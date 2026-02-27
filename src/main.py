@@ -12,11 +12,11 @@ import requests
 import feedparser
 
 
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 TELEGRAM_API = "https://api.telegram.org"
 ETF_MAP_PATH = Path("config/etf_map.json")
 
-# Data source for ETF map performance (free, no key). Best-effort.
+# Free, no-key data source for daily prices (best-effort)
 # Stooq daily CSV endpoint: https://stooq.com/q/d/l/?s=spy.us&i=d
 STOOQ_BASE = "https://stooq.com/q/d/l/"
 
@@ -28,6 +28,56 @@ def now_kst() -> datetime:
 def env(name: str, default: str = "") -> str:
     v = os.getenv(name, default)
     return v.strip() if isinstance(v, str) else default
+
+
+def get_lang() -> str:
+    # "ko" (default) or "en"
+    lang = (env("BRIEF_LANG", "ko") or "ko").lower()
+    return "en" if lang.startswith("en") else "ko"
+
+
+def tr(key: str) -> str:
+    # Minimal UI translation only (titles from RSS remain as-is)
+    ko = {
+        "title": "데일리 브리핑",
+        "status_ok": "정상",
+        "status_err": "오류",
+        "etf_loaded": "ETF 지도 로드",
+        "s2": "S2. ETF 지도",
+        "benchmark": "벤치마크",
+        "source": "소스",
+        "sector_a": "섹터 A (지속 강세)",
+        "sector_b": "섹터 B (회복 시도)",
+        "country_a": "국가/지역 A (지속 강세)",
+        "country_b": "국가/지역 B (회복 시도)",
+        "s1": "S1. 시장 헤드라인",
+        "no_news": "• (시장 관련 헤드라인 없음)",
+        "s4_log": "S4. 로그",
+        "s4_err": "S4. 에러",
+        "no_data": "• (데이터 없음)",
+        "failed_s2": "• (ETF 지도 계산 실패)",
+    }
+    en = {
+        "title": "Daily Briefing",
+        "status_ok": "OK",
+        "status_err": "ERROR",
+        "etf_loaded": "ETF map loaded",
+        "s2": "S2. ETF Map",
+        "benchmark": "Benchmark",
+        "source": "Source",
+        "sector_a": "Sector A (Sustained)",
+        "sector_b": "Sector B (Revival)",
+        "country_a": "Country/Region A (Sustained)",
+        "country_b": "Country/Region B (Revival)",
+        "s1": "S1. Market Headlines",
+        "no_news": "• (no market-related headlines)",
+        "s4_log": "S4. Log",
+        "s4_err": "S4. Error",
+        "no_data": "• (no data)",
+        "failed_s2": "• (failed to compute ETF map)",
+    }
+    table = ko if get_lang() == "ko" else en
+    return table.get(key, key)
 
 
 def load_etf_map() -> dict:
@@ -48,15 +98,34 @@ def load_etf_map() -> dict:
 
 
 def load_rss_urls() -> List[str]:
+    """RSS_URLS env overrides default (comma-separated)."""
     raw = env("RSS_URLS")
     if raw:
         return [u.strip() for u in raw.split(",") if u.strip()]
 
-    # Default RSS sources (replace later)
+    # Default = market-oriented, Korean-friendly (no API key)
+    # 1) Google News BUSINESS (KR edition)
+    # 2) Google News BUSINESS (US edition)
+    # 3) Yonhap Economy TV (KR)
     return [
-        "https://news.ycombinator.com/rss",
-        "https://feeds.bbci.co.uk/news/world/rss.xml",
-        "https://feeds.bbci.co.uk/news/technology/rss.xml",
+        "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ko&gl=KR&ceid=KR:ko",
+        "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-US&gl=US&ceid=US:en",
+        "https://www.yonhapnewseconomytv.com/rss/allArticle.xml",
+    ]
+
+
+def _keyword_list() -> List[str]:
+    custom = env("NEWS_KEYWORDS")
+    if custom:
+        return [k.strip() for k in custom.split(",") if k.strip()]
+    if get_lang() == "ko":
+        return [
+            "증시", "주식", "코스피", "코스닥", "나스닥", "S&P", "연준", "금리", "CPI", "PCE",
+            "고용", "실업", "국채", "채권", "달러", "환율", "실적", "어닝", "FOMC", "반도체", "AI",
+        ]
+    return [
+        "stock", "market", "S&P", "Nasdaq", "Dow", "Fed", "rate", "CPI", "PCE", "yields",
+        "treasury", "dollar", "earnings", "inflation", "recession", "oil", "chip", "AI",
     ]
 
 
@@ -65,14 +134,14 @@ def fetch_headlines(rss_urls: List[str], top_n: int = 8, timeout: int = 12) -> L
 
     for url in rss_urls:
         try:
-            headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.3 (+GitHub Actions)")}
+            headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.3.1 (+GitHub Actions)")}
             resp = requests.get(url, headers=headers, timeout=timeout)
             resp.raise_for_status()
 
             feed = feedparser.parse(resp.text)
             source = (feed.feed.get("title") or url).strip()
 
-            for e in feed.entries[: max(top_n, 20)]:
+            for e in feed.entries[: max(top_n, 30)]:
                 title = (e.get("title") or "").strip()
                 link = (e.get("link") or "").strip()
                 if not title:
@@ -99,13 +168,24 @@ def fetch_headlines(rss_urls: List[str], top_n: int = 8, timeout: int = 12) -> L
         if key in seen:
             continue
         seen.add(key)
-        dedup.append(it)
-        if len(dedup) >= top_n:
-            break
-
-    for it in dedup:
         it.pop("_ts", None)
-    return dedup
+        dedup.append(it)
+
+    use_filter = env("NEWS_FILTER", "1") != "0"
+    if use_filter:
+        kws = _keyword_list()
+        low_kws = [k.lower() for k in kws]
+        filtered = []
+        for it in dedup:
+            t = it["title"].lower()
+            if any(k in t for k in low_kws):
+                filtered.append(it)
+            if len(filtered) >= top_n:
+                break
+        if len(filtered) >= min(3, top_n):
+            return filtered[:top_n]
+
+    return dedup[:top_n]
 
 
 def truncate_telegram(text: str, limit: int = 3900) -> str:
@@ -114,23 +194,17 @@ def truncate_telegram(text: str, limit: int = 3900) -> str:
     return text[:limit] + "\n…(truncated)"
 
 
-# -----------------------
-# S2: ETF Map (Sector/Country) Rankings
-# -----------------------
 def _stooq_symbol(ticker: str) -> str:
-    # Stooq uses lowercase and often requires ".us" suffix for US-listed ETFs.
-    # Example: SPY -> spy.us
     t = ticker.strip().lower()
     if "." in t:
-        return t  # already supplied
+        return t
     return f"{t}.us"
 
 
 def _fetch_stooq_daily_closes(ticker: str, timeout: int = 12) -> List[Tuple[str, float]]:
-    """Return list of (date, close) ascending by date. Best effort."""
     sym = _stooq_symbol(ticker)
     url = f"{STOOQ_BASE}?s={sym}&i=d"
-    headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.3 (+GitHub Actions)")}
+    headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.3.1 (+GitHub Actions)")}
     resp = requests.get(url, headers=headers, timeout=timeout)
     resp.raise_for_status()
 
@@ -159,7 +233,6 @@ def _fetch_stooq_daily_closes(ticker: str, timeout: int = 12) -> List[Tuple[str,
 
 
 def _pct_change(closes: List[Tuple[str, float]], lookback: int) -> Optional[float]:
-    """Percent change vs N trading days ago."""
     if len(closes) < lookback + 1:
         return None
     last = closes[-1][1]
@@ -181,7 +254,6 @@ def build_etf_rankings(
     benchmark: str,
     timeout: int = 12,
 ) -> Tuple[List[dict], List[str]]:
-    """Return per-ticker perf/RS metrics and list of failed tickers."""
     failed: List[str] = []
     cache: Dict[str, List[Tuple[str, float]]] = {}
 
@@ -194,16 +266,9 @@ def build_etf_rankings(
 
     bench_closes = get_closes(benchmark)
     if not bench_closes:
-        # If benchmark fails, we still compute absolute returns but RS becomes NA.
         failed.append(benchmark)
 
-    horizons = {
-        "1w": 5,
-        "1m": 21,
-        "3m": 63,
-        "6m": 126,
-    }
-
+    horizons = {"1w": 5, "1m": 21, "3m": 63, "6m": 126}
     bench_ret = {k: _pct_change(bench_closes, v) for k, v in horizons.items()} if bench_closes else {}
 
     rows: List[dict] = []
@@ -222,13 +287,7 @@ def build_etf_rankings(
                 else:
                     rs[k] = None
 
-            rows.append(
-                {
-                    "ticker": t,
-                    "ret": ret,
-                    "rs": rs,
-                }
-            )
+            rows.append({"ticker": t, "ret": ret, "rs": rs})
         except Exception:
             failed.append(t)
 
@@ -236,8 +295,6 @@ def build_etf_rankings(
 
 
 def pick_top_tracks(rows: List[dict], top_n: int = 3) -> Tuple[List[dict], List[dict]]:
-    """Pick A track (sustained strength) and B track (revival) using RS metrics."""
-    # A track: weighted RS (6m,3m)
     def score_a(r: dict) -> float:
         rs6 = r["rs"].get("6m")
         rs3 = r["rs"].get("3m")
@@ -245,18 +302,14 @@ def pick_top_tracks(rows: List[dict], top_n: int = 3) -> Tuple[List[dict], List[
             return -1e9
         return 0.6 * rs6 + 0.4 * rs3
 
-    # B track: "revival" - short-term RS flips positive while medium-term still negative/weak
-    # Conditions are soft; we score improvement.
     def score_b(r: dict) -> float:
         rs1w = r["rs"].get("1w")
         rs1m = r["rs"].get("1m")
         rs3m = r["rs"].get("3m")
         if rs1w is None or rs1m is None or rs3m is None:
             return -1e9
-        # revival preference: rs1w positive and rs1m/rs3m not strongly positive yet
         if rs1w <= 0:
             return -1e9
-        # improvement score: rs1w - rs1m plus a small bonus if rs3m < 0 (still in pullback)
         bonus = 0.5 if rs3m < 0 else 0.0
         return (rs1w - rs1m) + bonus
 
@@ -273,18 +326,13 @@ def format_track_list(rows: List[dict], track: str) -> List[str]:
     for r in rows:
         t = r["ticker"]
         if track == "A":
-            lines.append(
-                f"• {t}: RS3M {_fmt_pct(r['rs'].get('3m'))}, RS6M {_fmt_pct(r['rs'].get('6m'))}"
-            )
+            lines.append(f"• {t}: RS3M {_fmt_pct(r['rs'].get('3m'))}, RS6M {_fmt_pct(r['rs'].get('6m'))}")
         else:
-            lines.append(
-                f"• {t}: RS1W {_fmt_pct(r['rs'].get('1w'))}, RS1M {_fmt_pct(r['rs'].get('1m'))}"
-            )
+            lines.append(f"• {t}: RS1W {_fmt_pct(r['rs'].get('1w'))}, RS1M {_fmt_pct(r['rs'].get('1m'))}")
     return lines
 
 
 def build_s2_section(etf_map: dict) -> Tuple[List[str], List[str]]:
-    """Return (s2_lines, warnings)."""
     warnings: List[str] = []
     benchmark_list = etf_map.get("benchmark", []) or ["ACWI"]
     benchmark = benchmark_list[0] if benchmark_list else "ACWI"
@@ -295,39 +343,38 @@ def build_s2_section(etf_map: dict) -> Tuple[List[str], List[str]]:
     emerging = cr.get("emerging", []) or []
     countries = developed + emerging
 
-    # If config is empty, don't crash
     if not sectors and not countries:
-        return ["(ETF map is empty)"], warnings
+        return [tr("no_data")], warnings
 
-    # Build rankings
     lines: List[str] = []
     timeout = int(env("DATA_TIMEOUT", "12") or "12")
 
-    # Sectors
+    lines.append(f"<b>{tr('s2')}</b>")
+    lines.append(f"<i>{html.escape(tr('benchmark'))}</i>: {html.escape(benchmark)}  <i>{html.escape(tr('source'))}</i>: Stooq (daily)")
+    lines.append("")
+
     if sectors:
         rows, failed = build_etf_rankings(sectors, benchmark=benchmark, timeout=timeout)
         if failed:
-            warnings.append(f"S2 sectors data missing: {', '.join(sorted(set(failed))[:8])}" + ("…" if len(set(failed)) > 8 else ""))
+            warnings.append("S2 sectors data missing: " + ", ".join(sorted(set(failed))[:8]) + ("…" if len(set(failed)) > 8 else ""))
         top_a, top_b = pick_top_tracks(rows, top_n=3)
-        lines.append("<b>S2. ETF Map</b>")
-        lines.append(f"<i>Benchmark</i>: {html.escape(benchmark)}  <i>Source</i>: Stooq (daily)")
-        lines.append("")
-        lines.append("<b>Sector A (Sustained)</b>")
-        lines.extend([html.escape(s) for s in format_track_list(top_a, "A")] or ["• (no data)"])
-        lines.append("<b>Sector B (Revival)</b>")
-        lines.extend([html.escape(s) for s in format_track_list(top_b, "B")] or ["• (no data)"])
+
+        lines.append(f"<b>{tr('sector_a')}</b>")
+        lines.extend([html.escape(s) for s in format_track_list(top_a, "A")] or [tr("no_data")])
+        lines.append(f"<b>{tr('sector_b')}</b>")
+        lines.extend([html.escape(s) for s in format_track_list(top_b, "B")] or [tr("no_data")])
         lines.append("")
 
-    # Countries
     if countries:
         rows, failed = build_etf_rankings(countries, benchmark=benchmark, timeout=timeout)
         if failed:
-            warnings.append(f"S2 countries data missing: {', '.join(sorted(set(failed))[:8])}" + ("…" if len(set(failed)) > 8 else ""))
+            warnings.append("S2 countries data missing: " + ", ".join(sorted(set(failed))[:8]) + ("…" if len(set(failed)) > 8 else ""))
         top_a, top_b = pick_top_tracks(rows, top_n=3)
-        lines.append("<b>Country/Region A (Sustained)</b>")
-        lines.extend([html.escape(s) for s in format_track_list(top_a, "A")] or ["• (no data)"])
-        lines.append("<b>Country/Region B (Revival)</b>")
-        lines.extend([html.escape(s) for s in format_track_list(top_b, "B")] or ["• (no data)"])
+
+        lines.append(f"<b>{tr('country_a')}</b>")
+        lines.extend([html.escape(s) for s in format_track_list(top_a, "A")] or [tr("no_data")])
+        lines.append(f"<b>{tr('country_b')}</b>")
+        lines.extend([html.escape(s) for s in format_track_list(top_b, "B")] or [tr("no_data")])
 
     return lines, warnings
 
@@ -336,7 +383,7 @@ def build_message(headlines: List[dict], etf_map: dict, ok: bool = True, error_s
     kst = now_kst().strftime("%Y-%m-%d %H:%M:%S KST")
     sha = env("GITHUB_SHA")
     sha_short = sha[:7] if sha else "local"
-    status = "OK" if ok else "ERROR"
+    status = tr("status_ok") if ok else tr("status_err")
 
     benchmark = etf_map.get("benchmark", []) or []
     sectors = etf_map.get("sectors_11", []) or []
@@ -346,36 +393,32 @@ def build_message(headlines: List[dict], etf_map: dict, ok: bool = True, error_s
     countries_cnt = len(developed) + len(emerging)
 
     lines: List[str] = []
-
-    # S0 Meta
-    lines.append(f"<b>Daily Briefing</b>  <code>{status}</code>")
+    lines.append(f"<b>{html.escape(tr('title'))}</b>  <code>{html.escape(status)}</code>")
     lines.append(f"⏱️ {html.escape(kst)}")
     lines.append(f"🧩 v{VERSION} / {html.escape(sha_short)}")
-    lines.append(f"🗺️ ETF map loaded: benchmark={','.join(benchmark)} / sectors={len(sectors)} / countries={countries_cnt}")
+    lines.append(f"🗺️ {html.escape(tr('etf_loaded'))}: benchmark={','.join(benchmark)} / sectors={len(sectors)} / countries={countries_cnt}")
     lines.append("")
 
-    # S2 ETF map (optional)
     if include_s2 and ok:
         try:
             s2_lines, warnings = build_s2_section(etf_map)
             lines.extend(s2_lines)
             if warnings:
                 lines.append("")
-                lines.append("<b>S4. Log</b>")
+                lines.append(f"<b>{html.escape(tr('s4_log'))}</b>")
                 for w in warnings[:3]:
                     lines.append(f"• {html.escape(w)}")
             lines.append("")
         except Exception:
-            lines.append("<b>S2. ETF Map</b>")
-            lines.append("• (failed to compute ETF map rankings)")
+            lines.append(f"<b>{html.escape(tr('s2'))}</b>")
+            lines.append(html.escape(tr("failed_s2")))
             lines.append("")
             print("[WARN] S2 ETF map failed", file=sys.stderr)
             print(traceback.format_exc(), file=sys.stderr)
 
-    # S1 Headlines
-    lines.append("<b>S1. Headlines</b>")
+    lines.append(f"<b>{html.escape(tr('s1'))}</b>")
     if not headlines:
-        lines.append("• (no headlines fetched)")
+        lines.append(html.escape(tr("no_news")))
     else:
         for i, h in enumerate(headlines, 1):
             src = html.escape(h.get("source", ""))
@@ -386,10 +429,9 @@ def build_message(headlines: List[dict], etf_map: dict, ok: bool = True, error_s
             else:
                 lines.append(f"{i}) {title} <i>({src})</i>")
 
-    # Error summary
     if not ok and error_summary:
         lines.append("")
-        lines.append("<b>S4. Error</b>")
+        lines.append(f"<b>{html.escape(tr('s4_err'))}</b>")
         lines.append(f"<code>{html.escape(error_summary)}</code>")
 
     return truncate_telegram("\n".join(lines))
@@ -417,7 +459,6 @@ def main() -> int:
     top_n = int(env("TOP_N", "8") or "8")
     rss_urls = load_rss_urls()
     etf_map = load_etf_map()
-
     include_s2 = env("INCLUDE_S2", "1") != "0"
 
     try:
