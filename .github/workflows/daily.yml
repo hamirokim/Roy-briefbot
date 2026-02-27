@@ -2,7 +2,7 @@ name: Daily Brief
 
 on:
   schedule:
-    - cron: "10 21 * * *"   # UTC 21:10 = KST 06:10
+    - cron: "10 22 * * *"  # UTC 22:10 = KST 07:10 (US close 데이터 반영 여유)
   workflow_dispatch:
 
 jobs:
@@ -26,5 +26,25 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+          # ---- 뉴스(S1) ----
+          NEWS_FILTER: "1"
+          NEWS_DIGEST_TOP: "3"
+          SHOW_RAW_HEADLINES: "0"
+
+          # ---- 후보(S3): 희소/고확률 ----
+          S3_TOP_N: "2"
+          S3_HOLDINGS_PER_ETF: "25"
+          S3_MAX_UNIVERSE: "70"
+          S3_MIN_PRICE: "5"
+          S3_MIN_DOLLAR_VOL: "20000000"
+          S3_MIN_DD: "-0.25"
+          S3_REQUIRE_1M_NEG: "1"
+          S3_MAX_BOUNCE_FROM_20D_LOW: "0.08"
+          S3_REQUIRE_ABOVE_200SMA: "1"
+          S3_REQUIRE_SLOPE200_POS: "1"
+          S3_MIN_ATR_PCT: "2.0"
+          S3_MAX_ATR_PCT: "8.0"
+
         run: |
           python src/main.py
