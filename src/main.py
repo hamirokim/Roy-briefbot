@@ -4,21 +4,27 @@ import time
 import json
 import html
 import traceback
+from io import BytesIO
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Tuple, Optional
 
 import requests
 import feedparser
+from openpyxl import load_workbook
 
 
-VERSION = "0.3.1"
+VERSION = "0.4.0"
 TELEGRAM_API = "https://api.telegram.org"
 ETF_MAP_PATH = Path("config/etf_map.json")
 
 # Free, no-key data source for daily prices (best-effort)
 # Stooq daily CSV endpoint: https://stooq.com/q/d/l/?s=spy.us&i=d
 STOOQ_BASE = "https://stooq.com/q/d/l/"
+
+# SPDR (SSGA) daily holdings XLSX (free, no-key)
+# Example: https://www.ssga.com/library-content/products/fund-data/etfs/us/holdings-daily-us-en-xlk.xlsx
+SSGA_HOLDINGS_TMPL = "https://www.ssga.com/library-content/products/fund-data/etfs/us/holdings-daily-us-en-{}.xlsx"
 
 
 def now_kst() -> datetime:
@@ -37,7 +43,6 @@ def get_lang() -> str:
 
 
 def tr(key: str) -> str:
-    # Minimal UI translation only (titles from RSS remain as-is)
     ko = {
         "title": "데일리 브리핑",
         "status_ok": "정상",
@@ -50,12 +55,16 @@ def tr(key: str) -> str:
         "sector_b": "섹터 B (회복 시도)",
         "country_a": "국가/지역 A (지속 강세)",
         "country_b": "국가/지역 B (회복 시도)",
+        "s3": "S3. 오늘 후보 종목",
+        "s3_none": "• 오늘 후보 없음 (조건 미충족/데이터 부족)",
+        "s3_note": "※ 후보는 '신호(ENTRY)'가 아니라 '환경(급락+반등기미+리스크)' 기반입니다. 타이밍은 TradingView 4H 지표로 최종 확인.",
         "s1": "S1. 시장 헤드라인",
         "no_news": "• (시장 관련 헤드라인 없음)",
         "s4_log": "S4. 로그",
         "s4_err": "S4. 에러",
         "no_data": "• (데이터 없음)",
         "failed_s2": "• (ETF 지도 계산 실패)",
+        "failed_s3": "• (후보 종목 계산 실패)",
     }
     en = {
         "title": "Daily Briefing",
@@ -69,19 +78,22 @@ def tr(key: str) -> str:
         "sector_b": "Sector B (Revival)",
         "country_a": "Country/Region A (Sustained)",
         "country_b": "Country/Region B (Revival)",
+        "s3": "S3. Candidates",
+        "s3_none": "• No candidates (filters not met / missing data)",
+        "s3_note": "Note: candidates are environment-based; timing confirmed on TradingView 4H.",
         "s1": "S1. Market Headlines",
         "no_news": "• (no market-related headlines)",
         "s4_log": "S4. Log",
         "s4_err": "S4. Error",
         "no_data": "• (no data)",
         "failed_s2": "• (failed to compute ETF map)",
+        "failed_s3": "• (failed to compute candidates)",
     }
     table = ko if get_lang() == "ko" else en
     return table.get(key, key)
 
 
 def load_etf_map() -> dict:
-    """Load ETF map from config/etf_map.json. Safe fallback if missing/invalid."""
     fallback = {
         "benchmark": ["ACWI"],
         "sectors_11": [],
@@ -98,15 +110,11 @@ def load_etf_map() -> dict:
 
 
 def load_rss_urls() -> List[str]:
-    """RSS_URLS env overrides default (comma-separated)."""
     raw = env("RSS_URLS")
     if raw:
         return [u.strip() for u in raw.split(",") if u.strip()]
 
     # Default = market-oriented, Korean-friendly (no API key)
-    # 1) Google News BUSINESS (KR edition)
-    # 2) Google News BUSINESS (US edition)
-    # 3) Yonhap Economy TV (KR)
     return [
         "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ko&gl=KR&ceid=KR:ko",
         "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-US&gl=US&ceid=US:en",
@@ -134,7 +142,7 @@ def fetch_headlines(rss_urls: List[str], top_n: int = 8, timeout: int = 12) -> L
 
     for url in rss_urls:
         try:
-            headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.3.1 (+GitHub Actions)")}
+            headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.4.0 (+GitHub Actions)")}
             resp = requests.get(url, headers=headers, timeout=timeout)
             resp.raise_for_status()
 
@@ -194,17 +202,25 @@ def truncate_telegram(text: str, limit: int = 3900) -> str:
     return text[:limit] + "\n…(truncated)"
 
 
+# -----------------------
+# S2: ETF Map Rankings (daily)
+# -----------------------
 def _stooq_symbol(ticker: str) -> str:
+    """
+    Stooq uses lowercase and often needs a market suffix.
+    For US-listed tickers/ETFs: use ".us"
+    """
     t = ticker.strip().lower()
-    if "." in t:
+    if t.endswith(".us") or t.endswith(".uk") or t.endswith(".jp") or t.endswith(".de") or t.endswith(".pl"):
         return t
     return f"{t}.us"
 
 
-def _fetch_stooq_daily_closes(ticker: str, timeout: int = 12) -> List[Tuple[str, float]]:
+def _fetch_stooq_daily_ohlcv(ticker: str, timeout: int = 12) -> List[dict]:
+    """Return list of dict: {date, open, high, low, close, volume} ascending by date."""
     sym = _stooq_symbol(ticker)
     url = f"{STOOQ_BASE}?s={sym}&i=d"
-    headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.3.1 (+GitHub Actions)")}
+    headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.4.0 (+GitHub Actions)")}
     resp = requests.get(url, headers=headers, timeout=timeout)
     resp.raise_for_status()
 
@@ -216,27 +232,37 @@ def _fetch_stooq_daily_closes(ticker: str, timeout: int = 12) -> List[Tuple[str,
     if len(lines) < 3:
         return []
 
-    out: List[Tuple[str, float]] = []
+    out: List[dict] = []
     for row in lines[1:]:
         cols = row.split(",")
-        if len(cols) < 5:
+        if len(cols) < 6:
             continue
-        date = cols[0].strip()
-        close_str = cols[4].strip()
         try:
-            close = float(close_str)
+            out.append(
+                {
+                    "date": cols[0].strip(),
+                    "open": float(cols[1]),
+                    "high": float(cols[2]),
+                    "low": float(cols[3]),
+                    "close": float(cols[4]),
+                    "volume": float(cols[5]),
+                }
+            )
         except Exception:
             continue
-        out.append((date, close))
 
     return out
 
 
-def _pct_change(closes: List[Tuple[str, float]], lookback: int) -> Optional[float]:
+def _closes(series: List[dict]) -> List[float]:
+    return [x["close"] for x in series]
+
+
+def _pct_change(closes: List[float], lookback: int) -> Optional[float]:
     if len(closes) < lookback + 1:
         return None
-    last = closes[-1][1]
-    prev = closes[-(lookback + 1)][1]
+    last = closes[-1]
+    prev = closes[-(lookback + 1)]
     if prev == 0:
         return None
     return (last / prev - 1.0) * 100.0
@@ -255,16 +281,17 @@ def build_etf_rankings(
     timeout: int = 12,
 ) -> Tuple[List[dict], List[str]]:
     failed: List[str] = []
-    cache: Dict[str, List[Tuple[str, float]]] = {}
+    cache: Dict[str, List[dict]] = {}
 
-    def get_closes(t: str) -> List[Tuple[str, float]]:
+    def get_series(t: str) -> List[dict]:
         if t in cache:
             return cache[t]
-        closes = _fetch_stooq_daily_closes(t, timeout=timeout)
-        cache[t] = closes
-        return closes
+        s = _fetch_stooq_daily_ohlcv(t, timeout=timeout)
+        cache[t] = s
+        return s
 
-    bench_closes = get_closes(benchmark)
+    bench_series = get_series(benchmark)
+    bench_closes = _closes(bench_series) if bench_series else []
     if not bench_closes:
         failed.append(benchmark)
 
@@ -274,7 +301,8 @@ def build_etf_rankings(
     rows: List[dict] = []
     for t in tickers:
         try:
-            closes = get_closes(t)
+            series = get_series(t)
+            closes = _closes(series) if series else []
             if not closes:
                 failed.append(t)
                 continue
@@ -321,18 +349,8 @@ def pick_top_tracks(rows: List[dict], top_n: int = 3) -> Tuple[List[dict], List[
     return top_a, top_b
 
 
-def format_track_list(rows: List[dict], track: str) -> List[str]:
-    lines: List[str] = []
-    for r in rows:
-        t = r["ticker"]
-        if track == "A":
-            lines.append(f"• {t}: RS3M {_fmt_pct(r['rs'].get('3m'))}, RS6M {_fmt_pct(r['rs'].get('6m'))}")
-        else:
-            lines.append(f"• {t}: RS1W {_fmt_pct(r['rs'].get('1w'))}, RS1M {_fmt_pct(r['rs'].get('1m'))}")
-    return lines
-
-
-def build_s2_section(etf_map: dict) -> Tuple[List[str], List[str]]:
+def compute_s2_picks(etf_map: dict) -> Tuple[List[str], List[str], List[str], List[str], List[str]]:
+    """Return (sector_A, sector_B, country_A, country_B, warnings)."""
     warnings: List[str] = []
     benchmark_list = etf_map.get("benchmark", []) or ["ACWI"]
     benchmark = benchmark_list[0] if benchmark_list else "ACWI"
@@ -343,43 +361,336 @@ def build_s2_section(etf_map: dict) -> Tuple[List[str], List[str]]:
     emerging = cr.get("emerging", []) or []
     countries = developed + emerging
 
-    if not sectors and not countries:
-        return [tr("no_data")], warnings
-
-    lines: List[str] = []
     timeout = int(env("DATA_TIMEOUT", "12") or "12")
 
-    lines.append(f"<b>{tr('s2')}</b>")
-    lines.append(f"<i>{html.escape(tr('benchmark'))}</i>: {html.escape(benchmark)}  <i>{html.escape(tr('source'))}</i>: Stooq (daily)")
-    lines.append("")
+    sector_a: List[str] = []
+    sector_b: List[str] = []
+    country_a: List[str] = []
+    country_b: List[str] = []
 
     if sectors:
         rows, failed = build_etf_rankings(sectors, benchmark=benchmark, timeout=timeout)
         if failed:
             warnings.append("S2 sectors data missing: " + ", ".join(sorted(set(failed))[:8]) + ("…" if len(set(failed)) > 8 else ""))
         top_a, top_b = pick_top_tracks(rows, top_n=3)
-
-        lines.append(f"<b>{tr('sector_a')}</b>")
-        lines.extend([html.escape(s) for s in format_track_list(top_a, "A")] or [tr("no_data")])
-        lines.append(f"<b>{tr('sector_b')}</b>")
-        lines.extend([html.escape(s) for s in format_track_list(top_b, "B")] or [tr("no_data")])
-        lines.append("")
+        sector_a = [r["ticker"] for r in top_a]
+        sector_b = [r["ticker"] for r in top_b]
 
     if countries:
         rows, failed = build_etf_rankings(countries, benchmark=benchmark, timeout=timeout)
         if failed:
             warnings.append("S2 countries data missing: " + ", ".join(sorted(set(failed))[:8]) + ("…" if len(set(failed)) > 8 else ""))
         top_a, top_b = pick_top_tracks(rows, top_n=3)
+        country_a = [r["ticker"] for r in top_a]
+        country_b = [r["ticker"] for r in top_b]
 
+    return sector_a, sector_b, country_a, country_b, warnings
+
+
+def build_s2_section(etf_map: dict, sector_a: List[str], sector_b: List[str], country_a: List[str], country_b: List[str]) -> List[str]:
+    benchmark_list = etf_map.get("benchmark", []) or ["ACWI"]
+    benchmark = benchmark_list[0] if benchmark_list else "ACWI"
+
+    lines: List[str] = []
+    lines.append(f"<b>{tr('s2')}</b>")
+    lines.append(f"<i>{html.escape(tr('benchmark'))}</i>: {html.escape(benchmark)}  <i>{html.escape(tr('source'))}</i>: Stooq (daily)")
+    lines.append("")
+
+    # Keep S2 compact (tickers only) since S3 will carry the actionable part.
+    if sector_a or sector_b:
+        lines.append(f"<b>{tr('sector_a')}</b>")
+        lines.extend([f"• {html.escape(t)}" for t in sector_a] or [tr("no_data")])
+        lines.append(f"<b>{tr('sector_b')}</b>")
+        lines.extend([f"• {html.escape(t)}" for t in sector_b] or [tr("no_data")])
+        lines.append("")
+
+    if country_a or country_b:
         lines.append(f"<b>{tr('country_a')}</b>")
-        lines.extend([html.escape(s) for s in format_track_list(top_a, "A")] or [tr("no_data")])
+        lines.extend([f"• {html.escape(t)}" for t in country_a] or [tr("no_data")])
         lines.append(f"<b>{tr('country_b')}</b>")
-        lines.extend([html.escape(s) for s in format_track_list(top_b, "B")] or [tr("no_data")])
+        lines.extend([f"• {html.escape(t)}" for t in country_b] or [tr("no_data")])
 
+    return lines
+
+
+# -----------------------
+# S3: Candidates (from top sector ETFs holdings)
+# -----------------------
+def fetch_spdr_holdings(etf_ticker: str, timeout: int = 12) -> List[dict]:
+    """
+    Fetch daily holdings for SPDR ETFs via SSGA XLSX.
+    Returns list of {ticker, name, weight} sorted by weight desc.
+    """
+    t = etf_ticker.strip().lower()
+    url = SSGA_HOLDINGS_TMPL.format(t)
+    headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.4.0 (+GitHub Actions)")}
+    resp = requests.get(url, headers=headers, timeout=timeout)
+    resp.raise_for_status()
+
+    wb = load_workbook(filename=BytesIO(resp.content), read_only=True, data_only=True)
+    ws = wb.active
+
+    header_row = None
+    col_ticker = None
+    col_name = None
+    col_weight = None
+
+    # Find header row (robust)
+    for i, row in enumerate(ws.iter_rows(min_row=1, max_row=80, values_only=True), start=1):
+        if not row:
+            continue
+        norm = [str(c).strip().lower() if c is not None else "" for c in row]
+        if any("ticker" in x or x == "symbol" for x in norm) and any("weight" in x for x in norm):
+            header_row = i
+            for j, x in enumerate(norm):
+                if col_ticker is None and ("ticker" in x or x == "symbol"):
+                    col_ticker = j
+                if col_name is None and ("name" == x or "security name" in x or x.endswith("name")):
+                    col_name = j
+                if col_weight is None and ("weight" in x):
+                    col_weight = j
+            break
+
+    if header_row is None or col_ticker is None or col_weight is None:
+        return []
+
+    out: List[dict] = []
+    blank_streak = 0
+    for row in ws.iter_rows(min_row=header_row + 1, max_row=header_row + 5000, values_only=True):
+        if not row:
+            blank_streak += 1
+            if blank_streak >= 20:
+                break
+            continue
+
+        raw_t = row[col_ticker] if col_ticker < len(row) else None
+        raw_w = row[col_weight] if col_weight < len(row) else None
+        raw_n = row[col_name] if (col_name is not None and col_name < len(row)) else None
+
+        if raw_t is None or str(raw_t).strip() == "":
+            blank_streak += 1
+            if blank_streak >= 20:
+                break
+            continue
+
+        blank_streak = 0
+        ticker = str(raw_t).strip().upper()
+
+        # Filter obvious non-equity rows
+        if len(ticker) > 10:
+            continue
+        if not ticker[0].isalpha():
+            continue
+
+        try:
+            weight = float(raw_w)
+        except Exception:
+            try:
+                weight = float(str(raw_w).replace("%", "").strip())
+            except Exception:
+                continue
+
+        name = str(raw_n).strip() if raw_n is not None else ""
+        out.append({"ticker": ticker, "name": name, "weight": weight})
+
+    out.sort(key=lambda x: x.get("weight", 0.0), reverse=True)
+    return out
+
+
+def sma(values: List[float], n: int) -> Optional[float]:
+    if len(values) < n:
+        return None
+    return sum(values[-n:]) / float(n)
+
+
+def atr14(series: List[dict]) -> Optional[float]:
+    if len(series) < 15:
+        return None
+    trs: List[float] = []
+    for i in range(1, len(series)):
+        h = series[i]["high"]
+        l = series[i]["low"]
+        pc = series[i - 1]["close"]
+        trv = max(h - l, abs(h - pc), abs(l - pc))
+        trs.append(trv)
+    if len(trs) < 14:
+        return None
+    return sum(trs[-14:]) / 14.0
+
+
+def clamp(x: float, lo: float, hi: float) -> float:
+    return max(lo, min(hi, x))
+
+
+def score_stock(series: List[dict]) -> Optional[dict]:
+    closes = _closes(series)
+    if len(closes) < 260:
+        return None
+
+    close = closes[-1]
+    if close <= 0:
+        return None
+
+    # Liquidity proxy using Stooq volume
+    vol20 = sum([x["volume"] for x in series[-20:]]) / 20.0
+    dollar_vol20 = vol20 * close
+
+    min_price = float(env("S3_MIN_PRICE", "5") or "5")
+    min_dv = float(env("S3_MIN_DOLLAR_VOL", "20000000") or "20000000")  # $20M/day
+
+    if close < min_price or dollar_vol20 < min_dv:
+        return None
+
+    # Drawdown vs 52w high
+    high252 = max(closes[-252:])
+    dd52 = (close / high252) - 1.0  # negative if below high
+    min_dd = float(env("S3_MIN_DD", "-0.15") or "-0.15")  # -15% or deeper
+    if dd52 > min_dd:
+        return None
+
+    r5 = _pct_change(closes, 5)
+    r21 = _pct_change(closes, 21)
+    r63 = _pct_change(closes, 63)
+
+    # Rebound signal: short-term positive
+    if r5 is None or r5 <= 0:
+        return None
+
+    # Risk (ATR%)
+    a14 = atr14(series)
+    if a14 is None:
+        return None
+    atrpct = (a14 / close) * 100.0
+    if atrpct < float(env("S3_MIN_ATR_PCT", "1.5") or "1.5") or atrpct > float(env("S3_MAX_ATR_PCT", "10") or "10"):
+        return None
+
+    s20 = sma(closes, 20)
+    s50 = sma(closes, 50)
+    s200 = sma(closes, 200)
+
+    slope200 = None
+    if s200 is not None and len(closes) >= 220:
+        s200_prev = sum(closes[-220:-20]) / 200.0
+        slope200 = s200 - s200_prev
+
+    pullback = 0.0
+    if s50 is not None and close < s50:
+        pullback += 0.4
+    if slope200 is not None and slope200 > 0:
+        pullback += 0.4
+    if s200 is not None and close > s200:
+        pullback += 0.2
+    pullback = clamp(pullback, 0.0, 1.0)
+
+    revival = 0.0
+    revival += clamp(r5 / 8.0, 0.0, 1.0)
+    if r21 is not None and r21 < 0:
+        revival += 0.3
+    if s20 is not None and close > s20:
+        revival += 0.3
+    revival = clamp(revival, 0.0, 1.0)
+
+    dd_score = clamp((-dd52) / 0.4, 0.0, 1.0)
+    risk_score = clamp(1.0 - abs(atrpct - 4.0) / 6.0, 0.0, 1.0)
+
+    score = 100.0 * (0.35 * pullback + 0.35 * revival + 0.2 * dd_score + 0.1 * risk_score)
+
+    return {
+        "close": close,
+        "dd52": dd52,
+        "r5": r5,
+        "r21": r21,
+        "r63": r63,
+        "atrpct": atrpct,
+        "dollar_vol20": dollar_vol20,
+        "score": score,
+    }
+
+
+def grade(score: float) -> str:
+    if score >= 80:
+        return "SSS"
+    if score >= 65:
+        return "SS"
+    if score >= 55:
+        return "S"
+    return "C"
+
+
+def build_s3_candidates(sector_etfs: List[str]) -> Tuple[List[str], List[str]]:
+    warnings: List[str] = []
+    timeout = int(env("DATA_TIMEOUT", "12") or "12")
+
+    holdings_per_etf = int(env("S3_HOLDINGS_PER_ETF", "15") or "15")
+    top_n = int(env("S3_TOP_N", "3") or "3")
+    max_universe = int(env("S3_MAX_UNIVERSE", "60") or "60")
+
+    universe: Dict[str, dict] = {}
+    for etf in sector_etfs:
+        try:
+            hs = fetch_spdr_holdings(etf, timeout=timeout)
+            if not hs:
+                warnings.append(f"S3 holdings missing: {etf}")
+                continue
+            for h in hs[:holdings_per_etf]:
+                t = h["ticker"]
+                if t not in universe:
+                    universe[t] = {"name": h.get("name", ""), "from": set([etf])}
+                else:
+                    universe[t]["from"].add(etf)
+        except Exception:
+            warnings.append(f"S3 holdings error: {etf}")
+            print(traceback.format_exc(), file=sys.stderr)
+
+    tickers = list(universe.keys())[:max_universe]
+    if not tickers:
+        return [], warnings
+
+    scored: List[dict] = []
+    cache: Dict[str, List[dict]] = {}
+    for t in tickers:
+        try:
+            series = cache.get(t)
+            if series is None:
+                series = _fetch_stooq_daily_ohlcv(t, timeout=timeout)
+                cache[t] = series
+            if not series:
+                continue
+            m = score_stock(series)
+            if not m:
+                continue
+            m["ticker"] = t
+            m["name"] = universe[t].get("name", "")
+            m["from"] = ",".join(sorted(list(universe[t]["from"])))
+            m["grade"] = grade(m["score"])
+            if m["grade"] in ("SSS", "SS", "S"):
+                scored.append(m)
+        except Exception:
+            continue
+
+    scored.sort(key=lambda x: x["score"], reverse=True)
+    scored = scored[:top_n]
+
+    lines: List[str] = []
+    if not scored:
+        return [tr("s3_none"), tr("s3_note")], warnings
+
+    for i, m in enumerate(scored, 1):
+        t = m["ticker"]
+        g = m["grade"]
+        name = m.get("name", "").strip()
+        name_short = (name[:28] + "…") if len(name) > 28 else name
+        dd = m["dd52"] * 100.0
+        lines.append(f"{i}) <b>[{g}] {html.escape(t)}</b> {html.escape(name_short)}")
+        lines.append(
+            f"   • 급락(52주고점 대비): {dd:.1f}% / 1W: {_fmt_pct(m.get('r5'))} / 1M: {_fmt_pct(m.get('r21'))} / ATR%: {m.get('atrpct'):.1f}"
+        )
+        lines.append(f"   • 출처(섹터ETF): {html.escape(m.get('from',''))} / 점수: {m.get('score'):.0f}")
+    lines.append(tr("s3_note"))
     return lines, warnings
 
 
-def build_message(headlines: List[dict], etf_map: dict, ok: bool = True, error_summary: str = "", include_s2: bool = True) -> str:
+def build_message(headlines: List[dict], etf_map: dict, ok: bool = True, error_summary: str = "", include_s2: bool = True, include_s3: bool = True) -> str:
     kst = now_kst().strftime("%Y-%m-%d %H:%M:%S KST")
     sha = env("GITHUB_SHA")
     sha_short = sha[:7] if sha else "local"
@@ -399,21 +710,49 @@ def build_message(headlines: List[dict], etf_map: dict, ok: bool = True, error_s
     lines.append(f"🗺️ {html.escape(tr('etf_loaded'))}: benchmark={','.join(benchmark)} / sectors={len(sectors)} / countries={countries_cnt}")
     lines.append("")
 
+    warnings: List[str] = []
+    sector_a: List[str] = []
+    sector_b: List[str] = []
+    country_a: List[str] = []
+    country_b: List[str] = []
+
     if include_s2 and ok:
         try:
-            s2_lines, warnings = build_s2_section(etf_map)
-            lines.extend(s2_lines)
-            if warnings:
-                lines.append("")
-                lines.append(f"<b>{html.escape(tr('s4_log'))}</b>")
-                for w in warnings[:3]:
-                    lines.append(f"• {html.escape(w)}")
+            sector_a, sector_b, country_a, country_b, w = compute_s2_picks(etf_map)
+            warnings.extend(w)
+            lines.extend(build_s2_section(etf_map, sector_a, sector_b, country_a, country_b))
             lines.append("")
         except Exception:
             lines.append(f"<b>{html.escape(tr('s2'))}</b>")
             lines.append(html.escape(tr("failed_s2")))
             lines.append("")
-            print("[WARN] S2 ETF map failed", file=sys.stderr)
+            print("[WARN] S2 failed", file=sys.stderr)
+            print(traceback.format_exc(), file=sys.stderr)
+
+    if include_s3 and ok:
+        try:
+            chosen: List[str] = []
+            for t in sector_a[:2]:
+                if t not in chosen:
+                    chosen.append(t)
+            for t in sector_b[:1]:
+                if t not in chosen:
+                    chosen.append(t)
+
+            lines.append(f"<b>{html.escape(tr('s3'))}</b>")
+            if chosen:
+                s3_lines, w = build_s3_candidates(chosen)
+                warnings.extend(w)
+                # s3_lines already includes HTML in some lines; keep as-is.
+                lines.extend(s3_lines)
+            else:
+                lines.append(tr("s3_none"))
+            lines.append("")
+        except Exception:
+            lines.append(f"<b>{html.escape(tr('s3'))}</b>")
+            lines.append(html.escape(tr("failed_s3")))
+            lines.append("")
+            print("[WARN] S3 failed", file=sys.stderr)
             print(traceback.format_exc(), file=sys.stderr)
 
     lines.append(f"<b>{html.escape(tr('s1'))}</b>")
@@ -428,6 +767,12 @@ def build_message(headlines: List[dict], etf_map: dict, ok: bool = True, error_s
                 lines.append(f'{i}) <a href="{html.escape(link)}">{title}</a> <i>({src})</i>')
             else:
                 lines.append(f"{i}) {title} <i>({src})</i>")
+
+    if warnings and ok:
+        lines.append("")
+        lines.append(f"<b>{html.escape(tr('s4_log'))}</b>")
+        for w in warnings[:6]:
+            lines.append(f"• {html.escape(w)}")
 
     if not ok and error_summary:
         lines.append("")
@@ -459,11 +804,13 @@ def main() -> int:
     top_n = int(env("TOP_N", "8") or "8")
     rss_urls = load_rss_urls()
     etf_map = load_etf_map()
+
     include_s2 = env("INCLUDE_S2", "1") != "0"
+    include_s3 = env("INCLUDE_S3", "1") != "0"
 
     try:
         headlines = fetch_headlines(rss_urls, top_n=top_n)
-        msg = build_message(headlines, etf_map=etf_map, ok=True, include_s2=include_s2)
+        msg = build_message(headlines, etf_map=etf_map, ok=True, include_s2=include_s2, include_s3=include_s3)
         send_telegram(msg)
         print("[OK] Briefing sent.")
         return 0
@@ -474,7 +821,7 @@ def main() -> int:
         print(traceback.format_exc(), file=sys.stderr)
 
         try:
-            msg = build_message([], etf_map=etf_map, ok=False, error_summary=err, include_s2=False)
+            msg = build_message([], etf_map=etf_map, ok=False, error_summary=err, include_s2=False, include_s3=False)
             send_telegram(msg)
             print("[OK] Error notification sent.")
         except Exception:
