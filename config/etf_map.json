@@ -1,0 +1,8 @@
+{
+  "benchmark": ["ACWI"],
+  "sectors_11": ["XLC","XLY","XLP","XLE","XLF","XLV","XLI","XLB","XLRE","XLK","XLU"],
+  "countries_regions_16": {
+    "developed": ["SPY","EWC","EWU","EWG","EWQ","EWL","EWJ","EWA"],
+    "emerging": ["MCHI","INDA","EWY","EWT","EWZ","EWW","KSA","EZA"]
+  }
+}
