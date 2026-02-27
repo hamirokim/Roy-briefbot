@@ -27,8 +27,8 @@ def env(name: str, default: str = "") -> str:
 
 def load_etf_map() -> dict:
     """
-    config/etf_map.json을 읽어 ETF 지도(벤치마크/섹터/국가)를 로드한다.
-    파일이 없거나 JSON이 깨져도 프로그램이 죽지 않게 기본값 반환.
+    Load ETF map from config/etf_map.json.
+    If the file is missing or invalid, return a safe fallback without crashing.
     """
     fallback = {
         "benchmark": ["ACWI"],
@@ -50,7 +50,7 @@ def load_rss_urls() -> list[str]:
     if raw:
         return [u.strip() for u in raw.split(",") if u.strip()]
 
-    # 기본값: 필요하면 나중에 교체
+    # Default RSS sources (you can replace later)
     return [
         "https://news.ycombinator.com/rss",
         "https://feeds.bbci.co.uk/news/world/rss.xml",
@@ -88,8 +88,10 @@ def fetch_headlines(rss_urls: list[str], top_n: int = 8, timeout: int = 12) -> l
             print(f"[WARN] RSS fetch failed: {url}", file=sys.stderr)
             print(traceback.format_exc(), file=sys.stderr)
 
+    # Sort by time desc; missing timestamps go last
     items.sort(key=lambda x: x.get("_ts", 0), reverse=True)
 
+    # Deduplicate by title
     seen = set()
     dedup = []
     for it in items:
@@ -107,6 +109,7 @@ def fetch_headlines(rss_urls: list[str], top_n: int = 8, timeout: int = 12) -> l
 
 
 def truncate_telegram(text: str, limit: int = 3900) -> str:
+    # Telegram hard limit is 4096; keep a buffer.
     if len(text) <= limit:
         return text
     return text[:limit] + "\n…(truncated)"
@@ -118,14 +121,15 @@ def build_message(headlines: list[dict], etf_map: dict, ok: bool = True, error_s
     sha_short = sha[:7] if sha else "local"
     status = "OK" if ok else "ERROR"
 
-    benchmark = etf_map.get("benchmark", [])
-    sectors = etf_map.get("sectors_11", [])
+    benchmark = etf_map.get("benchmark", []) or []
+    sectors = etf_map.get("sectors_11", []) or []
     cr = etf_map.get("countries_regions_16", {}) or {}
     developed = cr.get("developed", []) or []
     emerging = cr.get("emerging", []) or []
     countries_cnt = len(developed) + len(emerging)
 
     lines = []
+
     # S0 Meta
     lines.append(f"<b>Daily Briefing</b>  <code>{status}</code>")
     lines.append(f"⏱️ {html.escape(kst)}")
@@ -143,10 +147,11 @@ def build_message(headlines: list[dict], etf_map: dict, ok: bool = True, error_s
             title = html.escape(h.get("title", ""))
             link = h.get("link", "")
             if link:
-                lines.append(f"{i}) <a href=\"{html.escape(link)}\">{title}</a> <i>({src})</i>")
+                lines.append(f'{i}) <a href="{html.escape(link)}">{title}</a> <i>({src})</i>')
             else:
                 lines.append(f"{i}) {title} <i>({src})</i>")
 
+    # S4 Error
     if not ok and error_summary:
         lines.append("")
         lines.append("<b>S4. Error</b>")
@@ -184,6 +189,7 @@ def main() -> int:
         send_telegram(msg)
         print("[OK] Briefing sent.")
         return 0
+
     except Exception as e:
         err = f"{type(e).__name__}: {str(e)[:300]}"
         print("[ERROR] " + err, file=sys.stderr)
