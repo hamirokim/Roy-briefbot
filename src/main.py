@@ -14,7 +14,7 @@ import feedparser
 from openpyxl import load_workbook
 
 
-VERSION = "0.4.0"
+VERSION = "0.4.1"
 TELEGRAM_API = "https://api.telegram.org"
 ETF_MAP_PATH = Path("config/etf_map.json")
 
@@ -200,6 +200,95 @@ def truncate_telegram(text: str, limit: int = 3900) -> str:
     if len(text) <= limit:
         return text
     return text[:limit] + "\n…(truncated)"
+
+# -----------------------
+# S1: News digest (title-based, no full-article summary)
+# -----------------------
+def news_score(title: str) -> Tuple[int, List[str], str]:
+    t = (title or "").lower()
+    tags: List[str] = []
+    score = 0
+
+    def hit(words: List[str], pts: int, tag: str):
+        nonlocal score
+        if any(w.lower() in t for w in words):
+            score += pts
+            tags.append(tag)
+
+    hit(["fomc", "fed", "연준"], 5, "🟧통화정책")
+    hit(["cpi", "pce", "inflation", "물가"], 5, "🟧물가지표")
+    hit(["jobs", "employment", "실업", "고용"], 4, "🟨고용지표")
+    hit(["yield", "treasury", "국채", "채권"], 4, "🟨금리/채권")
+    hit(["usd", "dollar", "환율", "달러"], 3, "🟨환율")
+    hit(["earnings", "guidance", "실적", "어닝", "가이던스"], 4, "🟦실적")
+    hit(["vix", "volatility", "변동성"], 4, "🟥변동성")
+    hit(["oil", "opec", "유가"], 3, "🟩원자재")
+    hit(["war", "전쟁", "제재", "지정학"], 4, "🟥지정학")
+    hit(["rebalanc", "리밸런싱", "월마감"], 3, "🟪수급")
+    hit(["semiconductor", "chip", "반도체"], 3, "🟦섹터")
+    hit(["ai"], 2, "🟦테마")
+
+    if "🟥" in "".join(tags):
+        note = "오늘 변동성 리스크 가능. 신규 진입은 보수적으로."
+    elif "🟧통화정책" in tags or "🟧물가지표" in tags:
+        note = "매크로 이벤트 영향 큼. 포지션/사이즈 점검."
+    elif "🟦실적" in tags:
+        note = "실적/가이던스 변수. 종목별 갭 리스크 주의."
+    elif "🟪수급" in tags:
+        note = "수급 이벤트(리밸런싱)로 왜곡 가능."
+    else:
+        note = "시장 관련 이슈. 필요시 원문 확인."
+
+    tags = sorted(set(tags))
+    return score, tags, note
+
+
+def build_news_digest(headlines: List[dict]) -> List[str]:
+    top_k = int(env("NEWS_DIGEST_TOP", "3") or "3")
+    show_raw = env("SHOW_RAW_HEADLINES", "0") != "0"
+
+    scored = []
+    for h in headlines:
+        s, tags, note = news_score(h.get("title", ""))
+        scored.append((s, tags, note, h))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    picked = [x for x in scored if x[0] > 0][:top_k]
+    if not picked:
+        picked = scored[: min(top_k, len(scored))]
+
+    lines: List[str] = []
+    lines.append(f"<b>{html.escape(tr('s1'))}</b>")
+    lines.append("※ 기사 내용 요약이 아니라 '제목 키워드'로 중요도/리스크만 분류합니다. (원문 클릭은 선택)")
+
+    if not picked:
+        lines.append(html.escape(tr("no_news")))
+        return lines
+
+    for i, (s, tags, note, h) in enumerate(picked, 1):
+        title = h.get("title", "")
+        link = h.get("link", "")
+        tag_str = " ".join(tags) if tags else "🟦시장"
+        if link:
+            lines.append(f'{i}) {tag_str} <a href="{html.escape(link)}">{html.escape(title)}</a>')
+        else:
+            lines.append(f"{i}) {tag_str} {html.escape(title)}")
+        lines.append(f"   • {html.escape(note)}")
+
+    if show_raw:
+        lines.append("")
+        lines.append("<b>원문 헤드라인</b>")
+        for i, h in enumerate(headlines[:8], 1):
+            src = html.escape(h.get("source", ""))
+            title = html.escape(h.get("title", ""))
+            link = h.get("link", "")
+            if link:
+                lines.append(f'{i}) <a href="{html.escape(link)}">{title}</a> <i>({src})</i>')
+            else:
+                lines.append(f"{i}) {title} <i>({src})</i>")
+
+    return lines
+
 
 
 # -----------------------
@@ -556,6 +645,16 @@ def score_stock(series: List[dict]) -> Optional[dict]:
     if r5 is None or r5 <= 0:
         return None
 
+
+    if env("S3_REQUIRE_1M_NEG", "1") != "0":
+        if r21 is None or r21 >= 0:
+            return None
+
+    low20 = min([x["low"] for x in series[-20:]])
+    bounce20 = (close / low20 - 1.0) if low20 > 0 else 999.0
+    max_bounce = float(env("S3_MAX_BOUNCE_FROM_20D_LOW", "0.08") or "0.08")
+    if bounce20 > max_bounce:
+        return None
     # Risk (ATR%)
     a14 = atr14(series)
     if a14 is None:
@@ -567,6 +666,10 @@ def score_stock(series: List[dict]) -> Optional[dict]:
     s20 = sma(closes, 20)
     s50 = sma(closes, 50)
     s200 = sma(closes, 200)
+    if s200 is None:
+        return None
+    if env("S3_REQUIRE_ABOVE_200SMA", "1") != "0" and close <= s200:
+        return None
 
     slope200 = None
     if s200 is not None and len(closes) >= 220:
@@ -603,6 +706,7 @@ def score_stock(series: List[dict]) -> Optional[dict]:
         "r63": r63,
         "atrpct": atrpct,
         "dollar_vol20": dollar_vol20,
+        "bounce20": bounce20,
         "score": score,
     }
 
@@ -683,7 +787,7 @@ def build_s3_candidates(sector_etfs: List[str]) -> Tuple[List[str], List[str]]:
         dd = m["dd52"] * 100.0
         lines.append(f"{i}) <b>[{g}] {html.escape(t)}</b> {html.escape(name_short)}")
         lines.append(
-            f"   • 급락(52주고점 대비): {dd:.1f}% / 1W: {_fmt_pct(m.get('r5'))} / 1M: {_fmt_pct(m.get('r21'))} / ATR%: {m.get('atrpct'):.1f}"
+            f"   • 급락(52주고점 대비): {dd:.1f}% / 1W: {_fmt_pct(m.get('r5'))} / 1M: {_fmt_pct(m.get('r21'))} / ATR%: {m.get('atrpct'):.1f} / 20D저점대비: +{(m.get('bounce20',0.0)*100):.1f}%"
         )
         lines.append(f"   • 출처(섹터ETF): {html.escape(m.get('from',''))} / 점수: {m.get('score'):.0f}")
     lines.append(tr("s3_note"))
@@ -732,7 +836,7 @@ def build_message(headlines: List[dict], etf_map: dict, ok: bool = True, error_s
     if include_s3 and ok:
         try:
             chosen: List[str] = []
-            for t in sector_a[:2]:
+            for t in sector_a[:1]:
                 if t not in chosen:
                     chosen.append(t)
             for t in sector_b[:1]:
