@@ -4,6 +4,7 @@ import time
 import json
 import html
 import traceback
+import re
 from io import BytesIO
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
@@ -14,7 +15,7 @@ import feedparser
 from openpyxl import load_workbook
 
 
-VERSION = "0.4.2"
+VERSION = "0.4.3"
 TELEGRAM_API = "https://api.telegram.org"
 
 ETF_MAP_PATH = Path("config/etf_map.json")
@@ -22,6 +23,8 @@ STATE_PATH = Path("data/state.json")
 
 STOOQ_BASE = "https://stooq.com/q/d/l/"
 SSGA_HOLDINGS_TMPL = "https://www.ssga.com/library-content/products/fund-data/etfs/us/holdings-daily-us-en-{}.xlsx"
+
+HANGUL_RE = re.compile(r"[가-힣]")
 
 
 def now_kst() -> datetime:
@@ -60,14 +63,11 @@ def tr(key: str) -> str:
 
         "s1": "S1. 오늘 체크(제목 기반 요약)",
         "s1_note": "※ 본문 요약이 아니라 제목 키워드로 '리스크/이벤트'만 압축. (원문 클릭은 선택)",
-        "raw_headlines": "원문 헤드라인",
         "no_news": "• (시장 관련 헤드라인 없음)",
+        "raw_headlines": "원문 헤드라인",
 
         "s4_log": "S4. 로그",
         "s4_err": "S4. 에러",
-        "no_data": "• (데이터 없음)",
-        "failed_s2": "• (ETF 지도 계산 실패)",
-        "failed_s3": "• (후보 종목 계산 실패)",
         "state_missing": "• state.json이 없어 새로 생성(정상)",
     }
     en = {
@@ -163,11 +163,7 @@ def was_recently_recommended(state: dict, ticker: str, days: int) -> bool:
 # Config / RSS
 # -----------------------
 def load_etf_map() -> dict:
-    fallback = {
-        "benchmark": ["ACWI"],
-        "sectors_11": [],
-        "countries_regions_16": {"developed": [], "emerging": []},
-    }
+    fallback = {"benchmark": ["ACWI"], "sectors_11": [], "countries_regions_16": {"developed": [], "emerging": []}}
     try:
         with ETF_MAP_PATH.open("r", encoding="utf-8") as f:
             return json.load(f)
@@ -182,10 +178,10 @@ def load_rss_urls() -> List[str]:
     if raw:
         return [u.strip() for u in raw.split(",") if u.strip()]
     return [
-        "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ko&gl=KR&ceid=KR:ko",
-        "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-US&gl=US&ceid=US:en",
         "https://www.hankyung.com/feed/finance",
         "https://www.hankyung.com/feed/economy",
+        "https://www.yonhapnewseconomytv.com/rss/allArticle.xml",
+        "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ko&gl=KR&ceid=KR:ko",
     ]
 
 
@@ -194,38 +190,62 @@ def _keyword_list() -> List[str]:
     if custom:
         return [k.strip() for k in custom.split(",") if k.strip()]
     return [
-        "FOMC","연준","금리","CPI","PCE","고용","실업","국채","채권","달러","환율",
-        "실적","어닝","가이던스","빅테크","반도체","AI","유가","OPEC",
-        "코스피","코스닥","나스닥","S&P","VIX","리밸런싱","지정학","전쟁","제재",
+        "FOMC", "연준", "금리", "CPI", "PCE", "고용", "실업", "국채", "채권", "달러", "환율",
+        "실적", "어닝", "가이던스", "반도체", "AI", "유가", "OPEC",
+        "코스피", "코스닥", "나스닥", "S&P", "VIX", "리밸런싱", "지정학", "전쟁", "제재",
     ]
 
 
-def fetch_headlines(rss_urls: List[str], top_n: int = 16, timeout: int = 12, state: Optional[dict] = None) -> List[dict]:
+def is_korean_title(title: str) -> bool:
+    return bool(HANGUL_RE.search(title or ""))
+
+
+def fetch_headlines(
+    rss_urls: List[str],
+    top_n: int = 16,
+    timeout: int = 12,
+    state: Optional[dict] = None
+) -> Tuple[List[dict], List[str]]:
     items = []
+    logs = []
+    per_feed = []
+
     for url in rss_urls:
         try:
-            headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.4.2 (+GitHub Actions)")}
+            headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.4.3 (+GitHub Actions)")}
             resp = requests.get(url, headers=headers, timeout=timeout)
             resp.raise_for_status()
+
             feed = feedparser.parse(resp.text)
             source = (feed.feed.get("title") or url).strip()
-            for e in feed.entries[: max(top_n, 60)]:
+
+            count = 0
+            for e in feed.entries[: max(top_n, 80)]:
                 title = (e.get("title") or "").strip()
                 link = (e.get("link") or "").strip()
                 if not title:
                     continue
+
                 ts = 0
                 if "published_parsed" in e and e.published_parsed:
                     ts = int(time.mktime(e.published_parsed))
                 elif "updated_parsed" in e and e.updated_parsed:
                     ts = int(time.mktime(e.updated_parsed))
+
                 items.append({"source": source, "title": title, "link": link, "_ts": ts})
+                count += 1
+
+            per_feed.append((source, count))
         except Exception:
-            print(f"[WARN] RSS fetch failed: {url}", file=sys.stderr)
-            print(traceback.format_exc(), file=sys.stderr)
+            logs.append(f"RSS 실패: {url}")
+            per_feed.append((url, 0))
+
+    ok_cnt = sum(1 for _, c in per_feed if c > 0)
+    logs.append(f"RSS 상태: {ok_cnt}/{len(per_feed)} 피드 수집")
+    for s, c in per_feed[:3]:
+        logs.append(f"{s[:28]}…: {c}개")
 
     items.sort(key=lambda x: x.get("_ts", 0), reverse=True)
-
     seen_title = set()
     dedup = []
     for it in items:
@@ -245,14 +265,21 @@ def fetch_headlines(rss_urls: List[str], top_n: int = 16, timeout: int = 12, sta
                 filtered.append(it)
         dedup = filtered if len(filtered) >= 3 else dedup
 
+    if get_lang() == "ko" and env("NEWS_REQUIRE_KOREAN", "1") != "0":
+        ko_only = [it for it in dedup if is_korean_title(it.get("title", ""))]
+        if len(ko_only) >= 2:
+            dedup = ko_only
+        else:
+            logs.append("한글 뉴스 부족: 일부 영문이 섞일 수 있음")
+
     if state is not None and env("STATE_DEDUPE_NEWS", "1") != "0":
         seen_links = set(state.get("seen_links", []) or [])
         fresh = [it for it in dedup if it.get("link") and it["link"] not in seen_links]
         if len(fresh) >= 3:
-            return fresh[:top_n]
-        return (fresh + dedup)[:top_n]
+            return fresh[:top_n], logs
+        return (fresh + dedup)[:top_n], logs
 
-    return dedup[:top_n]
+    return dedup[:top_n], logs
 
 
 def truncate_telegram(text: str, limit: int = 3900) -> str:
@@ -261,11 +288,8 @@ def truncate_telegram(text: str, limit: int = 3900) -> str:
     return text[:limit] + "\n…(truncated)"
 
 
-# -----------------------
-# News digest (title-based)
-# -----------------------
 def news_score(title: str) -> Tuple[int, List[str], str]:
-    t = title.lower()
+    t = (title or "").lower()
     tags: List[str] = []
     score = 0
 
@@ -275,18 +299,18 @@ def news_score(title: str) -> Tuple[int, List[str], str]:
             score += pts
             tags.append(tag)
 
-    hit(["fomc","fed","연준"], 6, "🟧통화정책")
-    hit(["cpi","pce","inflation","물가"], 6, "🟧물가지표")
-    hit(["jobs","employment","실업","고용"], 5, "🟨고용지표")
-    hit(["yield","treasury","국채","채권"], 5, "🟨금리/채권")
-    hit(["usd","dollar","환율","달러"], 4, "🟨환율")
-    hit(["earnings","guidance","실적","어닝","가이던스"], 5, "🟦실적")
-    hit(["vix","volatility","변동성"], 5, "🟥변동성")
-    hit(["oil","opec","유가"], 4, "🟩원자재")
-    hit(["war","전쟁","제재","지정학"], 5, "🟥지정학")
-    hit(["rebalanc","리밸런싱","월마감"], 4, "🟪수급")
-    hit(["semiconductor","chip","반도체"], 4, "🟦섹터")
-    hit(["ai"], 3, "🟦테마")
+    hit(["fomc", "fed", "연준"], 6, "🟧통화정책")
+    hit(["cpi", "pce", "inflation", "물가"], 6, "🟧물가지표")
+    hit(["jobs", "employment", "실업", "고용"], 5, "🟨고용지표")
+    hit(["yield", "treasury", "국채", "채권"], 5, "🟨금리/채권")
+    hit(["usd", "dollar", "환율", "달러"], 4, "🟨환율")
+    hit(["earnings", "guidance", "실적", "어닝", "가이던스"], 5, "🟦실적")
+    hit(["vix", "volatility", "변동성"], 5, "🟥변동성")
+    hit(["oil", "opec", "유가"], 4, "🟩원자재")
+    hit(["war", "전쟁", "제재", "지정학"], 5, "🟥지정학")
+    hit(["rebalanc", "리밸런싱", "월마감"], 4, "🟪수급")
+    hit(["semiconductor", "chip", "반도체"], 4, "🟦섹터")
+    hit(["ai", "인공지능"], 3, "🟦테마")
 
     if "🟥" in "".join(tags):
         note = "변동성/리스크 이벤트 가능. 신규 진입 보수."
@@ -328,12 +352,13 @@ def build_news_digest(headlines: List[dict]) -> Tuple[List[str], List[str]]:
     for i, (s, tags, note, h) in enumerate(picked, 1):
         title = h.get("title", "")
         link = h.get("link", "")
+        src = h.get("source", "")
         tag_str = " ".join(tags) if tags else "🟦시장"
         if link:
-            lines.append(f"{i}) {tag_str} <a href=\"{html.escape(link)}\">{html.escape(title)}</a>")
+            lines.append(f"{i}) {tag_str} <a href=\"{html.escape(link)}\">{html.escape(title)}</a> <i>({html.escape(src)})</i>")
             used_links.append(link)
         else:
-            lines.append(f"{i}) {tag_str} {html.escape(title)}")
+            lines.append(f"{i}) {tag_str} {html.escape(title)} <i>({html.escape(src)})</i>")
         lines.append(f"   • {html.escape(note)}")
 
     if show_raw:
@@ -350,8 +375,9 @@ def build_news_digest(headlines: List[dict]) -> Tuple[List[str], List[str]]:
 
     return lines, used_links
 
+
 # -----------------------
-# S2: ETF Map (daily, Stooq)
+# S2 (ETF map)
 # -----------------------
 def _stooq_symbol(ticker: str) -> str:
     t = ticker.strip().lower()
@@ -363,25 +389,25 @@ def _stooq_symbol(ticker: str) -> str:
 def _fetch_stooq_daily_ohlcv(ticker: str, timeout: int = 12) -> List[dict]:
     sym = _stooq_symbol(ticker)
     url = f"{STOOQ_BASE}?s={sym}&i=d"
-    headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.4.2 (+GitHub Actions)")}
+    headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.4.3 (+GitHub Actions)")}
     resp = requests.get(url, headers=headers, timeout=timeout)
     resp.raise_for_status()
+
     text = resp.text.strip()
     if not text or "Date,Open,High,Low,Close,Volume" not in text:
         return []
+
     lines = text.splitlines()
     if len(lines) < 3:
         return []
+
     out: List[dict] = []
     for row in lines[1:]:
         cols = row.split(",")
         if len(cols) < 6:
             continue
         try:
-            out.append({"date": cols[0].strip(),
-                        "open": float(cols[1]), "high": float(cols[2]),
-                        "low": float(cols[3]), "close": float(cols[4]),
-                        "volume": float(cols[5])})
+            out.append({"date": cols[0].strip(), "open": float(cols[1]), "high": float(cols[2]), "low": float(cols[3]), "close": float(cols[4]), "volume": float(cols[5])})
         except Exception:
             continue
     return out
@@ -445,6 +471,7 @@ def build_etf_rankings(tickers: List[str], benchmark: str, timeout: int = 12) ->
             rows.append({"ticker": t, "rs": rs})
         except Exception:
             failed.append(t)
+
     return rows, failed
 
 
@@ -476,14 +503,11 @@ def pick_top_tracks(rows: List[dict], top_n: int = 3) -> Tuple[List[dict], List[
 
 def compute_s2_picks(etf_map: dict) -> Tuple[List[str], List[str], List[str], List[str], List[str]]:
     warnings: List[str] = []
-    benchmark_list = etf_map.get("benchmark", []) or ["ACWI"]
-    benchmark = benchmark_list[0] if benchmark_list else "ACWI"
+    benchmark = (etf_map.get("benchmark", []) or ["ACWI"])[0]
 
     sectors = etf_map.get("sectors_11", []) or []
     cr = etf_map.get("countries_regions_16", {}) or {}
-    developed = cr.get("developed", []) or []
-    emerging = cr.get("emerging", []) or []
-    countries = developed + emerging
+    countries = (cr.get("developed", []) or []) + (cr.get("emerging", []) or [])
 
     timeout = int(env("DATA_TIMEOUT", "12") or "12")
 
@@ -512,94 +536,26 @@ def compute_s2_picks(etf_map: dict) -> Tuple[List[str], List[str], List[str], Li
 
 
 def build_s2_section(etf_map: dict, sector_a: List[str], sector_b: List[str], country_a: List[str], country_b: List[str]) -> List[str]:
-    benchmark_list = etf_map.get("benchmark", []) or ["ACWI"]
-    benchmark = benchmark_list[0] if benchmark_list else "ACWI"
+    benchmark = (etf_map.get("benchmark", []) or ["ACWI"])[0]
     lines: List[str] = []
     lines.append(f"<b>{tr('s2')}</b>")
     lines.append(f"<i>{html.escape(tr('benchmark'))}</i>: {html.escape(benchmark)}  <i>{html.escape(tr('source'))}</i>: Stooq (daily)")
     lines.append("")
     lines.append(f"<b>{tr('sector_a')}</b>")
-    lines.extend([f"• {html.escape(t)}" for t in sector_a] or [tr("no_data")])
+    lines.extend([f"• {html.escape(t)}" for t in sector_a] or ["• (없음)"])
     lines.append(f"<b>{tr('sector_b')}</b>")
-    lines.extend([f"• {html.escape(t)}" for t in sector_b] or [tr("no_data")])
+    lines.extend([f"• {html.escape(t)}" for t in sector_b] or ["• (없음)"])
     lines.append("")
     lines.append(f"<b>{tr('country_a')}</b>")
-    lines.extend([f"• {html.escape(t)}" for t in country_a] or [tr("no_data")])
+    lines.extend([f"• {html.escape(t)}" for t in country_a] or ["• (없음)"])
     lines.append(f"<b>{tr('country_b')}</b>")
-    lines.extend([f"• {html.escape(t)}" for t in country_b] or [tr("no_data")])
+    lines.extend([f"• {html.escape(t)}" for t in country_b] or ["• (없음)"])
     return lines
 
+
 # -----------------------
-# S3: Candidates (SPDR holdings + Stooq daily proxy)
+# S3 (candidates)
 # -----------------------
-def fetch_spdr_holdings(etf_ticker: str, timeout: int = 12) -> List[dict]:
-    t = etf_ticker.strip().lower()
-    url = SSGA_HOLDINGS_TMPL.format(t)
-    headers = {"User-Agent": env("USER_AGENT", "RoyBriefbot/0.4.2 (+GitHub Actions)")}
-    resp = requests.get(url, headers=headers, timeout=timeout)
-    resp.raise_for_status()
-
-    wb = load_workbook(filename=BytesIO(resp.content), read_only=True, data_only=True)
-    ws = wb.active
-
-    header_row = None
-    col_ticker = None
-    col_name = None
-    col_weight = None
-
-    for i, row in enumerate(ws.iter_rows(min_row=1, max_row=80, values_only=True), start=1):
-        if not row:
-            continue
-        norm = [str(c).strip().lower() if c is not None else "" for c in row]
-        if any(("ticker" in x) or (x == "symbol") for x in norm) and any("weight" in x for x in norm):
-            header_row = i
-            for j, x in enumerate(norm):
-                if col_ticker is None and ("ticker" in x or x == "symbol"):
-                    col_ticker = j
-                if col_name is None and ("name" == x or "security name" in x or x.endswith("name")):
-                    col_name = j
-                if col_weight is None and ("weight" in x):
-                    col_weight = j
-            break
-
-    if header_row is None or col_ticker is None or col_weight is None:
-        return []
-
-    out: List[dict] = []
-    blank = 0
-    for row in ws.iter_rows(min_row=header_row + 1, max_row=header_row + 5000, values_only=True):
-        if not row:
-            blank += 1
-            if blank >= 20:
-                break
-            continue
-        raw_t = row[col_ticker] if col_ticker < len(row) else None
-        raw_w = row[col_weight] if col_weight < len(row) else None
-        raw_n = row[col_name] if (col_name is not None and col_name < len(row)) else None
-
-        if raw_t is None or str(raw_t).strip() == "":
-            blank += 1
-            if blank >= 20:
-                break
-            continue
-        blank = 0
-        ticker = str(raw_t).strip().upper()
-        if len(ticker) > 10 or not ticker[0].isalpha():
-            continue
-        try:
-            weight = float(raw_w)
-        except Exception:
-            try:
-                weight = float(str(raw_w).replace("%", "").strip())
-            except Exception:
-                continue
-        name = str(raw_n).strip() if raw_n is not None else ""
-        out.append({"ticker": ticker, "name": name, "weight": weight})
-
-    out.sort(key=lambda x: x.get("weight", 0.0), reverse=True)
-    return out
-
-
 def sma(values: List[float], n: int) -> Optional[float]:
     if len(values) < n:
         return None
@@ -728,13 +684,17 @@ def build_s3(sector_etfs: List[str], state: dict) -> Tuple[List[str], List[str],
     max_universe = int(env("S3_MAX_UNIVERSE", "120") or "120")
     cooldown_days = int(env("S3_COOLDOWN_DAYS", "10") or "10")
 
+    dbg = {"etf": 0, "hold": 0, "tickers": 0, "scored": 0, "entry": 0, "base": 0, "cooldown_skip": 0}
+
     universe: Dict[str, dict] = {}
     for etf in sector_etfs:
         try:
             hs = fetch_spdr_holdings(etf, timeout=timeout)
+            dbg["etf"] += 1
             if not hs:
                 warnings.append(f"S3 holdings missing: {etf}")
                 continue
+            dbg["hold"] += min(len(hs), holdings_per_etf)
             for h in hs[:holdings_per_etf]:
                 t = h["ticker"]
                 if t not in universe:
@@ -746,11 +706,13 @@ def build_s3(sector_etfs: List[str], state: dict) -> Tuple[List[str], List[str],
             print(traceback.format_exc(), file=sys.stderr)
 
     tickers = list(universe.keys())[:max_universe]
+    dbg["tickers"] = len(tickers)
     if not tickers:
         return [tr("s3_none"), tr("s3_note")], warnings, []
 
     entry_list: List[dict] = []
     base_list: List[dict] = []
+
     for t in tickers:
         try:
             series = _fetch_stooq_daily_ohlcv(t, timeout=timeout)
@@ -759,17 +721,23 @@ def build_s3(sector_etfs: List[str], state: dict) -> Tuple[List[str], List[str],
             m = score_stock(series)
             if not m:
                 continue
+            dbg["scored"] += 1
+
             m["ticker"] = t
             m["name"] = universe[t].get("name", "")
             m["from"] = ",".join(sorted(list(universe[t]["from"])))
 
             if m["grade"] != "SSS" and was_recently_recommended(state, t, cooldown_days):
+                dbg["cooldown_skip"] += 1
                 continue
 
             if m["kind"] == "entry":
+                dbg["entry"] += 1
                 entry_list.append(m)
             else:
+                dbg["base"] += 1
                 base_list.append(m)
+
         except Exception:
             continue
 
@@ -814,7 +782,12 @@ def build_s3(sector_etfs: List[str], state: dict) -> Tuple[List[str], List[str],
             lines.append(f"   • 리스크: ATR% {m.get('atrpct'):.1f} / 출처(ETF): {html.escape(m.get('from',''))} / 점수: {m.get('score'):.0f}")
 
     lines.append(tr("s3_note"))
+
+    if env("DEBUG_S3", "0") != "0":
+        warnings.append(f"S3 스캔: ETF={dbg['etf']}, holdings={dbg['hold']}, tickers={dbg['tickers']}, scored={dbg['scored']}, entry={dbg['entry']}, base={dbg['base']}, cooldown_skip={dbg['cooldown_skip']}")
+
     return lines, warnings, hist_items
+
 
 # -----------------------
 # Telegram + Message
@@ -831,24 +804,22 @@ def send_telegram(text: str) -> None:
         raise RuntimeError(f"Telegram send failed: {resp.status_code} {resp.text}")
 
 
-def build_message(etf_map: dict, state: dict) -> Tuple[str, List[str]]:
+def build_message(etf_map: dict, state: dict) -> str:
     logs: List[str] = []
     kst = now_kst().strftime("%Y-%m-%d %H:%M:%S KST")
     sha = env("GITHUB_SHA")
     sha_short = sha[:7] if sha else "local"
 
-    benchmark = etf_map.get("benchmark", []) or []
+    benchmark = (etf_map.get("benchmark", []) or ["ACWI"])[0]
     sectors = etf_map.get("sectors_11", []) or []
     cr = etf_map.get("countries_regions_16", {}) or {}
-    developed = cr.get("developed", []) or []
-    emerging = cr.get("emerging", []) or []
-    countries_cnt = len(developed) + len(emerging)
+    countries_cnt = len((cr.get("developed", []) or [])) + len((cr.get("emerging", []) or []))
 
     lines: List[str] = []
     lines.append(f"<b>{html.escape(tr('title'))}</b>  <code>{html.escape(tr('status_ok'))}</code>")
     lines.append(f"⏱️ {html.escape(kst)}")
     lines.append(f"🧩 v{VERSION} / {html.escape(sha_short)}")
-    lines.append(f"🗺️ {html.escape(tr('etf_loaded'))}: benchmark={','.join(benchmark)} / sectors={len(sectors)} / countries={countries_cnt}")
+    lines.append(f"🗺️ {html.escape(tr('etf_loaded'))}: benchmark={html.escape(benchmark)} / sectors={len(sectors)} / countries={countries_cnt}")
     lines.append("")
 
     sector_a: List[str] = []; sector_b: List[str] = []; country_a: List[str] = []; country_b: List[str] = []
@@ -859,9 +830,9 @@ def build_message(etf_map: dict, state: dict) -> Tuple[str, List[str]]:
         lines.append("")
     except Exception:
         lines.append(f"<b>{html.escape(tr('s2'))}</b>")
-        lines.append(html.escape(tr("failed_s2")))
+        lines.append("• (ETF 지도 계산 실패)")
         lines.append("")
-        print("[WARN] S2 failed", file=sys.stderr)
+        logs.append("S2 failed")
         print(traceback.format_exc(), file=sys.stderr)
 
     chosen: List[str] = []
@@ -879,15 +850,17 @@ def build_message(etf_map: dict, state: dict) -> Tuple[str, List[str]]:
             add_candidate_history(state, hist_items)
     except Exception:
         lines.append(f"<b>{html.escape(tr('s3a'))}</b>")
-        lines.append(html.escape(tr("failed_s3")))
+        lines.append("• (후보 계산 실패)")
         lines.append("")
-        print("[WARN] S3 failed", file=sys.stderr)
+        logs.append("S3 failed")
         print(traceback.format_exc(), file=sys.stderr)
 
     rss_urls = load_rss_urls()
-    headlines = fetch_headlines(rss_urls, top_n=16, timeout=12, state=state)
+    headlines, rss_logs = fetch_headlines(rss_urls, top_n=16, timeout=12, state=state)
+    logs.extend(rss_logs)
     digest_lines, used_links = build_news_digest(headlines)
     lines.extend(digest_lines)
+
     if used_links:
         mark_links_seen(state, used_links)
 
@@ -897,17 +870,17 @@ def build_message(etf_map: dict, state: dict) -> Tuple[str, List[str]]:
     if logs:
         lines.append("")
         lines.append(f"<b>{html.escape(tr('s4_log'))}</b>")
-        for w in logs[:8]:
+        for w in logs[:10]:
             lines.append(f"• {html.escape(w)}")
 
-    return truncate_telegram("\n".join(lines)), logs
+    return truncate_telegram("\n".join(lines))
 
 
 def main() -> int:
-    state, _ = load_state()
+    state, state_logs = load_state()
     etf_map = load_etf_map()
     try:
-        msg, _logs = build_message(etf_map, state)
+        msg = build_message(etf_map, state)
         save_state(state)
         send_telegram(msg)
         print("[OK] Briefing sent.")
