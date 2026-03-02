@@ -2,8 +2,11 @@ name: Daily Brief
 
 on:
   schedule:
-    - cron: "10 22 * * *"  # UTC 22:10 = KST 07:10 (US close 데이터 반영 여유)
+    - cron: "10 22 * * *"  # UTC 22:10 = KST 07:10
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   run:
@@ -27,24 +30,53 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
-          # ---- 뉴스(S1) ----
+          # ---- 브리핑 기본 ----
+          BRIEF_LANG: "ko"
+          INCLUDE_S2: "1"
+          INCLUDE_S3: "1"
+
+          # ---- 뉴스(S1): '중요 3개' 제목 기반 요약 ----
           NEWS_FILTER: "1"
           NEWS_DIGEST_TOP: "3"
-          SHOW_RAW_HEADLINES: "0"
+          SHOW_RAW_HEADLINES: "0"     # 1=원문 8개도 같이 출력
 
-          # ---- 후보(S3): 희소/고확률 ----
-          S3_TOP_N: "2"
-          S3_HOLDINGS_PER_ETF: "25"
-          S3_MAX_UNIVERSE: "70"
+          # ---- 후보(S3): 희소/고확률 프리셋 ----
+          S3_TOP_N: "4"              # 최종 후보 0~4
+          S3_HOLDINGS_PER_ETF: "30"  # ETF당 보유종목 스캔 수
+          S3_MAX_UNIVERSE: "120"     # 전체 후보 풀 상한
+
           S3_MIN_PRICE: "5"
           S3_MIN_DOLLAR_VOL: "20000000"
-          S3_MIN_DD: "-0.25"
-          S3_REQUIRE_1M_NEG: "1"
-          S3_MAX_BOUNCE_FROM_20D_LOW: "0.08"
+
+          S3_MIN_DD: "-0.30"         # 하드컷: -30% 이상 급락
+          S3_PRE_DD: "-0.27"         # 버퍼존: -27%~-30% (바닥 형성 후보)
+          S3_REQUIRE_1M_NEG: "1"     # 눌림 유지
+          S3_MAX_BOUNCE_FROM_20D_LOW: "0.10"  # 추격 방지: 20D저점 대비 +10% 이내
+
           S3_REQUIRE_ABOVE_200SMA: "1"
           S3_REQUIRE_SLOPE200_POS: "1"
+
           S3_MIN_ATR_PCT: "2.0"
           S3_MAX_ATR_PCT: "8.0"
 
+          # ---- 반복 추천 방지 ----
+          S3_COOLDOWN_DAYS: "10"
+
+          # ---- 상태 저장 ----
+          STATE_DEDUPE_NEWS: "1"
+          STATE_MAX_LINKS: "1500"
+
         run: |
           python src/main.py
+
+      - name: 상태(state.json) 자동 커밋
+        run: |
+          if [ -f data/state.json ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add data/state.json
+            git commit -m "chore: update state" || echo "No changes to commit"
+            git push || echo "Push skipped/failed"
+          else
+            echo "data/state.json not found; skip commit"
+          fi
