@@ -29,43 +29,76 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-
-          # ---- 브리핑 기본 ----
           BRIEF_LANG: "ko"
 
-          # ---- 뉴스(S1) ----
-          # KR 소스 위주(영문 RSS는 기본 제외)
+          # ---------------- NEWS (S1) ----------------
           RSS_URLS: "https://www.hankyung.com/feed/finance,https://www.hankyung.com/feed/economy,https://www.yonhapnewseconomytv.com/rss/allArticle.xml,https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ko&gl=KR&ceid=KR:ko"
           NEWS_FILTER: "1"
           NEWS_DIGEST_TOP: "3"
           SHOW_RAW_HEADLINES: "0"
-          NEWS_REQUIRE_KOREAN: "1"    # 1=한글 제목만(권장), 0=영문도 허용
+          NEWS_REQUIRE_KOREAN: "1"
 
-          # ---- 후보(S3): 희소/고확률 ----
-          S3_TOP_N: "4"
-          S3_HOLDINGS_PER_ETF: "30"
-          S3_MAX_UNIVERSE: "120"
+          # ---------------- UNIVERSE (S3) ----------------
+          # 섹터 A 1개 + 섹터 B 1개 ETF에서 holdings를 뽑아 스캔 (기본)
+          S3_HOLDINGS_PER_ETF: "40"
+          S3_MAX_UNIVERSE: "160"
 
-          S3_MIN_PRICE: "5"
-          S3_MIN_DOLLAR_VOL: "20000000"
+          # ---------------- DAILY PREFILTER (cheap) ----------------
+          # 너무 희귀하면 여기부터 완화(특히 DD_SOFT)
+          DD_SOFT: "-0.15"     # 바닥 후보(승급 대기) 최소 급락
+          DD_HARD: "-0.25"     # 진입 임박 후보 최소 급락
+          REQUIRE_1W_POS: "1"  # 반등기미(1W +)
+          REQUIRE_1M_NEG: "1"  # 눌림 유지(1M -)
 
-          S3_MIN_DD: "-0.30"
-          S3_PRE_DD: "-0.27"
-          S3_REQUIRE_1M_NEG: "1"
-          S3_MAX_BOUNCE_FROM_20D_LOW: "0.10"
+          MIN_PRICE: "5"
+          MIN_DOLLAR_VOL: "15000000"  # $15M/day (Stooq 기준, best-effort)
 
-          S3_REQUIRE_ABOVE_200SMA: "1"
-          S3_REQUIRE_SLOPE200_POS: "1"
+          # ---------------- 4H MAIN-INDICATOR SETUP (yfinance 1h->4h) ----------------
+          # Pine GLOBAL preset 기반 (메인지표)
+          WT_N1: "24"
+          WT_N2: "41"
+          WT_N3: "5"
+          WT_OB: "50.5"
+          WT_OS: "-41.0"
 
-          S3_MIN_ATR_PCT: "2.0"
-          S3_MAX_ATR_PCT: "8.0"
+          MFI_LEN: "11"
+          MFI_SMOOTH: "6"
+          MFI_LINGER: "1"
+          MFI_OB: "68.0"
+          MFI_OS: "32.0"
 
-          S3_COOLDOWN_DAYS: "10"
+          BB_LEN: "20"
+          BB_MULT: "2.2070048992556504"
+          BB_REIN: "2"
+          BB_REENTRY_BARS: "6"
 
-          # ---- 상태/디버그 ----
+          ST_ATR_LEN: "8"
+          ST_FACTOR: "4.325"
+          ST_CONFIRM: "1"
+          ST_HYS_ATR: "0.275"
+
+          TTL_CLUSTER: "3"   # 메인지표 2/3, 3/3 클러스터 윈도우 (정보 표시용)
+
+          # 후보 출력
+          S3_TOP_N: "4"          # 진입 임박 0~4
+          S3_BASE_TOP_N: "4"     # 바닥 후보 0~4
+
+          # 후보 조건(메인지표 기반)
+          REQUIRE_ST_DOWN: "1"   # 1=ST DOWN(메인지표 조건)일 때만 후보
+          A_MIN_ARM: "2"         # 진입 임박: arm >= 2
+          B_MIN_ARM: "1"         # 바닥 후보: arm >= 1
+
+          # 반복 추천 방지
+          S3_COOLDOWN_DAYS: "7"
+
+          # 상태/디버그
           STATE_DEDUPE_NEWS: "1"
           STATE_MAX_LINKS: "1500"
-          DEBUG_S3: "1"              # 1=스캔 통계 S4 로그에 출력
+          DEBUG_S3: "1"
+
+          # yfinance
+          YF_PERIOD: "180d"      # 1h 데이터 기간 (Yahoo 제한 내)
+          YF_INTERVAL: "1h"
 
         run: |
           python src/main.py
