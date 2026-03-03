@@ -39,22 +39,19 @@ jobs:
           NEWS_REQUIRE_KOREAN: "1"
 
           # ---------------- UNIVERSE (S3) ----------------
-          # 섹터 A 1개 + 섹터 B 1개 ETF에서 holdings를 뽑아 스캔 (기본)
-          S3_HOLDINGS_PER_ETF: "40"
-          S3_MAX_UNIVERSE: "160"
+          S3_HOLDINGS_PER_ETF: "50"
+          S3_MAX_UNIVERSE: "200"
 
           # ---------------- DAILY PREFILTER (cheap) ----------------
-          # 너무 희귀하면 여기부터 완화(특히 DD_SOFT)
-          DD_SOFT: "-0.15"     # 바닥 후보(승급 대기) 최소 급락
-          DD_HARD: "-0.25"     # 진입 임박 후보 최소 급락
+          DD_SOFT: "-0.12"     # 바닥 후보 최소 급락(완화)
+          DD_HARD: "-0.20"     # 진입 임박 최소 급락(완화)
           REQUIRE_1W_POS: "1"  # 반등기미(1W +)
           REQUIRE_1M_NEG: "1"  # 눌림 유지(1M -)
 
           MIN_PRICE: "5"
-          MIN_DOLLAR_VOL: "15000000"  # $15M/day (Stooq 기준, best-effort)
+          MIN_DOLLAR_VOL: "10000000"  # $10M/day (완화)
 
-          # ---------------- 4H MAIN-INDICATOR SETUP (yfinance 1h->4h) ----------------
-          # Pine GLOBAL preset 기반 (메인지표)
+          # ---------------- 4H MAIN-INDICATOR (WT/MFI/BB only) ----------------
           WT_N1: "24"
           WT_N2: "41"
           WT_N3: "5"
@@ -72,19 +69,13 @@ jobs:
           BB_REIN: "2"
           BB_REENTRY_BARS: "6"
 
-          ST_ATR_LEN: "8"
-          ST_FACTOR: "4.325"
-          ST_CONFIRM: "1"
-          ST_HYS_ATR: "0.275"
-
-          TTL_CLUSTER: "3"   # 메인지표 2/3, 3/3 클러스터 윈도우 (정보 표시용)
+          TTL_CLUSTER: "3"   # 3bar 내 WT/MFI/BB buy 트리거 개수(정보 표시용)
 
           # 후보 출력
           S3_TOP_N: "4"          # 진입 임박 0~4
           S3_BASE_TOP_N: "4"     # 바닥 후보 0~4
 
           # 후보 조건(메인지표 기반)
-          REQUIRE_ST_DOWN: "1"   # 1=ST DOWN(메인지표 조건)일 때만 후보
           A_MIN_ARM: "2"         # 진입 임박: arm >= 2
           B_MIN_ARM: "1"         # 바닥 후보: arm >= 1
 
@@ -97,8 +88,9 @@ jobs:
           DEBUG_S3: "1"
 
           # yfinance
-          YF_PERIOD: "180d"      # 1h 데이터 기간 (Yahoo 제한 내)
+          YF_PERIOD: "120d"      # 1h 데이터 기간 (완화)
           YF_INTERVAL: "1h"
+          YF_SLEEP_SEC: "0.2"    # 호출 간 슬립(레이트리밋 완화)
 
         run: |
           python src/main.py
