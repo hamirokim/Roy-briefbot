@@ -3,12 +3,14 @@ main.py — Roy-브리프봇 오케스트레이션
 실행 순서: M2(섹터 로테이션) → M3(역발상 필터) → M1(AI 종합 브리핑) → 텔레그램 전송
 """
 
+import json
 import logging
 import sys
+from pathlib import Path
 
 from src.state import load_state, save_state
 from src.telegram import send_message
-from src.utils import now_kst, truncate
+from src.utils import now_kst, today_kst_str, truncate
 
 # 모듈 임포트
 from src.modules.m2_rotation import run_m2
@@ -22,6 +24,19 @@ logging.basicConfig(
 )
 logger = logging.getLogger("main")
 
+# ── ETF 맵 경로 ──
+ETF_MAP_PATH = Path(__file__).resolve().parent / "config" / "etf_map.json"
+
+
+def _load_etf_map() -> dict:
+    """config/etf_map.json 로드."""
+    try:
+        with open(ETF_MAP_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error("etf_map.json 로드 실패: %s", e)
+        return {}
+
 
 def main():
     logger.info("=" * 60)
@@ -29,30 +44,43 @@ def main():
     logger.info("=" * 60)
 
     state = load_state()
+    etf_map = _load_etf_map()
+
+    if not etf_map:
+        logger.error("etf_map이 비어있음 — M2 실행 불가")
 
     # ───────────────────────────────────────
     # M2: 섹터 로테이션 (context_text만 반환, 텔레그램 X)
     # ───────────────────────────────────────
     logger.info("─── M2 섹터 로테이션 ───")
+    m2_context = ""
+    m2_snapshot = {}
     try:
-        m2_result = run_m2(state)
+        m2_result = run_m2(etf_map, state)
         m2_context = m2_result.get("context_text", "")
-        logger.info("M2 완료: %d자 컨텍스트", len(m2_context))
+        m2_snapshot = m2_result.get("today_snapshot", {})
+        logger.info("M2 완료: %d자 컨텍스트, %d ETF 분류", len(m2_context), len(m2_snapshot))
     except Exception as e:
         logger.error("M2 실패: %s", e)
-        m2_context = ""
+
+    # M2 히스토리 업데이트 (state.json에 저장)
+    if m2_snapshot:
+        from src.state import prune_m2_history
+        m2_history = state.get("m2_history", {})
+        m2_history[today_kst_str()] = m2_snapshot
+        state["m2_history"] = prune_m2_history(m2_history)
 
     # ───────────────────────────────────────
     # M3: 역발상 필터 (context_text만 반환, 텔레그램 X)
     # ───────────────────────────────────────
     logger.info("─── M3 역발상 필터 ───")
+    m3_context = ""
     try:
         m3_result = run_m3(state)
         m3_context = m3_result.get("context_text", "")
         logger.info("M3 완료: %d자 컨텍스트", len(m3_context))
     except Exception as e:
         logger.error("M3 실패: %s", e)
-        m3_context = ""
 
     # ───────────────────────────────────────
     # M1: AI 종합 브리핑 (뉴스 수집 + GPT + 텔레그램)
@@ -71,13 +99,11 @@ def main():
     except Exception as e:
         logger.error("M1 실패: %s", e)
         briefing = ""
-        used_llm = False
 
     # ───────────────────────────────────────
     # 텔레그램 전송 (단일 메시지)
     # ───────────────────────────────────────
     if briefing:
-        # 텔레그램 4096자 제한
         msg = truncate(briefing, 4000)
         ok = send_message(msg)
         if ok:
