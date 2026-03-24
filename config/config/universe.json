@@ -1,0 +1,51 @@
+{
+  "_comment": "M3 역발상 필터 스캔 유니버스. 섹터별 시총 상위 5개 + ETF는 etf_map.json과 공유.",
+  "_updated": "2026-03-24",
+
+  "stocks": {
+    "Technology": {
+      "tickers": ["aapl.us", "msft.us", "nvda.us", "avgo.us", "crm.us"],
+      "labels":  ["Apple", "Microsoft", "NVIDIA", "Broadcom", "Salesforce"]
+    },
+    "Health Care": {
+      "tickers": ["unh.us", "jnj.us", "lly.us", "abbv.us", "pfe.us"],
+      "labels":  ["UnitedHealth", "J&J", "Eli Lilly", "AbbVie", "Pfizer"]
+    },
+    "Financials": {
+      "tickers": ["jpm.us", "v.us", "ma.us", "bac.us", "gs.us"],
+      "labels":  ["JPMorgan", "Visa", "Mastercard", "BofA", "Goldman"]
+    },
+    "Consumer Discretionary": {
+      "tickers": ["amzn.us", "tsla.us", "hd.us", "mcd.us", "nke.us"],
+      "labels":  ["Amazon", "Tesla", "Home Depot", "McDonald's", "Nike"]
+    },
+    "Communication Services": {
+      "tickers": ["meta.us", "googl.us", "nflx.us", "dis.us", "cmcsa.us"],
+      "labels":  ["Meta", "Alphabet", "Netflix", "Disney", "Comcast"]
+    },
+    "Industrials": {
+      "tickers": ["cat.us", "hon.us", "ups.us", "de.us", "ba.us"],
+      "labels":  ["Caterpillar", "Honeywell", "UPS", "Deere", "Boeing"]
+    },
+    "Consumer Staples": {
+      "tickers": ["pg.us", "ko.us", "pep.us", "cost.us", "wmt.us"],
+      "labels":  ["P&G", "Coca-Cola", "PepsiCo", "Costco", "Walmart"]
+    },
+    "Energy": {
+      "tickers": ["xom.us", "cvx.us", "cop.us", "slb.us", "eog.us"],
+      "labels":  ["ExxonMobil", "Chevron", "ConocoPhillips", "SLB", "EOG"]
+    },
+    "Utilities": {
+      "tickers": ["nee.us", "so.us", "duc.us", "d.us", "aep.us"],
+      "labels":  ["NextEra", "Southern Co", "Duke Energy", "Dominion", "AEP"]
+    },
+    "Real Estate": {
+      "tickers": ["pld.us", "amt.us", "eqr.us", "o.us", "spg.us"],
+      "labels":  ["Prologis", "American Tower", "Equity Res", "Realty Income", "Simon Property"]
+    },
+    "Materials": {
+      "tickers": ["lin.us", "apd.us", "shw.us", "nem.us", "fmc.us"],
+      "labels":  ["Linde", "Air Products", "Sherwin-Williams", "Newmont", "FMC"]
+    }
+  }
+}
