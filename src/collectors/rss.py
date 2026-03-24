@@ -1,7 +1,7 @@
 """
 src/collectors/rss.py
 RSS 뉴스 수집기 — M1 시장 테마 AI 브리핑용
-Google News (business) + Reuters (business/world) + CNBC (world markets)
+Google News (business) + CNBC (world markets) + MarketWatch (top stories)
 
 사용법:
     from src.collectors.rss import collect_news
@@ -10,6 +10,7 @@ Google News (business) + Reuters (business/world) + CNBC (world markets)
 
 import logging
 import hashlib
+import re
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 
@@ -27,19 +28,14 @@ RSS_FEEDS = [
         "tag": "google",
     },
     {
-        "name": "Reuters (Business)",
-        "url": "https://www.reutersagency.com/feed/?taxonomy=best-sectors&post_type=best",
-        "tag": "reuters",
-    },
-    {
-        "name": "Reuters (World)",
-        "url": "https://www.reutersagency.com/feed/?taxonomy=best-regions&post_type=best",
-        "tag": "reuters",
-    },
-    {
         "name": "CNBC (World Markets)",
         "url": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=19854910",
         "tag": "cnbc",
+    },
+    {
+        "name": "MarketWatch (Top Stories)",
+        "url": "https://feeds.content.dowjones.io/public/rss/mw_topstories",
+        "tag": "marketwatch",
     },
 ]
 
@@ -47,6 +43,7 @@ RSS_FEEDS = [
 # Lookback 시간 결정
 # ─────────────────────────────────────────────
 KST = timezone(timedelta(hours=9))
+
 
 def _get_lookback_hours() -> int:
     """
@@ -68,7 +65,6 @@ def _parse_pub_date(entry) -> datetime | None:
     try:
         return parsedate_to_datetime(raw).astimezone(timezone.utc)
     except Exception:
-        # feedparser가 파싱한 struct_time 시도
         st = entry.get("published_parsed") or entry.get("updated_parsed")
         if st:
             try:
@@ -79,9 +75,29 @@ def _parse_pub_date(entry) -> datetime | None:
 
 
 def _dedup_key(title: str) -> str:
-    """제목 기반 중복 제거 키 (소문자 + 해시)."""
+    """제목 기반 중복 제거 키."""
     normalized = title.strip().lower()
     return hashlib.md5(normalized.encode()).hexdigest()
+
+
+def _clean_html(text: str) -> str:
+    """HTML 태그 + 엔티티 정리."""
+    if not text:
+        return ""
+    # HTML 태그 제거
+    text = re.sub(r"<[^>]+>", " ", text)
+    # HTML 엔티티
+    replacements = {
+        "&nbsp;": " ", "&amp;": "&", "&lt;": "<", "&gt;": ">",
+        "&quot;": '"', "&apos;": "'", "&#39;": "'",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    # 남은 &#xxx; 엔티티 제거
+    text = re.sub(r"&#?\w+;", " ", text)
+    # 연속 공백 정리
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
 
 # ─────────────────────────────────────────────
@@ -117,7 +133,7 @@ def collect_news(max_per_feed: int = 15) -> tuple[list[dict], int]:
                 if count >= max_per_feed:
                     break
 
-                title = (entry.get("title") or "").strip()
+                title = _clean_html(entry.get("title") or "")
                 if not title:
                     continue
 
@@ -133,12 +149,7 @@ def collect_news(max_per_feed: int = 15) -> tuple[list[dict], int]:
                     continue
 
                 # 요약 추출 (전문 X — 토큰 절약)
-                summary = (entry.get("summary") or entry.get("description") or "").strip()
-                # HTML 태그 간이 제거
-                if "<" in summary:
-                    import re
-                    summary = re.sub(r"<[^>]+>", "", summary).strip()
-                # 요약이 너무 길면 자르기 (200자)
+                summary = _clean_html(entry.get("summary") or entry.get("description") or "")
                 if len(summary) > 200:
                     summary = summary[:197] + "..."
 
@@ -166,10 +177,7 @@ def collect_news(max_per_feed: int = 15) -> tuple[list[dict], int]:
 
 
 def format_news_context(articles: list[dict]) -> str:
-    """
-    수집된 기사 리스트를 LLM 컨텍스트 텍스트로 변환.
-    GPT 토큰 효율을 위해 간결하게 포맷팅.
-    """
+    """수집된 기사를 LLM 컨텍스트 텍스트로 변환."""
     if not articles:
         return "(뉴스 수집 결과 없음)"
 
