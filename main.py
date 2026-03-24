@@ -38,12 +38,21 @@ def _load_etf_map() -> dict:
         return {}
 
 
+def _sanitize_state(state: dict) -> dict:
+    """state의 None 값들을 안전한 기본값으로 보정."""
+    if state.get("m2_history") is None:
+        state["m2_history"] = {}
+        logger.warning("state.m2_history가 None → {} 로 보정")
+    return state
+
+
 def main():
     logger.info("=" * 60)
     logger.info("Roy-브리프봇 시작 — %s", now_kst().strftime("%Y-%m-%d %H:%M KST"))
     logger.info("=" * 60)
 
     state = load_state()
+    state = _sanitize_state(state)  # None 방어
     etf_map = _load_etf_map()
 
     if not etf_map:
@@ -71,7 +80,6 @@ def main():
             m2_history = {}
         m2_history[today_kst_str()] = m2_snapshot
         pruned = prune_m2_history(m2_history)
-        # prune_m2_history가 None 반환 방어
         state["m2_history"] = pruned if pruned is not None else m2_history
 
     # ───────────────────────────────────────
