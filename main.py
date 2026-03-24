@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 from src.state import load_state, save_state
-from src.telegram import send_message
+from src.telegram import send_telegram
 from src.utils import now_kst, today_kst_str, truncate
 
 # 모듈 임포트
@@ -105,7 +105,7 @@ def main():
     # ───────────────────────────────────────
     if briefing:
         msg = truncate(briefing, 4000)
-        ok = send_message(msg)
+        ok = send_telegram(msg)
         if ok:
             logger.info("텔레그램 전송 성공")
         else:
