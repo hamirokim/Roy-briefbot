@@ -1,42 +1,49 @@
-name: Roy-브리프봇 Daily
+name: Daily Briefing
 
 on:
   schedule:
-    - cron: "10 22 * * 0-4"
+    # KST 07:10 = UTC 22:10 전날
+    # 월~금 KST 실행 = UTC 일~목 (0=일, 4=목)
+    - cron: '10 22 * * 0-4'
   workflow_dispatch:
 
 jobs:
   briefing:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    env:
-      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-      RS_RATIO_PERIOD: "63"
-      RS_MOM_PERIOD: "10"
-      RS_HISTORY_KEEP_DAYS: "7"
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run briefbot
+      - name: Run briefing
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GPT_API_KEY: ${{ secrets.GPT_API_KEY }}
+          GPT_MODEL: "gpt-5.4-mini-2026-03-17"
+          # M2 환경변수
+          RS_RATIO_PERIOD: "63"
+          RS_MOM_PERIOD: "10"
+          RS_HISTORY_KEEP_DAYS: "7"
+          # M3 환경변수 (기본값 — 오버라이드 시 여기에 추가)
+          # M3_DD_WATCH_PCT: "20.0"
+          # M3_DD_ALERT_PCT: "30.0"
+          # GPT 튜닝 (선택)
+          # GPT_MAX_TOKENS: "2000"
+          # GPT_TEMPERATURE: "0.3"
+          # GPT_TIMEOUT: "60"
         run: python main.py
 
-      - name: Persist state
-        if: always()
+      - name: Commit state changes
         run: |
-          git config user.name "briefbot"
-          git config user.email "briefbot@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/state.json
-          git diff --cached --quiet || git commit -m "chore: update state $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git diff --cached --quiet || git commit -m "auto: update state.json"
           git push
