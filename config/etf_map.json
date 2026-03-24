@@ -1,8 +1,38 @@
 {
-  "benchmark": ["ACWI"],
-  "sectors_11": ["XLC","XLY","XLP","XLE","XLF","XLV","XLI","XLB","XLRE","XLK","XLU"],
-  "countries_regions_16": {
-    "developed": ["SPY","EWC","EWU","EWG","EWQ","EWL","EWJ","EWA"],
-    "emerging": ["MCHI","INDA","EWY","EWT","EWZ","EWW","KSA","EZA"]
+  "benchmark": {
+    "name": "ACWI",
+    "stooq": "acwi.us",
+    "label": "MSCI ACWI"
+  },
+  "sectors": {
+    "XLK":  {"stooq": "xlk.us",  "label": "Technology"},
+    "XLV":  {"stooq": "xlv.us",  "label": "Healthcare"},
+    "XLF":  {"stooq": "xlf.us",  "label": "Financials"},
+    "XLY":  {"stooq": "xly.us",  "label": "Cons. Discretionary"},
+    "XLP":  {"stooq": "xlp.us",  "label": "Cons. Staples"},
+    "XLE":  {"stooq": "xle.us",  "label": "Energy"},
+    "XLI":  {"stooq": "xli.us",  "label": "Industrials"},
+    "XLB":  {"stooq": "xlb.us",  "label": "Materials"},
+    "XLC":  {"stooq": "xlc.us",  "label": "Communication"},
+    "XLU":  {"stooq": "xlu.us",  "label": "Utilities"},
+    "XLRE": {"stooq": "xlre.us", "label": "Real Estate"}
+  },
+  "countries": {
+    "EWJ":  {"stooq": "ewj.us",  "label": "Japan"},
+    "EWZ":  {"stooq": "ewz.us",  "label": "Brazil"},
+    "EWY":  {"stooq": "ewy.us",  "label": "South Korea"},
+    "EWT":  {"stooq": "ewt.us",  "label": "Taiwan"},
+    "EWG":  {"stooq": "ewg.us",  "label": "Germany"},
+    "EWU":  {"stooq": "ewu.us",  "label": "UK"},
+    "EWA":  {"stooq": "ewa.us",  "label": "Australia"},
+    "EWC":  {"stooq": "ewc.us",  "label": "Canada"},
+    "EWH":  {"stooq": "ewh.us",  "label": "Hong Kong"},
+    "EWS":  {"stooq": "ews.us",  "label": "Singapore"},
+    "INDA": {"stooq": "inda.us", "label": "India"},
+    "EWW":  {"stooq": "eww.us",  "label": "Mexico"},
+    "VNM":  {"stooq": "vnm.us",  "label": "Vietnam"},
+    "EZA":  {"stooq": "eza.us",  "label": "South Africa"},
+    "EIDO": {"stooq": "eido.us", "label": "Indonesia"},
+    "THD":  {"stooq": "thd.us",  "label": "Thailand"}
   }
 }
