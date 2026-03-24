@@ -67,8 +67,12 @@ def main():
     if m2_snapshot:
         from src.state import prune_m2_history
         m2_history = state.get("m2_history", {})
+        if m2_history is None:
+            m2_history = {}
         m2_history[today_kst_str()] = m2_snapshot
-        state["m2_history"] = prune_m2_history(m2_history)
+        pruned = prune_m2_history(m2_history)
+        # prune_m2_history가 None 반환 방어
+        state["m2_history"] = pruned if pruned is not None else m2_history
 
     # ───────────────────────────────────────
     # M3: 역발상 필터 (context_text만 반환, 텔레그램 X)
