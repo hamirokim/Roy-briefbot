@@ -36,7 +36,7 @@
       "labels":  ["ExxonMobil", "Chevron", "ConocoPhillips", "SLB", "EOG"]
     },
     "Utilities": {
-      "tickers": ["nee.us", "so.us", "duc.us", "d.us", "aep.us"],
+      "tickers": ["nee.us", "so.us", "duk.us", "d.us", "aep.us"],
       "labels":  ["NextEra", "Southern Co", "Duke Energy", "Dominion", "AEP"]
     },
     "Real Estate": {
