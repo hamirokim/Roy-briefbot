@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 # 설정
 # ─────────────────────────────────────────────
 GPT_API_KEY = os.environ.get("GPT_API_KEY", "")
-GPT_MODEL = os.environ.get("GPT_MODEL", "gpt-5.4-mini-2026-03-17")
+GPT_MODEL = os.environ.get("GPT_MODEL", "gpt-5.4-mini")
 GPT_MAX_TOKENS = int(os.environ.get("GPT_MAX_TOKENS", "2000"))
 GPT_TEMPERATURE = float(os.environ.get("GPT_TEMPERATURE", "0.3"))
 GPT_TIMEOUT = int(os.environ.get("GPT_TIMEOUT", "60"))
@@ -55,7 +55,6 @@ def _build_user_message(
     """analysis.txt 템플릿에 동적 데이터를 삽입."""
     template = _load_prompt("analysis.txt")
     if not template:
-        # 폴백: 하드코딩 최소 프롬프트
         return (
             f"오늘은 {date_str}입니다.\n\n"
             f"뉴스 ({news_count}건):\n{news_context}\n\n"
@@ -97,12 +96,13 @@ def _call_gpt(system_prompt: str, user_message: str) -> str | None:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},
         ],
-        "max_tokens": GPT_MAX_TOKENS,
+        "max_completion_tokens": GPT_MAX_TOKENS,
         "temperature": GPT_TEMPERATURE,
     }
 
     logger.info("GPT 호출: model=%s, input_chars=%d", GPT_MODEL, len(user_message))
 
+    resp = None
     try:
         resp = requests.post(url, headers=headers, json=payload, timeout=GPT_TIMEOUT)
         resp.raise_for_status()
@@ -111,7 +111,7 @@ def _call_gpt(system_prompt: str, user_message: str) -> str | None:
         # 응답 추출
         choices = data.get("choices", [])
         if not choices:
-            logger.error("GPT 응답에 choices 없음: %s", data)
+            logger.error("GPT 응답에 choices 없음: %s", json.dumps(data, ensure_ascii=False)[:500])
             return None
 
         content = choices[0].get("message", {}).get("content", "")
@@ -131,7 +131,14 @@ def _call_gpt(system_prompt: str, user_message: str) -> str | None:
         logger.error("GPT 호출 타임아웃 (%ds)", GPT_TIMEOUT)
         return None
     except requests.exceptions.HTTPError as e:
-        logger.error("GPT HTTP 에러: %s — %s", e, resp.text[:500] if resp else "")
+        # 에러 응답 본문을 반드시 로깅
+        body = ""
+        if resp is not None:
+            try:
+                body = resp.text[:1000]
+            except Exception:
+                body = "(응답 본문 읽기 실패)"
+        logger.error("GPT HTTP 에러: %s — 응답: %s", e, body)
         return None
     except Exception as e:
         logger.error("GPT 호출 실패: %s", e)
@@ -165,7 +172,7 @@ def _build_fallback_briefing(
         parts.extend([
             "",
             f"━━━ 뉴스 ({news_count}건) ━━━",
-            news_context[:1500],  # 텔레그램 길이 제한 고려
+            news_context[:1500],
         ])
 
     parts.append("\n⚠️ 본 브리핑은 AI 스크리닝이며 매매 시그널이 아닙니다.")
@@ -189,10 +196,10 @@ def run_m1(
 
     Returns:
         {
-            "briefing": str,      # 최종 브리핑 텍스트
-            "used_llm": bool,     # GPT 호출 성공 여부
-            "news_count": int,    # 수집된 뉴스 건수
-            "context_text": str,  # (향후 M4+ 확장용) 원문 컨텍스트
+            "briefing": str,
+            "used_llm": bool,
+            "news_count": int,
+            "context_text": str,
         }
     """
     date_str = now_kst().strftime("%Y-%m-%d (%a)")
@@ -264,24 +271,12 @@ def run_m1(
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
 
-    # 테스트용 더미 컨텍스트
     dummy_m2 = """[섹터 RRG 4분면 — 2026-03-24]
 LEADING: XLE(Energy), XLI(Industrials)
-WEAKENING: XLK(Technology), XLC(Communication)
-LAGGING: XLRE(Real Estate), XLU(Utilities)
-IMPROVING: XLV(Healthcare), XLF(Financials) ← 주목
-
-[전환 감지]
-⚡ XLV: LAGGING → IMPROVING (신규 전환)"""
+IMPROVING: XLV(Healthcare), XLF(Financials)"""
 
     dummy_m3 = """[역발상 후보 — 2026-03-24]
-1. FMC (🌐 Finviz) — DD: -74.7% | 반등: +3.2% | 거래량: 2.1x
-   P/E: 8.2 | Fwd P/E: 6.5 | 인사이더: +3.0% | 공매도: 12.1%
-   등급: 🔴 ALERT | 섹터: Materials (LAGGING)
-
-2. ACN (🌐 Finviz) — DD: -49.8% | 반등: +1.8% | 거래량: 1.6x
-   P/E: 22.1 | Fwd P/E: 18.3 | 인사이더: -0.5% | 공매도: 2.3%
-   등급: 🟡 WATCH | 섹터: Technology (WEAKENING)"""
+1. FMC — DD: -74.7% | 반등: +3.2%"""
 
     result = run_m1(m2_context=dummy_m2, m3_context=dummy_m3)
     print(f"\n=== M1 결과 (LLM: {result['used_llm']}, 뉴스: {result['news_count']}건) ===\n")
