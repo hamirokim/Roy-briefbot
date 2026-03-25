@@ -1,6 +1,6 @@
 """
 main.py — Roy-브리프봇 오케스트레이션
-실행 순서: M2(섹터 로테이션) → M3(역발상 필터) → M1(AI 종합 브리핑) → 텔레그램 전송
+실행 순서: M2(섹터 로테이션) → M3(역발상 필터) → M5(리스크 대시보드) → M1(AI 종합 브리핑) → 텔레그램 전송
 """
 
 import json
@@ -15,6 +15,7 @@ from src.utils import now_kst, today_kst_str, truncate
 # 모듈 임포트
 from src.modules.m2_rotation import run_m2
 from src.modules.m3_contrarian import run_m3
+from src.modules.m5_risk import run as run_m5
 from src.modules.m1_briefing import run_m1
 
 logging.basicConfig(
@@ -95,11 +96,26 @@ def main():
         logger.error("M3 실패: %s", e)
 
     # ───────────────────────────────────────
+    # M5: 리스크 대시보드 (context_text만 반환, 텔레그램 X)
+    # ───────────────────────────────────────
+    logger.info("─── M5 리스크 대시보드 ───")
+    m5_context = ""
+    try:
+        m5_context = run_m5(state)
+        logger.info("M5 완료: %d자 컨텍스트", len(m5_context))
+    except Exception as e:
+        logger.error("M5 실패: %s", e)
+
+    # ───────────────────────────────────────
     # M1: AI 종합 브리핑 (뉴스 수집 + GPT + 텔레그램)
     # ───────────────────────────────────────
     logger.info("─── M1 AI 브리핑 ───")
     try:
-        m1_result = run_m1(m2_context=m2_context, m3_context=m3_context)
+        m1_result = run_m1(
+            m2_context=m2_context,
+            m3_context=m3_context,
+            m5_context=m5_context,
+        )
         briefing = m1_result.get("briefing", "")
         used_llm = m1_result.get("used_llm", False)
         news_count = m1_result.get("news_count", 0)
