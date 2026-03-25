@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "year": 2026,
+    "expires": "2026-12-20",
+    "warning_days": 14,
+    "note": "날짜는 추정치. federalreserve.gov, bls.gov에서 확인 후 수정 필요. 특히 FOMC/CPI/NFP 날짜를 우선 검증할 것."
+  },
+  "events": [
+    {"date": "2026-01-02", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-01-14", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-01-16", "name": "OPEX 옵션만기", "impact": "medium", "category": "opex"},
+    {"date": "2026-01-28", "name": "FOMC 금리결정", "impact": "high", "category": "fomc"},
+
+    {"date": "2026-02-06", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-02-11", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-02-20", "name": "OPEX 옵션만기", "impact": "medium", "category": "opex"},
+
+    {"date": "2026-03-06", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-03-11", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-03-18", "name": "FOMC 금리결정", "impact": "high", "category": "fomc"},
+    {"date": "2026-03-20", "name": "쿼드위칭 OPEX", "impact": "high", "category": "opex"},
+
+    {"date": "2026-04-03", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-04-14", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-04-13", "name": "실적시즌 개막 (대형은행)", "impact": "medium", "category": "earnings"},
+    {"date": "2026-04-17", "name": "OPEX 옵션만기", "impact": "medium", "category": "opex"},
+
+    {"date": "2026-05-01", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-05-06", "name": "FOMC 금리결정", "impact": "high", "category": "fomc"},
+    {"date": "2026-05-13", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-05-15", "name": "OPEX 옵션만기", "impact": "medium", "category": "opex"},
+
+    {"date": "2026-06-05", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-06-10", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-06-17", "name": "FOMC 금리결정", "impact": "high", "category": "fomc"},
+    {"date": "2026-06-19", "name": "쿼드위칭 OPEX", "impact": "high", "category": "opex"},
+
+    {"date": "2026-07-02", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-07-14", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-07-13", "name": "실적시즌 개막 (대형은행)", "impact": "medium", "category": "earnings"},
+    {"date": "2026-07-17", "name": "OPEX 옵션만기", "impact": "medium", "category": "opex"},
+    {"date": "2026-07-29", "name": "FOMC 금리결정", "impact": "high", "category": "fomc"},
+
+    {"date": "2026-08-07", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-08-12", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-08-21", "name": "OPEX 옵션만기", "impact": "medium", "category": "opex"},
+
+    {"date": "2026-09-04", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-09-15", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-09-16", "name": "FOMC 금리결정", "impact": "high", "category": "fomc"},
+    {"date": "2026-09-18", "name": "쿼드위칭 OPEX", "impact": "high", "category": "opex"},
+
+    {"date": "2026-10-02", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-10-13", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-10-12", "name": "실적시즌 개막 (대형은행)", "impact": "medium", "category": "earnings"},
+    {"date": "2026-10-16", "name": "OPEX 옵션만기", "impact": "medium", "category": "opex"},
+    {"date": "2026-10-28", "name": "FOMC 금리결정", "impact": "high", "category": "fomc"},
+
+    {"date": "2026-11-06", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-11-12", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-11-20", "name": "OPEX 옵션만기", "impact": "medium", "category": "opex"},
+
+    {"date": "2026-12-04", "name": "NFP 고용보고서", "impact": "high", "category": "employment"},
+    {"date": "2026-12-09", "name": "FOMC 금리결정", "impact": "high", "category": "fomc"},
+    {"date": "2026-12-10", "name": "CPI 소비자물가", "impact": "high", "category": "inflation"},
+    {"date": "2026-12-18", "name": "쿼드위칭 OPEX", "impact": "high", "category": "opex"}
+  ]
+}
