@@ -103,7 +103,7 @@ def _fetch_current_prices(tickers: list[str]) -> dict[str, float | None]:
     prices = {}
     for ticker in tickers:
         try:
-            df = fetch_daily_closes(ticker, lookback=5)
+            df = fetch_daily_closes(ticker, lookback=30)
             if df is not None and len(df) > 0:
                 prices[ticker] = float(df["Close"].iloc[-1])
             else:
