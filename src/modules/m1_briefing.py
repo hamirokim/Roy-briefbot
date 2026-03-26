@@ -4,7 +4,7 @@ M1 시장 테마 AI 브리핑 — GPT API 호출 + 종합 판단 생성
 
 사용법:
     from src.modules.m1_briefing import run_m1
-    result = run_m1(m2_context, m3_context, m5_context)
+    result = run_m1(m2_context, m3_context, m5_context, m4_context)
     # result = {"briefing": str, "used_llm": bool, "news_count": int}
 """
 
@@ -51,6 +51,7 @@ def _build_user_message(
     m2_context: str,
     m3_context: str,
     m5_context: str,
+    m4_context: str,
     date_str: str,
 ) -> str:
     """analysis.txt 템플릿에 동적 데이터를 삽입."""
@@ -62,6 +63,7 @@ def _build_user_message(
             f"M2 섹터 로테이션:\n{m2_context}\n\n"
             f"M3 역발상 후보:\n{m3_context}\n\n"
             f"M5 리스크 데이터:\n{m5_context}\n\n"
+            f"M4 포지션 트래커:\n{m4_context}\n\n"
             "위 데이터를 종합하여 한국어 아침 시장 브리핑을 작성하세요."
         )
 
@@ -73,6 +75,7 @@ def _build_user_message(
         m2_context=m2_context,
         m3_context=m3_context,
         m5_context=m5_context,
+        m4_context=m4_context,
     )
 
 
@@ -155,11 +158,12 @@ def _build_fallback_briefing(
     m2_context: str,
     m3_context: str,
     m5_context: str,
+    m4_context: str,
     news_context: str,
     news_count: int,
     date_str: str,
 ) -> str:
-    """GPT 호출 실패 시 M2+M3+M5 원문을 그대로 전송."""
+    """GPT 호출 실패 시 M2+M3+M5+M4 원문을 그대로 전송."""
     parts = [
         f"📊 시장 브리핑 — {date_str}",
         "",
@@ -174,6 +178,13 @@ def _build_fallback_briefing(
         "━━━ 리스크 데이터 (M5) ━━━",
         m5_context if m5_context else "(데이터 없음)",
     ]
+
+    if m4_context:
+        parts.extend([
+            "",
+            "━━━ 포지션 트래커 (M4) ━━━",
+            m4_context,
+        ])
 
     if news_count > 0:
         parts.extend([
@@ -194,6 +205,7 @@ def run_m1(
     m2_context: str = "",
     m3_context: str = "",
     m5_context: str = "",
+    m4_context: str = "",
 ) -> dict:
     """
     M1 시장 테마 AI 브리핑 실행.
@@ -202,6 +214,7 @@ def run_m1(
         m2_context: M2 섹터 로테이션 컨텍스트 텍스트
         m3_context: M3 역발상 후보 컨텍스트 텍스트
         m5_context: M5 리스크 대시보드 컨텍스트 텍스트
+        m4_context: M4 포지션 트래커 컨텍스트 텍스트
 
     Returns:
         {
@@ -234,7 +247,7 @@ def run_m1(
     if not system_prompt:
         logger.warning("시스템 프롬프트 로드 실패 — 폴백 전송")
         briefing = _build_fallback_briefing(
-            m2_context, m3_context, m5_context, news_context, news_count, date_str
+            m2_context, m3_context, m5_context, m4_context, news_context, news_count, date_str
         )
         return {
             "briefing": briefing,
@@ -250,6 +263,7 @@ def run_m1(
         m2_context=m2_context,
         m3_context=m3_context,
         m5_context=m5_context,
+        m4_context=m4_context,
         date_str=date_str,
     )
 
@@ -263,7 +277,7 @@ def run_m1(
     else:
         logger.warning("GPT 실패 → 폴백 브리핑 전송")
         briefing = _build_fallback_briefing(
-            m2_context, m3_context, m5_context, news_context, news_count, date_str
+            m2_context, m3_context, m5_context, m4_context, news_context, news_count, date_str
         )
         used_llm = False
 
@@ -292,6 +306,14 @@ IMPROVING: XLV(Healthcare), XLF(Financials)"""
 - VIX: 22.4 (NORMAL 레짐 — 보통)
 - 이번 주 예정: 🔴 FOMC 금리결정(수)"""
 
-    result = run_m1(m2_context=dummy_m2, m3_context=dummy_m3, m5_context=dummy_m5)
+    dummy_m4 = """[포지션 트래커 — 2026-03-24]
+추적 종목: 1개
+
+• ENPH [WATCH]
+  현재가: $62.30
+  메모: M3 역발상 후보, DD -28%
+→ 지시: 진입 타이밍 접근 여부 판단. 메인지표 arm 떴는지 체크하라는 톤."""
+
+    result = run_m1(m2_context=dummy_m2, m3_context=dummy_m3, m5_context=dummy_m5, m4_context=dummy_m4)
     print(f"\n=== M1 결과 (LLM: {result['used_llm']}, 뉴스: {result['news_count']}건) ===\n")
     print(result["briefing"])
