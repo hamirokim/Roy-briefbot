@@ -9,8 +9,18 @@
       "EXIT_WATCH": "TP 신호 접근 중"
     },
     "편집방법": "GitHub → config/portfolio.json → 연필 아이콘 → 수정 → Commit changes",
-    "규칙": "최대 5종목. ticker는 Stooq 형식(예: ENPH.US → enph.us)"
+    "규칙": "최대 5종목. ticker는 Stooq 형식(예: MOS → mos.us)"
   },
   "max_positions": 5,
-  "positions": []
+  "positions": [
+    {
+      "ticker": "mos.us",
+      "status": "OPEN",
+      "added": "2025-12-15",
+      "entry_price": 24.6861,
+      "entry_date": "2025-12-15",
+      "sl_price": 23.05,
+      "memo": "비료/화학 섹터, 추세추종 진입"
+    }
+  ]
 }
