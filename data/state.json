@@ -1,5 +1,5 @@
 {
-  "last_run_kst": "2026-03-26 10:00:20",
+  "last_run_kst": "2026-03-26 10:06:44",
   "m2_history": {
     "2026-03-25": {
       "XLK": {
@@ -194,8 +194,8 @@
     },
     "2026-03-26": {
       "XLK": {
-        "ratio": 99.6,
-        "momentum": 99.85,
+        "ratio": 99.58,
+        "momentum": 99.84,
         "quadrant": "LAGGING",
         "group": "섹터",
         "label": "Technology"
@@ -243,8 +243,8 @@
         "label": "Industrials"
       },
       "XLB": {
-        "ratio": 102.66,
-        "momentum": 101.15,
+        "ratio": 102.64,
+        "momentum": 101.13,
         "quadrant": "LEADING",
         "group": "섹터",
         "label": "Materials"
