@@ -21,7 +21,7 @@ import os
 import time
 from pathlib import Path
 
-from src.collectors.stooq import fetch_closes
+from src.collectors.stooq import fetch_daily_closes
 from src.utils import now_kst
 
 logger = logging.getLogger(__name__)
@@ -103,9 +103,9 @@ def _fetch_current_prices(tickers: list[str]) -> dict[str, float | None]:
     prices = {}
     for ticker in tickers:
         try:
-            closes = fetch_closes(ticker, days=5)
-            if closes is not None and len(closes) > 0:
-                prices[ticker] = float(closes.iloc[-1])
+            df = fetch_daily_closes(ticker, lookback=5)
+            if df is not None and len(df) > 0:
+                prices[ticker] = float(df["Close"].iloc[-1])
             else:
                 logger.warning("Stooq 데이터 없음: %s", ticker)
                 prices[ticker] = None
