@@ -1,6 +1,6 @@
 """
 main.py — Roy-브리프봇 오케스트레이션
-실행 순서: M2(섹터 로테이션) → M3(역발상 필터) → M5(리스크 대시보드) → M4(포지션 트래커) → M7(상관관계 경고) → M1(AI 종합 브리핑) → 텔레그램 전송
+실행 순서: M2 → M3 → M5 → M4 → M7 → M6 → M1 → 텔레그램
 """
 
 import json
@@ -18,6 +18,7 @@ from src.modules.m3_contrarian import run_m3
 from src.modules.m5_risk import run as run_m5
 from src.modules.m4_tracker import run_m4
 from src.modules.m7_correlation import run_m7
+from src.modules.m6_feedback import run_m6, candidates_to_history_entries, deduplicate_entries
 from src.modules.m1_briefing import run_m1
 
 logging.basicConfig(
@@ -46,6 +47,9 @@ def _sanitize_state(state: dict) -> dict:
     if state.get("m2_history") is None:
         state["m2_history"] = {}
         logger.warning("state.m2_history가 None → {} 로 보정")
+    if state.get("m6_history") is None:
+        state["m6_history"] = []
+        logger.warning("state.m6_history가 None → [] 로 보정")
     return state
 
 
@@ -55,14 +59,14 @@ def main():
     logger.info("=" * 60)
 
     state = load_state()
-    state = _sanitize_state(state)  # None 방어
+    state = _sanitize_state(state)
     etf_map = _load_etf_map()
 
     if not etf_map:
         logger.error("etf_map이 비어있음 — M2 실행 불가")
 
     # ───────────────────────────────────────
-    # M2: 섹터 로테이션 (context_text만 반환, 텔레그램 X)
+    # M2: 섹터 로테이션
     # ───────────────────────────────────────
     logger.info("─── M2 섹터 로테이션 ───")
     m2_context = ""
@@ -75,7 +79,7 @@ def main():
     except Exception as e:
         logger.error("M2 실패: %s", e)
 
-    # M2 히스토리 업데이트 (state.json에 저장)
+    # M2 히스토리 업데이트
     if m2_snapshot:
         from src.state import prune_m2_history
         m2_history = state.get("m2_history", {})
@@ -86,19 +90,38 @@ def main():
         state["m2_history"] = pruned if pruned is not None else m2_history
 
     # ───────────────────────────────────────
-    # M3: 역발상 필터 (context_text만 반환, 텔레그램 X)
+    # M3: 역발상 필터
     # ───────────────────────────────────────
     logger.info("─── M3 역발상 필터 ───")
     m3_context = ""
+    m3_candidates = []
     try:
         m3_result = run_m3(state)
         m3_context = m3_result.get("context_text", "")
-        logger.info("M3 완료: %d자 컨텍스트", len(m3_context))
+        m3_candidates = m3_result.get("candidates", [])
+        logger.info("M3 완료: %d자 컨텍스트, %d개 후보", len(m3_context), len(m3_candidates))
     except Exception as e:
         logger.error("M3 실패: %s", e)
 
+    # ── M3 후보 → m6_history에 기록 ──
+    if m3_candidates:
+        try:
+            new_entries = candidates_to_history_entries(m3_candidates)
+            m6_history = state.get("m6_history", [])
+            if m6_history is None:
+                m6_history = []
+            added = deduplicate_entries(m6_history, new_entries)
+            if added:
+                m6_history.extend(added)
+                state["m6_history"] = m6_history
+                logger.info("M6 기록: %d개 신규 추가 (총 %d개)", len(added), len(m6_history))
+            else:
+                logger.info("M6 기록: 신규 없음 (이미 추적 중)")
+        except Exception as e:
+            logger.error("M6 기록 실패: %s", e)
+
     # ───────────────────────────────────────
-    # M5: 리스크 대시보드 (context_text만 반환, 텔레그램 X)
+    # M5: 리스크 대시보드
     # ───────────────────────────────────────
     logger.info("─── M5 리스크 대시보드 ───")
     m5_context = ""
@@ -109,7 +132,7 @@ def main():
         logger.error("M5 실패: %s", e)
 
     # ───────────────────────────────────────
-    # M4: 포지션 트래커 (context_text만 반환, 텔레그램 X)
+    # M4: 포지션 트래커
     # ───────────────────────────────────────
     logger.info("─── M4 포지션 트래커 ───")
     m4_context = ""
@@ -122,7 +145,7 @@ def main():
         logger.error("M4 실패: %s", e)
 
     # ───────────────────────────────────────
-    # M7: 상관관계 경고 (context_text만 반환, 텔레그램 X)
+    # M7: 상관관계 경고
     # ───────────────────────────────────────
     logger.info("─── M7 상관관계 경고 ───")
     m7_context = ""
@@ -136,7 +159,20 @@ def main():
         logger.error("M7 실패: %s", e)
 
     # ───────────────────────────────────────
-    # M1: AI 종합 브리핑 (뉴스 수집 + GPT + 텔레그램)
+    # M6: 피드백 루프
+    # ───────────────────────────────────────
+    logger.info("─── M6 피드백 루프 ───")
+    m6_context = ""
+    try:
+        m6_result = run_m6(state)
+        m6_context = m6_result.get("context_text", "")
+        track_count = m6_result.get("track_count", 0)
+        logger.info("M6 완료: %d개 추적, %d자 컨텍스트", track_count, len(m6_context))
+    except Exception as e:
+        logger.error("M6 실패: %s", e)
+
+    # ───────────────────────────────────────
+    # M1: AI 종합 브리핑
     # ───────────────────────────────────────
     logger.info("─── M1 AI 브리핑 ───")
     try:
@@ -146,6 +182,7 @@ def main():
             m5_context=m5_context,
             m4_context=m4_context,
             m7_context=m7_context,
+            m6_context=m6_context,
         )
         briefing = m1_result.get("briefing", "")
         used_llm = m1_result.get("used_llm", False)
@@ -160,7 +197,7 @@ def main():
         briefing = ""
 
     # ───────────────────────────────────────
-    # 텔레그램 전송 (단일 메시지)
+    # 텔레그램 전송
     # ───────────────────────────────────────
     if briefing:
         msg = truncate(briefing, 4000)
