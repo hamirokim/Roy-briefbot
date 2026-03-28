@@ -1,5 +1,5 @@
 {
-  "last_run_kst": "2026-03-27 07:51:02",
+  "last_run_kst": "2026-03-28 17:41:01",
   "m2_history": {
     "2026-03-25": {
       "XLK": {
@@ -569,6 +569,197 @@
       "THD": {
         "ratio": 105.67,
         "momentum": 100.24,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Thailand"
+      }
+    },
+    "2026-03-28": {
+      "XLK": {
+        "ratio": 98.15,
+        "momentum": 98.54,
+        "quadrant": "LAGGING",
+        "group": "섹터",
+        "label": "Technology"
+      },
+      "XLV": {
+        "ratio": 99.09,
+        "momentum": 101.03,
+        "quadrant": "IMPROVING",
+        "group": "섹터",
+        "label": "Healthcare"
+      },
+      "XLF": {
+        "ratio": 97.56,
+        "momentum": 101.04,
+        "quadrant": "IMPROVING",
+        "group": "섹터",
+        "label": "Financials"
+      },
+      "XLY": {
+        "ratio": 96.26,
+        "momentum": 99.73,
+        "quadrant": "LAGGING",
+        "group": "섹터",
+        "label": "Cons. Discretionary"
+      },
+      "XLP": {
+        "ratio": 104.24,
+        "momentum": 101.97,
+        "quadrant": "LEADING",
+        "group": "섹터",
+        "label": "Cons. Staples"
+      },
+      "XLE": {
+        "ratio": 126.51,
+        "momentum": 104.93,
+        "quadrant": "LEADING",
+        "group": "섹터",
+        "label": "Energy"
+      },
+      "XLI": {
+        "ratio": 101.71,
+        "momentum": 99.77,
+        "quadrant": "WEAKENING",
+        "group": "섹터",
+        "label": "Industrials"
+      },
+      "XLB": {
+        "ratio": 104.83,
+        "momentum": 103.08,
+        "quadrant": "LEADING",
+        "group": "섹터",
+        "label": "Materials"
+      },
+      "XLC": {
+        "ratio": 98.57,
+        "momentum": 98.59,
+        "quadrant": "LAGGING",
+        "group": "섹터",
+        "label": "Communication"
+      },
+      "XLU": {
+        "ratio": 109.0,
+        "momentum": 101.79,
+        "quadrant": "LEADING",
+        "group": "섹터",
+        "label": "Utilities"
+      },
+      "XLRE": {
+        "ratio": 102.18,
+        "momentum": 100.0,
+        "quadrant": "WEAKENING",
+        "group": "섹터",
+        "label": "Real Estate"
+      },
+      "EWJ": {
+        "ratio": 100.93,
+        "momentum": 100.05,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Japan"
+      },
+      "EWZ": {
+        "ratio": 108.15,
+        "momentum": 101.93,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Brazil"
+      },
+      "EWY": {
+        "ratio": 104.71,
+        "momentum": 94.33,
+        "quadrant": "WEAKENING",
+        "group": "국가/지역",
+        "label": "South Korea"
+      },
+      "EWT": {
+        "ratio": 106.33,
+        "momentum": 99.24,
+        "quadrant": "WEAKENING",
+        "group": "국가/지역",
+        "label": "Taiwan"
+      },
+      "EWG": {
+        "ratio": 95.87,
+        "momentum": 100.11,
+        "quadrant": "IMPROVING",
+        "group": "국가/지역",
+        "label": "Germany"
+      },
+      "EWU": {
+        "ratio": 102.6,
+        "momentum": 100.84,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "UK"
+      },
+      "EWA": {
+        "ratio": 103.87,
+        "momentum": 99.99,
+        "quadrant": "WEAKENING",
+        "group": "국가/지역",
+        "label": "Australia"
+      },
+      "EWC": {
+        "ratio": 103.25,
+        "momentum": 101.32,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Canada"
+      },
+      "EWH": {
+        "ratio": 104.23,
+        "momentum": 101.17,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Hong Kong"
+      },
+      "EWS": {
+        "ratio": 104.6,
+        "momentum": 101.89,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Singapore"
+      },
+      "INDA": {
+        "ratio": 95.09,
+        "momentum": 100.65,
+        "quadrant": "IMPROVING",
+        "group": "국가/지역",
+        "label": "India"
+      },
+      "EWW": {
+        "ratio": 102.43,
+        "momentum": 101.96,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Mexico"
+      },
+      "VNM": {
+        "ratio": 97.1,
+        "momentum": 103.1,
+        "quadrant": "IMPROVING",
+        "group": "국가/지역",
+        "label": "Vietnam"
+      },
+      "EZA": {
+        "ratio": 94.59,
+        "momentum": 101.4,
+        "quadrant": "IMPROVING",
+        "group": "국가/지역",
+        "label": "South Africa"
+      },
+      "EIDO": {
+        "ratio": 93.57,
+        "momentum": 103.71,
+        "quadrant": "IMPROVING",
+        "group": "국가/지역",
+        "label": "Indonesia"
+      },
+      "THD": {
+        "ratio": 107.73,
+        "momentum": 101.88,
         "quadrant": "LEADING",
         "group": "국가/지역",
         "label": "Thailand"
