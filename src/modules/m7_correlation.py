@@ -39,9 +39,7 @@ def _portfolio_path() -> Path:
 
 
 def _load_held_tickers() -> list[str]:
-    """portfolio.json에서 OPEN/ADD/EXIT_WATCH 종목 티커 추출.
-    반환: ['mos.us', 'nvo.us', ...] 형태의 Stooq 티커 리스트.
-    """
+    """portfolio.json에서 OPEN/ADD/EXIT_WATCH 종목 티커 추출."""
     path = _portfolio_path()
     if not path.exists():
         print("[M7] portfolio.json 없음 — 스킵")
@@ -66,20 +64,28 @@ def _load_held_tickers() -> list[str]:
 
 
 # ═══════════════════════════════════════════════════════════
-# 종가 시계열 수집
+# 종가 시계열 수집 + 숫자 강제 변환
 # ═══════════════════════════════════════════════════════════
 def _fetch_close_series(tickers: list[str]) -> dict[str, pd.Series]:
-    """각 티커의 일봉 종가 시계열을 수집. {ticker: pd.Series(날짜 인덱스)}"""
+    """각 티커의 일봉 종가 시계열을 수집.
+    pd.to_numeric으로 강제 변환하여 Timestamp/문자열 혼입 방어.
+    """
     result = {}
     for ticker in tickers:
         try:
             closes = fetch_daily_closes(ticker, lookback=CORR_LOOKBACK)
-            if closes is not None and len(closes) >= CORR_MIN_DAYS:
+            if closes is None:
+                print(f"[M7] {ticker}: 데이터 없음")
+                continue
+
+            # ── 핵심 방어: 숫자가 아닌 값(Timestamp 등) 강제 제거 ──
+            closes = pd.to_numeric(closes, errors="coerce").dropna()
+
+            if len(closes) >= CORR_MIN_DAYS:
                 result[ticker] = closes
                 print(f"[M7] {ticker}: {len(closes)}일 종가 수집 OK")
             else:
-                n = len(closes) if closes is not None else 0
-                print(f"[M7] {ticker}: 데이터 부족 ({n}일 < {CORR_MIN_DAYS}일 최소)")
+                print(f"[M7] {ticker}: 데이터 부족 ({len(closes)}일 < {CORR_MIN_DAYS}일 최소)")
         except Exception as e:
             print(f"[M7] {ticker} 수집 실패: {e}")
         time.sleep(_STOOQ_DELAY)
@@ -93,56 +99,57 @@ def _fetch_close_series(tickers: list[str]) -> dict[str, pd.Series]:
 def _compute_correlations(
     series_map: dict[str, pd.Series],
 ) -> list[dict]:
-    """모든 종목 쌍의 피어슨 상관계수 계산. threshold 이상만 반환.
-    반환: [{"pair": ("mos.us", "nvo.us"), "corr": 0.91, "days": 58}, ...]
-    """
+    """모든 종목 쌍의 피어슨 상관계수 계산. threshold 이상만 반환."""
     tickers = list(series_map.keys())
     alerts = []
 
     for t1, t2 in combinations(tickers, 2):
-        s1 = series_map[t1]
-        s2 = series_map[t2]
+        try:
+            # DataFrame으로 자동 정렬 — 인덱스 타입 불일치 문제 회피
+            df = pd.DataFrame({
+                "a": series_map[t1],
+                "b": series_map[t2],
+            }).dropna()
 
-        # 날짜 교집합으로 정렬
-        common = s1.index.intersection(s2.index)
-        if len(common) < CORR_MIN_DAYS:
-            print(
-                f"[M7] {t1}-{t2}: 공통 날짜 부족 ({len(common)}일 < {CORR_MIN_DAYS}일)"
-            )
+            n_common = len(df)
+            if n_common < CORR_MIN_DAYS:
+                print(f"[M7] {t1}-{t2}: 공통 날짜 부족 ({n_common}일 < {CORR_MIN_DAYS}일)")
+                continue
+
+            # numpy array로 수익률 계산
+            v1 = df["a"].values
+            v2 = df["b"].values
+
+            r1 = (v1[1:] - v1[:-1]) / v1[:-1]
+            r2 = (v2[1:] - v2[:-1]) / v2[:-1]
+
+            # NaN/Inf 제거
+            valid = np.isfinite(r1) & np.isfinite(r2)
+            r1 = r1[valid]
+            r2 = r2[valid]
+
+            if len(r1) < CORR_MIN_DAYS - 1:
+                print(f"[M7] {t1}-{t2}: 유효 수익률 부족 ({len(r1)}일)")
+                continue
+
+            corr = float(np.corrcoef(r1, r2)[0, 1])
+
+            if np.isnan(corr):
+                print(f"[M7] {t1}-{t2}: 상관계수 NaN — 스킵")
+                continue
+
+            print(f"[M7] {t1}-{t2}: 상관계수 {corr:.3f} (공통 {n_common}일)")
+
+            if corr >= CORR_THRESHOLD:
+                alerts.append({
+                    "pair": (t1, t2),
+                    "corr": corr,
+                    "days": n_common,
+                })
+
+        except Exception as e:
+            print(f"[M7] {t1}-{t2}: 계산 실패 — {e}")
             continue
-
-        # numpy array로 직접 수익률 계산
-        # (pct_change()는 DatetimeArray 인덱스에서 __truediv__ 에러 발생)
-        v1 = s1.loc[common].values.astype(float)
-        v2 = s2.loc[common].values.astype(float)
-
-        # 일간 수익률: (today - yesterday) / yesterday
-        r1 = (v1[1:] - v1[:-1]) / v1[:-1]
-        r2 = (v2[1:] - v2[:-1]) / v2[:-1]
-
-        # NaN/Inf 제거
-        valid = np.isfinite(r1) & np.isfinite(r2)
-        r1 = r1[valid]
-        r2 = r2[valid]
-
-        if len(r1) < CORR_MIN_DAYS - 1:
-            print(f"[M7] {t1}-{t2}: 유효 수익률 부족 ({len(r1)}일)")
-            continue
-
-        corr = float(np.corrcoef(r1, r2)[0, 1])
-
-        if np.isnan(corr):
-            print(f"[M7] {t1}-{t2}: 상관계수 NaN — 스킵")
-            continue
-
-        print(f"[M7] {t1}-{t2}: 상관계수 {corr:.3f} (공통 {len(common)}일)")
-
-        if corr >= CORR_THRESHOLD:
-            alerts.append({
-                "pair": (t1, t2),
-                "corr": corr,
-                "days": len(common),
-            })
 
     # 상관계수 높은 순 정렬
     alerts.sort(key=lambda x: x["corr"], reverse=True)
