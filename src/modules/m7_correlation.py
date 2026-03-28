@@ -111,14 +111,25 @@ def _compute_correlations(
             )
             continue
 
-        # 수익률 기반 상관계수 (종가 레벨이 아닌 일간 수익률)
-        r1 = s1.loc[common].pct_change().dropna()
-        r2 = s2.loc[common].pct_change().dropna()
+        # numpy array로 직접 수익률 계산
+        # (pct_change()는 DatetimeArray 인덱스에서 __truediv__ 에러 발생)
+        v1 = s1.loc[common].values.astype(float)
+        v2 = s2.loc[common].values.astype(float)
+
+        # 일간 수익률: (today - yesterday) / yesterday
+        r1 = (v1[1:] - v1[:-1]) / v1[:-1]
+        r2 = (v2[1:] - v2[:-1]) / v2[:-1]
+
+        # NaN/Inf 제거
+        valid = np.isfinite(r1) & np.isfinite(r2)
+        r1 = r1[valid]
+        r2 = r2[valid]
 
         if len(r1) < CORR_MIN_DAYS - 1:
+            print(f"[M7] {t1}-{t2}: 유효 수익률 부족 ({len(r1)}일)")
             continue
 
-        corr = float(np.corrcoef(r1.values, r2.values)[0, 1])
+        corr = float(np.corrcoef(r1, r2)[0, 1])
 
         if np.isnan(corr):
             print(f"[M7] {t1}-{t2}: 상관계수 NaN — 스킵")
