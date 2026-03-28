@@ -4,8 +4,7 @@ M1 시장 테마 AI 브리핑 — GPT API 호출 + 종합 판단 생성
 
 사용법:
     from src.modules.m1_briefing import run_m1
-    result = run_m1(m2_context, m3_context, m5_context, m4_context, m7_context)
-    # result = {"briefing": str, "used_llm": bool, "news_count": int}
+    result = run_m1(m2_context, m3_context, m5_context, m4_context, m7_context, m6_context)
 """
 
 import json
@@ -36,7 +35,6 @@ PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent / "config" / "prompt
 # 프롬프트 로드
 # ─────────────────────────────────────────────
 def _load_prompt(filename: str) -> str:
-    """config/prompts/ 에서 프롬프트 파일 읽기."""
     path = PROMPTS_DIR / filename
     if not path.exists():
         logger.error("프롬프트 파일 없음: %s", path)
@@ -53,9 +51,9 @@ def _build_user_message(
     m5_context: str,
     m4_context: str,
     m7_context: str,
+    m6_context: str,
     date_str: str,
 ) -> str:
-    """analysis.txt 템플릿에 동적 데이터를 삽입."""
     template = _load_prompt("analysis.txt")
     if not template:
         return (
@@ -66,6 +64,7 @@ def _build_user_message(
             f"M5 리스크 데이터:\n{m5_context}\n\n"
             f"M4 포지션 트래커:\n{m4_context}\n\n"
             f"M7 상관관계:\n{m7_context}\n\n"
+            f"M6 과거 추천 성과:\n{m6_context}\n\n"
             "위 데이터를 종합하여 한국어 아침 시장 브리핑을 작성하세요."
         )
 
@@ -79,6 +78,7 @@ def _build_user_message(
         m5_context=m5_context,
         m4_context=m4_context,
         m7_context=m7_context,
+        m6_context=m6_context,
     )
 
 
@@ -86,10 +86,6 @@ def _build_user_message(
 # GPT API 호출
 # ─────────────────────────────────────────────
 def _call_gpt(system_prompt: str, user_message: str) -> str | None:
-    """
-    OpenAI Chat Completions API 호출.
-    성공 시 응답 텍스트, 실패 시 None.
-    """
     if not GPT_API_KEY:
         logger.error("GPT_API_KEY가 설정되지 않음")
         return None
@@ -117,7 +113,6 @@ def _call_gpt(system_prompt: str, user_message: str) -> str | None:
         resp.raise_for_status()
         data = resp.json()
 
-        # 응답 추출
         choices = data.get("choices", [])
         if not choices:
             logger.error("GPT 응답에 choices 없음: %s", json.dumps(data, ensure_ascii=False)[:500])
@@ -125,7 +120,6 @@ def _call_gpt(system_prompt: str, user_message: str) -> str | None:
 
         content = choices[0].get("message", {}).get("content", "")
 
-        # 사용량 로깅
         usage = data.get("usage", {})
         logger.info(
             "GPT 완료: input=%d tokens, output=%d tokens, total=%d tokens",
@@ -140,7 +134,6 @@ def _call_gpt(system_prompt: str, user_message: str) -> str | None:
         logger.error("GPT 호출 타임아웃 (%ds)", GPT_TIMEOUT)
         return None
     except requests.exceptions.HTTPError as e:
-        # 에러 응답 본문을 반드시 로깅
         body = ""
         if resp is not None:
             try:
@@ -155,7 +148,7 @@ def _call_gpt(system_prompt: str, user_message: str) -> str | None:
 
 
 # ─────────────────────────────────────────────
-# 폴백 브리핑 (GPT 실패 시)
+# 폴백 브리핑
 # ─────────────────────────────────────────────
 def _build_fallback_briefing(
     m2_context: str,
@@ -163,11 +156,11 @@ def _build_fallback_briefing(
     m5_context: str,
     m4_context: str,
     m7_context: str,
+    m6_context: str,
     news_context: str,
     news_count: int,
     date_str: str,
 ) -> str:
-    """GPT 호출 실패 시 M2+M3+M5+M4+M7 원문을 그대로 전송."""
     parts = [
         f"📊 시장 브리핑 — {date_str}",
         "",
@@ -184,28 +177,18 @@ def _build_fallback_briefing(
     ]
 
     if m4_context:
-        parts.extend([
-            "",
-            "━━━ 포지션 트래커 (M4) ━━━",
-            m4_context,
-        ])
+        parts.extend(["", "━━━ 포지션 트래커 (M4) ━━━", m4_context])
 
     if m7_context:
-        parts.extend([
-            "",
-            "━━━ 상관관계 경고 (M7) ━━━",
-            m7_context,
-        ])
+        parts.extend(["", "━━━ 상관관계 경고 (M7) ━━━", m7_context])
+
+    if m6_context:
+        parts.extend(["", "━━━ 과거 추천 성과 (M6) ━━━", m6_context])
 
     if news_count > 0:
-        parts.extend([
-            "",
-            f"━━━ 뉴스 ({news_count}건) ━━━",
-            news_context[:1500],
-        ])
+        parts.extend(["", f"━━━ 뉴스 ({news_count}건) ━━━", news_context[:1500]])
 
     parts.append("\n⚠️ 본 브리핑은 AI 스크리닝이며 매매 시그널이 아닙니다.")
-
     return "\n".join(parts)
 
 
@@ -218,28 +201,10 @@ def run_m1(
     m5_context: str = "",
     m4_context: str = "",
     m7_context: str = "",
+    m6_context: str = "",
 ) -> dict:
-    """
-    M1 시장 테마 AI 브리핑 실행.
-
-    Args:
-        m2_context: M2 섹터 로테이션 컨텍스트 텍스트
-        m3_context: M3 역발상 후보 컨텍스트 텍스트
-        m5_context: M5 리스크 대시보드 컨텍스트 텍스트
-        m4_context: M4 포지션 트래커 컨텍스트 텍스트
-        m7_context: M7 상관관계 경고 컨텍스트 텍스트
-
-    Returns:
-        {
-            "briefing": str,
-            "used_llm": bool,
-            "news_count": int,
-            "context_text": str,
-        }
-    """
     date_str = now_kst().strftime("%Y-%m-%d (%a)")
 
-    # 1) 뉴스 수집
     logger.info("=" * 50)
     logger.info("M1 브리핑 시작: %s", date_str)
     logger.info("=" * 50)
@@ -255,19 +220,16 @@ def run_m1(
 
     logger.info("뉴스 %d건 수집 (lookback %dh)", news_count, lookback_hours)
 
-    # 2) GPT 호출 시도
     system_prompt = _load_prompt("system.txt")
     if not system_prompt:
         logger.warning("시스템 프롬프트 로드 실패 — 폴백 전송")
         briefing = _build_fallback_briefing(
-            m2_context, m3_context, m5_context, m4_context, m7_context,
-            news_context, news_count, date_str,
+            m2_context, m3_context, m5_context, m4_context,
+            m7_context, m6_context, news_context, news_count, date_str,
         )
         return {
-            "briefing": briefing,
-            "used_llm": False,
-            "news_count": news_count,
-            "context_text": briefing,
+            "briefing": briefing, "used_llm": False,
+            "news_count": news_count, "context_text": briefing,
         }
 
     user_message = _build_user_message(
@@ -279,12 +241,12 @@ def run_m1(
         m5_context=m5_context,
         m4_context=m4_context,
         m7_context=m7_context,
+        m6_context=m6_context,
         date_str=date_str,
     )
 
     gpt_result = _call_gpt(system_prompt, user_message)
 
-    # 3) 결과 처리
     if gpt_result:
         briefing = gpt_result
         used_llm = True
@@ -292,50 +254,12 @@ def run_m1(
     else:
         logger.warning("GPT 실패 → 폴백 브리핑 전송")
         briefing = _build_fallback_briefing(
-            m2_context, m3_context, m5_context, m4_context, m7_context,
-            news_context, news_count, date_str,
+            m2_context, m3_context, m5_context, m4_context,
+            m7_context, m6_context, news_context, news_count, date_str,
         )
         used_llm = False
 
     return {
-        "briefing": briefing,
-        "used_llm": used_llm,
-        "news_count": news_count,
-        "context_text": briefing,
+        "briefing": briefing, "used_llm": used_llm,
+        "news_count": news_count, "context_text": briefing,
     }
-
-
-# ─────────────────────────────────────────────
-# 단독 테스트
-# ─────────────────────────────────────────────
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
-
-    dummy_m2 = """[섹터 RRG 4분면 — 2026-03-24]
-LEADING: XLE(Energy), XLI(Industrials)
-IMPROVING: XLV(Healthcare), XLF(Financials)"""
-
-    dummy_m3 = """[역발상 후보 — 2026-03-24]
-1. FMC — DD: -74.7% | 반등: +3.2%"""
-
-    dummy_m5 = """[리스크 데이터]
-- VIX: 22.4 (NORMAL 레짐 — 보통)
-- 이번 주 예정: 🔴 FOMC 금리결정(수)"""
-
-    dummy_m4 = """[포지션 트래커 — 2026-03-24]
-추적 종목: 1개
-
-• ENPH [WATCH]
-  현재가: $62.30
-  메모: M3 역발상 후보, DD -28%
-→ 지시: 진입 타이밍 접근 여부 판단. 메인지표 arm 떴는지 체크하라는 톤."""
-
-    dummy_m7 = """[상관관계 데이터]
-- MOS와 ZTS: 60일 수익률 상관계수 0.87 (공통 58영업일 기준). 상관계수 0.85 이상 — 사실상 유사한 방향성."""
-
-    result = run_m1(
-        m2_context=dummy_m2, m3_context=dummy_m3, m5_context=dummy_m5,
-        m4_context=dummy_m4, m7_context=dummy_m7,
-    )
-    print(f"\n=== M1 결과 (LLM: {result['used_llm']}, 뉴스: {result['news_count']}건) ===\n")
-    print(result["briefing"])
