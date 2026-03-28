@@ -64,28 +64,83 @@ def _load_held_tickers() -> list[str]:
 
 
 # ═══════════════════════════════════════════════════════════
-# 종가 시계열 수집 + 숫자 강제 변환
+# fetch_daily_closes 반환값 → 숫자 Series로 정규화
+# ═══════════════════════════════════════════════════════════
+def _normalize_closes(raw) -> pd.Series | None:
+    """fetch_daily_closes() 반환값을 숫자 Series로 변환.
+    DataFrame이면 Close 열 추출, Series면 그대로 사용.
+    어떤 형태든 최종적으로 float Series를 반환.
+    """
+    if raw is None:
+        return None
+
+    # DataFrame인 경우 → Close 열 추출
+    if isinstance(raw, pd.DataFrame):
+        # Close 열 찾기 (대소문자 무관)
+        close_col = None
+        for col in raw.columns:
+            if col.lower() == "close":
+                close_col = col
+                break
+        if close_col is None:
+            # Close 열 없으면 마지막 숫자 열 사용
+            numeric_cols = raw.select_dtypes(include=[np.number]).columns
+            if len(numeric_cols) == 0:
+                print("[M7]   DataFrame에 숫자 열 없음")
+                return None
+            close_col = numeric_cols[-1]
+            print(f"[M7]   Close 열 없음 → '{close_col}' 열 사용")
+
+        series = raw[close_col].copy()
+
+        # Date 열이 있으면 인덱스로 설정
+        date_col = None
+        for col in raw.columns:
+            if col.lower() == "date":
+                date_col = col
+                break
+        if date_col is not None:
+            series.index = pd.to_datetime(raw[date_col])
+
+    elif isinstance(raw, pd.Series):
+        series = raw.copy()
+
+    else:
+        # 그 외 (list, ndarray 등)
+        try:
+            series = pd.Series(raw)
+        except Exception:
+            return None
+
+    # float 강제 변환 — 숫자 아닌 값 제거
+    series = series.apply(lambda x: float(x) if isinstance(x, (int, float, np.integer, np.floating)) else np.nan)
+    series = series.dropna()
+
+    return series if len(series) > 0 else None
+
+
+# ═══════════════════════════════════════════════════════════
+# 종가 시계열 수집
 # ═══════════════════════════════════════════════════════════
 def _fetch_close_series(tickers: list[str]) -> dict[str, pd.Series]:
-    """각 티커의 일봉 종가 시계열을 수집.
-    pd.to_numeric으로 강제 변환하여 Timestamp/문자열 혼입 방어.
-    """
+    """각 티커의 일봉 종가 시계열을 수집."""
     result = {}
     for ticker in tickers:
         try:
-            closes = fetch_daily_closes(ticker, lookback=CORR_LOOKBACK)
-            if closes is None:
-                print(f"[M7] {ticker}: 데이터 없음")
-                continue
+            raw = fetch_daily_closes(ticker, lookback=CORR_LOOKBACK)
+            print(f"[M7] {ticker}: 반환 타입={type(raw).__name__}", end="")
+            if isinstance(raw, (pd.DataFrame, pd.Series)):
+                print(f", shape={raw.shape}", end="")
+            print()
 
-            # ── 핵심 방어: 숫자가 아닌 값(Timestamp 등) 강제 제거 ──
-            closes = pd.to_numeric(closes, errors="coerce").dropna()
+            closes = _normalize_closes(raw)
 
-            if len(closes) >= CORR_MIN_DAYS:
+            if closes is not None and len(closes) >= CORR_MIN_DAYS:
                 result[ticker] = closes
                 print(f"[M7] {ticker}: {len(closes)}일 종가 수집 OK")
             else:
-                print(f"[M7] {ticker}: 데이터 부족 ({len(closes)}일 < {CORR_MIN_DAYS}일 최소)")
+                n = len(closes) if closes is not None else 0
+                print(f"[M7] {ticker}: 데이터 부족 ({n}일 < {CORR_MIN_DAYS}일 최소)")
         except Exception as e:
             print(f"[M7] {ticker} 수집 실패: {e}")
         time.sleep(_STOOQ_DELAY)
@@ -105,7 +160,7 @@ def _compute_correlations(
 
     for t1, t2 in combinations(tickers, 2):
         try:
-            # DataFrame으로 자동 정렬 — 인덱스 타입 불일치 문제 회피
+            # DataFrame으로 자동 정렬
             df = pd.DataFrame({
                 "a": series_map[t1],
                 "b": series_map[t2],
@@ -117,8 +172,8 @@ def _compute_correlations(
                 continue
 
             # numpy array로 수익률 계산
-            v1 = df["a"].values
-            v2 = df["b"].values
+            v1 = df["a"].values.astype(float)
+            v2 = df["b"].values.astype(float)
 
             r1 = (v1[1:] - v1[:-1]) / v1[:-1]
             r2 = (v2[1:] - v2[:-1]) / v2[:-1]
@@ -151,7 +206,6 @@ def _compute_correlations(
             print(f"[M7] {t1}-{t2}: 계산 실패 — {e}")
             continue
 
-    # 상관계수 높은 순 정렬
     alerts.sort(key=lambda x: x["corr"], reverse=True)
     return alerts
 
@@ -160,7 +214,6 @@ def _compute_correlations(
 # 티커 → 표시명 변환
 # ═══════════════════════════════════════════════════════════
 def _display_ticker(ticker: str) -> str:
-    """'mos.us' → 'MOS' 형태로 변환."""
     return ticker.replace(".us", "").upper()
 
 
@@ -168,7 +221,6 @@ def _display_ticker(ticker: str) -> str:
 # context_text 생성
 # ═══════════════════════════════════════════════════════════
 def _build_context(alerts: list[dict]) -> str:
-    """경고 쌍 → M1 GPT에 주입할 context 텍스트 생성."""
     if not alerts:
         return ""
 
@@ -198,13 +250,9 @@ def _build_context(alerts: list[dict]) -> str:
 # 메인 실행
 # ═══════════════════════════════════════════════════════════
 def run_m7() -> dict:
-    """M7 상관관계 경고 모듈 실행.
-    반환: {"context_text": str, "alert_count": int, "held_count": int}
-    """
     print("=" * 50)
     print("[M7] 상관관계 경고 시작")
 
-    # 1. 보유 종목 추출
     tickers = _load_held_tickers()
     held_count = len(tickers)
     print(f"[M7] 보유 종목: {held_count}개 — {tickers}")
@@ -213,7 +261,6 @@ def run_m7() -> dict:
         print("[M7] 보유 종목 2개 미만 — 상관관계 계산 불필요. 스킵.")
         return {"context_text": "", "alert_count": 0, "held_count": held_count}
 
-    # 2. 종가 시계열 수집
     series_map = _fetch_close_series(tickers)
     valid_count = len(series_map)
     print(f"[M7] 유효 데이터: {valid_count}/{held_count}개 종목")
@@ -222,11 +269,9 @@ def run_m7() -> dict:
         print("[M7] 유효 데이터 2개 미만 — 상관관계 계산 불가.")
         return {"context_text": "", "alert_count": 0, "held_count": held_count}
 
-    # 3. 상관계수 계산
     alerts = _compute_correlations(series_map)
     print(f"[M7] 경고 쌍: {len(alerts)}개 (threshold={CORR_THRESHOLD})")
 
-    # 4. context 생성
     context = _build_context(alerts)
     if context:
         print(f"[M7] context 생성: {len(context)}자")
