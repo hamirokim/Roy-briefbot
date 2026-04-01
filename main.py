@@ -1,18 +1,17 @@
 """
-main.py — Roy-브리프봇 오케스트레이션
+main.py — Roy-브리프봇 오케스트레이션 v3
 실행 순서: M2 → M3 → M5 → M4 → M7 → M6 → M1 → 텔레그램
+신규: 시장 스냅샷 + 직전 데이터 저장 + 주간/월간 모드
 """
 
 import json
 import logging
-import sys
 from pathlib import Path
 
 from src.state import load_state, save_state
 from src.telegram import send_telegram
 from src.utils import now_kst, today_kst_str, truncate
 
-# 모듈 임포트
 from src.modules.m2_rotation import run_m2
 from src.modules.m3_contrarian import run_m3
 from src.modules.m5_risk import run as run_m5
@@ -28,12 +27,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger("main")
 
-# ── ETF 맵 경로 ──
 ETF_MAP_PATH = Path(__file__).resolve().parent / "config" / "etf_map.json"
 
 
 def _load_etf_map() -> dict:
-    """config/etf_map.json 로드."""
     try:
         with open(ETF_MAP_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -43,31 +40,68 @@ def _load_etf_map() -> dict:
 
 
 def _sanitize_state(state: dict) -> dict:
-    """state의 None 값들을 안전한 기본값으로 보정."""
     if state.get("m2_history") is None:
         state["m2_history"] = {}
-        logger.warning("state.m2_history가 None → {} 로 보정")
     if state.get("m6_history") is None:
         state["m6_history"] = []
-        logger.warning("state.m6_history가 None → [] 로 보정")
+    if state.get("prev_day") is None:
+        state["prev_day"] = {}
     return state
 
 
+def _build_prev_summary(state: dict) -> str:
+    """직전 브리핑 데이터 → GPT context용 요약 텍스트."""
+    prev = state.get("prev_day", {})
+    if not prev or not prev.get("date"):
+        return ""
+
+    lines = [f"[직전 브리핑 데이터 — {prev['date']}]"]
+
+    snap = prev.get("snapshot", {})
+    for name, info in snap.items():
+        if isinstance(info, dict):
+            lines.append(f"- {name}: {info.get('close', '?')} (일간 {info.get('daily_pct', '?')}%)")
+
+    vix = prev.get("vix")
+    regime = prev.get("vix_regime", "")
+    if vix:
+        lines.append(f"- VIX: {vix} ({regime})")
+
+    pos = prev.get("positions", "")
+    if pos:
+        lines.append(f"- 포지션: {pos}")
+
+    return "\n".join(lines)
+
+
+def _detect_briefing_mode() -> str:
+    """요일/날짜 기반 브리핑 모드 결정."""
+    now = now_kst()
+    if now.day == 1:
+        return "monthly"
+    if now.weekday() == 0:  # 월요일
+        return "weekly"
+    return "daily"
+
+
 def main():
+    now = now_kst()
     logger.info("=" * 60)
-    logger.info("Roy-브리프봇 시작 — %s", now_kst().strftime("%Y-%m-%d %H:%M KST"))
+    logger.info("Roy-브리프봇 시작 — %s", now.strftime("%Y-%m-%d %H:%M KST"))
     logger.info("=" * 60)
 
     state = load_state()
     state = _sanitize_state(state)
     etf_map = _load_etf_map()
 
-    if not etf_map:
-        logger.error("etf_map이 비어있음 — M2 실행 불가")
+    briefing_mode = _detect_briefing_mode()
+    logger.info("브리핑 모드: %s", briefing_mode)
 
-    # ───────────────────────────────────────
-    # M2: 섹터 로테이션
-    # ───────────────────────────────────────
+    prev_summary = _build_prev_summary(state)
+    if prev_summary:
+        logger.info("직전 데이터 로드: %d자", len(prev_summary))
+
+    # ─── M2 ───
     logger.info("─── M2 섹터 로테이션 ───")
     m2_context = ""
     m2_snapshot = {}
@@ -75,23 +109,18 @@ def main():
         m2_result = run_m2(etf_map, state)
         m2_context = m2_result.get("context_text", "")
         m2_snapshot = m2_result.get("today_snapshot", {})
-        logger.info("M2 완료: %d자 컨텍스트, %d ETF 분류", len(m2_context), len(m2_snapshot))
+        logger.info("M2 완료: %d자, %d ETF", len(m2_context), len(m2_snapshot))
     except Exception as e:
         logger.error("M2 실패: %s", e)
 
-    # M2 히스토리 업데이트
     if m2_snapshot:
         from src.state import prune_m2_history
-        m2_history = state.get("m2_history", {})
-        if m2_history is None:
-            m2_history = {}
-        m2_history[today_kst_str()] = m2_snapshot
-        pruned = prune_m2_history(m2_history)
-        state["m2_history"] = pruned if pruned is not None else m2_history
+        m2h = state.get("m2_history", {}) or {}
+        m2h[today_kst_str()] = m2_snapshot
+        pruned = prune_m2_history(m2h)
+        state["m2_history"] = pruned if pruned is not None else m2h
 
-    # ───────────────────────────────────────
-    # M3: 역발상 필터
-    # ───────────────────────────────────────
+    # ─── M3 ───
     logger.info("─── M3 역발상 필터 ───")
     m3_context = ""
     m3_candidates = []
@@ -99,81 +128,71 @@ def main():
         m3_result = run_m3(state)
         m3_context = m3_result.get("context_text", "")
         m3_candidates = m3_result.get("candidates", [])
-        logger.info("M3 완료: %d자 컨텍스트, %d개 후보", len(m3_context), len(m3_candidates))
+        logger.info("M3 완료: %d자, %d개 후보", len(m3_context), len(m3_candidates))
     except Exception as e:
         logger.error("M3 실패: %s", e)
 
-    # ── M3 후보 → m6_history에 기록 ──
+    # M3 → M6 기록
     if m3_candidates:
         try:
             new_entries = candidates_to_history_entries(m3_candidates)
-            m6_history = state.get("m6_history", [])
-            if m6_history is None:
-                m6_history = []
-            added = deduplicate_entries(m6_history, new_entries)
+            m6h = state.get("m6_history", []) or []
+            added = deduplicate_entries(m6h, new_entries)
             if added:
-                m6_history.extend(added)
-                state["m6_history"] = m6_history
-                logger.info("M6 기록: %d개 신규 추가 (총 %d개)", len(added), len(m6_history))
-            else:
-                logger.info("M6 기록: 신규 없음 (이미 추적 중)")
+                m6h.extend(added)
+                state["m6_history"] = m6h
+                logger.info("M6 기록: %d개 추가 (총 %d개)", len(added), len(m6h))
         except Exception as e:
             logger.error("M6 기록 실패: %s", e)
 
-    # ───────────────────────────────────────
-    # M5: 리스크 대시보드
-    # ───────────────────────────────────────
+    # ─── M5 (시장 스냅샷 + VIX + 캘린더) ───
     logger.info("─── M5 리스크 대시보드 ───")
     m5_context = ""
+    m5_snapshot = []
+    m5_vix = None
+    m5_vix_regime = None
     try:
-        m5_context = run_m5(state)
-        logger.info("M5 완료: %d자 컨텍스트", len(m5_context))
+        m5_result = run_m5(state)
+        m5_context = m5_result.get("context_text", "")
+        m5_snapshot = m5_result.get("snapshot", [])
+        m5_vix = m5_result.get("vix")
+        m5_vix_regime = m5_result.get("vix_regime")
+        logger.info("M5 완료: %d자, %d자산, VIX=%s", len(m5_context), len(m5_snapshot), m5_vix)
     except Exception as e:
         logger.error("M5 실패: %s", e)
 
-    # ───────────────────────────────────────
-    # M4: 포지션 트래커
-    # ───────────────────────────────────────
+    # ─── M4 ───
     logger.info("─── M4 포지션 트래커 ───")
     m4_context = ""
     try:
         m4_result = run_m4()
         m4_context = m4_result.get("context_text", "")
         pos_count = m4_result.get("position_count", 0)
-        logger.info("M4 완료: %d개 포지션, %d자 컨텍스트", pos_count, len(m4_context))
+        logger.info("M4 완료: %d개 포지션, %d자", pos_count, len(m4_context))
     except Exception as e:
         logger.error("M4 실패: %s", e)
 
-    # ───────────────────────────────────────
-    # M7: 상관관계 경고
-    # ───────────────────────────────────────
+    # ─── M7 ───
     logger.info("─── M7 상관관계 경고 ───")
     m7_context = ""
     try:
         m7_result = run_m7()
         m7_context = m7_result.get("context_text", "")
-        alert_count = m7_result.get("alert_count", 0)
-        held_count = m7_result.get("held_count", 0)
-        logger.info("M7 완료: %d개 보유, %d개 경고쌍, %d자 컨텍스트", held_count, alert_count, len(m7_context))
+        logger.info("M7 완료: %d개 보유, %d개 경고쌍", m7_result.get("held_count", 0), m7_result.get("alert_count", 0))
     except Exception as e:
         logger.error("M7 실패: %s", e)
 
-    # ───────────────────────────────────────
-    # M6: 피드백 루프
-    # ───────────────────────────────────────
+    # ─── M6 ───
     logger.info("─── M6 피드백 루프 ───")
     m6_context = ""
     try:
         m6_result = run_m6(state)
         m6_context = m6_result.get("context_text", "")
-        track_count = m6_result.get("track_count", 0)
-        logger.info("M6 완료: %d개 추적, %d자 컨텍스트", track_count, len(m6_context))
+        logger.info("M6 완료: %d개 추적, %d자", m6_result.get("track_count", 0), len(m6_context))
     except Exception as e:
         logger.error("M6 실패: %s", e)
 
-    # ───────────────────────────────────────
-    # M1: AI 종합 브리핑
-    # ───────────────────────────────────────
+    # ─── M1 AI 브리핑 ───
     logger.info("─── M1 AI 브리핑 ───")
     try:
         m1_result = run_m1(
@@ -183,36 +202,38 @@ def main():
             m4_context=m4_context,
             m7_context=m7_context,
             m6_context=m6_context,
+            prev_summary=prev_summary,
+            briefing_mode=briefing_mode,
         )
         briefing = m1_result.get("briefing", "")
         used_llm = m1_result.get("used_llm", False)
         news_count = m1_result.get("news_count", 0)
-
-        logger.info(
-            "M1 완료: LLM=%s, 뉴스=%d건, 브리핑=%d자",
-            used_llm, news_count, len(briefing),
-        )
+        logger.info("M1 완료: LLM=%s, 뉴스=%d건, %d자", used_llm, news_count, len(briefing))
     except Exception as e:
         logger.error("M1 실패: %s", e)
         briefing = ""
 
-    # ───────────────────────────────────────
-    # 텔레그램 전송
-    # ───────────────────────────────────────
+    # ─── 텔레그램 ───
     if briefing:
-        msg = truncate(briefing, 4000)
-        ok = send_telegram(msg)
-        if ok:
-            logger.info("텔레그램 전송 성공")
-        else:
-            logger.error("텔레그램 전송 실패")
+        ok = send_telegram(truncate(briefing, 4000))
+        logger.info("텔레그램 %s", "성공" if ok else "실패")
     else:
-        logger.error("브리핑 내용 없음 — 전송 스킵")
+        logger.error("브리핑 없음 — 전송 스킵")
 
-    # ───────────────────────────────────────
-    # 상태 저장
-    # ───────────────────────────────────────
-    state["last_run_kst"] = now_kst().strftime("%Y-%m-%d %H:%M:%S")
+    # ─── 직전 데이터 저장 (다음 브리핑용) ───
+    snap_dict = {}
+    for s in m5_snapshot:
+        snap_dict[s["name"]] = {"close": s["close"], "daily_pct": s["daily_pct"]}
+
+    state["prev_day"] = {
+        "date": now.strftime("%Y-%m-%d"),
+        "snapshot": snap_dict,
+        "vix": m5_vix,
+        "vix_regime": m5_vix_regime,
+        "positions": m4_context[:200] if m4_context else "",  # 압축 저장
+    }
+
+    state["last_run_kst"] = now.strftime("%Y-%m-%d %H:%M:%S")
     save_state(state)
 
     logger.info("=" * 60)
