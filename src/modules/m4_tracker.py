@@ -1,5 +1,6 @@
 """
-M4 포지션 트래커 v2 — 상태 추적 + 일간/주간 변동률 + 압축 context
+M4 포지션 트래커 v3 — Sheets 연동 + portfolio.json fallback
+변경: Sheets에서 OPEN 포지션 읽기. 실패 시 portfolio.json fallback.
 """
 
 import json
@@ -23,7 +24,25 @@ STOOQ_DELAY = 0.3
 
 
 # ═══════════════════════════════════════════════════════════
-# portfolio.json 로드 (기존 유지)
+# Sheets에서 포지션 로드 (우선)
+# ═══════════════════════════════════════════════════════════
+def _load_from_sheets() -> list[dict] | None:
+    """Sheets에서 OPEN 포지션 로드. 실패 시 None 반환."""
+    try:
+        from src.collectors.sheets import read_positions
+        positions = read_positions()
+        if positions:
+            logger.info("Sheets에서 %d개 포지션 로드", len(positions))
+            return positions
+        logger.info("Sheets 포지션 비어 있음")
+        return positions  # 빈 리스트 반환 (정상 — 포지션 없음)
+    except Exception as e:
+        logger.warning("Sheets 로드 실패 → fallback: %s", e)
+        return None
+
+
+# ═══════════════════════════════════════════════════════════
+# portfolio.json fallback (기존 유지)
 # ═══════════════════════════════════════════════════════════
 def _load_portfolio() -> list[dict]:
     if not PORTFOLIO_PATH.exists():
@@ -57,7 +76,7 @@ def _load_portfolio() -> list[dict]:
 
 
 # ═══════════════════════════════════════════════════════════
-# DataFrame → 숫자 Series 정규화 (M7과 동일 방어)
+# DataFrame → 숫자 Series 정규화
 # ═══════════════════════════════════════════════════════════
 def _normalize_closes(raw) -> pd.Series | None:
     if raw is None:
@@ -92,9 +111,6 @@ def _normalize_closes(raw) -> pd.Series | None:
 # 가격 + 변동률 수집
 # ═══════════════════════════════════════════════════════════
 def _fetch_price_data(tickers: list[str]) -> dict[str, dict]:
-    """각 종목의 현재가 + 일간/주간 변동률 수집.
-    Returns: {ticker: {"close": float, "daily_pct": float, "weekly_pct": float}}
-    """
     results = {}
     for ticker in tickers:
         try:
@@ -110,7 +126,6 @@ def _fetch_price_data(tickers: list[str]) -> dict[str, dict]:
             prev = float(closes[-2])
             daily_pct = ((last - prev) / prev) * 100
 
-            # 주간: 5영업일 전
             w_idx = max(0, len(closes) - 6)
             weekly_pct = ((last - float(closes[w_idx])) / float(closes[w_idx])) * 100
 
@@ -131,7 +146,6 @@ def _fetch_price_data(tickers: list[str]) -> dict[str, dict]:
 # 압축 context 생성
 # ═══════════════════════════════════════════════════════════
 def _format_position(pos: dict, price_data: dict | None) -> str:
-    """개별 포지션 → 압축 context 1줄."""
     ticker = pos["ticker"].upper().replace(".US", "")
     status = pos["status"]
     entry_price = pos.get("entry_price")
@@ -169,7 +183,12 @@ def run_m4() -> dict:
     logger.info("M4 포지션 트래커 시작")
     logger.info("=" * 50)
 
-    positions = _load_portfolio()
+    # Sheets 우선, 실패 시 portfolio.json fallback
+    positions = _load_from_sheets()
+    if positions is None:
+        logger.info("Sheets fallback → portfolio.json")
+        positions = _load_portfolio()
+
     if not positions:
         return {"context_text": "", "position_count": 0}
 
@@ -177,7 +196,6 @@ def run_m4() -> dict:
     logger.info("현재가 수집: %s", ", ".join(tickers))
     price_map = _fetch_price_data(tickers)
 
-    # 상태 순서로 정렬
     status_order = ["OPEN", "ADD", "EXIT_WATCH", "ARMED", "WATCH"]
     positions.sort(key=lambda x: status_order.index(x["status"]) if x["status"] in status_order else 99)
 
