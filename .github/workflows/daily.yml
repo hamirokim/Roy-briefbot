@@ -27,17 +27,11 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GPT_API_KEY: ${{ secrets.GPT_API_KEY }}
           GPT_MODEL: "gpt-5.4-mini"
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
           # M2 환경변수
           RS_RATIO_PERIOD: "63"
           RS_MOM_PERIOD: "10"
           RS_HISTORY_KEEP_DAYS: "7"
-          # M3 환경변수 (기본값 — 오버라이드 시 여기에 추가)
-          # M3_DD_WATCH_PCT: "20.0"
-          # M3_DD_ALERT_PCT: "30.0"
-          # GPT 튜닝 (선택)
-          # GPT_MAX_TOKENS: "2000"
-          # GPT_TEMPERATURE: "0.3"
-          # GPT_TIMEOUT: "60"
         run: python main.py
 
       - name: Commit state changes
