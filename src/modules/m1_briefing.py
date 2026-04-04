@@ -1,5 +1,6 @@
 """
-M1 시장 테마 AI 브리핑 v3 — prev_summary + briefing_mode 지원
+M1 시장 테마 AI 브리핑 v4 — Sheets 저장 추가
+변경: GPT 브리핑 완료 후 BRIEFING 시트에 자동 저장.
 """
 
 import json
@@ -108,6 +109,16 @@ def _build_fallback(m2, m3, m5, m4, m7, m6, news, news_count, date_str):
     return "\n".join(parts)
 
 
+def _save_to_sheets(briefing: str, briefing_mode: str):
+    """브리핑을 Sheets에 저장. 실패해도 무시 (텔레그램 전송이 메인)."""
+    try:
+        from src.collectors.sheets import save_briefing
+        date_str = now_kst().strftime("%Y-%m-%d")
+        save_briefing(date_str, briefing, briefing_mode)
+    except Exception as e:
+        logger.warning("Sheets 저장 스킵 (텔레그램은 정상): %s", e)
+
+
 def run_m1(
     m2_context: str = "", m3_context: str = "", m5_context: str = "",
     m4_context: str = "", m7_context: str = "", m6_context: str = "",
@@ -143,7 +154,11 @@ def run_m1(
 
     if gpt_result:
         logger.info("M1 GPT 성공 (%d자)", len(gpt_result))
+        # ★ Sheets 저장
+        _save_to_sheets(gpt_result, briefing_mode)
         return {"briefing": gpt_result, "used_llm": True, "news_count": news_count, "context_text": gpt_result}
     else:
         briefing = _build_fallback(m2_context, m3_context, m5_context, m4_context, m7_context, m6_context, news_context, news_count, date_str)
+        # fallback도 저장
+        _save_to_sheets(briefing, briefing_mode)
         return {"briefing": briefing, "used_llm": False, "news_count": news_count, "context_text": briefing}
