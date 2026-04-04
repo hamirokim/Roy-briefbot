@@ -172,6 +172,20 @@ def main():
     except Exception as e:
         logger.error("M4 실패: %s", e)
 
+    # ─── ANALYTICS (지표 피드백 루프) ───
+    analytics_context = ""
+    if briefing_mode in ("weekly", "monthly"):
+        logger.info("─── ANALYTICS 지표 성과 ───")
+        try:
+            from src.collectors.sheets import read_analytics
+            analytics_context = read_analytics(min_closed=10)
+            if analytics_context:
+                logger.info("ANALYTICS 로드: %d자", len(analytics_context))
+            else:
+                logger.info("ANALYTICS 스킵 (CLOSED < 10건 또는 데이터 없음)")
+        except Exception as e:
+            logger.warning("ANALYTICS 실패: %s", e)
+
     # ─── M7 ───
     logger.info("─── M7 상관관계 경고 ───")
     m7_context = ""
@@ -204,6 +218,7 @@ def main():
             m6_context=m6_context,
             prev_summary=prev_summary,
             briefing_mode=briefing_mode,
+            analytics_context=analytics_context,
         )
         briefing = m1_result.get("briefing", "")
         used_llm = m1_result.get("used_llm", False)
