@@ -1,53 +1,8 @@
 {
   "_guide": {
-    "설명": "로이의 포지션 상태 관리 파일. GitHub 웹에서 직접 편집.",
-    "상태값": {
-      "WATCH": "관심 종목 (브리프봇 추천, 미진입)",
-      "ARMED": "메인지표 arm 진행 중",
-      "OPEN": "진입 완료 — entry_price/entry_date/sl_price 필수",
-      "ADD": "추가 매수 구간",
-      "EXIT_WATCH": "TP 신호 접근 중"
-    },
-    "편집방법": "GitHub → config/portfolio.json → 연필 아이콘 → 수정 → Commit changes",
-    "규칙": "최대 5종목. ticker는 소문자.us (예: mos.us)"
+    "설명": "더 이상 사용되지 않음. Sheets 연동으로 대체. fallback 용도로만 유지.",
+    "상태": "Sheets에서 포지션 관리 중"
   },
   "max_positions": 5,
-  "positions": [
-    {
-      "ticker": "mos.us",
-      "status": "OPEN",
-      "added": "2025-12-15",
-      "entry_price": 24.6861,
-      "entry_date": "2025-12-15",
-      "sl_price": 23.05,
-      "memo": "비료/화학"
-    },
-    {
-      "ticker": "nvo.us",
-      "status": "OPEN",
-      "added": "2025-03-11",
-      "entry_price": 37.94,
-      "entry_date": "2025-03-11",
-      "sl_price": 35.51,
-      "memo": "헬스케어/비만치료"
-    },
-    {
-      "ticker": "zts.us",
-      "status": "OPEN",
-      "added": "2025-12-15",
-      "entry_price": 119.45,
-      "entry_date": "2025-12-15",
-      "sl_price": 113.35,
-      "memo": "동물헬스케어"
-    },
-    {
-      "ticker": "csco.us",
-      "status": "OPEN",
-      "added": "2026-01-14",
-      "entry_price": 73.97,
-      "entry_date": "2026-01-14",
-      "sl_price": 72.80,
-      "memo": "네트워크/IT인프라"
-    }
-  ]
+  "positions": []
 }
