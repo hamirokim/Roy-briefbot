@@ -107,3 +107,135 @@ def _safe_float(val):
         return float(val) if val else None
     except (ValueError, TypeError):
         return None
+
+
+def _fmt_pct(val: str) -> str:
+    """소수(0.72) → '72.0%' 변환. 실패 시 '–'."""
+    try:
+        return f"{float(val) * 100:.1f}%" if val else "–"
+    except (ValueError, TypeError):
+        return "–"
+
+
+def _fmt_r(val: str) -> str:
+    """R배수 포맷. 실패 시 '–'."""
+    try:
+        return f"{float(val):+.2f}R" if val else "–"
+    except (ValueError, TypeError):
+        return "–"
+
+
+def _fmt_cnt(val: str) -> str:
+    """건수 포맷."""
+    try:
+        return f"{int(float(val))}건" if val else "0건"
+    except (ValueError, TypeError):
+        return "0건"
+
+
+def _row_val(all_data: list, row_idx: int, col: int) -> str:
+    """안전한 셀 값 접근."""
+    try:
+        return all_data[row_idx][col] if len(all_data) > row_idx and len(all_data[row_idx]) > col else ""
+    except (IndexError, TypeError):
+        return ""
+
+
+# ═══════════════════════════════════════════════════════════
+# ANALYTICS 읽기 (M1 피드백 루프용)
+# ═══════════════════════════════════════════════════════════
+def read_analytics(min_closed: int = 10) -> str:
+    """ANALYTICS 시트 → GPT context 텍스트 반환.
+
+    CLOSED 건수가 min_closed 미만이면 빈 문자열 반환 (게이트).
+    weekly/monthly 브리핑에서만 호출됨.
+    """
+    try:
+        ws = get_sheet("ANALYTICS 분석")
+        all_data = ws.get_all_values()
+    except Exception as e:
+        logger.warning("ANALYTICS 읽기 실패: %s", e)
+        return ""
+
+    if len(all_data) < 9:
+        return ""
+
+    # Row 4 (index 3) col B = CLOSED 건수
+    closed_raw = _row_val(all_data, 3, 1)
+    try:
+        closed_count = int(float(closed_raw)) if closed_raw else 0
+    except (ValueError, TypeError):
+        closed_count = 0
+
+    if closed_count < min_closed:
+        logger.info("ANALYTICS 스킵: CLOSED %d건 < %d건", closed_count, min_closed)
+        return ""
+
+    lines = [f"[RONIN 지표 성과 — CLOSED {closed_count}건]", ""]
+
+    # ── 전체 성과 (row 2~9, index 1~8) ──
+    lines.append("■ 전체 성과")
+    for i in range(1, min(9, len(all_data))):
+        label = _row_val(all_data, i, 0)
+        val = _row_val(all_data, i, 1)
+        if not label or val == "":
+            continue
+        if label == "승률":
+            val = _fmt_pct(val)
+        lines.append(f"  {label}: {val}")
+
+    # ── CONF별 (row 12~14, index 11~13) ──
+    if len(all_data) > 13:
+        lines.append("")
+        lines.append("■ CONF별 성과 (승률 / 평균R)")
+        for i in range(11, min(15, len(all_data))):
+            label = _row_val(all_data, i, 0)
+            if not label:
+                continue
+            wr = _row_val(all_data, i, 1)
+            ar = _row_val(all_data, i, 2)
+            if wr or ar:
+                lines.append(f"  {label}: {_fmt_pct(wr)} / {_fmt_r(ar)}")
+
+    # ── Base 구간별 (row 17~18, index 16~17) ──
+    if len(all_data) > 17:
+        lines.append("")
+        lines.append("■ Base 구간별 성과 (승률 / 평균R)")
+        for i in range(16, min(19, len(all_data))):
+            label = _row_val(all_data, i, 0)
+            if not label:
+                continue
+            wr = _row_val(all_data, i, 1)
+            ar = _row_val(all_data, i, 2)
+            if wr or ar:
+                lines.append(f"  {label}: {_fmt_pct(wr)} / {_fmt_r(ar)}")
+
+    # ── 청산사유별 (row 21~24, index 20~23) ──
+    if len(all_data) > 23:
+        lines.append("")
+        lines.append("■ 청산사유별 분포 (건수 / 평균R)")
+        for i in range(20, min(25, len(all_data))):
+            label = _row_val(all_data, i, 0)
+            if not label:
+                continue
+            cnt = _row_val(all_data, i, 1)
+            ar = _row_val(all_data, i, 2)
+            if cnt or ar:
+                lines.append(f"  {label}: {_fmt_cnt(cnt)} / {_fmt_r(ar)}")
+
+    # ── Gate별 (row 27~30, index 26~29) ──
+    if len(all_data) > 29:
+        lines.append("")
+        lines.append("■ Gate별 성과 (승률 / 평균R)")
+        for i in range(26, min(31, len(all_data))):
+            label = _row_val(all_data, i, 0)
+            if not label:
+                continue
+            wr = _row_val(all_data, i, 1)
+            ar = _row_val(all_data, i, 2)
+            if wr or ar:
+                lines.append(f"  {label}: {_fmt_pct(wr)} / {_fmt_r(ar)}")
+
+    result = "\n".join(lines)
+    logger.info("ANALYTICS 로드 완료: %d자", len(result))
+    return result
