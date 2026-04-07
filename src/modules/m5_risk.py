@@ -26,7 +26,7 @@ _WEEKDAYS_KR = ["월", "화", "수", "목", "금", "토", "일"]
 _HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; BriefBot/1.0)"}
 
 _SNAPSHOT_ASSETS = [
-    {"yahoo": "%5EGSPC", "name": "S&P500", "unit": "", "volume": True},
+    {"yahoo": "SPY", "name": "S&P500(SPY)", "unit": "$", "volume": True},
     {"yahoo": "%5EIXIC", "name": "나스닥", "unit": "", "volume": False},
     {"yahoo": "%5ERUT",  "name": "러셀2000", "unit": "", "volume": False},
     {"yahoo": "%5EDJI",  "name": "다우", "unit": "", "volume": False},
@@ -39,28 +39,37 @@ _SNAPSHOT_ASSETS = [
 # ═══════════════════════════════════════════════════════════
 # Yahoo Finance 차트 수집 (종가 + 거래량)
 # ═══════════════════════════════════════════════════════════
-def _fetch_yahoo_chart(ticker: str, range_str: str = "3mo", interval: str = "1d") -> dict | None:
-    """Yahoo Finance chart API → {"closes": [...], "volumes": [...]} 반환."""
+def _fetch_yahoo_chart(ticker: str, range_str: str = "3mo", interval: str = "1d", _retries: int = 2) -> dict | None:
+    """Yahoo Finance chart API → {"closes": [...], "volumes": [...]} 반환. 타임아웃 시 1회 재시도."""
+    import time
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range={range_str}&interval={interval}"
-    try:
-        resp = requests.get(url, timeout=15, headers=_HEADERS)
-        if resp.status_code != 200:
+    for attempt in range(_retries):
+        try:
+            resp = requests.get(url, timeout=20, headers=_HEADERS)
+            if resp.status_code != 200:
+                return None
+            data = resp.json()
+            result = data.get("chart", {}).get("result", [])
+            if not result:
+                return None
+            quote = result[0].get("indicators", {}).get("quote", [{}])[0]
+            closes = quote.get("close", [])
+            volumes = quote.get("volume", [])
+            valid_closes = [float(c) for c in closes if c is not None]
+            valid_volumes = [int(v) if v is not None else 0 for v in volumes]
+            if len(valid_closes) < 2:
+                return None
+            return {"closes": valid_closes, "volumes": valid_volumes}
+        except requests.exceptions.Timeout:
+            print(f"[M5] Yahoo {ticker} 타임아웃 (시도 {attempt + 1}/{_retries})")
+            if attempt < _retries - 1:
+                time.sleep(2)
+            continue
+        except Exception as e:
+            print(f"[M5] Yahoo {ticker} 실패: {e}")
             return None
-        data = resp.json()
-        result = data.get("chart", {}).get("result", [])
-        if not result:
-            return None
-        quote = result[0].get("indicators", {}).get("quote", [{}])[0]
-        closes = quote.get("close", [])
-        volumes = quote.get("volume", [])
-        valid_closes = [float(c) for c in closes if c is not None]
-        valid_volumes = [int(v) if v is not None else 0 for v in volumes]
-        if len(valid_closes) < 2:
-            return None
-        return {"closes": valid_closes, "volumes": valid_volumes}
-    except Exception as e:
-        print(f"[M5] Yahoo {ticker} 실패: {e}")
-        return None
+    print(f"[M5] Yahoo {ticker} 재시도 소진")
+    return None
 
 
 # ═══════════════════════════════════════════════════════════
