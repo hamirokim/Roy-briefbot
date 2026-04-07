@@ -139,7 +139,7 @@ def _fetch_raw(
             # Stooq 에러 응답 체크 (HTML이 오면 CSV가 아님)
             if "<html" in text.lower() or "No data" in text:
                 print(f"[WARN] Stooq 데이터 없음: {stooq_ticker}")
-                return None
+                break
 
             df = pd.read_csv(io.StringIO(text))
 
@@ -147,7 +147,7 @@ def _fetch_raw(
             required = {"Date", "Close"}
             if not required.issubset(set(df.columns)):
                 print(f"[WARN] Stooq 컬럼 이상: {stooq_ticker} -> {list(df.columns)}")
-                return None
+                break
 
             df["Date"] = pd.to_datetime(df["Date"])
 
@@ -165,7 +165,7 @@ def _fetch_raw(
 
             if len(df) < 20:
                 print(f"[WARN] Stooq 데이터 부족: {stooq_ticker} ({len(df)}행)")
-                return None
+                break
 
             _cache[cache_key] = df
             return df
