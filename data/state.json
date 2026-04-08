@@ -1,5 +1,5 @@
 {
-  "last_run_kst": "2026-04-08 07:57:46",
+  "last_run_kst": "2026-04-09 08:01:07",
   "m2_history": {
     "2026-03-25": {
       "XLK": {
@@ -1146,43 +1146,234 @@
         "group": "국가/지역",
         "label": "Thailand"
       }
+    },
+    "2026-04-09": {
+      "XLK": {
+        "ratio": 100.13,
+        "momentum": 101.26,
+        "quadrant": "LEADING",
+        "group": "섹터",
+        "label": "Technology"
+      },
+      "XLV": {
+        "ratio": 96.7,
+        "momentum": 98.38,
+        "quadrant": "LAGGING",
+        "group": "섹터",
+        "label": "Healthcare"
+      },
+      "XLF": {
+        "ratio": 98.17,
+        "momentum": 100.06,
+        "quadrant": "IMPROVING",
+        "group": "섹터",
+        "label": "Financials"
+      },
+      "XLY": {
+        "ratio": 94.74,
+        "momentum": 98.46,
+        "quadrant": "LAGGING",
+        "group": "섹터",
+        "label": "Cons. Discretionary"
+      },
+      "XLP": {
+        "ratio": 97.37,
+        "momentum": 96.47,
+        "quadrant": "LAGGING",
+        "group": "섹터",
+        "label": "Cons. Staples"
+      },
+      "XLE": {
+        "ratio": 105.61,
+        "momentum": 90.13,
+        "quadrant": "WEAKENING",
+        "group": "섹터",
+        "label": "Energy"
+      },
+      "XLI": {
+        "ratio": 100.66,
+        "momentum": 99.78,
+        "quadrant": "WEAKENING",
+        "group": "섹터",
+        "label": "Industrials"
+      },
+      "XLB": {
+        "ratio": 101.98,
+        "momentum": 98.63,
+        "quadrant": "WEAKENING",
+        "group": "섹터",
+        "label": "Materials"
+      },
+      "XLC": {
+        "ratio": 97.86,
+        "momentum": 98.87,
+        "quadrant": "LAGGING",
+        "group": "섹터",
+        "label": "Communication"
+      },
+      "XLU": {
+        "ratio": 102.92,
+        "momentum": 96.89,
+        "quadrant": "WEAKENING",
+        "group": "섹터",
+        "label": "Utilities"
+      },
+      "XLRE": {
+        "ratio": 100.35,
+        "momentum": 98.93,
+        "quadrant": "WEAKENING",
+        "group": "섹터",
+        "label": "Real Estate"
+      },
+      "EWJ": {
+        "ratio": 102.33,
+        "momentum": 100.75,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Japan"
+      },
+      "EWZ": {
+        "ratio": 106.33,
+        "momentum": 98.64,
+        "quadrant": "WEAKENING",
+        "group": "국가/지역",
+        "label": "Brazil"
+      },
+      "EWY": {
+        "ratio": 109.99,
+        "momentum": 105.74,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "South Korea"
+      },
+      "EWT": {
+        "ratio": 107.13,
+        "momentum": 101.64,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Taiwan"
+      },
+      "EWG": {
+        "ratio": 98.23,
+        "momentum": 101.29,
+        "quadrant": "IMPROVING",
+        "group": "국가/지역",
+        "label": "Germany"
+      },
+      "EWU": {
+        "ratio": 102.75,
+        "momentum": 100.0,
+        "quadrant": "WEAKENING",
+        "group": "국가/지역",
+        "label": "UK"
+      },
+      "EWA": {
+        "ratio": 103.85,
+        "momentum": 100.65,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Australia"
+      },
+      "EWC": {
+        "ratio": 101.02,
+        "momentum": 98.74,
+        "quadrant": "WEAKENING",
+        "group": "국가/지역",
+        "label": "Canada"
+      },
+      "EWH": {
+        "ratio": 102.02,
+        "momentum": 98.46,
+        "quadrant": "WEAKENING",
+        "group": "국가/지역",
+        "label": "Hong Kong"
+      },
+      "EWS": {
+        "ratio": 102.06,
+        "momentum": 98.69,
+        "quadrant": "WEAKENING",
+        "group": "국가/지역",
+        "label": "Singapore"
+      },
+      "INDA": {
+        "ratio": 96.35,
+        "momentum": 101.49,
+        "quadrant": "IMPROVING",
+        "group": "국가/지역",
+        "label": "India"
+      },
+      "EWW": {
+        "ratio": 103.38,
+        "momentum": 100.13,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Mexico"
+      },
+      "VNM": {
+        "ratio": 100.23,
+        "momentum": 103.26,
+        "quadrant": "LEADING",
+        "group": "국가/지역",
+        "label": "Vietnam"
+      },
+      "EZA": {
+        "ratio": 99.76,
+        "momentum": 103.86,
+        "quadrant": "IMPROVING",
+        "group": "국가/지역",
+        "label": "South Africa"
+      },
+      "EIDO": {
+        "ratio": 91.53,
+        "momentum": 98.8,
+        "quadrant": "LAGGING",
+        "group": "국가/지역",
+        "label": "Indonesia"
+      },
+      "THD": {
+        "ratio": 105.93,
+        "momentum": 99.14,
+        "quadrant": "WEAKENING",
+        "group": "국가/지역",
+        "label": "Thailand"
+      }
     }
   },
   "m6_history": [],
   "prev_day": {
-    "date": "2026-04-08",
+    "date": "2026-04-09",
     "snapshot": {
       "S&P500(SPY)": {
-        "close": 659.219970703125,
-        "daily_pct": 0.04
+        "close": 676.010009765625,
+        "daily_pct": 2.55
       },
       "나스닥": {
-        "close": 22017.849609375,
-        "daily_pct": 0.1
+        "close": 22634.994140625,
+        "daily_pct": 2.8
       },
       "러셀2000": {
-        "close": 2544.945068359375,
-        "daily_pct": 0.17
+        "close": 2620.458984375,
+        "daily_pct": 2.97
       },
       "다우": {
-        "close": 46584.4609375,
-        "daily_pct": -0.18
+        "close": 47909.921875,
+        "daily_pct": 2.85
       },
       "금(GLD)": {
-        "close": 431.80999755859375,
-        "daily_pct": 0.97
+        "close": 434.5299987792969,
+        "daily_pct": 0.63
       },
       "WTI유가": {
-        "close": 103.27999877929688,
-        "daily_pct": -8.12
+        "close": 96.72000122070312,
+        "daily_pct": -14.37
       },
       "원/달러": {
-        "close": 1501.260009765625,
-        "daily_pct": -0.44
+        "close": 1499.1300048828125,
+        "daily_pct": -0.58
       }
     },
-    "vix": 25.780000686645508,
-    "vix_regime": "HIGH",
-    "positions": "[포지션 — 2026-04-08]\n1개 보유\n\n• NVO [OPEN] $36.91 | 일간 +0.7%, 주간 +4.6% | 진입 $37.94 → -2.7% | SL $34.08 (-7.7%) | 메모: entry신호 통과\n\nGPT 지시: 가격 변동이 있는 종목만 상세 코멘트. 변동 없으면 '유지' 한마디. 변동 원인을 뉴스와 연결해서 해석. SL 체크하라는"
+    "vix": 21.040000915527344,
+    "vix_regime": "NORMAL",
+    "positions": "[포지션 — 2026-04-09]\n1개 보유\n\n• NVO [OPEN] $37.61 | 일간 +1.9%, 주간 +2.3% | 진입 $37.94 → -0.9% | SL $34.08 (-9.4%) | 메모: entry신호 통과\n\nGPT 지시: 가격 변동이 있는 종목만 상세 코멘트. 변동 없으면 '유지' 한마디. 변동 원인을 뉴스와 연결해서 해석. SL 체크하라는"
   }
 }
