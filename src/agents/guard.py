@@ -1,5 +1,5 @@
 """
-src/agents/guard.py — GUARD 포지션 모니터 에이전트
+src/agents/guard.py — GUARD 포지션 모니터 에이전트 (v2 patch — yfinance 전환)
 
 미션: 보유 종목(Sheets에서 읽음)을 매일 모니터 → 의미있는 이벤트만 보고
 
@@ -8,13 +8,16 @@ src/agents/guard.py — GUARD 포지션 모니터 에이전트
   - 일간 변동 ±2% 이상 → 뉴스 매칭 + LLM 1줄 해석
   - 뉴스 헤드라인만 있어도 LLM 해석 (가격 변동 무관)
 
-데이터 소스:
+데이터 소스 (v2 패치):
   - Sheets read_positions() — 보유 종목 마스터
-  - Stooq/yfinance — 가격 변동
+  - **yfinance** (Stooq 차단 회피) — 가격 변동
   - Finnhub /company-news — 종목별 뉴스 (이미 키 있음)
 
 GUARD ≠ M4 트래커 (단순 가격 표시) — 뉴스 해석까지 포함된 "의미있는 보고"
 M7 상관관계 결과도 GUARD가 흡수 (이미 보유 중이니 GUARD 영역)
+
+v2 변경 (2026-04-21):
+  - _fetch_price_change: Stooq → yfinance (GitHub Actions IP 차단 회피)
 """
 
 import logging
@@ -73,31 +76,53 @@ def _load_positions_fallback() -> list[dict]:
 
 
 # ═══════════════════════════════════════════════════════════
-# 가격 변동 수집 (Stooq 우선, yfinance fallback)
+# 가격 변동 수집 — v2: yfinance 전용 (Stooq 차단 회피)
 # ═══════════════════════════════════════════════════════════
 
+def _normalize_ticker_for_yf(ticker: str) -> str:
+    """저널/Stooq 형식 → yfinance 형식 변환.
+
+    예: 'nvo.us' → 'NVO'
+        'NVO' → 'NVO' (그대로)
+        '005930.KS' → '005930.KS' (그대로)
+    """
+    t = ticker.strip()
+    # Stooq 형식 (.us 접미사) 제거
+    if t.lower().endswith(".us"):
+        t = t[:-3]
+    return t.upper()
+
+
 def _fetch_price_change(ticker: str) -> Optional[dict]:
-    """일간/주간 변동률. ticker는 'NVO' 같은 raw 형식."""
+    """일간/주간 변동률 — yfinance 사용 (v2 패치)."""
     try:
-        from src.collectors.stooq import fetch_daily_closes
-        stooq_ticker = ticker.lower() if "." in ticker else f"{ticker.lower()}.us"
-        raw = fetch_daily_closes(stooq_ticker, lookback=15)
+        import yfinance as yf
 
-        if raw is None:
+        yf_ticker = _normalize_ticker_for_yf(ticker)
+        end = datetime.now()
+        start = end - timedelta(days=15)
+
+        # yfinance batch download 형식
+        df = yf.download(
+            yf_ticker,
+            start=start.strftime("%Y-%m-%d"),
+            end=end.strftime("%Y-%m-%d"),
+            progress=False,
+            auto_adjust=False,
+        )
+
+        if df is None or df.empty:
+            logger.warning("[guard yf] %s 빈 결과", ticker)
             return None
 
-        # DataFrame이든 Series든 처리
-        import pandas as pd
-        if isinstance(raw, pd.DataFrame):
-            close_col = next((c for c in raw.columns if c.lower() == "close"), None)
-            if close_col is None:
-                return None
-            closes = raw[close_col].astype(float).dropna().values
-        elif isinstance(raw, pd.Series):
-            closes = raw.astype(float).dropna().values
-        else:
+        # Close 열 추출 (단일 종목이라 멀티인덱스 평탄화)
+        if hasattr(df.columns, "nlevels") and df.columns.nlevels > 1:
+            df.columns = [c[0] if isinstance(c, tuple) else c for c in df.columns]
+
+        if "Close" not in df.columns:
             return None
 
+        closes = df["Close"].astype(float).dropna().values
         if len(closes) < 2:
             return None
 
@@ -114,7 +139,7 @@ def _fetch_price_change(ticker: str) -> Optional[dict]:
             "weekly_pct": round(weekly_pct, 2),
         }
     except Exception as e:
-        logger.warning("[guard price] %s 실패: %s", ticker, e)
+        logger.warning("[guard yf] %s 실패: %s", ticker, e)
         return None
 
 
@@ -131,11 +156,12 @@ def _fetch_company_news(ticker: str, lookback_hours: int = 24, max_items: int = 
     if not FINNHUB_KEY:
         return []
     end = datetime.now().date()
-    start = end - timedelta(days=2)  # 안전하게 2일치 받고 시간 필터링
+    start = end - timedelta(days=2)
 
     try:
+        symbol = _normalize_ticker_for_yf(ticker)
         params = {
-            "symbol": ticker.upper().split(".")[0],
+            "symbol": symbol.split(".")[0],  # .KS 접미사 제거
             "from": start.strftime("%Y-%m-%d"),
             "to": end.strftime("%Y-%m-%d"),
             "token": FINNHUB_KEY,
@@ -147,7 +173,6 @@ def _fetch_company_news(ticker: str, lookback_hours: int = 24, max_items: int = 
         if not isinstance(items, list):
             return []
 
-        # 시간 필터 (lookback_hours)
         cutoff = datetime.now().timestamp() - (lookback_hours * 3600)
         recent = [
             {
@@ -179,14 +204,6 @@ class GuardAgent(BaseAgent):
         self.settings = _load_settings()
 
     def run(self, state: dict) -> dict:
-        """GUARD 메인 실행.
-
-        반환:
-          - positions: list[dict] — 종목별 상태
-          - alerts: list[dict] — ±2% 이상 변동 또는 중요 뉴스
-          - quiet: list[str] — 변동 없는 종목 (텔레그램 출력 제외 대상)
-          - context_text: str — DIGEST가 LLM에 넘길 요약 (M1 호환)
-        """
         guard_cfg = self.settings["guard"]
         threshold_pct = guard_cfg["daily_change_threshold_pct"]
         news_lookback = guard_cfg["news_lookback_hours"]
@@ -202,7 +219,6 @@ class GuardAgent(BaseAgent):
             self.log.info("[guard] 보유 종목 없음")
             return self._empty_result()
 
-        # 보유 상태만 (OPEN/ADD/EXIT_WATCH)
         held = [p for p in positions if p.get("status", "").upper() in {"OPEN", "ADD", "EXIT_WATCH"}]
         if not held:
             self.log.info("[guard] 보유 상태 종목 없음")
@@ -232,7 +248,6 @@ class GuardAgent(BaseAgent):
                 entry["price"] = price
             time.sleep(0.3)
 
-            # 뉴스 조건: ±threshold% 이상 변동 시만 fetch (Finnhub rate limit 절약)
             news = []
             is_significant = (
                 price is not None
@@ -273,7 +288,6 @@ class GuardAgent(BaseAgent):
         }
 
     def _build_context(self, results, alerts, quiet, m7_context, threshold_pct) -> str:
-        """GUARD 결과를 DIGEST LLM 입력용 텍스트로."""
         date_str = datetime.now().strftime("%Y-%m-%d")
         lines = [f"[보유 포지션 — {date_str}]"]
         lines.append(f"총 {len(results)}종목 보유. 변동 {threshold_pct}% 이상 또는 뉴스 있음: {len(alerts)}개")
@@ -292,7 +306,6 @@ class GuardAgent(BaseAgent):
                 else:
                     lines.append(f"- {ticker} [{a['status']}] 가격 수집 실패")
 
-                # 뉴스 헤드라인 + 요약
                 if a.get("news"):
                     for n in a["news"]:
                         lines.append(f"  뉴스 ({n['source']}): {n['headline']}")
