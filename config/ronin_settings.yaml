@@ -1,0 +1,117 @@
+# ============================================================
+# ronin_settings.yaml — 브리프봇 v2.0 튜닝 파라미터
+# ============================================================
+# 이 파일이 모든 임계치/cooldown/limit의 단일 진실 소스.
+# 코드 안에 매직넘버 박지 말 것. 전부 여기서 읽음.
+
+# ── SCOUT 사전 감지 신호 임계치 ──
+scout:
+  # 글로벌 거시 필터 (Stage 1)
+  market_cap_min_usd: 1_000_000_000   # $1B
+  avg_volume_value_min_usd: 1_000_000 # 일평균 거래대금 $1M
+
+  # 시간 기준 (모든 신호 동일 — D 단위 통일, Q2 결정)
+  bar_interval: "D"
+
+  # 신호별 임계치
+  signals:
+    bb_squeeze:
+      enabled: true
+      bb_length: 20                    # BB 계산 기간
+      bb_mult: 2.0                     # BB std 배수
+      width_pct_threshold: 0.5         # BBW < 20일 평균 × 이 값
+      lookback_avg: 20                 # BBW 평균 기간
+
+    volume_compression:
+      enabled: true
+      short_days: 5                    # 단기 평균
+      long_days: 20                    # 장기 평균
+      ratio_threshold: 0.7             # 단기 < 장기 × 이 값
+
+    after_low_consolidation:
+      enabled: true
+      low_lookback_days: 252           # 52주 신저가 기준
+      consolidation_min_days: 7        # 신저가 후 횡보 시작
+      consolidation_max_days: 14       # 횡보 종료
+      range_pct: 0.05                  # 횡보 = 종가 변동 < ±5%
+
+    insider_buying:                    # 미국만 (Finviz)
+      enabled: true
+      lookback_days: 7
+      min_count: 1                     # 매수 거래 최소 횟수
+
+    rrg_improving:                     # 섹터 RRG IMPROVING 진입
+      enabled: true
+      transition_lookback_days: 3      # 최근 3일 내 LAGGING→IMPROVING
+
+  # 후보 채택 임계치
+  signals_required: 2                  # 5개 중 N개 이상 충족 → 후보
+  max_candidates_output: 3             # 최종 출력 종목 수
+  min_candidates_for_alert: 1          # 0개여도 알림 발송 (다른 섹션 가능)
+
+  # cooldown — 같은 종목 중복 알림 방지 (시뮬 시나리오 3 발견)
+  cooldown_days: 5                     # 한번 후보로 나오면 5일간 재출현 금지
+
+# ── GUARD 포지션 모니터 ──
+guard:
+  daily_change_threshold_pct: 2.0      # ±2% 이상 변동 시 뉴스 매칭
+  news_lookback_hours: 24
+  max_news_per_ticker: 3
+
+# ── REGIME 매크로 ──
+regime:
+  vix:
+    low_threshold: 15
+    normal_max: 25
+    high_max: 30
+    extreme_threshold: 40              # 이상 시 좌측거래 우호도 표시 강화
+
+  fx:
+    history_days: 90                   # 90일 분포 percentile 계산
+    percentile_high_pct: 70            # 상위 30% = "비쌈"
+    percentile_low_pct: 30             # 하위 30% = "쌈"
+
+  macro_calendar:
+    lookahead_days: 7
+    fred_series:                       # 발표 후 결과 자동 수집
+      - "FEDFUNDS"                     # 연준 기준금리
+      - "DGS10"                        # 10년물 국채
+      - "DEXKOUS"                      # 원/달러
+      - "CPIAUCSL"                     # CPI
+      - "PCE"                          # PCE
+      - "UNRATE"                       # 실업률
+
+  learning_notes:
+    enabled: true                      # 매번 용어 1~2개 풀이 (Q3-1)
+    max_per_brief: 2
+
+# ── DIGEST 출력 ──
+digest:
+  telegram:
+    max_chars: 3800                    # 텔레그램 4096 한도, 여유 296자
+    fallback_message: "⚠️ 시스템 점검 필요 — 모든 데이터 모듈 실패"
+
+  sheets:
+    enabled: true                      # 저널 BRIEFING 시트에 상세 저장
+    include_rejected_candidates: true  # SCOUT 탈락 후보도 기록 (학습용)
+
+# ── 데이터 캐시 ──
+cache:
+  ticker_master_ttl_days: 7            # 종목 마스터 (시총/섹터)
+  ohlcv_intraday_ttl_minutes: 60       # 장중 OHLCV
+  finviz_screener_ttl_minutes: 30      # Finviz 스크리너 결과
+
+# ── 4개국 유니버스 ──
+universe:
+  enabled_countries:
+    - "US"     # NYSE + NASDAQ
+    - "KR"     # KOSPI + KOSDAQ
+    - "JP"     # TSE
+    - "CN"     # 미국 ADR + 홍콩 일부 (Q2 결정 — ADR 위주)
+
+  # 최대 스캔 종목 수 (Stage 1 거시 필터 통과 후)
+  max_per_country:
+    US: 2000
+    KR: 600
+    JP: 1500
+    CN: 400      # ADR 중심
