@@ -10,8 +10,8 @@ from google.oauth2.service_account import Credentials
 logger = logging.getLogger(__name__)
 
 SPREADSHEET_ID = os.environ.get(
-    "GOOGLE_SHEET_ID",
-    "1AqTovu36EHZL8NcQSr-zPqZGEtQpJ1eeNyMWhstTntU",
+    "GOOGLE_SHEETS_ID",
+    "1JRw_UKcofejBdEmypQ-FN-cMUvDD-pEywCpnH_g3yZo",
 )
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
