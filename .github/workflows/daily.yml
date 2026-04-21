@@ -2,42 +2,68 @@ name: Daily Briefing
 
 on:
   schedule:
-    # KST 07:10 = UTC 22:10 전날
-    # 월~금 KST 실행 = UTC 일~목 (0=일, 4=목)
-    - cron: '10 22 * * 0-4'
+    # KST 07:10 = UTC 22:10 (전날)
+    - cron: '10 22 * * *'
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Briefing mode'
+        required: false
+        default: 'daily'
+        type: choice
+        options:
+          - daily
+          - weekly
+          - monthly
 
 jobs:
-  briefing:
+  brief:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    timeout-minutes: 50
 
-      - name: Set up Python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run briefing
+      - name: Run briefbot v2.0
         env:
+          # OpenAI (LLM)
+          GPT_API_KEY: ${{ secrets.GPT_API_KEY }}
+          GPT_MODEL: ${{ secrets.GPT_MODEL || 'gpt-5.4-mini' }}
+
+          # Telegram
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          GPT_API_KEY: ${{ secrets.GPT_API_KEY }}
-          GPT_MODEL: "gpt-5.4-mini"
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-          # M2 환경변수
-          RS_RATIO_PERIOD: "63"
-          RS_MOM_PERIOD: "10"
-          RS_HISTORY_KEEP_DAYS: "7"
-        run: python main.py
 
-      - name: Commit state changes
+          # Finnhub (GUARD 종목별 뉴스)
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+
+          # FRED (REGIME 매크로 — 선택)
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+
+          # Google Sheets (저널 + 보유 포지션)
+          GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+        run: |
+          MODE="${{ github.event.inputs.mode || 'daily' }}"
+          python main.py "$MODE"
+
+      - name: Commit state.json
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/state.json
-          git diff --cached --quiet || git commit -m "auto: update state.json"
-          git push
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state.json data/cache/ 2>/dev/null || true
+          git diff --staged --quiet || git commit -m "auto: state update $(date -u +%Y-%m-%d)"
+          git push 2>/dev/null || echo "no changes to push"
