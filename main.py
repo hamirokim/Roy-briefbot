@@ -112,8 +112,8 @@ def update_cooldown_from_scout(state: dict) -> None:
 def send_telegram(text: str) -> bool:
     """기존 src.telegram 모듈 활용."""
     try:
-        from src.telegram import send_telegram
-        return send_telegram(text)
+        from src.telegram import send_telegram as _send_tg
+        return _send_tg(text)
     except Exception as e:
         logger.error("텔레그램 발송 실패: %s", e)
         return False
