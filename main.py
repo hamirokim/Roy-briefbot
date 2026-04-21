@@ -1,260 +1,224 @@
 """
-main.py — Roy-브리프봇 오케스트레이션 v3
-실행 순서: M2 → M3 → M5 → M4 → M7 → M6 → M1 → 텔레그램
-신규: 시장 스냅샷 + 직전 데이터 저장 + 주간/월간 모드
+main.py — Roy-briefbot v2.0 메인 엔트리포인트
+
+LangGraph 기반 4 에이전트 워크플로:
+  SCOUT (발굴) → GUARD (모니터) → REGIME (매크로 + 해석) → DIGEST (종합)
+
+기존 M1~M7 직접 호출은 제거. 각 모듈은 에이전트 안에서 흡수됨:
+  - M2 (섹터 RRG) → REGIME 안에서 호출
+  - M4 (트래커) → GUARD 안에서 흡수
+  - M5 (리스크) → REGIME 안에서 흡수
+  - M6 (피드백) → 향후 SCOUT cooldown으로 통합 (현재 미사용)
+  - M7 (상관) → GUARD 안에서 호출
+
+GitHub Actions 스케줄: KST 07:10 (.github/workflows/daily.yml)
 """
 
 import json
 import logging
+import os
+import sys
+import traceback
+from datetime import datetime
 from pathlib import Path
 
-from src.state import load_state, save_state
-from src.telegram import send_telegram
-from src.utils import now_kst, today_kst_str, truncate
-
-from src.modules.m2_rotation import run_m2
-from src.modules.m3_contrarian import run_m3
-from src.modules.m5_risk import run as run_m5
-from src.modules.m4_tracker import run_m4
-from src.modules.m7_correlation import run_m7
-from src.modules.m6_feedback import run_m6, candidates_to_history_entries, deduplicate_entries
-from src.modules.m1_briefing import run_m1
-
+# 로깅 설정 (가장 먼저)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    datefmt="%H:%M:%S",
+    handlers=[logging.StreamHandler(sys.stdout)],
 )
 logger = logging.getLogger("main")
 
-ETF_MAP_PATH = Path(__file__).resolve().parent / "config" / "etf_map.json"
+
+# ═══════════════════════════════════════════════════════════
+# 경로 설정
+# ═══════════════════════════════════════════════════════════
+
+BASE_DIR = Path(__file__).resolve().parent
+STATE_PATH = BASE_DIR / "state.json"
+CONFIG_DIR = BASE_DIR / "config"
+DATA_DIR = BASE_DIR / "data"
+DATA_DIR.mkdir(exist_ok=True)
 
 
-def _load_etf_map() -> dict:
+# ═══════════════════════════════════════════════════════════
+# State 영속화
+# ═══════════════════════════════════════════════════════════
+
+def load_state() -> dict:
+    """state.json 로드 — 없으면 빈 dict."""
+    if not STATE_PATH.exists():
+        return {}
     try:
-        with open(ETF_MAP_PATH, "r", encoding="utf-8") as f:
+        with open(STATE_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
-        logger.error("etf_map.json 로드 실패: %s", e)
+        logger.warning("state.json 로드 실패: %s — 빈 state로 시작", e)
         return {}
 
 
-def _sanitize_state(state: dict) -> dict:
-    if state.get("m2_history") is None:
-        state["m2_history"] = {}
-    if state.get("m6_history") is None:
-        state["m6_history"] = []
-    if state.get("prev_day") is None:
-        state["prev_day"] = {}
-    return state
+def save_state(state: dict) -> None:
+    """state.json 저장."""
+    try:
+        # LangGraph state는 너무 커서 저장 시 필터
+        persistable = {
+            "last_run_date": state.get("date"),
+            "last_run_at": datetime.now().isoformat(),
+            "m2_history": state.get("m2_history", {}),
+            "scout_cooldown": state.get("scout_cooldown", {}),
+            "prev_day": {
+                "candidates": state.get("scout_out", {}).get("candidates", []),
+                "alerts_count": len(state.get("guard_out", {}).get("alerts", [])),
+                "vix": state.get("regime_out", {}).get("vix"),
+            },
+        }
+        with open(STATE_PATH, "w", encoding="utf-8") as f:
+            json.dump(persistable, f, ensure_ascii=False, indent=2)
+        logger.info("state.json 저장 완료")
+    except Exception as e:
+        logger.error("state.json 저장 실패: %s", e)
 
 
-def _build_prev_summary(state: dict) -> str:
-    """직전 브리핑 데이터 → GPT context용 요약 텍스트."""
-    prev = state.get("prev_day", {})
-    if not prev or not prev.get("date"):
-        return ""
-
-    lines = [f"[직전 브리핑 데이터 — {prev['date']}]"]
-
-    snap = prev.get("snapshot", {})
-    for name, info in snap.items():
-        if isinstance(info, dict):
-            lines.append(f"- {name}: {info.get('close', '?')} (일간 {info.get('daily_pct', '?')}%)")
-
-    vix = prev.get("vix")
-    regime = prev.get("vix_regime", "")
-    if vix:
-        lines.append(f"- VIX: {vix} ({regime})")
-
-    pos = prev.get("positions", "")
-    if pos:
-        lines.append(f"- 포지션: {pos}")
-
-    return "\n".join(lines)
+def update_m2_history_from_regime(state: dict) -> None:
+    """REGIME 출력에서 RRG 스냅샷 추출 → m2_history 누적."""
+    try:
+        rrg = state.get("regime_out", {}).get("rrg", {})
+        snapshot = rrg.get("snapshot", {})
+        if not snapshot:
+            return
+        m2_history = state.get("m2_history", {})
+        today = state.get("date") or datetime.now().strftime("%Y-%m-%d")
+        m2_history[today] = snapshot
+        # 30일치만 유지 (메모리 절약)
+        sorted_dates = sorted(m2_history.keys(), reverse=True)
+        m2_history = {d: m2_history[d] for d in sorted_dates[:30]}
+        state["m2_history"] = m2_history
+    except Exception as e:
+        logger.warning("m2_history 업데이트 실패: %s", e)
 
 
-def _detect_briefing_mode() -> str:
-    """요일/날짜 기반 브리핑 모드 결정."""
-    now = now_kst()
-    if now.day == 1:
-        return "monthly"
-    if now.weekday() == 0:  # 월요일
-        return "weekly"
-    return "daily"
+def update_cooldown_from_scout(state: dict) -> None:
+    """SCOUT new_cooldown → state에 저장."""
+    new_cooldown = state.get("scout_out", {}).get("new_cooldown")
+    if new_cooldown is not None:
+        state["scout_cooldown"] = new_cooldown
 
 
-def main():
-    now = now_kst()
+# ═══════════════════════════════════════════════════════════
+# 텔레그램 발송
+# ═══════════════════════════════════════════════════════════
+
+def send_telegram(text: str) -> bool:
+    """기존 src.telegram 모듈 활용."""
+    try:
+        from src.telegram import send_message
+        return send_message(text)
+    except Exception as e:
+        logger.error("텔레그램 발송 실패: %s", e)
+        return False
+
+
+# ═══════════════════════════════════════════════════════════
+# 저널 BRIEFING 시트 저장
+# ═══════════════════════════════════════════════════════════
+
+def save_to_sheets(detailed_text: str, mode: str = "daily") -> None:
+    """기존 sheets.save_briefing 활용."""
+    try:
+        from src.collectors.sheets import save_briefing
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        save_briefing(date_str, detailed_text, mode)
+        logger.info("저널 BRIEFING 저장 완료")
+    except Exception as e:
+        logger.warning("저널 BRIEFING 저장 실패 (텔레그램은 정상): %s", e)
+
+
+# ═══════════════════════════════════════════════════════════
+# 메인 실행
+# ═══════════════════════════════════════════════════════════
+
+def main(briefing_mode: str = "daily") -> int:
+    """Roy-briefbot v2.0 메인 실행.
+
+    Args:
+        briefing_mode: "daily" | "weekly" | "monthly"
+
+    Returns:
+        0 = 성공, 1 = 실패
+    """
     logger.info("=" * 60)
-    logger.info("Roy-브리프봇 시작 — %s", now.strftime("%Y-%m-%d %H:%M KST"))
+    logger.info("Roy-briefbot v2.0 시작 (mode=%s)", briefing_mode)
     logger.info("=" * 60)
 
+    # 1. State 로드
     state = load_state()
-    state = _sanitize_state(state)
-    etf_map = _load_etf_map()
+    state["date"] = datetime.now().strftime("%Y-%m-%d")
+    state["briefing_mode"] = briefing_mode
+    state["errors"] = []
 
-    briefing_mode = _detect_briefing_mode()
-    logger.info("브리핑 모드: %s", briefing_mode)
-
-    prev_summary = _build_prev_summary(state)
-    if prev_summary:
-        logger.info("직전 데이터 로드: %d자", len(prev_summary))
-
-    # ─── M2 ───
-    logger.info("─── M2 섹터 로테이션 ───")
-    m2_context = ""
-    m2_snapshot = {}
+    # 2. LangGraph 빌드 + 실행
     try:
-        m2_result = run_m2(etf_map, state)
-        m2_context = m2_result.get("context_text", "")
-        m2_snapshot = m2_result.get("today_snapshot", {})
-        logger.info("M2 완료: %d자, %d ETF", len(m2_context), len(m2_snapshot))
+        from src.graph import build_graph
+        app = build_graph()
+        logger.info("LangGraph compile OK")
     except Exception as e:
-        logger.error("M2 실패: %s", e)
+        logger.error("LangGraph 빌드 실패: %s\n%s", e, traceback.format_exc())
+        send_telegram(f"⚠️ Roy-briefbot 시작 실패: {e}")
+        return 1
 
-    if m2_snapshot:
-        from src.state import prune_m2_history
-        m2h = state.get("m2_history", {}) or {}
-        m2h[today_kst_str()] = m2_snapshot
-        pruned = prune_m2_history(m2h)
-        state["m2_history"] = pruned if pruned is not None else m2h
-
-    # ─── M3 ───
-    logger.info("─── M3 역발상 필터 ───")
-    m3_context = ""
-    m3_candidates = []
+    # 3. 워크플로 실행
     try:
-        m3_result = run_m3(state)
-        m3_context = m3_result.get("context_text", "")
-        m3_candidates = m3_result.get("candidates", [])
-        logger.info("M3 완료: %d자, %d개 후보", len(m3_context), len(m3_candidates))
+        result = app.invoke(state)
+        logger.info("LangGraph invoke 완료")
     except Exception as e:
-        logger.error("M3 실패: %s", e)
+        logger.error("LangGraph invoke 실패: %s\n%s", e, traceback.format_exc())
+        send_telegram(f"⚠️ Roy-briefbot 실행 실패: {e}")
+        return 1
 
-    # M3 → M6 기록
-    if m3_candidates:
-        try:
-            new_entries = candidates_to_history_entries(m3_candidates)
-            m6h = state.get("m6_history", []) or []
-            added = deduplicate_entries(m6h, new_entries)
-            if added:
-                m6h.extend(added)
-                state["m6_history"] = m6h
-                logger.info("M6 기록: %d개 추가 (총 %d개)", len(added), len(m6h))
-        except Exception as e:
-            logger.error("M6 기록 실패: %s", e)
+    # 4. State 영속화 (다음 실행에서 사용)
+    update_m2_history_from_regime(result)
+    update_cooldown_from_scout(result)
+    save_state(result)
 
-    # ─── M5 (시장 스냅샷 + VIX + 캘린더) ───
-    logger.info("─── M5 리스크 대시보드 ───")
-    m5_context = ""
-    m5_snapshot = []
-    m5_vix = None
-    m5_vix_regime = None
-    try:
-        m5_result = run_m5(state)
-        m5_context = m5_result.get("context_text", "")
-        m5_snapshot = m5_result.get("snapshot", [])
-        m5_vix = m5_result.get("vix")
-        m5_vix_regime = m5_result.get("vix_regime")
-        logger.info("M5 완료: %d자, %d자산, VIX=%s", len(m5_context), len(m5_snapshot), m5_vix)
-    except Exception as e:
-        logger.error("M5 실패: %s", e)
+    # 5. 출력 발송
+    digest_out = result.get("digest_out", {})
+    telegram_text = digest_out.get("telegram_text", "")
+    sheets_text = digest_out.get("sheets_text", "")
 
-    # ─── M4 ───
-    logger.info("─── M4 포지션 트래커 ───")
-    m4_context = ""
-    try:
-        m4_result = run_m4()
-        m4_context = m4_result.get("context_text", "")
-        pos_count = m4_result.get("position_count", 0)
-        logger.info("M4 완료: %d개 포지션, %d자", pos_count, len(m4_context))
-    except Exception as e:
-        logger.error("M4 실패: %s", e)
+    if not telegram_text:
+        logger.warning("DIGEST 출력 없음 — fallback 사용")
+        telegram_text = "⚠️ Roy-briefbot — DIGEST 출력 없음. 시스템 점검 필요."
 
-    # ─── ANALYTICS (지표 피드백 루프) ───
-    analytics_context = ""
-    if briefing_mode in ("weekly", "monthly"):
-        logger.info("─── ANALYTICS 지표 성과 ───")
-        try:
-            from src.collectors.sheets import read_analytics
-            analytics_context = read_analytics(min_closed=10)
-            if analytics_context:
-                logger.info("ANALYTICS 로드: %d자", len(analytics_context))
-            else:
-                logger.info("ANALYTICS 스킵 (CLOSED < 10건 또는 데이터 없음)")
-        except Exception as e:
-            logger.warning("ANALYTICS 실패: %s", e)
-
-    # ─── M7 ───
-    logger.info("─── M7 상관관계 경고 ───")
-    m7_context = ""
-    try:
-        m7_result = run_m7()
-        m7_context = m7_result.get("context_text", "")
-        logger.info("M7 완료: %d개 보유, %d개 경고쌍", m7_result.get("held_count", 0), m7_result.get("alert_count", 0))
-    except Exception as e:
-        logger.error("M7 실패: %s", e)
-
-    # ─── M6 ───
-    logger.info("─── M6 피드백 루프 ───")
-    m6_context = ""
-    try:
-        m6_result = run_m6(state)
-        m6_context = m6_result.get("context_text", "")
-        logger.info("M6 완료: %d개 추적, %d자", m6_result.get("track_count", 0), len(m6_context))
-    except Exception as e:
-        logger.error("M6 실패: %s", e)
-
-    # ─── M1 AI 브리핑 ───
-    logger.info("─── M1 AI 브리핑 ───")
-    try:
-        m1_result = run_m1(
-            m2_context=m2_context,
-            m3_context=m3_context,
-            m5_context=m5_context,
-            m4_context=m4_context,
-            m7_context=m7_context,
-            m6_context=m6_context,
-            prev_summary=prev_summary,
-            briefing_mode=briefing_mode,
-            analytics_context=analytics_context,
-        )
-        briefing = m1_result.get("briefing", "")
-        used_llm = m1_result.get("used_llm", False)
-        news_count = m1_result.get("news_count", 0)
-        logger.info("M1 완료: LLM=%s, 뉴스=%d건, %d자", used_llm, news_count, len(briefing))
-    except Exception as e:
-        logger.error("M1 실패: %s", e)
-        briefing = ""
-
-    # ─── 텔레그램 ───
-    if briefing:
-        ok = send_telegram(truncate(briefing, 4000))
-        logger.info("텔레그램 %s", "성공" if ok else "실패")
+    # 텔레그램
+    sent = send_telegram(telegram_text)
+    if sent:
+        logger.info("텔레그램 발송 OK (%d자)", len(telegram_text))
     else:
-        logger.error("브리핑 없음 — 전송 스킵")
+        logger.error("텔레그램 발송 실패")
 
-    # ─── 직전 데이터 저장 (다음 브리핑용) ───
-    snap_dict = {}
-    for s in m5_snapshot:
-        snap_dict[s["name"]] = {"close": s["close"], "daily_pct": s["daily_pct"]}
+    # 저널 BRIEFING 시트
+    if sheets_text:
+        save_to_sheets(sheets_text, briefing_mode)
 
-    state["prev_day"] = {
-        "date": now.strftime("%Y-%m-%d"),
-        "snapshot": snap_dict,
-        "vix": m5_vix,
-        "vix_regime": m5_vix_regime,
-        "positions": m4_context[:200] if m4_context else "",  # 압축 저장
-    }
-
-    state["last_run_kst"] = now.strftime("%Y-%m-%d %H:%M:%S")
-    save_state(state)
+    # 6. 결과 로깅
+    errors = result.get("errors", [])
+    if errors:
+        logger.warning("실행 중 에러 %d건:", len(errors))
+        for e in errors:
+            logger.warning("  - %s", e)
 
     logger.info("=" * 60)
-    logger.info("Roy-브리프봇 완료")
+    logger.info("Roy-briefbot v2.0 종료")
     logger.info("=" * 60)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    # CLI 인자 처리 (briefing_mode)
+    mode = "daily"
+    if len(sys.argv) > 1 and sys.argv[1] in ("daily", "weekly", "monthly"):
+        mode = sys.argv[1]
+
+    exit_code = main(briefing_mode=mode)
+    sys.exit(exit_code)
