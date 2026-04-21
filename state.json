@@ -1,0 +1,76 @@
+{
+  "last_run_date": "2026-04-21",
+  "last_run_at": "2026-04-21T06:30:44.260724",
+  "m2_history": {},
+  "scout_cooldown": {
+    "CASY": "2026-04-21",
+    "IP": "2026-04-21",
+    "COO": "2026-04-21"
+  },
+  "prev_day": {
+    "candidates": [
+      {
+        "ticker": "CASY",
+        "name": "Casey's General Stores Inc",
+        "country": "US",
+        "sector": "Consumer Cyclical",
+        "market_cap": 28400000000.0,
+        "score": 2,
+        "signals": {
+          "insider_buying": {
+            "insider_trans_pct": 0.2,
+            "lookback_days": 7
+          },
+          "volume_compression": {
+            "short_avg": 354080,
+            "long_avg": 878005,
+            "ratio": 0.403,
+            "threshold": 0.7
+          }
+        }
+      },
+      {
+        "ticker": "IP",
+        "name": "International Paper Co",
+        "country": "US",
+        "sector": "Consumer Cyclical",
+        "market_cap": 19530000000.0,
+        "score": 2,
+        "signals": {
+          "insider_buying": {
+            "insider_trans_pct": 1.18,
+            "lookback_days": 7
+          },
+          "bb_squeeze": {
+            "current_width": 0.0874,
+            "avg_width": 0.1923,
+            "ratio": 0.454,
+            "threshold": 0.5
+          }
+        }
+      },
+      {
+        "ticker": "COO",
+        "name": "Cooper Companies Inc",
+        "country": "US",
+        "sector": "Healthcare",
+        "market_cap": 13550000000.0,
+        "score": 2,
+        "signals": {
+          "insider_buying": {
+            "insider_trans_pct": 1.24,
+            "lookback_days": 7
+          },
+          "bb_squeeze": {
+            "current_width": 0.0495,
+            "avg_width": 0.1348,
+            "ratio": 0.367,
+            "threshold": 0.5
+          }
+        }
+      }
+    ],
+    "alerts_count": 0,
+    "vix": 18.87
+  }
+}
