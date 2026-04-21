@@ -1,11 +1,91 @@
 {
   "last_run_date": "2026-04-21",
-  "last_run_at": "2026-04-21T09:41:43.527826",
-  "m2_history": {},
+  "last_run_at": "2026-04-21T10:19:58.877143",
+  "m2_history": {
+    "2026-04-21": {
+      "XLK": {
+        "quadrant": "LEADING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 103.35,
+        "momentum": 106.16
+      },
+      "XLV": {
+        "quadrant": "LAGGING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 95.65,
+        "momentum": 94.26
+      },
+      "XLF": {
+        "quadrant": "LAGGING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 98.93,
+        "momentum": 96.57
+      },
+      "XLY": {
+        "quadrant": "LEADING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 101.46,
+        "momentum": 101.72
+      },
+      "XLP": {
+        "quadrant": "LAGGING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 96.26,
+        "momentum": 93.6
+      },
+      "XLE": {
+        "quadrant": "LAGGING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 91.44,
+        "momentum": 84.58
+      },
+      "XLI": {
+        "quadrant": "LAGGING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 98.58,
+        "momentum": 99.21
+      },
+      "XLB": {
+        "quadrant": "LAGGING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 97.63,
+        "momentum": 93.47
+      },
+      "XLC": {
+        "quadrant": "LAGGING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 99.34,
+        "momentum": 99.67
+      },
+      "XLU": {
+        "quadrant": "LAGGING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 94.59,
+        "momentum": 91.22
+      },
+      "XLRE": {
+        "quadrant": "WEAKENING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 100.28,
+        "momentum": 99.17
+      }
+    }
+  },
   "scout_cooldown": {},
   "prev_day": {
     "candidates": [],
     "alerts_count": 1,
-    "vix": 19.09
+    "vix": 18.97
   }
 }
