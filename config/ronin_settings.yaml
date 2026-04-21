@@ -45,7 +45,7 @@ scout:
       transition_lookback_days: 3      # 최근 3일 내 LAGGING→IMPROVING
 
   # 후보 채택 임계치
-  signals_required: 2                  # 5개 중 N개 이상 충족 → 후보
+  signals_required: 3                  # 5개 중 N개 이상 충족 → 후보
   max_candidates_output: 3             # 최종 출력 종목 수
   min_candidates_for_alert: 1          # 0개여도 알림 발송 (다른 섹션 가능)
 
