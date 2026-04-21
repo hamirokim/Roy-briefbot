@@ -1,16 +1,23 @@
 """
-M7 상관관계 경고 — 보유 종목 간 집중 리스크 감지
-=================================================
+M7 상관관계 경고 — 보유 종목 간 집중 리스크 감지 (v2.9 — Sheets 연동 패치)
+==========================================================================
 역할: OPEN/ADD/EXIT_WATCH 종목 간 60영업일 피어슨 상관계수 계산.
-      0.85 이상이면 "사실상 동일 베팅" 경고 → M1 GPT 컨텍스트에 주입.
+0.85 이상이면 "사실상 동일 베팅" 경고 → M1 GPT 컨텍스트에 주입.
+
 원칙: 팩트만 전달. "위험!" 톤이 아니라 "인지해둬" 톤.
-      경고 쌍 0개면 빈 문자열 반환 → M1에서 자동 생략 (희소 원칙).
+경고 쌍 0개면 빈 문자열 반환 → M1에서 자동 생략 (희소 원칙).
+
+v2.9 변경 (D27):
+  - portfolio.json 단독 → Sheets 우선 + portfolio.json fallback (M4 패턴 통합)
+  - _load_held_tickers()만 재작성, 나머지 로직은 원본 유지
+
 위치: src/modules/m7_correlation.py
 """
 
 import json
 import os
 import time
+import logging
 from itertools import combinations
 from pathlib import Path
 
@@ -19,39 +26,60 @@ import pandas as pd
 
 from src.collectors.stooq import fetch_daily_closes
 
-# ── 환경변수 ──────────────────────────────────────────────
+logger = logging.getLogger(__name__)
+
+# ── 환경변수 ──
 CORR_THRESHOLD = float(os.getenv("M7_CORR_THRESHOLD", "0.85"))
 CORR_LOOKBACK = int(os.getenv("M7_CORR_LOOKBACK", "90"))  # 캘린더일 (Stooq 요청용)
 CORR_MIN_DAYS = 40  # 최소 영업일 데이터. 이 미만이면 상관계수 신뢰 불가.
 
-# 보유 종목으로 간주할 상태 (미보유 상태 WATCH/ARMED 제외)
 _HELD_STATES = {"OPEN", "ADD", "EXIT_WATCH"}
-
-# Stooq 요청 간 딜레이 (초)
 _STOOQ_DELAY = 0.3
 
+PORTFOLIO_PATH = Path(__file__).resolve().parents[2] / "config" / "portfolio.json"
+
 
 # ═══════════════════════════════════════════════════════════
-# portfolio.json 로드
+# v2.9 신규: Sheets 우선 로드 (M4 패턴)
 # ═══════════════════════════════════════════════════════════
-def _portfolio_path() -> Path:
-    return Path(__file__).resolve().parents[2] / "config" / "portfolio.json"
 
+def _load_from_sheets() -> list[str] | None:
+    """Sheets에서 OPEN/ADD/EXIT_WATCH 종목 티커 로드. 실패 시 None.
 
-def _load_held_tickers() -> list[str]:
-    """portfolio.json에서 OPEN/ADD/EXIT_WATCH 종목 티커 추출."""
-    path = _portfolio_path()
-    if not path.exists():
-        print("[M7] portfolio.json 없음 — 스킵")
-        return []
-
+    Sheets에서 받은 티커는 'NVO' 같은 순수 형식 → '.us' 접미사 추가.
+    """
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        from src.collectors.sheets import read_positions
+        positions = read_positions()
+        if positions is None:
+            return None
+        tickers = []
+        for p in positions:
+            status = (p.get("status") or "").upper()
+            ticker = (p.get("ticker") or "").strip()
+            if status in _HELD_STATES and ticker:
+                # Stooq 형식으로 변환
+                if not ticker.lower().endswith(".us"):
+                    ticker = f"{ticker.lower()}.us"
+                tickers.append(ticker)
+        logger.info("[M7] Sheets에서 %d개 보유 종목 로드", len(tickers))
+        return tickers
+    except Exception as e:
+        logger.warning("[M7] Sheets 로드 실패 → portfolio.json fallback: %s", e)
+        return None
+
+
+def _load_from_portfolio_json() -> list[str]:
+    """portfolio.json fallback (원본 로직 유지)."""
+    if not PORTFOLIO_PATH.exists():
+        logger.info("[M7] portfolio.json 없음 — 빈 리스트")
+        return []
+    try:
+        with open(PORTFOLIO_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
     except Exception as e:
-        print(f"[M7] portfolio.json 로드 실패: {e}")
+        logger.error("[M7] portfolio.json 로드 실패: %s", e)
         return []
-
     positions = data.get("positions", [])
     tickers = []
     for pos in positions:
@@ -59,37 +87,39 @@ def _load_held_tickers() -> list[str]:
         ticker = pos.get("ticker", "").strip()
         if status in _HELD_STATES and ticker:
             tickers.append(ticker)
-
     return tickers
 
 
+def _load_held_tickers() -> list[str]:
+    """Sheets 우선 → portfolio.json fallback (v2.9 패치)."""
+    sheets_tickers = _load_from_sheets()
+    if sheets_tickers is not None:
+        return sheets_tickers
+    return _load_from_portfolio_json()
+
+
 # ═══════════════════════════════════════════════════════════
-# fetch_daily_closes 반환값 → 숫자 Series로 정규화
+# fetch_daily_closes 반환값 → 숫자 Series로 정규화 (원본 유지)
 # ═══════════════════════════════════════════════════════════
+
 def _normalize_closes(raw) -> pd.Series | None:
-    """fetch_daily_closes() 반환값을 숫자 Series로 변환.
-    DataFrame이면 Close 열 추출, Series면 그대로 사용.
-    어떤 형태든 최종적으로 float Series를 반환.
-    """
+    """fetch_daily_closes() 반환값을 숫자 Series로 변환."""
     if raw is None:
         return None
 
     # DataFrame인 경우 → Close 열 추출
     if isinstance(raw, pd.DataFrame):
-        # Close 열 찾기 (대소문자 무관)
         close_col = None
         for col in raw.columns:
             if col.lower() == "close":
                 close_col = col
                 break
         if close_col is None:
-            # Close 열 없으면 마지막 숫자 열 사용
             numeric_cols = raw.select_dtypes(include=[np.number]).columns
             if len(numeric_cols) == 0:
-                print("[M7]   DataFrame에 숫자 열 없음")
+                logger.debug("[M7] DataFrame에 숫자 열 없음")
                 return None
             close_col = numeric_cols[-1]
-            print(f"[M7]   Close 열 없음 → '{close_col}' 열 사용")
 
         series = raw[close_col].copy()
 
@@ -104,96 +134,82 @@ def _normalize_closes(raw) -> pd.Series | None:
 
     elif isinstance(raw, pd.Series):
         series = raw.copy()
-
     else:
-        # 그 외 (list, ndarray 등)
         try:
             series = pd.Series(raw)
         except Exception:
             return None
 
-    # float 강제 변환 — 숫자 아닌 값 제거
-    series = series.apply(lambda x: float(x) if isinstance(x, (int, float, np.integer, np.floating)) else np.nan)
+    # float 강제 변환
+    series = series.apply(
+        lambda x: float(x) if isinstance(x, (int, float, np.integer, np.floating)) else np.nan
+    )
     series = series.dropna()
-
     return series if len(series) > 0 else None
 
 
 # ═══════════════════════════════════════════════════════════
-# 종가 시계열 수집
+# 종가 시계열 수집 (원본 유지)
 # ═══════════════════════════════════════════════════════════
+
 def _fetch_close_series(tickers: list[str]) -> dict[str, pd.Series]:
     """각 티커의 일봉 종가 시계열을 수집."""
     result = {}
     for ticker in tickers:
         try:
             raw = fetch_daily_closes(ticker, lookback=CORR_LOOKBACK)
-            print(f"[M7] {ticker}: 반환 타입={type(raw).__name__}", end="")
-            if isinstance(raw, (pd.DataFrame, pd.Series)):
-                print(f", shape={raw.shape}", end="")
-            print()
-
             closes = _normalize_closes(raw)
-
             if closes is not None and len(closes) >= CORR_MIN_DAYS:
                 result[ticker] = closes
-                print(f"[M7] {ticker}: {len(closes)}일 종가 수집 OK")
+                logger.info("[M7] %s: %d일 종가 수집 OK", ticker, len(closes))
             else:
                 n = len(closes) if closes is not None else 0
-                print(f"[M7] {ticker}: 데이터 부족 ({n}일 < {CORR_MIN_DAYS}일 최소)")
+                logger.warning("[M7] %s: 데이터 부족 (%d일 < %d일 최소)", ticker, n, CORR_MIN_DAYS)
         except Exception as e:
-            print(f"[M7] {ticker} 수집 실패: {e}")
+            logger.warning("[M7] %s 수집 실패: %s", ticker, e)
         time.sleep(_STOOQ_DELAY)
-
     return result
 
 
 # ═══════════════════════════════════════════════════════════
-# 상관계수 계산
+# 상관계수 계산 (원본 유지)
 # ═══════════════════════════════════════════════════════════
-def _compute_correlations(
-    series_map: dict[str, pd.Series],
-) -> list[dict]:
+
+def _compute_correlations(series_map: dict[str, pd.Series]) -> list[dict]:
     """모든 종목 쌍의 피어슨 상관계수 계산. threshold 이상만 반환."""
     tickers = list(series_map.keys())
     alerts = []
 
     for t1, t2 in combinations(tickers, 2):
         try:
-            # DataFrame으로 자동 정렬
             df = pd.DataFrame({
                 "a": series_map[t1],
                 "b": series_map[t2],
             }).dropna()
-
             n_common = len(df)
             if n_common < CORR_MIN_DAYS:
-                print(f"[M7] {t1}-{t2}: 공통 날짜 부족 ({n_common}일 < {CORR_MIN_DAYS}일)")
+                logger.debug("[M7] %s-%s: 공통 날짜 부족 (%d일 < %d일)", t1, t2, n_common, CORR_MIN_DAYS)
                 continue
 
-            # numpy array로 수익률 계산
             v1 = df["a"].values.astype(float)
             v2 = df["b"].values.astype(float)
-
             r1 = (v1[1:] - v1[:-1]) / v1[:-1]
             r2 = (v2[1:] - v2[:-1]) / v2[:-1]
 
-            # NaN/Inf 제거
             valid = np.isfinite(r1) & np.isfinite(r2)
             r1 = r1[valid]
             r2 = r2[valid]
 
             if len(r1) < CORR_MIN_DAYS - 1:
-                print(f"[M7] {t1}-{t2}: 유효 수익률 부족 ({len(r1)}일)")
+                logger.debug("[M7] %s-%s: 유효 수익률 부족 (%d일)", t1, t2, len(r1))
                 continue
 
             corr = float(np.corrcoef(r1, r2)[0, 1])
-
             if np.isnan(corr):
-                print(f"[M7] {t1}-{t2}: 상관계수 NaN — 스킵")
+                logger.debug("[M7] %s-%s: 상관계수 NaN", t1, t2)
                 continue
 
-            print(f"[M7] {t1}-{t2}: 상관계수 {corr:.3f} (공통 {n_common}일)")
+            logger.info("[M7] %s-%s: 상관계수 %.3f (공통 %d일)", t1, t2, corr, n_common)
 
             if corr >= CORR_THRESHOLD:
                 alerts.append({
@@ -203,7 +219,7 @@ def _compute_correlations(
                 })
 
         except Exception as e:
-            print(f"[M7] {t1}-{t2}: 계산 실패 — {e}")
+            logger.warning("[M7] %s-%s 계산 실패: %s", t1, t2, e)
             continue
 
     alerts.sort(key=lambda x: x["corr"], reverse=True)
@@ -211,15 +227,13 @@ def _compute_correlations(
 
 
 # ═══════════════════════════════════════════════════════════
-# 티커 → 표시명 변환
+# 표시명 변환 + context 생성 (원본 유지)
 # ═══════════════════════════════════════════════════════════
+
 def _display_ticker(ticker: str) -> str:
     return ticker.replace(".us", "").upper()
 
 
-# ═══════════════════════════════════════════════════════════
-# context_text 생성
-# ═══════════════════════════════════════════════════════════
 def _build_context(alerts: list[dict]) -> str:
     if not alerts:
         return ""
@@ -247,39 +261,44 @@ def _build_context(alerts: list[dict]) -> str:
 
 
 # ═══════════════════════════════════════════════════════════
-# 메인 실행
+# 메인 실행 (원본 유지)
 # ═══════════════════════════════════════════════════════════
+
 def run_m7() -> dict:
-    print("=" * 50)
-    print("[M7] 상관관계 경고 시작")
+    """M7 상관관계 경고 실행.
+
+    반환: {"context_text": str, "alert_count": int, "held_count": int}
+    """
+    logger.info("=" * 50)
+    logger.info("[M7] 상관관계 경고 시작")
 
     tickers = _load_held_tickers()
     held_count = len(tickers)
-    print(f"[M7] 보유 종목: {held_count}개 — {tickers}")
+    logger.info("[M7] 보유 종목: %d개 — %s", held_count, tickers)
 
     if held_count < 2:
-        print("[M7] 보유 종목 2개 미만 — 상관관계 계산 불필요. 스킵.")
+        logger.info("[M7] 보유 종목 2개 미만 — 상관관계 계산 불필요. 스킵.")
         return {"context_text": "", "alert_count": 0, "held_count": held_count}
 
     series_map = _fetch_close_series(tickers)
     valid_count = len(series_map)
-    print(f"[M7] 유효 데이터: {valid_count}/{held_count}개 종목")
+    logger.info("[M7] 유효 데이터: %d/%d개 종목", valid_count, held_count)
 
     if valid_count < 2:
-        print("[M7] 유효 데이터 2개 미만 — 상관관계 계산 불가.")
+        logger.info("[M7] 유효 데이터 2개 미만 — 상관관계 계산 불가.")
         return {"context_text": "", "alert_count": 0, "held_count": held_count}
 
     alerts = _compute_correlations(series_map)
-    print(f"[M7] 경고 쌍: {len(alerts)}개 (threshold={CORR_THRESHOLD})")
+    logger.info("[M7] 경고 쌍: %d개 (threshold=%.2f)", len(alerts), CORR_THRESHOLD)
 
     context = _build_context(alerts)
     if context:
-        print(f"[M7] context 생성: {len(context)}자")
+        logger.info("[M7] context 생성: %d자", len(context))
     else:
-        print("[M7] 경고 쌍 없음 — context 빈 문자열 (희소 원칙)")
+        logger.info("[M7] 경고 쌍 없음 — context 빈 문자열 (희소 원칙)")
 
-    print("[M7] 상관관계 경고 완료")
-    print("=" * 50)
+    logger.info("[M7] 상관관계 경고 완료")
+    logger.info("=" * 50)
 
     return {
         "context_text": context,
