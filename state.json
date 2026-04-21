@@ -1,6 +1,6 @@
 {
   "last_run_date": "2026-04-21",
-  "last_run_at": "2026-04-21T10:19:58.877143",
+  "last_run_at": "2026-04-21T23:20:05.120097",
   "m2_history": {
     "2026-04-21": {
       "XLK": {
@@ -86,6 +86,6 @@
   "prev_day": {
     "candidates": [],
     "alerts_count": 1,
-    "vix": 18.97
+    "vix": 19.5
   }
 }
