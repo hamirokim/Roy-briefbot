@@ -54,7 +54,7 @@ jobs:
 
           # Google Sheets (저널 + 보유 포지션)
           GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
-          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         run: |
           MODE="${{ github.event.inputs.mode || 'daily' }}"
           python main.py "$MODE"
