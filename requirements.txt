@@ -6,7 +6,7 @@ feedparser
 gspread
 google-auth
 pyyaml
-   pyarrow
-   pykrx
-   yfinance
-   langgraph
+pyarrow
+pykrx
+yfinance
+langgraph
