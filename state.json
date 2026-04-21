@@ -1,82 +1,11 @@
 {
   "last_run_date": "2026-04-21",
-  "last_run_at": "2026-04-21T08:50:51.039117",
+  "last_run_at": "2026-04-21T09:41:43.527826",
   "m2_history": {},
-  "scout_cooldown": {
-    "CASY": "2026-04-21",
-    "IP": "2026-04-21",
-    "COO": "2026-04-21",
-    "CLX": "2026-04-21",
-    "SJM": "2026-04-21",
-    "CELH": "2026-04-21",
-    "AWI": "2026-04-21",
-    "BLCO": "2026-04-21",
-    "RLI": "2026-04-21"
-  },
+  "scout_cooldown": {},
   "prev_day": {
-    "candidates": [
-      {
-        "ticker": "AWI",
-        "name": "Armstrong World Industries Inc",
-        "country": "US",
-        "sector": "Industrials",
-        "market_cap": 7740000000.0,
-        "score": 2,
-        "signals": {
-          "insider_buying": {
-            "insider_trans_pct": 0.11,
-            "lookback_days": 7
-          },
-          "volume_compression": {
-            "short_avg": 264900,
-            "long_avg": 394130,
-            "ratio": 0.672,
-            "threshold": 0.7
-          }
-        }
-      },
-      {
-        "ticker": "BLCO",
-        "name": "Bausch + Lomb Corp",
-        "country": "US",
-        "sector": "Healthcare",
-        "market_cap": 5940000000.0,
-        "score": 2,
-        "signals": {
-          "insider_buying": {
-            "insider_trans_pct": 0.02,
-            "lookback_days": 7
-          },
-          "volume_compression": {
-            "short_avg": 260580,
-            "long_avg": 374375,
-            "ratio": 0.696,
-            "threshold": 0.7
-          }
-        }
-      },
-      {
-        "ticker": "RLI",
-        "name": "RLI Corp",
-        "country": "US",
-        "sector": "Financial",
-        "market_cap": 5320000000.0,
-        "score": 2,
-        "signals": {
-          "insider_buying": {
-            "insider_trans_pct": 0.08,
-            "lookback_days": 7
-          },
-          "bb_squeeze": {
-            "current_width": 0.0512,
-            "avg_width": 0.1067,
-            "ratio": 0.48,
-            "threshold": 0.5
-          }
-        }
-      }
-    ],
-    "alerts_count": 0,
+    "candidates": [],
+    "alerts_count": 1,
     "vix": 19.09
   }
 }
