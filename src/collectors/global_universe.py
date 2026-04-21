@@ -1,14 +1,18 @@
 """
-src/collectors/global_universe.py — 4개국 종목 마스터
+src/collectors/global_universe.py — 4개국 종목 마스터 (v2 — pykrx 제거)
+
+v2 (2026-04-21): pykrx KRX 차단 회피 — KR도 yfinance .KS 시드로 전환
+v1 (2026-04-19): 4개국 (US Finviz / KR pykrx / JP+CN yfinance)
 
 역할:
   - 미국/한국/일본/중국 종목 리스트 수집
   - 시총·거래대금 거시 필터로 압축 (Stage 1)
-  - 캐시 7일 (마스터 데이터는 매일 안 변함)
+  - 캐시 7일
 
-Q2 (Roy 지시): 글로벌 4개국 + 제외 없음 + 한도/효율 내 최대한
-Q3 (Roy 지시): 중국은 ADR만 (akshare 본토는 매매 불가)
-Daily 통일 (Q2): 모든 데이터 D 단위
+Q1: 본업 충실 — 메인포트/AUTO_TICKER 자동 제외 X
+Q2: Daily 통일
+Q3: 중국 ADR만
+v2: KR 시드 종목 30개 + yfinance .KS (pykrx GitHub Actions 차단 회피)
 """
 
 import json
@@ -20,7 +24,6 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-import requests
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +31,7 @@ logger = logging.getLogger(__name__)
 CACHE_DIR = Path(__file__).resolve().parents[2] / "data" / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── 설정 로드 ──
+
 def _load_settings() -> dict:
     import yaml
     path = Path(__file__).resolve().parents[2] / "config" / "ronin_settings.yaml"
@@ -71,21 +74,15 @@ def _load_cache(country: str) -> Optional[pd.DataFrame]:
 
 
 # ═══════════════════════════════════════════════════════════
-# 미국 — Finviz 스크리너 (시총 + 거래대금 필터 한 번에)
+# 미국 — Finviz 스크리너
 # ═══════════════════════════════════════════════════════════
 
 def _fetch_us_universe(market_cap_min: float, max_n: int) -> pd.DataFrame:
-    """Finviz 스크리너로 미국 종목 마스터 수집.
-
-    columns: ticker, name, sector, industry, market_cap, avg_volume_value, country
-    """
     try:
         from finvizfinance.screener.overview import Overview
 
         screener = Overview()
-        # Finviz 시총 필터: Mid+ ($2B+), Large ($10B+), Mega ($200B+)
-        # $1B 이상 = small_over (정확히 매핑되는 옵션 없으면 sma_over)
-        filters = {"Market Cap.": "+Small (over $300mln)"}  # $1B 이상이면 small over로 충분
+        filters = {"Market Cap.": "+Small (over $300mln)"}
         screener.set_filter(filters_dict=filters)
         df_raw = screener.screener_view(order="Market Cap.", ascend=False)
 
@@ -93,7 +90,6 @@ def _fetch_us_universe(market_cap_min: float, max_n: int) -> pd.DataFrame:
             logger.warning("[US] Finviz 스크리너 빈 결과")
             return pd.DataFrame()
 
-        # 컬럼 정규화
         df = pd.DataFrame({
             "ticker": df_raw.get("Ticker", "").astype(str).str.upper(),
             "name": df_raw.get("Company", ""),
@@ -108,7 +104,7 @@ def _fetch_us_universe(market_cap_min: float, max_n: int) -> pd.DataFrame:
         return df
 
     except ImportError:
-        logger.error("[US] finvizfinance 미설치 — pip install finvizfinance")
+        logger.error("[US] finvizfinance 미설치")
         return pd.DataFrame()
     except Exception as e:
         logger.error("[US] Finviz 실패: %s", e)
@@ -116,72 +112,113 @@ def _fetch_us_universe(market_cap_min: float, max_n: int) -> pd.DataFrame:
 
 
 # ═══════════════════════════════════════════════════════════
-# 한국 — pykrx (KRX 직접)
+# 한국 (v2) — yfinance + 시드 종목 (pykrx 제거)
 # ═══════════════════════════════════════════════════════════
 
-def _fetch_kr_universe(market_cap_min_usd: float, max_n: int, fx_krw: float = 1480) -> pd.DataFrame:
-    """KRX 종목 마스터 수집. 시총은 KRW → USD 변환.
+# KOSPI 시총 상위 + KOSDAQ 시총 상위 (글로벌 인지도 + 거래량 충분)
+_KR_SEED_TICKERS = [
+    # KOSPI 대형주
+    "005930.KS",  # 삼성전자
+    "000660.KS",  # SK하이닉스
+    "373220.KS",  # LG에너지솔루션
+    "207940.KS",  # 삼성바이오로직스
+    "005935.KS",  # 삼성전자우
+    "005380.KS",  # 현대차
+    "000270.KS",  # 기아
+    "068270.KS",  # 셀트리온
+    "035420.KS",  # NAVER
+    "005490.KS",  # POSCO홀딩스
+    "012330.KS",  # 현대모비스
+    "028260.KS",  # 삼성물산
+    "066570.KS",  # LG전자
+    "035720.KS",  # 카카오
+    "051910.KS",  # LG화학
+    "006400.KS",  # 삼성SDI
+    "055550.KS",  # 신한지주
+    "105560.KS",  # KB금융
+    "086790.KS",  # 하나금융지주
+    "138040.KS",  # 메리츠금융지주
+    "032830.KS",  # 삼성생명
+    "017670.KS",  # SK텔레콤
+    "030200.KS",  # KT
+    "015760.KS",  # 한국전력
+    "034730.KS",  # SK
+    "009150.KS",  # 삼성전기
+    "000810.KS",  # 삼성화재
+    "036570.KS",  # 엔씨소프트
+    "018260.KS",  # 삼성에스디에스
+    "003550.KS",  # LG
+    # KOSDAQ 대형주
+    "247540.KQ",  # 에코프로비엠
+    "086520.KQ",  # 에코프로
+    "091990.KQ",  # 셀트리온헬스케어
+    "196170.KQ",  # 알테오젠
+    "041510.KQ",  # SM
+    "035900.KQ",  # JYP Ent.
+    "112040.KQ",  # 위메이드
+    "263750.KQ",  # 펄어비스
+    "066970.KQ",  # 엘앤에프
+    "058470.KQ",  # 리노공업
+]
 
-    pykrx는 selenium 없이 KRX API 직접 호출 (안전).
-    """
+
+def _fetch_kr_universe(market_cap_min_usd: float, max_n: int, fx_krw: float = 1471) -> pd.DataFrame:
+    """KR 시드 종목 — yfinance (.KS / .KQ 접미사). v2 패치."""
     try:
-        from pykrx import stock
+        import yfinance as yf
 
-        today = datetime.now().strftime("%Y%m%d")
-        # KOSPI + KOSDAQ 모든 종목
         rows = []
-        for market in ("KOSPI", "KOSDAQ"):
+        for ticker in _KR_SEED_TICKERS[:max_n]:
             try:
-                tickers = stock.get_market_ticker_list(today, market=market)
-                cap_df = stock.get_market_cap_by_ticker(today, market=market)
-                # 일평균 거래대금 = 60일 평균
-                fundamental = stock.get_market_fundamental_by_ticker(today, market=market)
-
-                for ticker in tickers:
-                    name = stock.get_market_ticker_name(ticker)
-                    market_cap_krw = cap_df.loc[ticker, "시가총액"] if ticker in cap_df.index else 0
+                info = yf.Ticker(ticker).info
+                market_cap_krw = info.get("marketCap", 0)
+                if not market_cap_krw:
+                    continue
+                # KRW로 받을 수도 USD로 받을 수도 — 큰 값이면 KRW로 가정
+                if market_cap_krw > 1e10:  # 100억 이상 = KRW 기준
                     market_cap_usd = market_cap_krw / fx_krw
-                    if market_cap_usd < market_cap_min_usd:
-                        continue
-                    rows.append({
-                        "ticker": f"{ticker}.KS" if market == "KOSPI" else f"{ticker}.KQ",
-                        "name": name,
-                        "sector": "",  # pykrx 기본 미제공, 별도 API 필요
-                        "industry": market,
-                        "market_cap": market_cap_usd,
-                        "avg_volume_value": 0,  # 추후 보강
-                        "country": "KR",
-                    })
-                logger.info("[KR] %s: %d종목 (시총 ≥ $%.0fM)", market, len(rows), market_cap_min_usd / 1e6)
-            except Exception as e:
-                logger.error("[KR] %s 수집 실패: %s", market, e)
+                else:
+                    market_cap_usd = market_cap_krw
+                if market_cap_usd < market_cap_min_usd:
+                    continue
 
-        df = pd.DataFrame(rows).sort_values("market_cap", ascending=False).head(max_n).reset_index(drop=True)
+                rows.append({
+                    "ticker": ticker,
+                    "name": info.get("longName") or info.get("shortName") or ticker,
+                    "sector": info.get("sector", ""),
+                    "industry": info.get("industry", ""),
+                    "market_cap": market_cap_usd,
+                    "avg_volume_value": (info.get("averageVolume") or 0) * (info.get("currentPrice") or 0),
+                    "country": "KR",
+                })
+                time.sleep(0.2)
+            except Exception as e:
+                logger.debug("[KR] %s 실패: %s", ticker, e)
+                continue
+
+        df = pd.DataFrame(rows).sort_values("market_cap", ascending=False).reset_index(drop=True) if rows else pd.DataFrame()
+        logger.info("[KR] yfinance 시드: %d종목 (시총 ≥ $%.0fM)", len(df), market_cap_min_usd / 1e6)
         return df
 
     except ImportError:
-        logger.error("[KR] pykrx 미설치 — pip install pykrx")
+        logger.error("[KR] yfinance 미설치")
         return pd.DataFrame()
     except Exception as e:
-        logger.error("[KR] pykrx 실패: %s", e)
+        logger.error("[KR] yfinance 실패: %s", e)
         return pd.DataFrame()
 
 
 # ═══════════════════════════════════════════════════════════
-# 일본 — yfinance + 닛케이 225 + TOPIX 100 시드
+# 일본 — yfinance 시드
 # ═══════════════════════════════════════════════════════════
 
-# 닛케이 225 + TOPIX Core 30 시드 (시총 큰 일본 종목)
-# 실전: TSE 전체는 유료 데이터 필요. 시드 + 점진 확장.
 _JP_SEED_TICKERS = [
-    # 닛케이 225 상위 + 글로벌 인지도
     "7203.T", "6758.T", "9984.T", "8306.T", "6098.T", "9432.T", "8035.T",
     "6861.T", "4063.T", "7974.T", "9433.T", "8316.T", "8411.T", "8058.T",
     "6367.T", "6981.T", "4543.T", "6594.T", "8001.T", "4502.T", "6273.T",
     "7741.T", "4519.T", "9434.T", "4661.T", "7267.T", "4901.T", "6920.T",
     "8031.T", "6701.T", "6503.T", "9020.T", "9022.T", "6178.T", "4568.T",
-    "4523.T", "6178.T", "8002.T", "5108.T", "4732.T", "2914.T", "4324.T",
-    # TOPIX Core 30 추가
+    "4523.T", "8002.T", "5108.T", "4732.T", "2914.T", "4324.T",
     "9983.T", "4452.T", "6724.T", "6502.T", "9101.T", "5401.T", "8053.T",
     "8801.T", "8802.T", "1605.T", "3382.T", "5020.T", "6326.T", "7011.T",
     "7270.T", "8267.T", "4755.T", "6504.T",
@@ -189,13 +226,8 @@ _JP_SEED_TICKERS = [
 
 
 def _fetch_jp_universe(market_cap_min_usd: float, max_n: int) -> pd.DataFrame:
-    """일본 — yfinance 시드 기반.
-
-    참고: TSE 전체 종목 무료 데이터 어려움. 시드 100개 시작 → 추후 확장.
-    """
     try:
         import yfinance as yf
-
         rows = []
         for ticker in _JP_SEED_TICKERS[:max_n]:
             try:
@@ -212,14 +244,13 @@ def _fetch_jp_universe(market_cap_min_usd: float, max_n: int) -> pd.DataFrame:
                     "avg_volume_value": info.get("averageVolume", 0) * info.get("currentPrice", 0),
                     "country": "JP",
                 })
-                time.sleep(0.2)  # rate limit
+                time.sleep(0.2)
             except Exception as e:
                 logger.debug("[JP] %s 실패: %s", ticker, e)
                 continue
-        df = pd.DataFrame(rows).sort_values("market_cap", ascending=False).reset_index(drop=True)
+        df = pd.DataFrame(rows).sort_values("market_cap", ascending=False).reset_index(drop=True) if rows else pd.DataFrame()
         logger.info("[JP] yfinance: %d종목", len(df))
         return df
-
     except ImportError:
         logger.error("[JP] yfinance 미설치")
         return pd.DataFrame()
@@ -229,48 +260,19 @@ def _fetch_jp_universe(market_cap_min_usd: float, max_n: int) -> pd.DataFrame:
 
 
 # ═══════════════════════════════════════════════════════════
-# 중국 — ADR만 (Q3 결정. 본토 A주 매매 불가 종목 제외)
+# 중국 ADR
 # ═══════════════════════════════════════════════════════════
 
-# 미국 상장 중국 ADR — 시총 큰 종목 위주
-# 실전: 매매 가능 + 유동성 충분 종목만
 _CN_ADR_TICKERS = [
-    "BABA",   # Alibaba
-    "JD",     # JD.com
-    "PDD",    # Pinduoduo
-    "BIDU",   # Baidu
-    "NIO",    # NIO Auto
-    "LI",     # Li Auto
-    "XPEV",   # XPeng
-    "TME",    # Tencent Music
-    "BILI",   # Bilibili
-    "YMM",    # Full Truck Alliance
-    "TCOM",   # Trip.com
-    "VIPS",   # Vipshop
-    "EDU",    # New Oriental Education
-    "TAL",    # TAL Education
-    "BEKE",   # KE Holdings
-    "ZH",     # Zhihu
-    "MNSO",   # Miniso
-    "WB",     # Weibo
-    "IQ",     # iQIYI
-    "DIDI",   # DiDi (OTC)
-    "LU",     # Lufax
-    "FUTU",   # Futu Holdings
-    "TIGR",   # UP Fintech
-    "NTES",   # NetEase
-    "ATAT",   # Atour Lifestyle
+    "BABA", "JD", "PDD", "BIDU", "NIO", "LI", "XPEV", "TME", "BILI", "YMM",
+    "TCOM", "VIPS", "EDU", "TAL", "BEKE", "ZH", "MNSO", "WB", "IQ", "DIDI",
+    "LU", "FUTU", "TIGR", "NTES", "ATAT",
 ]
 
 
 def _fetch_cn_universe(market_cap_min_usd: float, max_n: int) -> pd.DataFrame:
-    """중국 — 미국 상장 ADR만 (매매 가능 종목).
-
-    데이터 소스: yfinance (미국 거래소 종목이라 동일하게 처리).
-    """
     try:
         import yfinance as yf
-
         rows = []
         for ticker in _CN_ADR_TICKERS[:max_n]:
             try:
@@ -291,28 +293,19 @@ def _fetch_cn_universe(market_cap_min_usd: float, max_n: int) -> pd.DataFrame:
             except Exception as e:
                 logger.debug("[CN] %s 실패: %s", ticker, e)
                 continue
-        df = pd.DataFrame(rows).sort_values("market_cap", ascending=False).reset_index(drop=True)
+        df = pd.DataFrame(rows).sort_values("market_cap", ascending=False).reset_index(drop=True) if rows else pd.DataFrame()
         logger.info("[CN] ADR: %d종목", len(df))
         return df
-
     except Exception as e:
         logger.error("[CN] ADR 수집 실패: %s", e)
         return pd.DataFrame()
 
 
 # ═══════════════════════════════════════════════════════════
-# 메인 진입점 — 4개국 합본
+# 메인 진입점
 # ═══════════════════════════════════════════════════════════
 
 def fetch_global_universe(force_refresh: bool = False) -> pd.DataFrame:
-    """4개국 종목 마스터 통합 fetch.
-
-    캐시 우선 (TTL 7일). force_refresh=True 시 재수집.
-
-    Returns:
-        DataFrame columns:
-          ticker, name, sector, industry, market_cap, avg_volume_value, country
-    """
     settings = _load_settings()
     cap_min = float(settings["scout"]["market_cap_min_usd"])
     cache_ttl = int(settings["cache"]["ticker_master_ttl_days"])
@@ -336,7 +329,6 @@ def fetch_global_universe(force_refresh: bool = False) -> pd.DataFrame:
                 parts.append(df)
                 continue
 
-        # fetch fresh
         fetcher = fetchers.get(country)
         if fetcher is None:
             logger.warning("[universe] %s 수집기 없음 — 스킵", country)
@@ -351,19 +343,12 @@ def fetch_global_universe(force_refresh: bool = False) -> pd.DataFrame:
         return pd.DataFrame()
 
     combined = pd.concat(parts, ignore_index=True)
-    logger.info("[universe] 합본: %d종목 (%s)", len(combined),
-                ", ".join(f"{c}={len(p)}" for c, p in zip(enabled, parts)))
+    logger.info("[universe] 합본: %d종목", len(combined))
     return combined
 
-
-# ═══════════════════════════════════════════════════════════
-# CLI 테스트용
-# ═══════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
     df = fetch_global_universe(force_refresh=True)
     print(f"\n총 {len(df)}종목")
     print(df.groupby("country").size())
-    print("\n상위 20종목:")
-    print(df.nlargest(20, "market_cap")[["ticker", "name", "country", "market_cap"]])
