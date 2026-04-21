@@ -100,17 +100,20 @@ class DigestAgent(BaseAgent):
                 "all_empty": True,
             }
 
-        # ── LLM 호출 — SCOUT 후보 자연어 해석 ──
+        # ── LLM 호출 1 — SCOUT 후보 자연어 해석 ──
         candidates_with_explanation = self._enrich_candidates_llm(scout_out.get("candidates", []))
+
+        # ── LLM 호출 2 — GUARD 영문 뉴스 한국어 요약 (v3 신규) ──
+        guard_out_translated = self._translate_news_korean(guard_out)
 
         # ── 텔레그램 메시지 생성 ──
         telegram_text = self._build_telegram(
-            candidates_with_explanation, guard_out, regime_out
+            candidates_with_explanation, guard_out_translated, regime_out
         )
 
         # ── 저널 BRIEFING 시트 메시지 생성 (상세) ──
         sheets_text = self._build_sheets_detailed(
-            scout_out, guard_out, regime_out, candidates_with_explanation
+            scout_out, guard_out_translated, regime_out, candidates_with_explanation
         )
 
         return {
@@ -120,6 +123,86 @@ class DigestAgent(BaseAgent):
             "alerts_count": len(guard_out.get("alerts", [])),
             "all_empty": False,
         }
+
+    # ─────────────────────────────────────────────
+    # LLM — 영문 뉴스 한국어 요약 (v3 신규)
+    # ─────────────────────────────────────────────
+    def _translate_news_korean(self, guard_out: dict) -> dict:
+        """GUARD alerts의 영문 뉴스 → 한국어 1줄 요약.
+
+        한 번의 LLM 호출로 여러 종목 뉴스 동시 처리 (효율).
+        실패 시 영문 그대로 유지 (fallback).
+        """
+        alerts = guard_out.get("alerts", [])
+        if not alerts:
+            return guard_out
+
+        # 영문 뉴스 있는 종목만
+        news_to_translate = []
+        for a in alerts:
+            for n in a.get("news", []):
+                headline = n.get("headline", "").strip()
+                if headline:
+                    news_to_translate.append({
+                        "ticker": a["ticker"],
+                        "headline": headline,
+                        "summary": n.get("summary", "")[:200],
+                    })
+
+        if not news_to_translate:
+            return guard_out
+
+        system = (
+            "당신은 RONIN 트레이딩 시스템의 뉴스 요약자입니다.\n"
+            "역할: 영문 종목 뉴스 헤드라인을 한국어 1줄로 압축.\n"
+            "원칙:\n"
+            "1. 핵심 사실만 전달 (가격 영향 위주).\n"
+            "2. 30~50자 이내. 너무 짧으면 의미 손실, 너무 길면 안 됨.\n"
+            "3. 종목 영향 톤 명시 (호재/악재/중립 또는 단순 사실).\n"
+            "4. 환각 금지. 헤드라인에 없는 정보 추가 X.\n"
+            "5. 회사명은 영문 약어 그대로 (예: NVO, MSFT).\n"
+        )
+
+        user = (
+            "다음 영문 뉴스 헤드라인을 각각 한국어 1줄로 요약해주세요.\n"
+            "JSON 배열 형식으로만 출력 (마크다운 금지).\n"
+            f"형식: [{{\"ticker\": \"...\", \"headline\": \"<원문>\", \"ko\": \"<한국어 요약>\"}}, ...]\n"
+            f"입력 순서대로 같은 개수의 항목을 반환해주세요.\n\n"
+            f"뉴스:\n{json.dumps(news_to_translate, ensure_ascii=False, indent=2)}"
+        )
+
+        raw = self.call_llm(system, user, max_tokens=600)
+        if not raw:
+            return guard_out
+
+        try:
+            cleaned = raw.replace("```json", "").replace("```", "").strip()
+            translations = json.loads(cleaned)
+            # 매핑: (ticker, headline) → ko_summary
+            ko_map: dict[tuple, str] = {}
+            for t in translations:
+                key = (t.get("ticker", ""), t.get("headline", ""))
+                ko_map[key] = t.get("ko", "")
+        except Exception as e:
+            self.log.warning("[digest news ko] JSON 파싱 실패: %s", e)
+            return guard_out
+
+        # alerts 깊은 복사 후 ko_summary 주입
+        new_alerts = []
+        for a in alerts:
+            new_a = dict(a)
+            new_news = []
+            for n in a.get("news", []):
+                new_n = dict(n)
+                ko = ko_map.get((a["ticker"], n.get("headline", "")), "")
+                new_n["ko_summary"] = ko
+                new_news.append(new_n)
+            new_a["news"] = new_news
+            new_alerts.append(new_a)
+
+        new_guard = dict(guard_out)
+        new_guard["alerts"] = new_alerts
+        return new_guard
 
     # ─────────────────────────────────────────────
     # LLM — 후보 자연어 해석
@@ -266,7 +349,12 @@ class DigestAgent(BaseAgent):
                     lines.append(f"• <b>{a['ticker']}</b> 가격 수집 실패")
                 if a.get("news"):
                     n = a["news"][0]
-                    lines.append(f"  📰 {n['headline'][:80]}")
+                    # 한국어 요약 우선, 없으면 영문 헤드라인 (v3 패치)
+                    ko = n.get("ko_summary", "").strip()
+                    if ko:
+                        lines.append(f"  📰 {ko}")
+                    else:
+                        lines.append(f"  📰 {n['headline'][:80]}")
             if quiet:
                 lines.append(f"<i>변동 없음: {', '.join(quiet)}</i>")
             lines.append("")
