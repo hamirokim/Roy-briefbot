@@ -1,7 +1,86 @@
 {
-  "last_run_date": "2026-04-22",
-  "last_run_at": "2026-04-22T23:29:36.948590",
+  "last_run_date": "2026-04-23",
+  "last_run_at": "2026-04-23T23:27:38.601566",
   "m2_history": {
+    "2026-04-23": {
+      "XLK": {
+        "quadrant": "LEADING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 104.22,
+        "momentum": 104.74
+      },
+      "XLV": {
+        "quadrant": "LAGGING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 95.84,
+        "momentum": 95.31
+      },
+      "XLF": {
+        "quadrant": "LAGGING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 98.14,
+        "momentum": 97.59
+      },
+      "XLY": {
+        "quadrant": "LEADING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 100.27,
+        "momentum": 100.25
+      },
+      "XLP": {
+        "quadrant": "LAGGING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 96.66,
+        "momentum": 97.89
+      },
+      "XLE": {
+        "quadrant": "LAGGING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 95.59,
+        "momentum": 97.36
+      },
+      "XLI": {
+        "quadrant": "LAGGING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 97.06,
+        "momentum": 96.48
+      },
+      "XLB": {
+        "quadrant": "LAGGING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 97.23,
+        "momentum": 94.4
+      },
+      "XLC": {
+        "quadrant": "LAGGING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 98.6,
+        "momentum": 99.31
+      },
+      "XLU": {
+        "quadrant": "LAGGING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 93.82,
+        "momentum": 93.7
+      },
+      "XLRE": {
+        "quadrant": "LAGGING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 97.51,
+        "momentum": 98.09
+      }
+    },
     "2026-04-22": {
       "XLK": {
         "quadrant": "LEADING",
@@ -164,7 +243,7 @@
   "scout_cooldown": {},
   "prev_day": {
     "candidates": [],
-    "alerts_count": 1,
-    "vix": 18.92
+    "alerts_count": 2,
+    "vix": 19.31
   }
 }
