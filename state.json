@@ -1,7 +1,86 @@
 {
-  "last_run_date": "2026-04-24",
-  "last_run_at": "2026-04-24T23:21:13.776859",
+  "last_run_date": "2026-04-25",
+  "last_run_at": "2026-04-25T23:19:22.749478",
   "m2_history": {
+    "2026-04-25": {
+      "XLK": {
+        "quadrant": "LEADING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 104.19,
+        "momentum": 103.9
+      },
+      "XLV": {
+        "quadrant": "LAGGING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 95.22,
+        "momentum": 95.99
+      },
+      "XLF": {
+        "quadrant": "LAGGING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 96.85,
+        "momentum": 96.34
+      },
+      "XLY": {
+        "quadrant": "IMPROVING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 99.6,
+        "momentum": 100.63
+      },
+      "XLP": {
+        "quadrant": "LAGGING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 98.55,
+        "momentum": 98.64
+      },
+      "XLE": {
+        "quadrant": "LAGGING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 97.53,
+        "momentum": 99.26
+      },
+      "XLI": {
+        "quadrant": "LAGGING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 97.84,
+        "momentum": 97.78
+      },
+      "XLB": {
+        "quadrant": "LAGGING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 97.7,
+        "momentum": 96.3
+      },
+      "XLC": {
+        "quadrant": "LAGGING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 96.79,
+        "momentum": 97.36
+      },
+      "XLU": {
+        "quadrant": "LAGGING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 97.33,
+        "momentum": 97.54
+      },
+      "XLRE": {
+        "quadrant": "LAGGING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 98.34,
+        "momentum": 97.49
+      }
+    },
     "2026-04-24": {
       "XLK": {
         "quadrant": "LEADING",
@@ -323,35 +402,8 @@
     "KOD": "2026-04-24"
   },
   "prev_day": {
-    "candidates": [
-      {
-        "ticker": "KOD",
-        "name": "Kodiak Sciences Inc",
-        "country": "US",
-        "sector": "Healthcare",
-        "market_cap": 2870000000.0,
-        "score": 3,
-        "signals": {
-          "insider_buying": {
-            "insider_trans_pct": 118.77,
-            "lookback_days": 7
-          },
-          "bb_squeeze": {
-            "current_width": 0.3138,
-            "avg_width": 0.8974,
-            "ratio": 0.35,
-            "threshold": 0.5
-          },
-          "volume_compression": {
-            "short_avg": 670020,
-            "long_avg": 1994775,
-            "ratio": 0.336,
-            "threshold": 0.7
-          }
-        }
-      }
-    ],
-    "alerts_count": 2,
+    "candidates": [],
+    "alerts_count": 3,
     "vix": 18.71
   }
 }
