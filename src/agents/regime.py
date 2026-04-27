@@ -27,6 +27,7 @@ from typing import Any, Optional
 import requests
 
 from src.agents.base import BaseAgent
+from src.utils import today_kst_str
 
 logger = logging.getLogger(__name__)
 
@@ -368,7 +369,7 @@ class RegimeAgent(BaseAgent):
     # context_text 생성
     # ─────────────────────────────────────────────
     def _build_context(self, vix_data, rrg_data, fx_data, macro_data, interpretation) -> str:
-        date_str = datetime.now().strftime("%Y-%m-%d")
+        date_str = today_kst_str()
         lines = [f"[매크로 환경 — {date_str}]", ""]
 
         # VIX
