@@ -22,6 +22,8 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 
+from src.utils import now_kst, today_kst_str
+
 # 로깅 설정 (가장 먼저)
 logging.basicConfig(
     level=logging.INFO,
@@ -64,7 +66,7 @@ def save_state(state: dict) -> None:
         # LangGraph state는 너무 커서 저장 시 필터
         persistable = {
             "last_run_date": state.get("date"),
-            "last_run_at": datetime.now().isoformat(),
+            "last_run_at": now_kst().isoformat(),
             "m2_history": state.get("m2_history", {}),
             "scout_cooldown": state.get("scout_cooldown", {}),
             "prev_day": {
@@ -88,7 +90,7 @@ def update_m2_history_from_regime(state: dict) -> None:
         if not snapshot:
             return
         m2_history = state.get("m2_history", {})
-        today = state.get("date") or datetime.now().strftime("%Y-%m-%d")
+        today = state.get("date") or today_kst_str()
         m2_history[today] = snapshot
         # 30일치만 유지 (메모리 절약)
         sorted_dates = sorted(m2_history.keys(), reverse=True)
@@ -127,7 +129,7 @@ def save_to_sheets(detailed_text: str, mode: str = "daily") -> None:
     """기존 sheets.save_briefing 활용."""
     try:
         from src.collectors.sheets import save_briefing
-        date_str = datetime.now().strftime("%Y-%m-%d")
+        date_str = today_kst_str()
         save_briefing(date_str, detailed_text, mode)
         logger.info("저널 BRIEFING 저장 완료")
     except Exception as e:
@@ -153,7 +155,7 @@ def main(briefing_mode: str = "daily") -> int:
 
     # 1. State 로드
     state = load_state()
-    state["date"] = datetime.now().strftime("%Y-%m-%d")
+    state["date"] = today_kst_str()
     state["briefing_mode"] = briefing_mode
     state["errors"] = []
 
