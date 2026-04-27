@@ -325,11 +325,6 @@ class GuardAgent(BaseAgent):
             lines.append(m7_context)
             lines.append("")
 
-        lines.append(
-            "DIGEST LLM 지시: 주목 종목만 1줄씩 해석 (가격변동 + 뉴스 종합). "
-            "변동 없는 종목은 언급하지 마. SL 체크 같은 일반론 금지 — 뉴스가 SL 위협 시에만 구체 경고."
-        )
-
         return "\n".join(lines)
 
     def _empty_result(self) -> dict:
