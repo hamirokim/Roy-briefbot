@@ -30,6 +30,7 @@ from typing import Any, Optional
 import requests
 
 from src.agents.base import BaseAgent
+from src.utils import today_kst_str
 
 logger = logging.getLogger(__name__)
 
@@ -288,7 +289,7 @@ class GuardAgent(BaseAgent):
         }
 
     def _build_context(self, results, alerts, quiet, m7_context, threshold_pct) -> str:
-        date_str = datetime.now().strftime("%Y-%m-%d")
+        date_str = today_kst_str()
         lines = [f"[보유 포지션 — {date_str}]"]
         lines.append(f"총 {len(results)}종목 보유. 변동 {threshold_pct}% 이상 또는 뉴스 있음: {len(alerts)}개")
         lines.append("")
