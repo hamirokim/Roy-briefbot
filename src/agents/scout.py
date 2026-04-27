@@ -27,6 +27,7 @@ import numpy as np
 import pandas as pd
 
 from src.agents.base import BaseAgent
+from src.utils import today_kst_str
 
 logger = logging.getLogger(__name__)
 
@@ -283,7 +284,7 @@ class ScoutAgent(BaseAgent):
         signals_required = scout_cfg["signals_required"]
         max_output = scout_cfg["max_candidates_output"]
         cooldown_days = scout_cfg["cooldown_days"]
-        today = state.get("date", datetime.now().strftime("%Y-%m-%d"))
+        today = state.get("date", today_kst_str())
         cooldown_map = dict(state.get("scout_cooldown", {}))
         m2_history = state.get("m2_history", {})
 
@@ -458,7 +459,7 @@ class ScoutAgent(BaseAgent):
             "cooldown_skipped": cooldown_skipped,
             "new_cooldown": {},
             "ohlcv_evaluated": 0,
-            "today": datetime.now().strftime("%Y-%m-%d"),
+            "today": today_kst_str(),
         }
 
     def _error_output(self, error_msg: str) -> dict:
@@ -469,6 +470,6 @@ class ScoutAgent(BaseAgent):
             "cooldown_skipped": 0,
             "new_cooldown": {},
             "ohlcv_evaluated": 0,
-            "today": datetime.now().strftime("%Y-%m-%d"),
+            "today": today_kst_str(),
             "error": error_msg,
         }
