@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from src.agents.base import BaseAgent
+from src.utils import now_kst
 
 logger = logging.getLogger(__name__)
 
@@ -266,7 +267,7 @@ class DigestAgent(BaseAgent):
     # ─────────────────────────────────────────────
     def _build_telegram(self, candidates: list, guard_out: dict, regime_out: dict) -> str:
         max_chars = self.settings["digest"]["telegram"]["max_chars"]
-        date_str = datetime.now().strftime("%Y-%m-%d (%a)")
+        date_str = now_kst().strftime("%Y-%m-%d (%a)")
 
         lines = [f"<b>📊 RONIN BRIEF — {date_str}</b>", ""]
 
@@ -394,7 +395,7 @@ class DigestAgent(BaseAgent):
     # 저널 BRIEFING 시트 (상세, 길이 제한 없음)
     # ─────────────────────────────────────────────
     def _build_sheets_detailed(self, scout_out, guard_out, regime_out, candidates_with_comment) -> str:
-        date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+        date_str = now_kst().strftime("%Y-%m-%d %H:%M")
         lines = [f"=== RONIN BRIEFING — {date_str} ===", ""]
 
         # 매크로 환경 (REGIME context 그대로)
