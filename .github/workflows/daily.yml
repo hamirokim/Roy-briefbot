@@ -2,16 +2,30 @@ name: Daily Briefing
 
 on:
   schedule:
-    # KST 07:10 = UTC 22:10 (전날)
-    - cron: '10 22 * * *'
+    # UTC Sun-Fri 22:10 = KST Mon-Sat 07:10
+    # 미국 시장 close → 다음 한국 발송일 매핑 (좌측거래 시스템 운용 패턴)
+    #   UTC 일 22:10 → KST 월 07:10  (미국 금요일 close 데이터 + 주말 뉴스, 주간 모드)
+    #   UTC 월 22:10 → KST 화 07:10  (미국 월요일 close)
+    #   UTC 화 22:10 → KST 수 07:10  (미국 화요일 close)
+    #   UTC 수 22:10 → KST 목 07:10  (미국 수요일 close)
+    #   UTC 목 22:10 → KST 금 07:10  (미국 목요일 close)
+    #   UTC 금 22:10 → KST 토 07:10  (미국 금요일 close ← 신선 데이터)
+    # KST 일요일만 발송 안 함 (UTC 토 발사 X)
+    # 월요일 weekly와 토요일 daily는 같은 가격 데이터지만 — 토=신속 daily, 월=주말 흡수+종합
+    # 모드 자동 감지 (main.py _detect_briefing_mode):
+    #   - 매월 첫 발송   → monthly (전월 정리 + 새 달 방향, weekly 흡수)
+    #   - 월요일 첫 weekly → weekly (전주 종합 + 새 주 방향)
+    #   - 그 외          → daily
+    - cron: '10 22 * * 0-5'
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Briefing mode'
+        description: 'Briefing mode (auto = 날짜 기반 자동 감지)'
         required: false
-        default: 'daily'
+        default: 'auto'
         type: choice
         options:
+          - auto
           - daily
           - weekly
           - monthly
@@ -56,7 +70,7 @@ jobs:
           GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         run: |
-          MODE="${{ github.event.inputs.mode || 'daily' }}"
+          MODE="${{ github.event.inputs.mode || 'auto' }}"
           python main.py "$MODE"
 
       - name: Commit state.json
