@@ -18,7 +18,7 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 
-from src.collectors.stooq import fetch_daily_ohlcv
+from src.collectors.global_ohlcv import fetch_daily_ohlcv_yf as fetch_daily_ohlcv
 from src.collectors.finviz import fetch_contrarian_candidates, fetch_fundamental_data, FINVIZ_AVAILABLE
 from src.utils import now_kst, today_kst_str
 
