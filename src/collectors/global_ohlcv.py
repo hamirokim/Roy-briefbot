@@ -184,6 +184,125 @@ def fetch_ohlcv(
     return all_result
 
 
+# ═══════════════════════════════════════════════════════════
+# 단순 종가 fetcher — m4_tracker / m6_feedback 용 (stooq 대체)
+# v4.2 (2026-04-28): stooq 폐기 → yfinance 통일 (D52 정합)
+# stooq DB가 NY 마감 후 ~3시간 늦게 갱신되어 KST 07:10 발송 시 1일 지연 발생.
+# yfinance는 NY 마감 후 ~30분 내 갱신되어 최신 데이터 보장.
+# ═══════════════════════════════════════════════════════════
+
+def _stooq_to_yahoo_ticker(stooq_ticker: str) -> str:
+    """Stooq 호환 티커 (xxx.us) → yfinance 티커 (XXX) 변환.
+
+    호환성: 기존 m4_tracker/m6_feedback 가 'msft.us' 형식으로 호출하는 것 유지.
+    """
+    t = stooq_ticker.strip()
+    if t.lower().endswith(".us"):
+        return t[:-3].upper()
+    if t.startswith("^"):
+        return t  # ^VIX 같은 인덱스는 그대로
+    return t.upper()
+
+
+def fetch_daily_closes_yf(stooq_ticker: str, lookback: int = 30) -> Optional[pd.DataFrame]:
+    """yfinance 단일 종목 일봉 종가 fetch (m4_tracker / m6_feedback 용).
+
+    인터페이스: stooq.fetch_daily_closes 와 동일 (DataFrame [Date, Close]).
+    내부: yfinance 직접 호출. 캐시 X (단일 호출, 빠름).
+
+    Returns:
+        pd.DataFrame [Date(datetime), Close(float)] sorted asc. 실패 시 None.
+    """
+    try:
+        import yfinance as yf
+    except ImportError:
+        logger.error("[ohlcv] yfinance 미설치")
+        return None
+
+    yahoo_ticker = _stooq_to_yahoo_ticker(stooq_ticker)
+    end = datetime.now()
+    start = end - timedelta(days=int(lookback * 1.6) + 10)
+
+    try:
+        df = yf.download(
+            yahoo_ticker,
+            start=start.strftime("%Y-%m-%d"),
+            end=end.strftime("%Y-%m-%d"),
+            progress=False,
+            auto_adjust=False,
+            threads=False,
+        )
+        if df is None or df.empty:
+            logger.warning("[ohlcv yf] %s 빈 결과", yahoo_ticker)
+            return None
+
+        df = df.reset_index()
+        # 다중 인덱스 칼럼 정리 (yfinance batch=False여도 가끔 발생)
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = [c[0] if isinstance(c, tuple) else c for c in df.columns]
+
+        if "Close" not in df.columns or "Date" not in df.columns:
+            logger.warning("[ohlcv yf] %s 컬럼 이상: %s", yahoo_ticker, list(df.columns))
+            return None
+
+        out = df[["Date", "Close"]].dropna().reset_index(drop=True)
+        out["Date"] = pd.to_datetime(out["Date"]).dt.tz_localize(None)
+        return out
+
+    except Exception as e:
+        logger.warning("[ohlcv yf] %s 실패: %s", yahoo_ticker, e)
+        return None
+
+
+def fetch_daily_ohlcv_yf(stooq_ticker: str, lookback: int = 260) -> Optional[pd.DataFrame]:
+    """yfinance 단일 종목 OHLCV fetch (m3_contrarian 용).
+
+    인터페이스: stooq.fetch_daily_ohlcv 와 동일 (DataFrame [Date, Open, High, Low, Close, Volume]).
+
+    Returns:
+        pd.DataFrame [Date, Open, High, Low, Close, Volume] sorted asc. 실패 시 None.
+    """
+    try:
+        import yfinance as yf
+    except ImportError:
+        logger.error("[ohlcv] yfinance 미설치")
+        return None
+
+    yahoo_ticker = _stooq_to_yahoo_ticker(stooq_ticker)
+    end = datetime.now()
+    start = end - timedelta(days=int(lookback * 1.6) + 10)
+
+    try:
+        df = yf.download(
+            yahoo_ticker,
+            start=start.strftime("%Y-%m-%d"),
+            end=end.strftime("%Y-%m-%d"),
+            progress=False,
+            auto_adjust=False,
+            threads=False,
+        )
+        if df is None or df.empty:
+            logger.warning("[ohlcv yf] %s 빈 결과", yahoo_ticker)
+            return None
+
+        df = df.reset_index()
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = [c[0] if isinstance(c, tuple) else c for c in df.columns]
+
+        required = {"Date", "Open", "High", "Low", "Close", "Volume"}
+        if not required.issubset(set(df.columns)):
+            logger.warning("[ohlcv yf] %s OHLCV 컬럼 부족: %s", yahoo_ticker, list(df.columns))
+            return None
+
+        out = df[["Date", "Open", "High", "Low", "Close", "Volume"]].dropna(subset=["Date", "Close"]).reset_index(drop=True)
+        out["Date"] = pd.to_datetime(out["Date"]).dt.tz_localize(None)
+        return out
+
+    except Exception as e:
+        logger.warning("[ohlcv yf] %s OHLCV 실패: %s", yahoo_ticker, e)
+        return None
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
     test_input = {
