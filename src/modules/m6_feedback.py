@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 
-from src.collectors.stooq import fetch_daily_closes
+from src.collectors.global_ohlcv import fetch_daily_closes_yf as fetch_daily_closes
 from src.utils import now_kst, today_kst_str
 
 # ── 환경변수 ──────────────────────────────────────────────
