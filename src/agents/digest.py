@@ -557,6 +557,15 @@ class DigestAgent(BaseAgent):
                 lines.append(f"  신호: {sig_short}")
                 if c.get("comment"):
                     lines.append(f"  <i>{c['comment']}</i>")
+                # M1.5 买入三问 LLM 보강 (Z3-4)
+                if c.get("buy_questions"):
+                    try:
+                        from src.modules.m1_5_buyquestions import format_buy_questions_telegram
+                        bq_text = format_buy_questions_telegram(c)
+                        if bq_text:
+                            lines.append(bq_text)
+                    except Exception as e:
+                        self.log.debug("[digest] M1.5 텔레그램 포맷 실패: %s", e)
             lines.append("")
         else:
             lines.append(f"<b>🎯 신규 후보</b> 오늘 없음 (사전 감지 임계 미달)")
@@ -828,6 +837,26 @@ class DigestAgent(BaseAgent):
 
                 if c.get("comment"):
                     lines.append(f"    해석    : {c['comment']}")
+
+                # M1.5 买入三问 풀 분석 (Z3-4)
+                bq = c.get("buy_questions") or {}
+                if bq:
+                    star = bq.get("star_rating", "★")
+                    summary = bq.get("summary", "")
+                    lines.append(f"    买入三问 ({star} {summary}):")
+                    if bq.get("industry"):
+                        lines.append(f"      📂 산업    : {bq['industry']}")
+                    if bq.get("thesis"):
+                        lines.append(f"      💡 thesis  : {bq['thesis']}")
+                    if bq.get("catalyst"):
+                        lines.append(f"      🎯 catalyst: {bq['catalyst']}")
+                    lines.append(f"      Q1 왜 오르나: {bq.get('q1_why', '')}")
+                    lines.append(f"      Q2 누가 사나: {bq.get('q2_who', '')}")
+                    lines.append(f"      Q3 공간    : {bq.get('q3_space', '')}")
+                    risks = bq.get("risk_flags") or []
+                    if risks:
+                        risk_text = " / ".join(str(r) for r in risks[:3])
+                        lines.append(f"      ⚠️ 리스크 : {risk_text}")
                 lines.append("")
         else:
             lines.append("  (오늘 채택 후보 없음 — 사전 감지 임계 미달)")
