@@ -228,9 +228,11 @@ class GuardAgent(BaseAgent):
         self.log.info("[guard] 보유 %d종목 모니터", len(held))
 
         # 2. 종목별 가격 + 뉴스
+        # D87 (Z3-4): 모든 보유 종목 뉴스 fetch (변동 X여도). LLM 1회로 의미 판정.
         results = []
         alerts = []
-        quiet = []
+        quiet = []         # 옛 호환: ticker만
+        quiet_full = []    # D87 신규: 가격 + 뉴스 디테일 (digest가 노출)
 
         for pos in held:
             ticker = pos.get("ticker", "").strip()
@@ -249,25 +251,42 @@ class GuardAgent(BaseAgent):
                 entry["price"] = price
             time.sleep(0.3)
 
-            news = []
+            # 변동 여부와 무관하게 뉴스 fetch (D87)
+            news = _fetch_company_news(ticker, news_lookback, max_news)
+            time.sleep(0.5)
+            entry["news"] = news
+
             is_significant = (
                 price is not None
                 and abs(price.get("daily_pct", 0)) >= threshold_pct
             )
-            if is_significant:
-                news = _fetch_company_news(ticker, news_lookback, max_news)
-                time.sleep(0.5)
-
-            entry["news"] = news
             entry["is_significant"] = is_significant
-
             results.append(entry)
-            if is_significant or news:
+
+            # 1차 분류: 변동 있으면 alerts 무조건
+            if is_significant:
                 alerts.append(entry)
             else:
-                quiet.append(ticker)
+                # 변동 X — 일단 quiet 후보. 뉴스 있으면 의미 판정 단계로
+                quiet_full.append(entry)
 
-        # 3. M7 흡수 — 상관관계 경고
+        # 3. LLM 의미 판정 — 변동 X + 뉴스 있는 종목만 (D87)
+        # 의미 있으면 alerts 승격, 의미 X면 quiet_full 그대로
+        if quiet_full:
+            promoted = self._classify_quiet_news_significance(quiet_full)
+            for tic in promoted:
+                # quiet_full에서 제거 + alerts로 이동
+                for q in list(quiet_full):
+                    if q.get("ticker") == tic:
+                        quiet_full.remove(q)
+                        alerts.append(q)
+                        self.log.info("[guard] %s: 변동 X but 뉴스 의미 → alerts 승격", tic)
+                        break
+
+        # quiet (옛 호환): quiet_full에 남은 종목 ticker만
+        quiet = [q.get("ticker", "") for q in quiet_full if q.get("ticker")]
+
+        # 4. M7 흡수 — 상관관계 경고
         m7_context = ""
         try:
             from src.modules.m7_correlation import run_m7
@@ -276,17 +295,85 @@ class GuardAgent(BaseAgent):
         except Exception as e:
             self.log.warning("[guard m7] 실패 (무시): %s", e)
 
-        # 4. context_text 생성 (DIGEST/LLM 입력)
+        # 5. context_text 생성 (DIGEST/LLM 입력)
         context = self._build_context(results, alerts, quiet, m7_context, threshold_pct)
 
         return {
             "positions": results,
             "alerts": alerts,
             "quiet": quiet,
+            "quiet_full": quiet_full,    # D87 신규: digest가 풍성 노출
             "m7_context": m7_context,
             "context_text": context,
             "held_count": len(held),
         }
+
+    # ─────────────────────────────────────────────
+    # LLM — Quiet 종목 뉴스 의미 판정 (D87 신규)
+    # 변동 X but 뉴스 있는 종목 일괄 판정
+    # ─────────────────────────────────────────────
+    def _classify_quiet_news_significance(self, quiet_entries: list[dict]) -> list[str]:
+        """변동 X + 뉴스 있는 종목 일괄 LLM 판정.
+
+        Returns: 의미 있는 뉴스 보유 ticker list (alerts 승격 대상).
+        실패 시 빈 list (안전: 옛 동작 유지).
+        """
+        # 뉴스 있는 종목만 추출
+        with_news = [q for q in quiet_entries if q.get("news")]
+        if not with_news:
+            return []
+
+        # 종목별 뉴스 짧게 정리
+        items_text = []
+        for q in with_news:
+            ticker = q.get("ticker", "?")
+            news_list = q.get("news", []) or []
+            heads = []
+            for n in news_list[:3]:
+                head = (n.get("headline", "") or "")[:120]
+                if head:
+                    heads.append(head)
+            if heads:
+                items_text.append(f"[{ticker}]\n" + "\n".join(f"  - {h}" for h in heads))
+
+        if not items_text:
+            return []
+
+        system = (
+            "당신은 미국 주식 보유 종목 뉴스 영향도 판정 전문가입니다.\n"
+            "역할: 각 종목 뉴스가 단기 주가에 의미 있는 영향을 줄 가능성 판정.\n"
+            "원칙:\n"
+            "1. 의미 있음 = (실적 발표/예고, 가이던스 변경, 인수합병, 신제품 출시, 규제/소송, 등급 변경, 핵심 인물 변화)\n"
+            "2. 의미 없음 = (일반 시장 분석, 주가 가십, 단순 가격 변동 보도, 무관 산업 뉴스)\n"
+            "3. 보수적 판정 (애매하면 의미 없음)\n"
+            "\n"
+            "출력 형식: ticker만 줄별로 (의미 있는 종목만 출력). 의미 없으면 빈 출력.\n"
+            "예시 출력:\n"
+            "NVDA\n"
+            "MSFT\n"
+            "(설명/이유 X. ticker만.)"
+        )
+
+        user = (
+            "다음은 변동 ±2% 미만이지만 뉴스가 있는 종목들입니다. "
+            "단기 주가 영향 가능성 있는 ticker만 출력해주세요.\n\n"
+            + "\n\n".join(items_text)
+        )
+
+        try:
+            result = self.call_llm(system, user, max_tokens=200)
+            if not result:
+                return []
+            promoted = []
+            for ln in result.strip().split("\n"):
+                ln = ln.strip().upper()
+                # 코드/노이즈 제거 (영문 + 숫자 + 점만 허용, 1~10자)
+                if 1 <= len(ln) <= 10 and all(c.isalnum() or c in ".-" for c in ln):
+                    promoted.append(ln)
+            return promoted
+        except Exception as e:
+            self.log.warning("[guard] quiet 뉴스 LLM 판정 실패 (무시): %s", e)
+            return []
 
     def _build_context(self, results, alerts, quiet, m7_context, threshold_pct) -> str:
         date_str = today_kst_str()
@@ -332,6 +419,7 @@ class GuardAgent(BaseAgent):
             "positions": [],
             "alerts": [],
             "quiet": [],
+            "quiet_full": [],
             "m7_context": "",
             "context_text": "",
             "held_count": 0,
