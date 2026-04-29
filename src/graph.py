@@ -41,6 +41,7 @@ class BriefBotState(TypedDict, total=False):
 
     # ── 영속 상태 (state.json 누적) ──
     m2_history: dict                   # 섹터 RRG 히스토리 (REGIME 사용)
+    m6_history: list                   # SCOUT 후보 추적 history (M6 D86)
     scout_cooldown: dict               # 신호별 cooldown {ticker: last_alert_date}
     prev_day: dict                     # 어제 브리핑 데이터
     macro_pending: dict                # 발표 대기 매크로 이벤트
@@ -49,6 +50,7 @@ class BriefBotState(TypedDict, total=False):
     scout_out: dict                    # SCOUT: candidates, scanned_total, by_country
     guard_out: dict                    # GUARD: positions_status, news_events
     regime_out: dict                   # REGIME: vix, sectors, macro_events, fx
+    m6_out: dict                       # M6: summary_text, detailed_lines, track_count
     digest_out: dict                   # DIGEST: telegram_text, sheets_text
 
     # ── 메타 ──
@@ -100,6 +102,35 @@ def digest_node(state: BriefBotState) -> dict:
     return update
 
 
+def m6_node(state: BriefBotState) -> dict:
+    """M6 — SCOUT 후보 사후 추적 (Z3-4 재설계, D86).
+
+    SCOUT 결과 + 옛 m6_history → 28일 추적 → DIGEST 컨텍스트.
+    DIGEST 직전 호출 (DIGEST가 결과 사용).
+    """
+    update: dict = {}
+    try:
+        from src.modules.m6_feedback import run_m6
+        scout_out = state.get("scout_out") or {}
+        candidates = scout_out.get("candidates") or []
+        # state는 dict 복사로 전달 (run_m6가 m6_history in-place 수정)
+        m6_state_dict = {"m6_history": state.get("m6_history", [])}
+        m6_out = run_m6(m6_state_dict, scout_candidates=candidates)
+        # 갱신된 history는 state에 다시 반영
+        update["m6_history"] = m6_state_dict["m6_history"]
+        update["m6_out"] = m6_out
+    except Exception as e:
+        logger.warning("[m6_node] 실행 실패 (계속 진행): %s", e)
+        update["m6_out"] = {
+            "summary_text": "",
+            "detailed_lines": [],
+            "track_count": 0,
+            "results": [],
+        }
+        update["errors"] = [f"m6:{e}"]
+    return update
+
+
 # ═══════════════════════════════════════════════════════════
 # 그래프 구성
 # ═══════════════════════════════════════════════════════════
@@ -118,13 +149,16 @@ def build_graph():
     workflow.add_node("scout", scout_node)
     workflow.add_node("guard", guard_node)
     workflow.add_node("regime", regime_node)
+    workflow.add_node("m6", m6_node)
     workflow.add_node("digest", digest_node)
 
-    # 엣지: START → 3개 병렬 → digest → END
+    # 엣지: scout → guard → regime → m6 → digest → END
+    # M6는 SCOUT 후보 받아 추적 + 옛 history 성과 계산 → DIGEST가 사용
     workflow.set_entry_point("scout")
     workflow.add_edge("scout", "guard")
     workflow.add_edge("guard", "regime")
-    workflow.add_edge("regime", "digest")
+    workflow.add_edge("regime", "m6")
+    workflow.add_edge("m6", "digest")
     workflow.add_edge("digest", END)
 
     # ※ 진짜 병렬 fan-out은 langgraph 0.2+ 의 add_edge_parallel 활용 가능.
