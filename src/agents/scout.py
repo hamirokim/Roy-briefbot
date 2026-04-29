@@ -36,6 +36,79 @@ logger = logging.getLogger(__name__)
 # Settings 로드
 # ═══════════════════════════════════════════════════════════
 
+# ═══════════════════════════════════════════════════════════
+# Z1 신규 — 신호 명명 강화 (한글 + 主力运作 단계)
+# D55 정합: SCOUT 5신호 ↔ 主力运作 5단계 매핑
+# ═══════════════════════════════════════════════════════════
+SIGNAL_LABELS = {
+    "bb_squeeze": {
+        "ko": "변동성 압축",
+        "zh_phase": "拉升 직전 (매집 완료)",
+        "desc": "BB Width < 평균 0.5× — 변동성 폭발 임박",
+    },
+    "volume_compression": {
+        "ko": "거래량 압축",
+        "zh_phase": "建仓 진행 중",
+        "desc": "5일 거래량 < 20일 평균 0.7× — 매집 단계 거래량 흡수",
+    },
+    "after_low_consolidation": {
+        "ko": "横盘建仓 (저점 후 횡보)",
+        "zh_phase": "建仓 단계 (主力 매집 의심)",
+        "desc": "52주 신저가 후 7~14일 횡보 — 바닥 다지기",
+    },
+    "insider_buying": {
+        "ko": "메인자금 진입 흔적",
+        "zh_phase": "主力 진입",
+        "desc": "Insider 1주 내 매수 발생",
+    },
+    "rrg_improving": {
+        "ko": "활성 섹터 진입 (회전)",
+        "zh_phase": "拉离 (메인자금 회전 시작)",
+        "desc": "섹터 RRG 3일 내 LAGGING→IMPROVING 전환",
+    },
+}
+
+
+# ═══════════════════════════════════════════════════════════
+# Z1 신규 — themes.yaml 로드 (Track D 提前布局용)
+# ═══════════════════════════════════════════════════════════
+def _load_themes() -> dict:
+    """themes.yaml 로드 (Track D 가치사슬 매핑)."""
+    import yaml
+    from pathlib import Path
+    
+    themes_path = Path(__file__).parent.parent.parent / "config" / "themes.yaml"
+    if not themes_path.exists():
+        return {}
+    
+    try:
+        with open(themes_path, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f)
+        return data.get("themes", {})
+    except Exception as e:
+        return {}
+
+
+def _build_ticker_to_themes_map(themes: dict) -> dict:
+    """ticker → list of (theme_key, role, priority, layer) 역인덱스 구축."""
+    result = {}
+    for theme_key, theme_data in themes.items():
+        for layer in ["upstream", "midstream", "downstream", "enabling_layer"]:
+            tickers = theme_data.get(layer, [])
+            for t in tickers:
+                if isinstance(t, dict):
+                    ticker = t.get("ticker", "")
+                    if ticker:
+                        result.setdefault(ticker, []).append({
+                            "theme_key": theme_key,
+                            "theme_label": theme_data.get("label_ko", theme_key),
+                            "role": t.get("role", ""),
+                            "priority": t.get("priority", "B"),
+                            "layer": layer,
+                        })
+    return result
+
+
 def _load_settings() -> dict:
     import yaml
     path = Path(__file__).resolve().parents[2] / "config" / "ronin_settings.yaml"
@@ -407,7 +480,39 @@ class ScoutAgent(BaseAgent):
         candidates.sort(key=lambda x: (-x["score"], -x["market_cap"]))
         candidates = candidates[:max_output]
 
-        self.log.info("[scout] 최종 후보: %d개", len(candidates))
+        # === Z1 신규: 신호 명명 강화 + Track D 提前布局 매핑 ===
+        themes = _load_themes()
+        ticker_themes = _build_ticker_to_themes_map(themes)
+        
+        for c in candidates:
+            ticker = c["ticker"]
+            
+            # 신호 한글 라벨 추가
+            sig_dict = c.get("signals", {})
+            labeled_signals = {}
+            for sig_key, sig_info in sig_dict.items():
+                label_data = SIGNAL_LABELS.get(sig_key, {})
+                labeled_signals[sig_key] = {
+                    **sig_info,
+                    "label_ko": label_data.get("ko", sig_key),
+                    "phase": label_data.get("zh_phase", ""),
+                }
+            c["signals"] = labeled_signals
+            
+            # Track D: themes.yaml 매핑된 종목인가?
+            theme_matches = ticker_themes.get(ticker, [])
+            if theme_matches:
+                c["track_d"] = {
+                    "is_theme_beneficiary": True,
+                    "matches": theme_matches,
+                    "track": "D (提前布局)",
+                }
+            else:
+                c["track_d"] = {"is_theme_beneficiary": False}
+
+        self.log.info("[scout] 최종 후보: %d개 (Track D 매핑 %d개)", 
+                      len(candidates), 
+                      sum(1 for c in candidates if c.get("track_d", {}).get("is_theme_beneficiary")))
 
         # ── cooldown 갱신 ──
         new_cooldown = _update_cooldown(cooldown_map, candidates, today)
