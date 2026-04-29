@@ -44,6 +44,45 @@ _DEFAULT_SECTOR_MAP = {
     "XLRE": {"label": "리츠", "group": "defensive"},
 }
 
+# 테마 ETF 매핑 (Z1 신규 — D55/D58 정합)
+# 섹터(11개) 안의 sub-industry 또는 cross-sector 테마 추적용
+# AAPL/NVDA 같은 주도주가 매집 단계 못 통과해도 테마 RRG로 잡힘
+_DEFAULT_THEME_MAP = {
+    # 반도체 (Tech 안의 sub-industry, 가장 핫)
+    "SOXX": {"label": "반도체 (iShares)",        "category": "tech_subindustry"},
+    "SMH":  {"label": "반도체 (VanEck)",         "category": "tech_subindustry"},
+    # AI/로봇
+    "AIQ":  {"label": "AI & 빅데이터",            "category": "ai_robotics"},
+    "BOTZ": {"label": "로봇 & AI",                "category": "ai_robotics"},
+    "IRBO": {"label": "AI & 로봇 (iShares)",      "category": "ai_robotics"},
+    # 클라우드/소프트웨어
+    "SKYY": {"label": "클라우드 컴퓨팅",          "category": "tech_subindustry"},
+    "IGV":  {"label": "소프트웨어",               "category": "tech_subindustry"},
+    # 사이버보안
+    "HACK": {"label": "사이버보안 (ETFMG)",       "category": "tech_subindustry"},
+    "CIBR": {"label": "사이버보안 (First Trust)", "category": "tech_subindustry"},
+    # 핀테크
+    "FINX": {"label": "핀테크",                   "category": "fintech"},
+    "ARKF": {"label": "핀테크 혁신 (ARK)",        "category": "fintech"},
+    # 에너지 전환
+    "TAN":  {"label": "태양광",                   "category": "energy_transition"},
+    "LIT":  {"label": "리튬 & 배터리",            "category": "energy_transition"},
+    "ICLN": {"label": "클린에너지",               "category": "energy_transition"},
+    # 우주/방산
+    "ITA":  {"label": "항공우주 & 방산",          "category": "space_defense"},
+    # 바이오
+    "XBI":  {"label": "바이오테크 (S&P)",         "category": "biotech"},
+    "IBB":  {"label": "바이오테크 (NASDAQ)",      "category": "biotech"},
+}
+
+# RRG 4분면 한글 + 中文 번역 (Z1 신규 — 사용자 가독성)
+QUADRANT_LABELS = {
+    "LEADING":   {"ko": "선도",   "zh": "拉升", "desc": "이미 강세, 보유/추격"},
+    "IMPROVING": {"ko": "개선",   "zh": "拉离", "desc": "★ 회복 진입, 매수 황금 시점"},
+    "WEAKENING": {"ko": "약화",   "zh": "出货", "desc": "강세 식음, 익절/회피"},
+    "LAGGING":   {"ko": "후행",   "zh": "建仓", "desc": "약세 지속, 관찰/예비"},
+}
+
 BENCHMARK = "SPY"
 LOOKBACK_DAYS = 90       # 90일 일봉
 RATIO_WINDOW = 14        # ratio 모멘텀 계산 기간
@@ -210,7 +249,7 @@ def _detect_transitions(today_snapshot: dict, m2_history: dict) -> list[dict]:
 # context 생성
 # ═══════════════════════════════════════════════════════════
 
-def _build_context(snapshot: dict, transitions: list[dict]) -> str:
+def _build_context(snapshot: dict, transitions: list[dict], header: str = "섹터 회전 (RRG) — 미국 11개 섹터 ETF") -> str:
     if not snapshot:
         return ""
 
@@ -220,11 +259,16 @@ def _build_context(snapshot: dict, transitions: list[dict]) -> str:
         if quad in by_quad:
             by_quad[quad].append(f"{ticker}({info.get('label', '')})")
 
-    lines = ["[섹터 회전 (RRG) — 미국 11개 섹터 ETF]"]
+    lines = [f"[{header}]"]
+    # 4분면 출력: 한글/중문 번역 포함 (Z1 신규)
     for q in ["LEADING", "IMPROVING", "WEAKENING", "LAGGING"]:
         items = by_quad.get(q, [])
         if items:
-            lines.append(f"  {q}: {', '.join(items)}")
+            label_info = QUADRANT_LABELS.get(q, {})
+            ko = label_info.get("ko", "")
+            zh = label_info.get("zh", "")
+            tag = f"{q} ({ko}/{zh})" if ko else q
+            lines.append(f"  {tag}: {', '.join(items)}")
 
     if transitions:
         lines.append("")
@@ -234,8 +278,8 @@ def _build_context(snapshot: dict, transitions: list[dict]) -> str:
 
     lines.append("")
     lines.append(
-        "참고: IMPROVING = 약세에서 회복 중 (좌측거래 후보 영역). "
-        "LEADING = 이미 강함. LAGGING = 약세 지속. WEAKENING = 강세 식음."
+        "참고: LEADING(선도/拉升)=이미강함, IMPROVING(개선/拉离)=★회복진입(매수황금), "
+        "WEAKENING(약화/出货)=강세식음, LAGGING(후행/建仓)=약세지속."
     )
 
     return "\n".join(lines)
@@ -246,7 +290,7 @@ def _build_context(snapshot: dict, transitions: list[dict]) -> str:
 # ═══════════════════════════════════════════════════════════
 
 def run_m2(etf_map: Optional[dict] = None, state: Optional[dict] = None) -> dict:
-    """M2 섹터 RRG 실행.
+    """M2 섹터 RRG + 테마 RRG 실행 (Z1 확장).
 
     Args:
         etf_map: config/etf_map.json (선택 — 미사용 시 _DEFAULT_SECTOR_MAP)
@@ -254,58 +298,125 @@ def run_m2(etf_map: Optional[dict] = None, state: Optional[dict] = None) -> dict
 
     Returns:
         {
-            "today_snapshot": dict[ticker, {quadrant, label, group, ratio, momentum}],
+            "today_snapshot": dict (섹터 전용, 호환성 유지),
+            "theme_snapshot": dict (테마 RRG, 신규),
             "transitions": list,
-            "context_text": str,
+            "theme_transitions": list,
+            "context_text": str (섹터 + 테마 통합),
         }
     """
     logger.info("=" * 50)
-    logger.info("[M2] 섹터 RRG 시작 (yfinance v3)")
+    logger.info("[M2] 섹터 + 테마 RRG 시작 (yfinance v3, Z1 확장)")
 
-    # 종목 리스트
+    # === 1. 섹터 RRG (기존 11개) ===
     sector_tickers = list(_DEFAULT_SECTOR_MAP.keys())
-    all_tickers = [BENCHMARK] + sector_tickers
+    all_sector = [BENCHMARK] + sector_tickers
+    sector_closes = _fetch_closes(all_sector)
 
-    # yfinance batch fetch
-    closes = _fetch_closes(all_tickers)
-
-    if BENCHMARK not in closes:
+    if BENCHMARK not in sector_closes:
         logger.warning("[M2] %s 벤치마크 없음 — 빈 결과", BENCHMARK)
-        return {"today_snapshot": {}, "transitions": [], "context_text": ""}
+        return {"today_snapshot": {}, "theme_snapshot": {}, "transitions": [], "theme_transitions": [], "context_text": ""}
 
-    benchmark_close = closes.pop(BENCHMARK)
+    benchmark_close = sector_closes.pop(BENCHMARK)
 
-    if len(closes) < 2:
-        logger.warning("[M2] 섹터 ETF 2개 미만 — 빈 결과")
-        return {"today_snapshot": {}, "transitions": [], "context_text": ""}
+    sector_snapshot = {}
+    if len(sector_closes) >= 2:
+        sector_snapshot = _compute_rrg(sector_closes, benchmark_close)
+        logger.info("[M2] 섹터 RRG: %d개 분류", len(sector_snapshot))
 
-    # RRG 계산
-    snapshot = _compute_rrg(closes, benchmark_close)
-    logger.info("[M2] %d개 섹터 RRG 분류 완료", len(snapshot))
+    # === 2. 테마 RRG (신규, 17개) ===
+    theme_tickers = list(_DEFAULT_THEME_MAP.keys())
+    theme_closes = _fetch_closes(theme_tickers)
+
+    theme_snapshot = {}
+    if len(theme_closes) >= 2:
+        # _compute_rrg 는 _DEFAULT_SECTOR_MAP 만 lookup. 테마용 변형
+        theme_snapshot = _compute_rrg_for_themes(theme_closes, benchmark_close)
+        logger.info("[M2] 테마 RRG: %d개 분류", len(theme_snapshot))
 
     # 4분면 분포 로깅
-    quad_count = {}
-    for info in snapshot.values():
+    quad_count_s = {}
+    for info in sector_snapshot.values():
         q = info.get("quadrant", "?")
-        quad_count[q] = quad_count.get(q, 0) + 1
-    logger.info("[M2] 분포: %s", quad_count)
+        quad_count_s[q] = quad_count_s.get(q, 0) + 1
+    quad_count_t = {}
+    for info in theme_snapshot.values():
+        q = info.get("quadrant", "?")
+        quad_count_t[q] = quad_count_t.get(q, 0) + 1
+    logger.info("[M2] 섹터 분포: %s | 테마 분포: %s", quad_count_s, quad_count_t)
 
-    # 분면 전환
+    # === 3. 분면 전환 (섹터 + 테마 별도) ===
     m2_history = (state or {}).get("m2_history", {})
-    transitions = _detect_transitions(snapshot, m2_history)
+    transitions = _detect_transitions(sector_snapshot, m2_history)
+
+    m2_theme_history = (state or {}).get("m2_theme_history", {})
+    theme_transitions = _detect_transitions(theme_snapshot, m2_theme_history)
+
     if transitions:
-        logger.info("[M2] 분면 전환: %d개", len(transitions))
+        logger.info("[M2] 섹터 분면 전환: %d개", len(transitions))
+    if theme_transitions:
+        logger.info("[M2] 테마 분면 전환: %d개", len(theme_transitions))
 
-    context = _build_context(snapshot, transitions)
+    # === 4. context 통합 (섹터 + 테마) ===
+    sector_ctx = _build_context(sector_snapshot, transitions, "섹터 회전 (RRG) — 미국 11개 섹터 ETF")
+    theme_ctx = _build_context(theme_snapshot, theme_transitions, f"테마 회전 (RRG) — {len(_DEFAULT_THEME_MAP)}개 테마 ETF")
 
-    logger.info("[M2] 섹터 RRG 완료")
+    context = sector_ctx + ("\n\n" + theme_ctx if theme_ctx else "")
+
+    logger.info("[M2] 섹터 + 테마 RRG 완료")
     logger.info("=" * 50)
 
     return {
-        "today_snapshot": snapshot,
+        "today_snapshot": sector_snapshot,
+        "theme_snapshot": theme_snapshot,
         "transitions": transitions,
+        "theme_transitions": theme_transitions,
         "context_text": context,
     }
+
+
+# ═══════════════════════════════════════════════════════════
+# 테마용 RRG 계산 (Z1 신규)
+# _compute_rrg와 동일 로직이지만 _DEFAULT_THEME_MAP 사용
+# ═══════════════════════════════════════════════════════════
+def _compute_rrg_for_themes(theme_closes: dict, benchmark_close) -> dict:
+    """테마 RRG 계산 (_compute_rrg 변형, _DEFAULT_THEME_MAP lookup)."""
+    import pandas as pd
+    result = {}
+    for ticker, close in theme_closes.items():
+        try:
+            df = pd.DataFrame({"theme": close, "bench": benchmark_close}).dropna()
+            if len(df) < 50:
+                continue
+            ratio = df["theme"] / df["bench"]
+            ratio = ratio / ratio.mean() * 100
+            momentum = ratio.pct_change(periods=5) * 100 + 100
+
+            rs_ratio = float(ratio.iloc[-1])
+            rs_momentum = float(momentum.iloc[-1])
+
+            if rs_ratio >= 100 and rs_momentum >= 100:
+                quadrant = "LEADING"
+            elif rs_ratio >= 100 and rs_momentum < 100:
+                quadrant = "WEAKENING"
+            elif rs_ratio < 100 and rs_momentum < 100:
+                quadrant = "LAGGING"
+            else:
+                quadrant = "IMPROVING"
+
+            theme_info = _DEFAULT_THEME_MAP.get(ticker, {"label": ticker, "category": ""})
+            result[ticker] = {
+                "quadrant": quadrant,
+                "label": theme_info["label"],
+                "category": theme_info["category"],
+                "ratio": round(rs_ratio, 2),
+                "momentum": round(rs_momentum, 2),
+            }
+        except Exception as e:
+            logger.warning("[M2] 테마 %s 계산 실패: %s", ticker, e)
+            continue
+
+    return result
 
 
 if __name__ == "__main__":
