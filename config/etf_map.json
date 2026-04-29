@@ -5,34 +5,185 @@
     "label": "MSCI ACWI"
   },
   "sectors": {
-    "XLK":  {"stooq": "xlk.us",  "label": "Technology"},
-    "XLV":  {"stooq": "xlv.us",  "label": "Healthcare"},
-    "XLF":  {"stooq": "xlf.us",  "label": "Financials"},
-    "XLY":  {"stooq": "xly.us",  "label": "Cons. Discretionary"},
-    "XLP":  {"stooq": "xlp.us",  "label": "Cons. Staples"},
-    "XLE":  {"stooq": "xle.us",  "label": "Energy"},
-    "XLI":  {"stooq": "xli.us",  "label": "Industrials"},
-    "XLB":  {"stooq": "xlb.us",  "label": "Materials"},
-    "XLC":  {"stooq": "xlc.us",  "label": "Communication"},
-    "XLU":  {"stooq": "xlu.us",  "label": "Utilities"},
-    "XLRE": {"stooq": "xlre.us", "label": "Real Estate"}
+    "XLK": {
+      "stooq": "xlk.us",
+      "label": "Technology"
+    },
+    "XLV": {
+      "stooq": "xlv.us",
+      "label": "Healthcare"
+    },
+    "XLF": {
+      "stooq": "xlf.us",
+      "label": "Financials"
+    },
+    "XLY": {
+      "stooq": "xly.us",
+      "label": "Cons. Discretionary"
+    },
+    "XLP": {
+      "stooq": "xlp.us",
+      "label": "Cons. Staples"
+    },
+    "XLE": {
+      "stooq": "xle.us",
+      "label": "Energy"
+    },
+    "XLI": {
+      "stooq": "xli.us",
+      "label": "Industrials"
+    },
+    "XLB": {
+      "stooq": "xlb.us",
+      "label": "Materials"
+    },
+    "XLC": {
+      "stooq": "xlc.us",
+      "label": "Communication"
+    },
+    "XLU": {
+      "stooq": "xlu.us",
+      "label": "Utilities"
+    },
+    "XLRE": {
+      "stooq": "xlre.us",
+      "label": "Real Estate"
+    }
   },
   "countries": {
-    "EWJ":  {"stooq": "ewj.us",  "label": "Japan"},
-    "EWZ":  {"stooq": "ewz.us",  "label": "Brazil"},
-    "EWY":  {"stooq": "ewy.us",  "label": "South Korea"},
-    "EWT":  {"stooq": "ewt.us",  "label": "Taiwan"},
-    "EWG":  {"stooq": "ewg.us",  "label": "Germany"},
-    "EWU":  {"stooq": "ewu.us",  "label": "UK"},
-    "EWA":  {"stooq": "ewa.us",  "label": "Australia"},
-    "EWC":  {"stooq": "ewc.us",  "label": "Canada"},
-    "EWH":  {"stooq": "ewh.us",  "label": "Hong Kong"},
-    "EWS":  {"stooq": "ews.us",  "label": "Singapore"},
-    "INDA": {"stooq": "inda.us", "label": "India"},
-    "EWW":  {"stooq": "eww.us",  "label": "Mexico"},
-    "VNM":  {"stooq": "vnm.us",  "label": "Vietnam"},
-    "EZA":  {"stooq": "eza.us",  "label": "South Africa"},
-    "EIDO": {"stooq": "eido.us", "label": "Indonesia"},
-    "THD":  {"stooq": "thd.us",  "label": "Thailand"}
+    "EWJ": {
+      "stooq": "ewj.us",
+      "label": "Japan"
+    },
+    "EWZ": {
+      "stooq": "ewz.us",
+      "label": "Brazil"
+    },
+    "EWY": {
+      "stooq": "ewy.us",
+      "label": "South Korea"
+    },
+    "EWT": {
+      "stooq": "ewt.us",
+      "label": "Taiwan"
+    },
+    "EWG": {
+      "stooq": "ewg.us",
+      "label": "Germany"
+    },
+    "EWU": {
+      "stooq": "ewu.us",
+      "label": "UK"
+    },
+    "EWA": {
+      "stooq": "ewa.us",
+      "label": "Australia"
+    },
+    "EWC": {
+      "stooq": "ewc.us",
+      "label": "Canada"
+    },
+    "EWH": {
+      "stooq": "ewh.us",
+      "label": "Hong Kong"
+    },
+    "EWS": {
+      "stooq": "ews.us",
+      "label": "Singapore"
+    },
+    "INDA": {
+      "stooq": "inda.us",
+      "label": "India"
+    },
+    "EWW": {
+      "stooq": "eww.us",
+      "label": "Mexico"
+    },
+    "VNM": {
+      "stooq": "vnm.us",
+      "label": "Vietnam"
+    },
+    "EZA": {
+      "stooq": "eza.us",
+      "label": "South Africa"
+    },
+    "EIDO": {
+      "stooq": "eido.us",
+      "label": "Indonesia"
+    },
+    "THD": {
+      "stooq": "thd.us",
+      "label": "Thailand"
+    }
+  },
+  "themes": {
+    "SOXX": {
+      "label": "Semiconductors (iShares)",
+      "category": "tech_subindustry"
+    },
+    "SMH": {
+      "label": "Semiconductors (VanEck)",
+      "category": "tech_subindustry"
+    },
+    "AIQ": {
+      "label": "AI & Big Data",
+      "category": "ai_robotics"
+    },
+    "BOTZ": {
+      "label": "Robotics & AI",
+      "category": "ai_robotics"
+    },
+    "IRBO": {
+      "label": "AI & Robotics (iShares)",
+      "category": "ai_robotics"
+    },
+    "SKYY": {
+      "label": "Cloud Computing",
+      "category": "tech_subindustry"
+    },
+    "IGV": {
+      "label": "Software (iShares)",
+      "category": "tech_subindustry"
+    },
+    "HACK": {
+      "label": "Cybersecurity (ETFMG)",
+      "category": "tech_subindustry"
+    },
+    "CIBR": {
+      "label": "Cybersecurity (First Trust)",
+      "category": "tech_subindustry"
+    },
+    "FINX": {
+      "label": "FinTech",
+      "category": "fintech"
+    },
+    "ARKF": {
+      "label": "FinTech Innovation (ARK)",
+      "category": "fintech"
+    },
+    "TAN": {
+      "label": "Solar Energy",
+      "category": "energy_transition"
+    },
+    "LIT": {
+      "label": "Lithium & Battery Tech",
+      "category": "energy_transition"
+    },
+    "ICLN": {
+      "label": "Clean Energy",
+      "category": "energy_transition"
+    },
+    "ITA": {
+      "label": "Aerospace & Defense",
+      "category": "space_defense"
+    },
+    "XBI": {
+      "label": "Biotech (S&P)",
+      "category": "biotech"
+    },
+    "IBB": {
+      "label": "Biotech (NASDAQ)",
+      "category": "biotech"
+    }
   }
 }
