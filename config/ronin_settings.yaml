@@ -26,7 +26,7 @@ scout:
       enabled: true
       short_days: 5                    # 단기 평균
       long_days: 20                    # 장기 평균
-      ratio_threshold: 0.7             # 단기 < 장기 × 이 값
+      ratio_threshold: 0.6             # 단기 < 장기 × 이 값 (Z2 우승 조합 D77)
 
     after_low_consolidation:
       enabled: true
