@@ -1,6 +1,6 @@
 {
   "last_run_date": "2026-04-29",
-  "last_run_at": "2026-04-29T10:03:52.925248+09:00",
+  "last_run_at": "2026-04-29T20:02:09.383573+09:00",
   "last_monthly_run": "2026-04-27",
   "last_weekly_run": "2026-W18",
   "m2_history": {
@@ -722,6 +722,6 @@
   "prev_day": {
     "candidates": [],
     "alerts_count": 0,
-    "vix": 17.83
+    "vix": 17.96
   }
 }
