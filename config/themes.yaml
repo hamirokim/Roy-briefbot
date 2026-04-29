@@ -1,0 +1,185 @@
+# ═══════════════════════════════════════════════════════════
+# RONIN 테마 가치사슬 매핑 (Z1 신규 — D55/D58 정합)
+# ═══════════════════════════════════════════════════════════
+# 목적: "거시 → 섹터 → 테마 → 개별주" 4단계 톱다운 시스템
+# 사용: Track D 提前布局 모듈이 이 파일 읽고 가치사슬 종목들 자동 모니터링
+# 운영: 사용자(로이)가 핵심 산업 정의 + Claude 도움으로 가치사슬 매핑
+# 갱신: 분기 1회 또는 주요 산업 변화 시
+# 추가: 정적 큐레이션 한계 — 신생 산업은 동적 발굴 (Z3) 도입 시 보완
+# ═══════════════════════════════════════════════════════════
+
+themes:
+
+  # ── 1. AI 인프라 (训练/推理) ──
+  # 가장 핫. NVDA 단독 추격 X, 가치사슬 다층 분석 필요.
+  ai_infrastructure:
+    label_ko: "AI 인프라 (학습/추론)"
+    label_zh: "AI基础设施 (训练/推理)"
+    parent_sector: "XLK"
+    parent_theme_etf: "AIQ"   # 테마 RRG 참고
+    description: "AI 모델 학습/추론에 필요한 반도체 + 데이터센터 + 전력 인프라"
+    
+    upstream:               # 상류 (장비/소재) — 매집 단계 노릴 자리
+      - ticker: "ASML"
+        role: "노광장비 독점 (EUV)"
+        priority: "A+"
+      - ticker: "AMAT"
+        role: "반도체 식각/증착 장비"
+        priority: "A"
+      - ticker: "LRCX"
+        role: "식각 장비"
+        priority: "A"
+      - ticker: "KLAC"
+        role: "검사/계측 장비"
+        priority: "A"
+    
+    midstream:              # 중류 (제조)
+      - ticker: "TSM"
+        role: "파운드리 1위"
+        priority: "A+"
+      - ticker: "INTC"
+        role: "파운드리 진입 (IDM 2.0)"
+        priority: "B"
+    
+    downstream:             # 하류 (최종 칩)
+      - ticker: "NVDA"
+        role: "AI GPU 1위 (H100/B200)"
+        priority: "A+"
+      - ticker: "AMD"
+        role: "GPU + CPU (MI300)"
+        priority: "A"
+      - ticker: "AVGO"
+        role: "AI 네트워킹 칩 + VMware"
+        priority: "A"
+      - ticker: "MRVL"
+        role: "데이터센터 칩"
+        priority: "B+"
+    
+    enabling_layer:         # 인프라 (전력/냉각) — 가장 간과되지만 핵심 병목
+      - ticker: "VRT"
+        role: "데이터센터 전력/냉각"
+        priority: "A+"
+      - ticker: "ETN"
+        role: "전력 관리 시스템"
+        priority: "A"
+      - ticker: "GEV"
+        role: "전력 그리드 (GE Vernova)"
+        priority: "A"
+      - ticker: "CEG"
+        role: "원자력 전력 공급"
+        priority: "A"
+
+  # ── 2. 로봇 산업 (Humanoid + Industrial) ──
+  robotics:
+    label_ko: "로봇 산업 (휴머노이드 + 산업용)"
+    label_zh: "机器人产业"
+    parent_sector: "XLI"   # 산업재
+    parent_theme_etf: "BOTZ"
+    description: "AI 발전과 결합한 다음 거대 산업. 휴머노이드 + 산업 자동화 + 수술 로봇"
+    
+    upstream:
+      - ticker: "ROK"
+        role: "Rockwell Automation (산업 자동화)"
+        priority: "A"
+      - ticker: "ABBNY"
+        role: "ABB (로봇팔, 산업용)"
+        priority: "A"
+      - ticker: "FANUY"
+        role: "FANUC (일본, 산업 로봇 1위)"
+        priority: "A"
+    
+    midstream:
+      - ticker: "TER"
+        role: "Teradyne (협동 로봇 + 반도체 테스트)"
+        priority: "A"
+      - ticker: "ISRG"
+        role: "Intuitive Surgical (수술 로봇 da Vinci)"
+        priority: "A+"
+    
+    downstream:
+      - ticker: "TSLA"
+        role: "Optimus (휴머노이드)"
+        priority: "B+"      # 멀티플레이어, 로봇 외 영향 큼
+      - ticker: "BOTZ"
+        role: "로봇 ETF (분산 노출)"
+        priority: "B"
+
+  # ── 3. 우주 경제 (SpaceX 영향권) ──
+  space_economy:
+    label_ko: "우주 경제 (SpaceX + 위성)"
+    label_zh: "太空经济"
+    parent_sector: "XLI"
+    parent_theme_etf: "ITA"
+    description: "SpaceX 비상장. 영향권 종목 = 발사체/위성/방산. 정부 예산 + 민간 수요"
+    
+    upstream:               # 방산 (전통)
+      - ticker: "LMT"
+        role: "Lockheed Martin (방산 최대)"
+        priority: "A"
+      - ticker: "RTX"
+        role: "Raytheon (미사일/방산)"
+        priority: "A"
+      - ticker: "NOC"
+        role: "Northrop Grumman (B-21 + 우주)"
+        priority: "A"
+    
+    midstream:              # 발사체 (신생)
+      - ticker: "RKLB"
+        role: "Rocket Lab (소형 위성 발사)"
+        priority: "A+"      # 성장 단계, 提前布局 후보
+    
+    downstream:             # 위성 운영
+      - ticker: "VSAT"
+        role: "Viasat (위성 통신)"
+        priority: "B"
+      - ticker: "IRDM"
+        role: "Iridium (위성 IoT)"
+        priority: "B+"
+
+  # ── 4. 에너지 전환 (전기화/수소) ──
+  energy_transition:
+    label_ko: "에너지 전환 (전기차/수소/배터리)"
+    label_zh: "能源转型"
+    parent_sector: "XLE"
+    parent_theme_etf: "ICLN"
+    description: "전기차 + 배터리 + 수소 + 원자력. 매크로 사이클 영향 큼"
+    
+    upstream:               # 광물 (리튬/코발트)
+      - ticker: "ALB"
+        role: "Albemarle (리튬 1위)"
+        priority: "A"
+      - ticker: "SQM"
+        role: "SQM (칠레 리튬)"
+        priority: "A"
+    
+    midstream:              # 배터리/수소
+      - ticker: "PLUG"
+        role: "Plug Power (수소 연료전지)"
+        priority: "B"
+      - ticker: "BLDP"
+        role: "Ballard Power (수소)"
+        priority: "B"
+    
+    downstream:             # 전기차
+      - ticker: "TSLA"
+        role: "전기차 + 에너지 저장"
+        priority: "A"
+      - ticker: "LCID"
+        role: "Lucid Motors"
+        priority: "C"
+      - ticker: "RIVN"
+        role: "Rivian"
+        priority: "C"
+
+# ═══════════════════════════════════════════════════════════
+# 등급 시스템 (priority)
+# ═══════════════════════════════════════════════════════════
+# A+ : 가치사슬 핵심 + 독점적 위치 + 高확신도
+# A  : 가치사슬 주요 종목, 잘 알려진 수혜주
+# B+ : 멀티-테마 노출 (다른 영역도 매출), 부분 수혜주
+# B  : 신생/성장 단계, 변동성 큼
+# C  : 수혜주 후보, 낮은 확신도, 모니터링만
+#
+# Track D 提前布局 알림 우선순위:
+# A+ > A > B+ > B (C는 알림 X, 모니터링만)
+# ═══════════════════════════════════════════════════════════
