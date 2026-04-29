@@ -514,6 +514,16 @@ class ScoutAgent(BaseAgent):
                       len(candidates), 
                       sum(1 for c in candidates if c.get("track_d", {}).get("is_theme_beneficiary")))
 
+        # ── M1.5 买入三问 LLM 보강 (Z3-4, D74/D78/D80) ──
+        # 후보별 풀 분석 (산업/thesis/catalyst/Q1-Q3/리스크/별점) LLM 호출.
+        # 실패해도 SCOUT 결과는 그대로 반환 (안정성).
+        if candidates:
+            try:
+                from src.modules.m1_5_buyquestions import run_m1_5_buy_questions
+                run_m1_5_buy_questions(candidates, today=today)
+            except Exception as e:
+                self.log.warning("[scout] M1.5 LLM 보강 실패 (계속 진행): %s", e)
+
         # ── cooldown 갱신 ──
         new_cooldown = _update_cooldown(cooldown_map, candidates, today)
 
