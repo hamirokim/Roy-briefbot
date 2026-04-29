@@ -409,25 +409,30 @@ class DigestAgent(BaseAgent):
     # LLM — 영문 뉴스 한국어 요약 (v3 신규)
     # ─────────────────────────────────────────────
     def _translate_news_korean(self, guard_out: dict) -> dict:
-        """GUARD alerts의 영문 뉴스 → 한국어 1줄 요약.
+        """GUARD alerts + quiet_full의 영문 뉴스 → 한국어 1줄 요약.
 
-        한 번의 LLM 호출로 여러 종목 뉴스 동시 처리 (효율).
+        D88 (Z3-4): quiet_full 종목 뉴스도 번역 (텔레그램/시트 보유 뉴스 한글 일관).
+        한 번의 LLM 호출로 alerts + quiet_full 모두 동시 처리 (효율).
         실패 시 영문 그대로 유지 (fallback).
         """
-        alerts = guard_out.get("alerts", [])
-        if not alerts:
+        alerts = guard_out.get("alerts", []) or []
+        quiet_full = guard_out.get("quiet_full", []) or []
+
+        # 번역 대상 후보 = alerts + quiet_full (둘 다)
+        all_targets = alerts + quiet_full
+        if not all_targets:
             return guard_out
 
-        # 영문 뉴스 있는 종목만
+        # 영문 뉴스 있는 종목만 일괄 수집
         news_to_translate = []
-        for a in alerts:
-            for n in a.get("news", []):
-                headline = n.get("headline", "").strip()
+        for entry in all_targets:
+            for n in entry.get("news", []) or []:
+                headline = (n.get("headline", "") or "").strip()
                 if headline:
                     news_to_translate.append({
-                        "ticker": a["ticker"],
+                        "ticker": entry.get("ticker", ""),
                         "headline": headline,
-                        "summary": n.get("summary", "")[:200],
+                        "summary": (n.get("summary", "") or "")[:200],
                     })
 
         if not news_to_translate:
@@ -452,14 +457,17 @@ class DigestAgent(BaseAgent):
             f"뉴스:\n{json.dumps(news_to_translate, ensure_ascii=False, indent=2)}"
         )
 
-        raw = self.call_llm(system, user, max_tokens=600)
+        # 입력 뉴스가 많으면 max_tokens 동적 증가
+        n_news = len(news_to_translate)
+        max_tok = max(600, n_news * 80)
+
+        raw = self.call_llm(system, user, max_tokens=max_tok)
         if not raw:
             return guard_out
 
         try:
             cleaned = raw.replace("```json", "").replace("```", "").strip()
             translations = json.loads(cleaned)
-            # 매핑: (ticker, headline) → ko_summary
             ko_map: dict[tuple, str] = {}
             for t in translations:
                 key = (t.get("ticker", ""), t.get("headline", ""))
@@ -473,16 +481,30 @@ class DigestAgent(BaseAgent):
         for a in alerts:
             new_a = dict(a)
             new_news = []
-            for n in a.get("news", []):
+            for n in a.get("news", []) or []:
                 new_n = dict(n)
-                ko = ko_map.get((a["ticker"], n.get("headline", "")), "")
+                ko = ko_map.get((a.get("ticker", ""), n.get("headline", "")), "")
                 new_n["ko_summary"] = ko
                 new_news.append(new_n)
             new_a["news"] = new_news
             new_alerts.append(new_a)
 
+        # quiet_full 동일 처리 (D88)
+        new_quiet_full = []
+        for q in quiet_full:
+            new_q = dict(q)
+            new_news = []
+            for n in q.get("news", []) or []:
+                new_n = dict(n)
+                ko = ko_map.get((q.get("ticker", ""), n.get("headline", "")), "")
+                new_n["ko_summary"] = ko
+                new_news.append(new_n)
+            new_q["news"] = new_news
+            new_quiet_full.append(new_q)
+
         new_guard = dict(guard_out)
         new_guard["alerts"] = new_alerts
+        new_guard["quiet_full"] = new_quiet_full
         return new_guard
 
     # ─────────────────────────────────────────────
