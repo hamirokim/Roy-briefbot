@@ -151,6 +151,7 @@ class DigestAgent(BaseAgent):
         scout_out = state.get("scout_out", {})
         guard_out = state.get("guard_out", {})
         regime_out = state.get("regime_out", {})
+        m6_out = state.get("m6_out", {}) or {}
         briefing_mode = state.get("briefing_mode", "daily")
 
         # 모든 에이전트 실패 체크
@@ -182,11 +183,18 @@ class DigestAgent(BaseAgent):
             period_summary = self._build_monthly_summary(state, regime_out, scout_out)
             self.log.info("[digest] 월간 정리 생성: %d자", len(period_summary))
 
+        # ── LLM 호출 4 (Z3-4 D87 신규) — 매일 매크로 1줄 해석 ──
+        # 후보 0일/알람 0일에도 콘텐츠 풍성하게 만들기 위함
+        macro_interp = self._build_macro_interpretation_llm(regime_out, scout_out, guard_out_translated)
+        self.log.info("[digest] 매크로 해석 생성: %d자", len(macro_interp))
+
         # ── 텔레그램 메시지 생성 ──
         telegram_text = self._build_telegram(
             candidates_with_explanation, guard_out_translated, regime_out,
             briefing_mode=briefing_mode,
             period_summary=period_summary,
+            macro_interp=macro_interp,
+            m6_out=m6_out,
         )
 
         # ── 저널 BRIEFING 시트 메시지 생성 (상세) ──
@@ -194,6 +202,8 @@ class DigestAgent(BaseAgent):
             scout_out, guard_out_translated, regime_out, candidates_with_explanation,
             briefing_mode=briefing_mode,
             period_summary=period_summary,
+            macro_interp=macro_interp,
+            m6_out=m6_out,
         )
 
         return {
@@ -204,6 +214,73 @@ class DigestAgent(BaseAgent):
             "briefing_mode": briefing_mode,
             "all_empty": False,
         }
+
+    # ─────────────────────────────────────────────
+    # LLM — 매일 매크로 1~2줄 해석 (Z3-4 D87 신규)
+    # 후보 0일/알람 0일 풍성 브리핑용
+    # ─────────────────────────────────────────────
+    def _build_macro_interpretation_llm(
+        self, regime_out: dict, scout_out: dict, guard_out: dict
+    ) -> str:
+        """오늘 매크로 환경의 좌측거래 관점 1~2문단 해석.
+
+        매일 호출. 후보/알람 없는 날에도 사용자가 가치 느끼도록.
+        실패 시 빈 문자열.
+        """
+        vix_data = regime_out.get("vix_data", {}) or {}
+        fx = regime_out.get("fx", {}) or {}
+        rrg = regime_out.get("rrg", {}) or {}
+        by_quad = rrg.get("by_quadrant", {}) or {}
+        macro = regime_out.get("macro", {}) or {}
+        upcoming = macro.get("upcoming", []) or []
+
+        quad_lines = []
+        for q in ["LEADING", "IMPROVING", "WEAKENING", "LAGGING"]:
+            items = by_quad.get(q, [])
+            if not items:
+                continue
+            ko = _QUADRANT_KO.get(q, q)
+            tickers = ", ".join(i.get("label", i.get("ticker", "?")) for i in items[:5])
+            quad_lines.append(f"  {ko}: {tickers}")
+
+        upcoming_lines = []
+        for evt in upcoming[:3]:
+            impact = evt.get("impact", "")
+            marker = "🔴" if impact == "high" else ("🟡" if impact == "medium" else "·")
+            upcoming_lines.append(f"  {marker} {evt.get('date')} {evt.get('name')}")
+
+        n_candidates = len(scout_out.get("candidates", []) or [])
+        n_alerts = len(guard_out.get("alerts", []) or [])
+
+        system = (
+            "당신은 RONIN 트레이딩 시스템의 매일 매크로 해석가입니다.\n"
+            "역할: 오늘 매크로 환경 (VIX/환율/섹터 RRG/매크로 일정)을 좌측거래 관점에서 2문단으로 해석.\n"
+            "원칙:\n"
+            "1. 한국어. 결론·관찰 포인트 우선.\n"
+            "2. 2문단 (각 80~150자):\n"
+            "   ① 오늘 환경 핵심 (어떤 신호가 강한가, 어디 주목해야 하나)\n"
+            "   ② 좌측거래 관점 관찰 포인트 (베어/강세 어느 쪽 매집/분배 가능성)\n"
+            "3. 진입/exit 명령 X. 환경 평가 + 관찰만.\n"
+            "4. 환각 X. 입력 데이터에 있는 수치만.\n"
+            "5. 자연 한국어 문단 (마크다운/번호 X)."
+        )
+
+        user = (
+            f"[오늘 매크로 환경]\n"
+            f"  VIX: {vix_data.get('value', '?')} ({vix_data.get('regime', '?')})\n"
+            f"  원/달러: {fx.get('current', '?')}원 ({fx.get('label', '')})\n"
+            f"\n[섹터 RRG 4분면]\n"
+            + ("\n".join(quad_lines) or "  (데이터 부족)")
+            + f"\n\n[이번 주 매크로 일정]\n"
+            + ("\n".join(upcoming_lines) or "  (없음)")
+            + f"\n\n[오늘 시스템 상태]\n"
+            f"  SCOUT 후보: {n_candidates}개\n"
+            f"  GUARD 알람: {n_alerts}개\n\n"
+            "위 환경에 대한 매크로 해석 (2문단)을 작성해주세요."
+        )
+
+        result = self.call_llm(system, user, max_tokens=400)
+        return (result or "").strip()
 
     # ─────────────────────────────────────────────
     # LLM — 주간 종합 + 새 주 방향 안내 (weekly 모드)
@@ -475,9 +552,17 @@ class DigestAgent(BaseAgent):
         regime_out: dict,
         briefing_mode: str = "daily",
         period_summary: str = "",
+        macro_interp: str = "",
+        m6_out: dict | None = None,
     ) -> str:
+        """텔레그램 메시지 생성.
+
+        D87 (Z3-4): 텔레그램 = 시트 동일화 원칙. 풀 콘텐츠 빌드 후 텔레그램용 변환.
+        후보 0일에도 풍성: RRG 4분면 + 매크로 LLM 해석 + m6 추적 + quiet 뉴스 노출.
+        """
         max_chars = self.settings["digest"]["telegram"]["max_chars"]
         date_str = now_kst().strftime("%Y-%m-%d (%a)")
+        m6_out = m6_out or {}
 
         # 모드별 헤더 라벨
         mode_badge = ""
@@ -494,7 +579,6 @@ class DigestAgent(BaseAgent):
                 lines.append("<b>📅 월간 정리 + 새 달 방향</b>")
             else:
                 lines.append("<b>📅 주간 종합 + 새 주 방향</b>")
-            # 텔레그램은 너무 길지 않게 자름 (저널은 풀버전)
             short = period_summary if len(period_summary) <= 600 else period_summary[:580] + "…"
             lines.append(f"<i>{short}</i>")
             lines.append("")
@@ -522,6 +606,23 @@ class DigestAgent(BaseAgent):
                 lines.append(f"<i>{judgment}</i>")
             lines.append("")
 
+        # ── 1-A. 섹터 RRG 4분면 (D87 신규: 텔레그램에도 노출) ──
+        rrg = regime_out.get("rrg", {}) or {}
+        by_quad = rrg.get("by_quadrant", {}) or {}
+        if by_quad:
+            lines.append("<b>📊 섹터 RRG (4분면)</b>")
+            for q in ["LEADING", "IMPROVING", "WEAKENING", "LAGGING"]:
+                items = by_quad.get(q, [])
+                if not items:
+                    continue
+                ko = _QUADRANT_KO.get(q, q)
+                tickers = ", ".join(
+                    i.get("label", i.get("ticker", "?")) for i in items[:6]
+                )
+                emoji = {"LEADING": "🟢", "IMPROVING": "🔵", "WEAKENING": "🟡", "LAGGING": "🔴"}.get(q, "·")
+                lines.append(f"{emoji} {ko}: <i>{tickers}</i>")
+            lines.append("")
+
         # 어제 발표 + 해석
         macro = regime_out.get("macro", {})
         yesterday = macro.get("yesterday_announced", [])
@@ -532,6 +633,14 @@ class DigestAgent(BaseAgent):
                 lines.append(f"• {evt.get('name')}")
             if interp:
                 lines.append(f"<i>{interp[:400]}</i>")
+            lines.append("")
+
+        # ── 1-B. 매크로 해석 LLM (D87 신규: 매일 1~2문단) ──
+        if macro_interp:
+            lines.append(f"<b>🧠 매크로 해석</b>")
+            # 텔레그램은 압축 (시트는 풀버전)
+            interp_short = macro_interp if len(macro_interp) <= 500 else macro_interp[:480] + "…"
+            lines.append(f"<i>{interp_short}</i>")
             lines.append("")
 
         # 이번 주 예정
@@ -571,11 +680,21 @@ class DigestAgent(BaseAgent):
             lines.append(f"<b>🎯 신규 후보</b> 오늘 없음 (사전 감지 임계 미달)")
             lines.append("")
 
+        # ── 2-A. M6 SCOUT 추적 (D86 신규) ──
+        m6_summary = m6_out.get("summary_text", "")
+        if m6_summary:
+            lines.append(f"<b>🔄 SCOUT 추적</b>")
+            lines.append(f"<i>{m6_summary}</i>")
+            lines.append("")
+
         # ── 3. GUARD 보유 포지션 ──
         alerts = guard_out.get("alerts", [])
+        quiet_full = guard_out.get("quiet_full", []) or []  # D87: 전체 quiet 데이터 (티커+가격+뉴스)
         quiet = guard_out.get("quiet", [])
+        held_count = guard_out.get("held_count", 0)
+
         if alerts:
-            lines.append(f"<b>📌 보유 ({guard_out.get('held_count', 0)}종목 — 주목 {len(alerts)})</b>")
+            lines.append(f"<b>📌 보유 ({held_count}종목 — 주목 {len(alerts)})</b>")
             for a in alerts:
                 price = a.get("price", {})
                 if price:
@@ -587,25 +706,40 @@ class DigestAgent(BaseAgent):
                     lines.append(f"• <b>{a['ticker']}</b> 가격 수집 실패")
                 if a.get("news"):
                     n = a["news"][0]
-                    # 한국어 요약 우선, 없으면 영문 헤드라인 (v3 패치)
                     ko = n.get("ko_summary", "").strip()
                     if ko:
                         lines.append(f"  📰 {ko}")
                     else:
                         lines.append(f"  📰 {n['headline'][:80]}")
-            if quiet:
-                lines.append(f"<i>변동 없음: {', '.join(quiet)}</i>")
             lines.append("")
-        elif guard_out.get("held_count", 0) > 0:
-            lines.append(
-                f"<b>📌 보유 {guard_out.get('held_count', 0)}종목</b> 모두 변동 없음"
-            )
+        elif held_count > 0:
+            lines.append(f"<b>📌 보유 {held_count}종목</b> 모두 변동 없음")
+            lines.append("")
+
+        # ── 3-A. Quiet 종목 뉴스 (D87 신규: 변동 X여도 의미 뉴스 있으면 push) ──
+        if quiet_full:
+            quiet_with_news = [q for q in quiet_full if q.get("news")]
+            if quiet_with_news:
+                lines.append(f"<b>📰 보유 종목 주요 뉴스</b>")
+                for q in quiet_with_news[:4]:
+                    ticker = q.get("ticker", "?")
+                    price = q.get("price", {})
+                    pct = price.get("daily_pct", 0) if price else 0
+                    news_list = q.get("news", []) or []
+                    if news_list:
+                        n = news_list[0]
+                        ko = n.get("ko_summary", "").strip()
+                        head = ko or (n.get("headline", "") or "")[:100]
+                        lines.append(f"• <b>{ticker}</b> ({pct:+.1f}%) — <i>{head}</i>")
+                lines.append("")
+        elif quiet:
+            # quiet_full 없으면 옛 로직 (이름만)
+            lines.append(f"<i>변동 없음: {', '.join(quiet)}</i>")
             lines.append("")
 
         # ── 4. M7 상관관계 (GUARD에서 흡수됨) ──
         m7 = guard_out.get("m7_context", "")
         if m7:
-            # M7은 raw 텍스트라 짧게
             m7_short = m7.split("\n")[1] if "\n" in m7 else m7
             lines.append(f"<i>{m7_short[:200]}</i>")
             lines.append("")
@@ -614,11 +748,11 @@ class DigestAgent(BaseAgent):
         notes = regime_out.get("interpretation", {}).get("learning_notes", [])
         if notes:
             lines.append(f"<b>📚 학습</b>")
-            for n in notes[:2]:
+            for n in notes[:3]:  # D87: 2 → 3개로 확장
                 term = n.get("term", "")
                 explain = n.get("explain", "")
                 if term and explain:
-                    lines.append(f"• <b>{term}</b>: {explain[:100]}")
+                    lines.append(f"• <b>{term}</b>: {explain[:120]}")
 
         # 길이 제한
         text = "\n".join(lines)
@@ -639,18 +773,16 @@ class DigestAgent(BaseAgent):
         candidates_with_comment,
         briefing_mode: str = "daily",
         period_summary: str = "",
+        macro_interp: str = "",
+        m6_out: dict | None = None,
     ) -> str:
         """저널 본문 빌드.
 
-        원칙 (v4 한글화):
-        - 모든 라벨/섹션명 한국어 통일
-        - 영문 ETF/티커 코드는 한글 라벨 동반 (정보 보존)
-        - 영문 뉴스 → ko_summary 우선 사용 (alerts에서 직접)
-        - guard_out["context_text"] / regime_out["context_text"] 의존 X
-        - 디테일 강화: 모든 데이터 노출
-        - briefing_mode in (weekly, monthly) → period_summary 상단 섹션 추가
+        D87 원칙: 텔레그램 = 시트 동일화. 풀 콘텐츠 노출 (시트는 길이 제한 X).
+        텔레그램과 동일한 콘텐츠 + 추가 디테일 (RRG 분면 전환, m6 종목별 상세, quiet 뉴스 풀버전).
         """
         SEP = "═" * 60
+        m6_out = m6_out or {}
 
         now = now_kst()
         date_str = now.strftime("%Y-%m-%d (%a) %H:%M KST")
@@ -681,13 +813,13 @@ class DigestAgent(BaseAgent):
                 lines.append(f"  {ln}" if ln.strip() else "")
             lines.append("")
 
-        # ▣ 매크로 환경
-        lines.extend(self._build_journal_regime(regime_out))
+        # ▣ 매크로 환경 (D87: macro_interp 풀버전 포함)
+        lines.extend(self._build_journal_regime(regime_out, macro_interp=macro_interp))
 
-        # ■ 정찰 (SCOUT)
-        lines.extend(self._build_journal_scout(scout_out, candidates_with_comment))
+        # ■ 정찰 (SCOUT) (D87: m6_out 통합)
+        lines.extend(self._build_journal_scout(scout_out, candidates_with_comment, m6_out=m6_out))
 
-        # ■ 감시 (GUARD)
+        # ■ 감시 (GUARD) (D87: quiet 뉴스 풀버전)
         lines.extend(self._build_journal_guard(guard_out))
 
         # ■ 메타
@@ -698,7 +830,7 @@ class DigestAgent(BaseAgent):
     # ─────────────────────────────────────────────
     # 저널 섹션 빌더 — 매크로 환경
     # ─────────────────────────────────────────────
-    def _build_journal_regime(self, regime_out: dict) -> list:
+    def _build_journal_regime(self, regime_out: dict, macro_interp: str = "") -> list:
         lines = ["▣ 매크로 환경", ""]
 
         # VIX
@@ -779,6 +911,14 @@ class DigestAgent(BaseAgent):
                 marker = "🔴" if impact == "high" else ("🟡" if impact == "medium" else "·")
                 lines.append(f"  {marker} {evt.get('date')}  {evt.get('name')}")
 
+        # ▣ 매크로 해석 (D87 신규: 풀버전, 시트는 길이 제한 X)
+        if macro_interp:
+            lines.append("")
+            lines.append("▣ 매크로 해석 (오늘 좌측거래 관점)")
+            for ln in macro_interp.split("\n"):
+                if ln.strip():
+                    lines.append(f"  {ln}")
+
         # ▣ 학습 노트
         notes = (regime_out.get("interpretation", {}) or {}).get("learning_notes", []) or []
         if notes:
@@ -796,7 +936,7 @@ class DigestAgent(BaseAgent):
     # ─────────────────────────────────────────────
     # 저널 섹션 빌더 — 정찰 (SCOUT)
     # ─────────────────────────────────────────────
-    def _build_journal_scout(self, scout_out: dict, candidates: list) -> list:
+    def _build_journal_scout(self, scout_out: dict, candidates: list, m6_out: dict | None = None) -> list:
         SEP = "═" * 60
         lines = [
             SEP,
@@ -862,6 +1002,21 @@ class DigestAgent(BaseAgent):
             lines.append("  (오늘 채택 후보 없음 — 사전 감지 임계 미달)")
             lines.append("")
 
+        # ── M6 SCOUT 추적 (D86 신규: 시트는 풀버전, 종목별 상세) ──
+        m6_out = m6_out or {}
+        m6_summary = m6_out.get("summary_text", "")
+        m6_detailed = m6_out.get("detailed_lines", []) or []
+        m6_count = m6_out.get("track_count", 0)
+        if m6_summary or m6_detailed:
+            lines.append("─" * 60)
+            lines.append(f"▷ SCOUT 후보 추적 (M6, {m6_count}개)")
+            if m6_summary:
+                lines.append(f"  요약: {m6_summary}")
+            if m6_detailed:
+                lines.append("")
+                lines.extend(m6_detailed)
+            lines.append("")
+
         return lines
 
     # ─────────────────────────────────────────────
@@ -923,10 +1078,36 @@ class DigestAgent(BaseAgent):
                     lines.append(f"      메모   : {memo}")
                 lines.append("")
 
-        if quiet:
-            lines.append(
-                f"▷ 변동 없음 ({len(quiet)}종목): {', '.join(quiet)}"
-            )
+        # ── Quiet 종목 풀 노출 (D87 신규: 변동 X여도 뉴스/가격 정보 노출) ──
+        quiet_full = guard_out.get("quiet_full", []) or []
+        if quiet_full:
+            lines.append(f"▷ 변동 없음 ({len(quiet_full)}종목)")
+            lines.append("")
+            for q in quiet_full:
+                ticker = q.get("ticker", "?")
+                price = q.get("price", {}) or {}
+                close = price.get("close", "?")
+                d_pct = price.get("daily_pct", 0) or 0
+                w_pct = price.get("weekly_pct", 0) or 0
+                try:
+                    lines.append(f"  • {ticker}  ${close}  (일 {d_pct:+.1f}%, 주 {w_pct:+.1f}%)")
+                except Exception:
+                    lines.append(f"  • {ticker}  ${close}  (일 {d_pct}, 주 {w_pct})")
+
+                news_list = q.get("news", []) or []
+                if news_list:
+                    for n in news_list[:3]:
+                        ko = (n.get("ko_summary") or "").strip()
+                        if ko:
+                            lines.append(f"      📰 {ko}")
+                        else:
+                            head = (n.get("headline", "") or "")[:100]
+                            if head:
+                                lines.append(f"      📰 {head}")
+            lines.append("")
+        elif quiet:
+            # quiet_full 없으면 옛 로직 (이름만)
+            lines.append(f"▷ 변동 없음 ({len(quiet)}종목): {', '.join(quiet)}")
             lines.append("")
 
         # M7 상관관계 경고 (있을 때만)
