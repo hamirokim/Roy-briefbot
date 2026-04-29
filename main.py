@@ -4,12 +4,13 @@ main.py — Roy-briefbot v2.0 메인 엔트리포인트
 LangGraph 기반 4 에이전트 워크플로:
   SCOUT (발굴) → GUARD (모니터) → REGIME (매크로 + 해석) → DIGEST (종합)
 
-기존 M1~M7 직접 호출은 제거. 각 모듈은 에이전트 안에서 흡수됨:
+기존 M1~M7 직접 호출은 제거. 각 모듈은 에이전트 안에서 흡수 또는 재설계됨:
   - M2 (섹터 RRG) → REGIME 안에서 호출
-  - M4 (트래커) → GUARD 안에서 흡수
-  - M5 (리스크) → REGIME 안에서 흡수
-  - M6 (피드백) → 향후 SCOUT cooldown으로 통합 (현재 미사용)
+  - M4 (트래커) → GUARD 안에서 흡수 (D83 폐기)
+  - M5 (리스크) → REGIME 안에서 흡수 (D84 폐기)
+  - M6 (피드백) → SCOUT 후보 추적 재설계 (D86, DIGEST 직전 호출)
   - M7 (상관) → GUARD 안에서 호출
+  - M1.5 (买入三问) → SCOUT 안에서 호출 (Z3-4, D81 통합)
 
 GitHub Actions 스케줄: KST 07:10 (.github/workflows/daily.yml)
 """
@@ -70,6 +71,7 @@ def save_state(state: dict) -> None:
             "last_monthly_run": state.get("last_monthly_run", ""),
             "last_weekly_run": state.get("last_weekly_run", ""),
             "m2_history": state.get("m2_history", {}),
+            "m6_history": state.get("m6_history", []),
             "scout_cooldown": state.get("scout_cooldown", {}),
             "prev_day": {
                 "candidates": state.get("scout_out", {}).get("candidates", []),
