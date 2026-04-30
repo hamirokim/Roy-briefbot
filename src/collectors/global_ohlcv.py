@@ -26,6 +26,31 @@ CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ═══════════════════════════════════════════════════════════
+# yfinance period 매핑 헬퍼 (D89: end exclusive 시간대 버그 근본 해결)
+# ═══════════════════════════════════════════════════════════
+
+def _to_yf_period(days: int) -> str:
+    """캘린더일 → yfinance period 문자열.
+
+    period 사용 = start/end 시간대 신경 X. yfinance가 자동으로 최신까지.
+    GitHub Actions UTC + KST 07:10 + end exclusive 충돌 해결.
+    """
+    if days <= 7:
+        return "5d"
+    if days <= 35:
+        return "1mo"
+    if days <= 95:
+        return "3mo"
+    if days <= 190:
+        return "6mo"
+    if days <= 380:
+        return "1y"
+    if days <= 760:
+        return "2y"
+    return "5y"
+
+
+# ═══════════════════════════════════════════════════════════
 # 캐시 헬퍼 (당일 1회만 fetch)
 # ═══════════════════════════════════════════════════════════
 
@@ -83,8 +108,8 @@ def _fetch_yfinance_batch(tickers: list[str], lookback_days: int = 260) -> dict[
         logger.error("[ohlcv] yfinance 미설치")
         return {}
 
-    end = datetime.now()
-    start = end - timedelta(days=lookback_days)
+    # D89 근본 해결: period 사용 (시간대 무관, 자동 최신까지).
+    period_str = _to_yf_period(lookback_days)
     result: dict[str, pd.DataFrame] = {}
 
     CHUNK = 50
@@ -94,8 +119,7 @@ def _fetch_yfinance_batch(tickers: list[str], lookback_days: int = 260) -> dict[
         try:
             raw = yf.download(
                 batch_str,
-                start=start.strftime("%Y-%m-%d"),
-                end=end.strftime("%Y-%m-%d"),
+                period=period_str,
                 progress=False,
                 group_by="ticker",
                 auto_adjust=False,
@@ -220,14 +244,13 @@ def fetch_daily_closes_yf(stooq_ticker: str, lookback: int = 30) -> Optional[pd.
         return None
 
     yahoo_ticker = _stooq_to_yahoo_ticker(stooq_ticker)
-    end = datetime.now()
-    start = end - timedelta(days=int(lookback * 1.6) + 10)
+    # D89 근본 해결: period 사용 (시간대 무관, 자동 최신까지)
+    period_str = _to_yf_period(int(lookback * 1.6) + 10)
 
     try:
         df = yf.download(
             yahoo_ticker,
-            start=start.strftime("%Y-%m-%d"),
-            end=end.strftime("%Y-%m-%d"),
+            period=period_str,
             progress=False,
             auto_adjust=False,
             threads=False,
@@ -269,14 +292,13 @@ def fetch_daily_ohlcv_yf(stooq_ticker: str, lookback: int = 260) -> Optional[pd.
         return None
 
     yahoo_ticker = _stooq_to_yahoo_ticker(stooq_ticker)
-    end = datetime.now()
-    start = end - timedelta(days=int(lookback * 1.6) + 10)
+    # D89 근본 해결: period 사용 (시간대 무관, 자동 최신까지)
+    period_str = _to_yf_period(int(lookback * 1.6) + 10)
 
     try:
         df = yf.download(
             yahoo_ticker,
-            start=start.strftime("%Y-%m-%d"),
-            end=end.strftime("%Y-%m-%d"),
+            period=period_str,
             progress=False,
             auto_adjust=False,
             threads=False,
