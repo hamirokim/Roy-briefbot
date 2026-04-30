@@ -95,19 +95,21 @@ def _normalize_ticker_for_yf(ticker: str) -> str:
 
 
 def _fetch_price_change(ticker: str) -> Optional[dict]:
-    """일간/주간 변동률 — yfinance 사용 (v2 패치)."""
+    """일간/주간 변동률 — yfinance period 방식 (D89 시간대 버그 근본 해결).
+
+    end 파라미터 폐기. period="1mo" 사용 → 시간대 무관, 자동 최신까지.
+    GitHub Actions UTC + KST 07:10 + end exclusive 3중 충돌 해결.
+    """
     try:
         import yfinance as yf
 
         yf_ticker = _normalize_ticker_for_yf(ticker)
-        end = datetime.now()
-        start = end - timedelta(days=15)
 
-        # yfinance batch download 형식
+        # D89 근본 해결: period 사용 → start/end 시간대 신경 X
+        # weekly_pct는 6 거래일 필요 → "1mo" (~22 거래일) 충분
         df = yf.download(
             yf_ticker,
-            start=start.strftime("%Y-%m-%d"),
-            end=end.strftime("%Y-%m-%d"),
+            period="1mo",
             progress=False,
             auto_adjust=False,
         )
