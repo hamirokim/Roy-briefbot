@@ -7,6 +7,11 @@ src/graph.py — LangGraph 메인 워크플로
 조건부 라우팅 예시 (향후 확장):
   - VIX EXTREME (>40) → SCOUT 스킵
   - 모든 에이전트 실패 → fallback 메시지
+
+D91 박제 (2026-04-30): m6_node에 SCOUT 시트 적재 hook 추가.
+  - SCOUT 후보 발화 시 자동으로 'SCOUT 후보발굴' / 'SCOUT 통계' 시트 생성/업데이트
+  - 매일 follow-up 가격 (+5d/+28d) + POSITIONS 매핑 동기화
+  - 시트 작업 실패해도 메인 워크플로 영향 X (try/except)
 """
 
 import logging
@@ -107,8 +112,15 @@ def m6_node(state: BriefBotState) -> dict:
 
     SCOUT 결과 + 옛 m6_history → 28일 추적 → DIGEST 컨텍스트.
     DIGEST 직전 호출 (DIGEST가 결과 사용).
+
+    D91 (2026-04-30): m6 처리 후 SCOUT 시트 자동 적재 hook 추가.
+      1. SCOUT 후보 → 'SCOUT 후보발굴' 시트 1행씩 적재 (price_at_add 동봉)
+      2. 매일 follow-up: +5d/+28d 가격 자동 채움
+      3. POSITIONS → SCOUT 시트 진입여부 컬럼 자동 동기화
+      모든 작업 try/except — 실패해도 봇 메인 워크플로 영향 X.
     """
     update: dict = {}
+    candidates_with_price = []
     try:
         from src.modules.m6_feedback import run_m6
         scout_out = state.get("scout_out") or {}
@@ -119,6 +131,21 @@ def m6_node(state: BriefBotState) -> dict:
         # 갱신된 history는 state에 다시 반영
         update["m6_history"] = m6_state_dict["m6_history"]
         update["m6_out"] = m6_out
+
+        # ── D91: SCOUT 시트 적재용 — m6_history에서 오늘 추가된 가격 찾아 candidate에 주입 ──
+        # m6는 _fetch_current_price를 이미 수행하므로 m6_history에서 매칭
+        history = m6_state_dict["m6_history"]
+        today_str = state.get("date", "")
+        history_index = {
+            (h.get("ticker", ""), h.get("date_added", "")): h.get("price_at_add")
+            for h in history
+        }
+        for c in candidates:
+            ticker = (c.get("ticker") or "").upper()
+            price = history_index.get((ticker, today_str))
+            if price is not None:
+                c["price_at_add"] = price
+        candidates_with_price = candidates
     except Exception as e:
         logger.warning("[m6_node] 실행 실패 (계속 진행): %s", e)
         update["m6_out"] = {
@@ -128,6 +155,49 @@ def m6_node(state: BriefBotState) -> dict:
             "results": [],
         }
         update["errors"] = [f"m6:{e}"]
+
+    # ═══════════════════════════════════════════════════════════
+    # D91: SCOUT 시트 자동 적재 (실패해도 워크플로 영향 X)
+    # ═══════════════════════════════════════════════════════════
+    try:
+        from src.collectors.sheets import (
+            save_candidates_eval,
+            update_followup_prices,
+            sync_position_mapping,
+        )
+        date_str = state.get("date", "")
+
+        # 1. 신규 후보 적재 (price_at_add 이미 주입됨)
+        if candidates_with_price and date_str:
+            try:
+                added = save_candidates_eval(candidates_with_price, date_str)
+                if added > 0:
+                    logger.info("[m6_node] SCOUT 시트 신규 적재: %d행", added)
+            except Exception as e:
+                logger.warning("[m6_node] save_candidates_eval 실패: %s", e)
+
+        # 2. 매일 follow-up: +5d/+28d 가격 자동 채움
+        try:
+            history = update.get("m6_history") or state.get("m6_history") or []
+            n = update_followup_prices(history)
+            if n > 0:
+                logger.info("[m6_node] follow-up 가격 갱신: %d행", n)
+        except Exception as e:
+            logger.warning("[m6_node] update_followup_prices 실패: %s", e)
+
+        # 3. POSITIONS → SCOUT 진입여부 동기화
+        try:
+            n = sync_position_mapping()
+            if n > 0:
+                logger.info("[m6_node] 진입 매핑 동기화: %d행", n)
+        except Exception as e:
+            logger.warning("[m6_node] sync_position_mapping 실패: %s", e)
+
+    except ImportError as e:
+        logger.warning("[m6_node] SCOUT 시트 모듈 import 실패: %s", e)
+    except Exception as e:
+        logger.warning("[m6_node] SCOUT 시트 작업 전체 실패: %s", e)
+
     return update
 
 
