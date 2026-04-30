@@ -16,7 +16,6 @@ v2.9 (2026-04-19): portfolio.json → Sheets 우선
 import json
 import os
 import logging
-from datetime import datetime, timedelta
 from itertools import combinations
 from pathlib import Path
 
@@ -108,14 +107,13 @@ def _fetch_close_series(tickers: list[str]) -> dict[str, pd.Series]:
         logger.error("[M7] yfinance 미설치")
         return {}
 
-    end = datetime.now()
-    start = end - timedelta(days=CORR_LOOKBACK_DAYS)
+    # D89 근본 해결: period 사용 (시간대 무관)
+    # CORR_LOOKBACK_DAYS=90 → "3mo"
 
     try:
         df = yf.download(
             " ".join(tickers),
-            start=start.strftime("%Y-%m-%d"),
-            end=end.strftime("%Y-%m-%d"),
+            period="3mo",
             progress=False,
             group_by="ticker" if len(tickers) > 1 else "column",
             auto_adjust=False,
