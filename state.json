@@ -1,9 +1,88 @@
 {
-  "last_run_date": "2026-05-05",
-  "last_run_at": "2026-05-05T08:31:58.976762+09:00",
+  "last_run_date": "2026-05-06",
+  "last_run_at": "2026-05-06T08:31:57.715850+09:00",
   "last_monthly_run": "2026-05-01",
   "last_weekly_run": "2026-W19",
   "m2_history": {
+    "2026-05-06": {
+      "XLK": {
+        "quadrant": "WEAKENING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 103.03,
+        "momentum": 99.88
+      },
+      "XLV": {
+        "quadrant": "IMPROVING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 98.33,
+        "momentum": 103.05
+      },
+      "XLF": {
+        "quadrant": "LAGGING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 97.74,
+        "momentum": 98.96
+      },
+      "XLY": {
+        "quadrant": "LAGGING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 98.24,
+        "momentum": 96.84
+      },
+      "XLP": {
+        "quadrant": "IMPROVING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 99.78,
+        "momentum": 106.27
+      },
+      "XLE": {
+        "quadrant": "LEADING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 101.97,
+        "momentum": 113.91
+      },
+      "XLI": {
+        "quadrant": "IMPROVING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 98.57,
+        "momentum": 100.79
+      },
+      "XLB": {
+        "quadrant": "IMPROVING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 98.34,
+        "momentum": 102.12
+      },
+      "XLC": {
+        "quadrant": "LAGGING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 97.4,
+        "momentum": 98.13
+      },
+      "XLU": {
+        "quadrant": "IMPROVING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 99.17,
+        "momentum": 105.0
+      },
+      "XLRE": {
+        "quadrant": "IMPROVING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 98.85,
+        "momentum": 100.24
+      }
+    },
     "2026-05-05": {
       "XLK": {
         "quadrant": "WEAKENING",
@@ -1136,6 +1215,6 @@
   "prev_day": {
     "candidates": [],
     "alerts_count": 0,
-    "vix": 18.29
+    "vix": 17.38
   }
 }
