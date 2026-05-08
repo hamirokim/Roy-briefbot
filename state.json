@@ -1,9 +1,88 @@
 {
-  "last_run_date": "2026-05-08",
-  "last_run_at": "2026-05-08T08:32:48.242088+09:00",
+  "last_run_date": "2026-05-09",
+  "last_run_at": "2026-05-09T08:32:45.776741+09:00",
   "last_monthly_run": "2026-05-01",
   "last_weekly_run": "2026-W19",
   "m2_history": {
+    "2026-05-09": {
+      "XLK": {
+        "quadrant": "LEADING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 105.46,
+        "momentum": 102.04
+      },
+      "XLV": {
+        "quadrant": "IMPROVING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 96.5,
+        "momentum": 100.89
+      },
+      "XLF": {
+        "quadrant": "LAGGING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 96.35,
+        "momentum": 97.39
+      },
+      "XLY": {
+        "quadrant": "LAGGING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 98.82,
+        "momentum": 97.4
+      },
+      "XLP": {
+        "quadrant": "IMPROVING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 98.33,
+        "momentum": 102.16
+      },
+      "XLE": {
+        "quadrant": "IMPROVING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 94.26,
+        "momentum": 103.08
+      },
+      "XLI": {
+        "quadrant": "LAGGING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 97.71,
+        "momentum": 99.11
+      },
+      "XLB": {
+        "quadrant": "LAGGING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 97.46,
+        "momentum": 99.82
+      },
+      "XLC": {
+        "quadrant": "LAGGING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 97.75,
+        "momentum": 98.4
+      },
+      "XLU": {
+        "quadrant": "IMPROVING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 95.0,
+        "momentum": 100.43
+      },
+      "XLRE": {
+        "quadrant": "LAGGING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 98.22,
+        "momentum": 97.95
+      }
+    },
     "2026-05-08": {
       "XLK": {
         "quadrant": "WEAKENING",
@@ -1388,60 +1467,8 @@
     "CVBF": "2026-05-08"
   },
   "prev_day": {
-    "candidates": [
-      {
-        "ticker": "CVBF",
-        "name": "CVB Financial Corp",
-        "country": "US",
-        "sector": "Financial",
-        "market_cap": 3650000000.0,
-        "score": 3,
-        "signals": {
-          "insider_buying": {
-            "insider_trans_pct": 0.21,
-            "lookback_days": 7,
-            "label_ko": "메인자금 진입 흔적",
-            "phase": "主力 진입"
-          },
-          "bb_squeeze": {
-            "current_width": 0.0389,
-            "avg_width": 0.0958,
-            "ratio": 0.406,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          },
-          "volume_compression": {
-            "short_avg": 1385261,
-            "long_avg": 2463460,
-            "ratio": 0.562,
-            "threshold": 0.6,
-            "label_ko": "거래량 압축",
-            "phase": "建仓 진행 중"
-          }
-        },
-        "track_d": {
-          "is_theme_beneficiary": false
-        },
-        "buy_questions": {
-          "industry": "미국 지역은행/금융",
-          "thesis": "메인자금 진입 흔적과 변동성·거래량 압축이 함께 나타나 단기 매집 가능성은 있습니다. 다만 EPS 성장률이 낮아 강한 펀더멘털 추세보다는 수급 중심 신호로 보는 것이 적절합니다.",
-          "catalyst": "최근 6개월 내 촉매는 정보 부족입니다. 제공된 데이터상으로는 수급 개선과 압축 구간 해소가 가장 직접적인 관찰 포인트입니다.",
-          "q1_why": "PE 13.4, Forward PE 10.9로 밸류에이션은 과도하게 비싸지 않습니다. 다만 next Y EPS Growth 1.9%로 이익 성장 기대가 낮아, 상승 여력은 실적 가속보다 수급 개선에 더 의존합니다.",
-          "q2_who": "Insider Trans +0.2%, Institutional Trans +0.1%로 내부자와 기관의 순매수 신호는 약하지만 플러스입니다. 따라서 강한 대형 매집이라기보다 제한적이지만 우호적인 자금 유입으로 해석됩니다.",
-          "q3_space": "RSI 55.5로 과열 구간은 아니어서 추가 상승 여지는 남아 있습니다. 또한 매집 신호 통과 3/5와 거래량·변동성 압축은 아직 상단 돌파 전 구간일 가능성을 시사합니다.",
-          "risk_flags": [
-            "EPS 성장률 1.9%로 펀더멘털 모멘텀이 약함",
-            "insider/기관 순매수 강도가 매우 낮아 확신도 제한적"
-          ],
-          "star_rating": "★",
-          "summary": "수급만 우호적",
-          "_llm_used": true
-        },
-        "price_at_add": 20.51
-      }
-    ],
+    "candidates": [],
     "alerts_count": 2,
-    "vix": 17.08
+    "vix": 17.19
   }
 }
