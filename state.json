@@ -1,9 +1,88 @@
 {
-  "last_run_date": "2026-05-14",
-  "last_run_at": "2026-05-14T08:46:28.456317+09:00",
+  "last_run_date": "2026-05-15",
+  "last_run_at": "2026-05-15T08:33:43.369316+09:00",
   "last_monthly_run": "2026-05-01",
   "last_weekly_run": "2026-W20",
   "m2_history": {
+    "2026-05-15": {
+      "XLK": {
+        "quadrant": "WEAKENING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 104.03,
+        "momentum": 99.84
+      },
+      "XLV": {
+        "quadrant": "IMPROVING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 98.5,
+        "momentum": 103.45
+      },
+      "XLF": {
+        "quadrant": "LAGGING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 96.66,
+        "momentum": 99.8
+      },
+      "XLY": {
+        "quadrant": "LAGGING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 97.39,
+        "momentum": 97.78
+      },
+      "XLP": {
+        "quadrant": "IMPROVING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 98.55,
+        "momentum": 100.0
+      },
+      "XLE": {
+        "quadrant": "IMPROVING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 97.61,
+        "momentum": 100.09
+      },
+      "XLI": {
+        "quadrant": "IMPROVING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 97.97,
+        "momentum": 100.13
+      },
+      "XLB": {
+        "quadrant": "LAGGING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 97.37,
+        "momentum": 99.66
+      },
+      "XLC": {
+        "quadrant": "IMPROVING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 97.91,
+        "momentum": 101.16
+      },
+      "XLU": {
+        "quadrant": "LAGGING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 95.56,
+        "momentum": 98.18
+      },
+      "XLRE": {
+        "quadrant": "LAGGING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 96.63,
+        "momentum": 98.26
+      }
+    },
     "2026-05-14": {
       "XLK": {
         "quadrant": "LEADING",
@@ -1775,16 +1854,85 @@
       ],
       "track_d": "",
       "source": "SCOUT"
+    },
+    {
+      "ticker": "BMI",
+      "name": "Badger Meter Inc",
+      "country": "US",
+      "sector": "Technology",
+      "date_added": "2026-05-15",
+      "price_at_add": 117.54,
+      "score": 3,
+      "signal_keys": [
+        "insider_buying",
+        "bb_squeeze",
+        "volume_compression"
+      ],
+      "track_d": "",
+      "source": "SCOUT"
     }
   ],
   "scout_cooldown": {
     "KOD": "2026-04-29",
     "NKE": "2026-04-30",
-    "CVBF": "2026-05-08"
+    "CVBF": "2026-05-08",
+    "BMI": "2026-05-15"
   },
   "prev_day": {
-    "candidates": [],
+    "candidates": [
+      {
+        "ticker": "BMI",
+        "name": "Badger Meter Inc",
+        "country": "US",
+        "sector": "Technology",
+        "market_cap": 3310000000.0,
+        "score": 3,
+        "signals": {
+          "insider_buying": {
+            "insider_trans_pct": 3.86,
+            "lookback_days": 7,
+            "label_ko": "메인자금 진입 흔적",
+            "phase": "主力 진입"
+          },
+          "bb_squeeze": {
+            "current_width": 0.1051,
+            "avg_width": 0.4363,
+            "ratio": 0.241,
+            "threshold": 0.5,
+            "label_ko": "변동성 압축",
+            "phase": "拉升 직전 (매집 완료)"
+          },
+          "volume_compression": {
+            "short_avg": 502060,
+            "long_avg": 950310,
+            "ratio": 0.528,
+            "threshold": 0.6,
+            "label_ko": "거래량 압축",
+            "phase": "建仓 진행 중"
+          }
+        },
+        "track_d": {
+          "is_theme_beneficiary": false
+        },
+        "buy_questions": {
+          "industry": "Technology",
+          "thesis": "메인자금 진입 흔적과 변동성·거래량 압축이 동시에 나타나 단기 매집 구간일 가능성이 있습니다. 다만 EPS 성장률이 낮고 PEG가 높아, 강한 펀더멘털 재평가보다는 수급 중심의 제한적 매집으로 보입니다.",
+          "catalyst": "최근 6개월 내 가능 catalyst는 정보 부족입니다. 제공된 데이터만으로는 실적 상향, 제품 발표, 가이던스 개선 여부를 확인할 수 없습니다.",
+          "q1_why": "Forward PE 23.9배 대비 내년 EPS Growth 4.9%로 성장 대비 밸류에이션 부담이 있습니다. PE 26.6배와 PEG 4.42는 저평가 신호가 아니라서, 상승 논리는 실적 모멘텀보다 수급에 더 가깝습니다.",
+          "q2_who": "Insider Trans +3.9%로 내부자 매수 우위가 확인되어 일부 매집 신호는 있습니다. 반면 Institutional Trans -0.8%로 기관은 순유입이 약해, 강한 기관 주도 매집이라고 보긴 어렵습니다.",
+          "q3_space": "RSI 36.8로 과열은 아니며 추가 상승 여지는 남아 있습니다. 다만 52주 저점 정보가 없어 저점 대비 공간은 정보 부족입니다.",
+          "risk_flags": [
+            "EPS Growth가 4.9%로 낮아 실적 기반 상승 탄력이 약함",
+            "PEG 4.42와 기관 순유입 약세로 밸류에이션/수급 부담 존재"
+          ],
+          "star_rating": "★",
+          "summary": "수급매집약함",
+          "_llm_used": true
+        },
+        "price_at_add": 117.54
+      }
+    ],
     "alerts_count": 2,
-    "vix": 17.87
+    "vix": 17.26
   }
 }
