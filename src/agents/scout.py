@@ -17,8 +17,10 @@ Q1 (Roy 지시): 메인포트/AUTO_TICKER 제외 필터 없음. 본업에 충실
 Q2 (Roy 지시): Daily 통일.
 """
 
+import json
 import logging
 import time
+from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Optional
@@ -30,6 +32,8 @@ from src.agents.base import BaseAgent
 from src.utils import today_kst_str
 
 logger = logging.getLogger(__name__)
+
+RADAR_DIR = Path(__file__).resolve().parents[2] / "data" / "scout"
 
 
 # ═══════════════════════════════════════════════════════════
@@ -107,6 +111,191 @@ def _build_ticker_to_themes_map(themes: dict) -> dict:
                             "layer": layer,
                         })
     return result
+
+
+def _theme_lookup_key(ticker: str) -> str:
+    """테마 매핑용 티커 정규화."""
+    t = (ticker or "").strip().upper()
+    if t.endswith(".US"):
+        t = t[:-3]
+    return t
+
+
+def _theme_bonus(matches: list[dict], weights: dict) -> float:
+    """themes.yaml 우선순위 → 레이더 점수 보너스."""
+    if not matches:
+        return 0.0
+    priority_order = {"A+": 4, "A": 3, "B+": 2, "B": 1, "C": 0}
+    best = max(matches, key=lambda m: priority_order.get(str(m.get("priority", "B")), 1))
+    priority = str(best.get("priority", "B"))
+    key = {
+        "A+": "theme_A_plus",
+        "A": "theme_A",
+        "B+": "theme_B_plus",
+        "B": "theme_B",
+    }.get(priority, "theme_B")
+    return float(weights.get(key, 0.0))
+
+
+def _liquidity_boost(row: pd.Series, min_liquidity: float, weight: float) -> float:
+    """거래대금이 기준을 넘으면 작은 보너스만 준다."""
+    try:
+        value = float(row.get("avg_volume_value", 0) or 0)
+    except (TypeError, ValueError):
+        value = 0.0
+    if min_liquidity <= 0 or value >= min_liquidity:
+        return float(weight)
+    return 0.0
+
+
+def _label_signal_dict(signals: dict) -> dict:
+    """신호 dict에 한글 라벨을 붙인다."""
+    labeled = {}
+    for sig_key, sig_info in (signals or {}).items():
+        label_data = SIGNAL_LABELS.get(sig_key, {})
+        labeled[sig_key] = {
+            **sig_info,
+            "label_ko": label_data.get("ko", sig_key),
+            "phase": label_data.get("zh_phase", ""),
+        }
+    return labeled
+
+
+def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dict, min_liquidity: float) -> dict:
+    """SCOUT 내부 관찰풀/브리핑 공용 후보 객체."""
+    row = info["row"]
+    matches = ticker_themes.get(_theme_lookup_key(ticker), [])
+    theme_score = _theme_bonus(matches, weights)
+    liquidity_score = _liquidity_boost(row, min_liquidity, float(weights.get("liquidity_boost", 0.0)))
+    signal_score = float(info.get("score", 0.0))
+    radar_score = round(signal_score + theme_score + liquidity_score, 3)
+    signals = _label_signal_dict(info.get("signals", {}))
+    signal_keys = list(signals.keys())
+
+    item = {
+        "ticker": ticker,
+        "name": row.get("name", ""),
+        "country": row["country"],
+        "sector": row.get("sector", ""),
+        "market_cap": float(row.get("market_cap", 0) or 0),
+        "avg_volume_value": float(row.get("avg_volume_value", 0) or 0),
+        "score": radar_score,
+        "signal_score": round(signal_score, 3),
+        "theme_score": round(theme_score, 3),
+        "liquidity_score": round(liquidity_score, 3),
+        "signal_count": len(signal_keys),
+        "signal_keys": signal_keys,
+        "signals": signals,
+    }
+
+    if matches:
+        item["track_d"] = {
+            "is_theme_beneficiary": True,
+            "matches": matches,
+            "track": "D (提前布局)",
+        }
+    else:
+        item["track_d"] = {"is_theme_beneficiary": False}
+
+    return item
+
+
+def _summarize_radar(
+    radar_pool: list[dict],
+    candidates: list[dict],
+    scanned_total: int,
+    ohlcv_evaluated: int,
+    cooldown_skipped: int,
+    by_country: dict,
+    by_source: dict,
+    coverage_thresholds: dict,
+) -> dict:
+    """브리핑이 '후보 없음'의 이유까지 말할 수 있게 요약한다."""
+    signal_counter = Counter()
+    country_counter = Counter()
+    theme_count = 0
+    for item in radar_pool:
+        country_counter[item.get("country", "")] += 1
+        if item.get("track_d", {}).get("is_theme_beneficiary"):
+            theme_count += 1
+        for key in item.get("signal_keys", []):
+            signal_counter[key] += 1
+
+    coverage_warnings = []
+    for country, threshold in (coverage_thresholds or {}).items():
+        count = int(by_country.get(country, 0) or 0)
+        if count < int(threshold):
+            coverage_warnings.append({
+                "country": country,
+                "count": count,
+                "threshold": int(threshold),
+            })
+
+    if candidates:
+        no_candidate_reason = ""
+    elif not radar_pool:
+        no_candidate_reason = "관찰풀 기준을 넘은 종목이 없음"
+    else:
+        no_candidate_reason = "관찰풀은 있으나 최종 보고 기준 미달"
+
+    return {
+        "scanned_total": scanned_total,
+        "ohlcv_evaluated": ohlcv_evaluated,
+        "cooldown_skipped": cooldown_skipped,
+        "radar_pool_count": len(radar_pool),
+        "brief_pick_count": len(candidates),
+        "theme_count": theme_count,
+        "top_signals": signal_counter.most_common(5),
+        "radar_by_country": dict(country_counter),
+        "source_counts": by_source,
+        "coverage_warnings": coverage_warnings,
+        "no_candidate_reason": no_candidate_reason,
+    }
+
+
+def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
+    """넓은 관찰풀은 로이가 보는 시트가 아니라 내부 파일에 저장한다."""
+    RADAR_DIR.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "date": today,
+        "summary": summary,
+        "items": radar_pool,
+    }
+    json_path = RADAR_DIR / f"radar_pool_{today}.json"
+    parquet_path = RADAR_DIR / f"radar_pool_{today}.parquet"
+
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+    parquet_ok = False
+    try:
+        flat_rows = []
+        for item in radar_pool:
+            flat_rows.append({
+                "date": today,
+                "ticker": item.get("ticker"),
+                "name": item.get("name"),
+                "country": item.get("country"),
+                "sector": item.get("sector"),
+                "market_cap": item.get("market_cap"),
+                "avg_volume_value": item.get("avg_volume_value"),
+                "score": item.get("score"),
+                "signal_score": item.get("signal_score"),
+                "theme_score": item.get("theme_score"),
+                "liquidity_score": item.get("liquidity_score"),
+                "signal_count": item.get("signal_count"),
+                "signal_keys": ",".join(item.get("signal_keys", [])),
+                "is_theme_beneficiary": item.get("track_d", {}).get("is_theme_beneficiary", False),
+            })
+        pd.DataFrame(flat_rows).to_parquet(parquet_path, index=False)
+        parquet_ok = True
+    except Exception as e:
+        logger.warning("[scout] radar parquet 저장 실패(json은 저장됨): %s", e)
+
+    return {
+        "json": str(json_path),
+        "parquet": str(parquet_path) if parquet_ok else "",
+    }
 
 
 def _load_settings() -> dict:
@@ -256,22 +445,23 @@ def _signal_rrg_improving(ticker: str, sector: str, m2_history: dict, params: di
 
     # 섹터명 → ETF 매핑 (주요 미국 섹터)
     sector_etf_map = {
-        "Technology": "xlk.us",
-        "Healthcare": "xlv.us",
-        "Health Care": "xlv.us",
-        "Financials": "xlf.us",
-        "Financial": "xlf.us",
-        "Consumer Cyclical": "xly.us",
-        "Consumer Discretionary": "xly.us",
-        "Consumer Defensive": "xlp.us",
-        "Consumer Staples": "xlp.us",
-        "Energy": "xle.us",
-        "Industrials": "xli.us",
-        "Materials": "xlb.us",
-        "Basic Materials": "xlb.us",
-        "Communication Services": "xlc.us",
-        "Utilities": "xlu.us",
-        "Real Estate": "xlre.us",
+        "Technology": "XLK",
+        "Healthcare": "XLV",
+        "Health Care": "XLV",
+        "Financials": "XLF",
+        "Financial": "XLF",
+        "Financial Services": "XLF",
+        "Consumer Cyclical": "XLY",
+        "Consumer Discretionary": "XLY",
+        "Consumer Defensive": "XLP",
+        "Consumer Staples": "XLP",
+        "Energy": "XLE",
+        "Industrials": "XLI",
+        "Materials": "XLB",
+        "Basic Materials": "XLB",
+        "Communication Services": "XLC",
+        "Utilities": "XLU",
+        "Real Estate": "XLRE",
     }
     etf_ticker = sector_etf_map.get(sector)
     if not etf_ticker:
@@ -354,12 +544,21 @@ class ScoutAgent(BaseAgent):
           - new_cooldown: dict (state에 다시 저장됨)
         """
         scout_cfg = self.settings["scout"]
-        signals_required = scout_cfg["signals_required"]
-        max_output = scout_cfg["max_candidates_output"]
-        cooldown_days = scout_cfg["cooldown_days"]
+        signals_required = int(scout_cfg["signals_required"])
+        max_output = int(scout_cfg.get("brief_pick_size", scout_cfg["max_candidates_output"]))
+        cooldown_days = int(scout_cfg["cooldown_days"])
+        radar_pool_size = int(scout_cfg.get("radar_pool_size", 100))
+        radar_min_score = float(scout_cfg.get("radar_min_score", 1.0))
+        brief_min_score = float(scout_cfg.get("brief_min_score", 2.0))
+        weights = scout_cfg.get("scoring_weights", {}) or {}
+        min_liquidity = float(scout_cfg.get("avg_volume_value_min_usd", 0) or 0)
+        theme_boost_enabled = bool(scout_cfg.get("theme_boost_enabled", True))
+        coverage_thresholds = scout_cfg.get("coverage_warning_threshold", {}) or {}
         today = state.get("date", today_kst_str())
         cooldown_map = dict(state.get("scout_cooldown", {}))
         m2_history = state.get("m2_history", {})
+        themes = _load_themes() if theme_boost_enabled else {}
+        ticker_themes = _build_ticker_to_themes_map(themes)
 
         # ── Stage 1: 글로벌 종목 마스터 ──
         from src.collectors.global_universe import fetch_global_universe
@@ -369,7 +568,13 @@ class ScoutAgent(BaseAgent):
             return self._empty_result()
 
         scanned_total = len(universe)
-        by_country_total = universe.groupby("country").size().to_dict()
+        by_country_total = {
+            str(k): int(v) for k, v in universe.groupby("country").size().to_dict().items()
+        }
+        by_source_total = (
+            {str(k): int(v) for k, v in universe.groupby("source").size().to_dict().items()}
+            if "source" in universe.columns else {}
+        )
         self.log.info("[scout] universe: %d종목 (%s)", scanned_total, by_country_total)
 
         # ── Stage 2: cooldown 필터링 ──
@@ -404,14 +609,14 @@ class ScoutAgent(BaseAgent):
             if scout_cfg["signals"]["insider_buying"]["enabled"]:
                 hit, info = _signal_insider_buying(ticker, country, scout_cfg["signals"]["insider_buying"])
                 if hit:
-                    score += 1
+                    score += float(weights.get("insider_buying", 1.0))
                     sigs["insider_buying"] = info
 
             # RRG (섹터 매핑된 것만)
             if scout_cfg["signals"]["rrg_improving"]["enabled"]:
                 hit, info = _signal_rrg_improving(ticker, sector, m2_history, scout_cfg["signals"]["rrg_improving"])
                 if hit:
-                    score += 1
+                    score += float(weights.get("rrg_improving", 1.0))
                     sigs["rrg_improving"] = info
 
             prelim_scores[ticker] = {
@@ -444,71 +649,55 @@ class ScoutAgent(BaseAgent):
                 if scout_cfg["signals"]["bb_squeeze"]["enabled"]:
                     hit, sig_info = _signal_bb_squeeze(df, scout_cfg["signals"]["bb_squeeze"])
                     if hit:
-                        info["score"] += 1
+                        info["score"] += float(weights.get("bb_squeeze", 1.0))
                         info["signals"]["bb_squeeze"] = sig_info
 
                 # volume_compression
                 if scout_cfg["signals"]["volume_compression"]["enabled"]:
                     hit, sig_info = _signal_volume_compression(df, scout_cfg["signals"]["volume_compression"])
                     if hit:
-                        info["score"] += 1
+                        info["score"] += float(weights.get("volume_compression", 1.0))
                         info["signals"]["volume_compression"] = sig_info
 
                 # after_low_consolidation
                 if scout_cfg["signals"]["after_low_consolidation"]["enabled"]:
                     hit, sig_info = _signal_after_low_consolidation(df, scout_cfg["signals"]["after_low_consolidation"])
                     if hit:
-                        info["score"] += 1
+                        info["score"] += float(weights.get("after_low_consolidation", 1.0))
                         info["signals"]["after_low_consolidation"] = sig_info
 
-        # ── Stage 4: 최종 후보 선정 ──
-        candidates = []
+        # ── Stage 4: 내부 Radar Pool 구성 ──
+        radar_pool = []
         for ticker, info in prelim_scores.items():
-            if info["score"] >= signals_required:
-                row = info["row"]
-                candidates.append({
-                    "ticker": ticker,
-                    "name": row.get("name", ""),
-                    "country": row["country"],
-                    "sector": row.get("sector", ""),
-                    "market_cap": float(row.get("market_cap", 0)),
-                    "score": info["score"],
-                    "signals": info["signals"],
-                })
+            item = _build_radar_item(ticker, info, ticker_themes, weights, min_liquidity)
+            if item["score"] >= radar_min_score and (item["signal_count"] > 0 or item["theme_score"] > 0):
+                radar_pool.append(item)
 
-        # 점수 높은 순, 동점 시 시총 큰 순
-        candidates.sort(key=lambda x: (-x["score"], -x["market_cap"]))
-        candidates = candidates[:max_output]
+        radar_pool.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
+        radar_pool = radar_pool[:radar_pool_size]
 
-        # === Z1 신규: 신호 명명 강화 + Track D 提前布局 매핑 ===
-        themes = _load_themes()
-        ticker_themes = _build_ticker_to_themes_map(themes)
-        
-        for c in candidates:
-            ticker = c["ticker"]
-            
-            # 신호 한글 라벨 추가
-            sig_dict = c.get("signals", {})
-            labeled_signals = {}
-            for sig_key, sig_info in sig_dict.items():
-                label_data = SIGNAL_LABELS.get(sig_key, {})
-                labeled_signals[sig_key] = {
-                    **sig_info,
-                    "label_ko": label_data.get("ko", sig_key),
-                    "phase": label_data.get("zh_phase", ""),
-                }
-            c["signals"] = labeled_signals
-            
-            # Track D: themes.yaml 매핑된 종목인가?
-            theme_matches = ticker_themes.get(ticker, [])
-            if theme_matches:
-                c["track_d"] = {
-                    "is_theme_beneficiary": True,
-                    "matches": theme_matches,
-                    "track": "D (提前布局)",
-                }
-            else:
-                c["track_d"] = {"is_theme_beneficiary": False}
+        # ── Stage 5: 로이에게 보고할 엄선 후보만 추출 ──
+        candidates = [
+            item for item in radar_pool
+            if item["score"] >= brief_min_score or item["signal_count"] >= signals_required
+        ][:max_output]
+
+        radar_summary = _summarize_radar(
+            radar_pool=radar_pool,
+            candidates=candidates,
+            scanned_total=scanned_total,
+            ohlcv_evaluated=len(ohlcv_targets),
+            cooldown_skipped=cooldown_skipped,
+            by_country=by_country_total,
+            by_source=by_source_total,
+            coverage_thresholds=coverage_thresholds,
+        )
+
+        try:
+            radar_paths = _save_radar_pool(today, radar_pool, radar_summary)
+        except Exception as e:
+            radar_paths = {}
+            self.log.warning("[scout] radar pool 저장 실패: %s", e)
 
         self.log.info("[scout] 최종 후보: %d개 (Track D 매핑 %d개)", 
                       len(candidates), 
@@ -534,6 +723,9 @@ class ScoutAgent(BaseAgent):
             "cooldown_skipped": cooldown_skipped,
             "new_cooldown": new_cooldown,
             "ohlcv_evaluated": len(ohlcv_targets),
+            "radar_pool": radar_pool[:10],
+            "radar_summary": radar_summary,
+            "radar_paths": radar_paths,
             "today": today,
         }
 
@@ -550,7 +742,10 @@ class ScoutAgent(BaseAgent):
         # 우선순위 2: 점수 0인데 시총 상위만 선별
         zero_score = [(t, i) for t, i in prelim_scores.items() if i["score"] == 0]
 
-        # 국가별 시총 상위 200종목씩
+        scout_cfg = self.settings["scout"]
+        top_per_country = int(scout_cfg.get("ohlcv_top_per_country", 200))
+
+        # 국가별 시총 상위 N종목씩
         by_country: dict[str, list] = {}
         for t, info in zero_score:
             country = info["row"]["country"]
@@ -559,7 +754,7 @@ class ScoutAgent(BaseAgent):
         top_picks = {}
         for country, items in by_country.items():
             items.sort(key=lambda x: -float(x[1]["row"].get("market_cap", 0)))
-            for t, info in items[:200]:
+            for t, info in items[:top_per_country]:
                 top_picks[t] = info
 
         # 합본
@@ -567,6 +762,18 @@ class ScoutAgent(BaseAgent):
         return result
 
     def _empty_result(self, scanned_total: int = 0, cooldown_skipped: int = 0) -> dict:
+        radar_summary = {
+            "scanned_total": scanned_total,
+            "ohlcv_evaluated": 0,
+            "cooldown_skipped": cooldown_skipped,
+            "radar_pool_count": 0,
+            "brief_pick_count": 0,
+            "theme_count": 0,
+            "top_signals": [],
+            "radar_by_country": {},
+            "coverage_warnings": [],
+            "no_candidate_reason": "유니버스가 비었거나 재선정대기 필터 후 남은 종목이 없음",
+        }
         return {
             "candidates": [],
             "scanned_total": scanned_total,
@@ -574,6 +781,9 @@ class ScoutAgent(BaseAgent):
             "cooldown_skipped": cooldown_skipped,
             "new_cooldown": {},
             "ohlcv_evaluated": 0,
+            "radar_pool": [],
+            "radar_summary": radar_summary,
+            "radar_paths": {},
             "today": today_kst_str(),
         }
 
@@ -585,6 +795,15 @@ class ScoutAgent(BaseAgent):
             "cooldown_skipped": 0,
             "new_cooldown": {},
             "ohlcv_evaluated": 0,
+            "radar_pool": [],
+            "radar_summary": {
+                "radar_pool_count": 0,
+                "brief_pick_count": 0,
+                "no_candidate_reason": error_msg,
+                "top_signals": [],
+                "coverage_warnings": [],
+            },
+            "radar_paths": {},
             "today": today_kst_str(),
             "error": error_msg,
         }

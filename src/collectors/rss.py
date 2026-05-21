@@ -8,6 +8,8 @@ Google News (business) + CNBC (world markets) + MarketWatch (top stories)
     articles, lookback_hours = collect_news()
 """
 
+from __future__ import annotations
+
 import logging
 import hashlib
 import re

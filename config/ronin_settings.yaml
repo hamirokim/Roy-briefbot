@@ -46,8 +46,36 @@ scout:
 
   # 후보 채택 임계치
   signals_required: 3                  # 5개 중 N개 이상 충족 → 후보
-  max_candidates_output: 3             # 최종 출력 종목 수
+  max_candidates_output: 5             # 최종 출력 종목 수
   min_candidates_for_alert: 1          # 0개여도 알림 발송 (다른 섹션 가능)
+
+  # SCOUT v2 레이더 모드
+  # 내부에는 넓게 저장하고, 로이에게는 엄선 후보만 보고한다.
+  radar_pool_size: 100                 # 내부 관찰풀 최대 저장 수
+  radar_min_score: 1.0                 # 관찰풀 편입 최소 점수
+  brief_min_score: 2.0                 # 최종 브리핑 후보 최소 점수
+  ohlcv_top_per_country: 500           # 무신호 종목 중 국가별 OHLCV 평가 상한
+  theme_boost_enabled: true            # themes.yaml 가치사슬 종목 보너스
+
+  scoring_weights:
+    bb_squeeze: 1.2
+    volume_compression: 1.0
+    after_low_consolidation: 1.1
+    insider_buying: 0.7
+    rrg_improving: 1.0
+    theme_A_plus: 0.8
+    theme_A: 0.6
+    theme_B_plus: 0.4
+    theme_B: 0.2
+    liquidity_boost: 0.2
+
+  coverage_warning_threshold:
+    US: 1500
+    KR: 200
+    JP: 400
+    CN_ADR: 35
+    CN_HK: 40
+    CN_A: 60
 
   # cooldown — 같은 종목 중복 알림 방지 (시뮬 시나리오 3 발견)
   cooldown_days: 5                     # 한번 후보로 나오면 5일간 재출현 금지
@@ -107,11 +135,11 @@ universe:
     - "US"     # NYSE + NASDAQ
     - "KR"     # KOSPI + KOSDAQ
     - "JP"     # TSE
-    - "CN"     # 미국 ADR + 홍콩 일부 (Q2 결정 — ADR 위주)
+    - "CN"     # 중국 ADR + 홍콩 + A주 주요주
 
   # 최대 스캔 종목 수 (Stage 1 거시 필터 통과 후)
   max_per_country:
     US: 2000
     KR: 600
-    JP: 1500
-    CN: 400      # ADR 중심
+    JP: 500
+    CN: 500      # ADR + HK + A주

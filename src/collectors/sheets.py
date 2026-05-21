@@ -522,7 +522,7 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
             date_str,                                 # B: 발생일
             ticker,                                   # C: 티커
             (c.get("country") or "").upper(),         # D: 국가
-            int(c.get("score") or 0),                 # E: Score
+            round(float(c.get("score") or 0), 2),     # E: Score
             bq.get("star_rating", ""),                # F: 별점
             (bq.get("summary") or "")[:30],           # G: Summary
             (bq.get("industry") or "")[:50],          # H: Industry

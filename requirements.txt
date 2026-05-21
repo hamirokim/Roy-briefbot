@@ -10,3 +10,4 @@ pyarrow
 pykrx
 yfinance
 langgraph
+akshare

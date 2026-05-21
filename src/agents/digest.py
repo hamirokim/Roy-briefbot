@@ -12,6 +12,8 @@ src/agents/digest.py — DIGEST 오케스트레이터
 LLM 역할: SCOUT 후보의 "왜 후보인지" 1줄 자연어 + 전체 톤 정리
 """
 
+from __future__ import annotations
+
 import json
 import logging
 from datetime import datetime
@@ -44,6 +46,8 @@ _COUNTRY_FLAG = {
     "KR": "🇰🇷",
     "JP": "🇯🇵",
     "CN_ADR": "🇨🇳",
+    "CN_HK": "🇭🇰",
+    "CN_A": "🇨🇳",
 }
 
 # ─── 저널 한글 매핑 (v4: 한글 통일) ───
@@ -52,6 +56,22 @@ _COUNTRY_KO = {
     "KR": "한국",
     "JP": "일본",
     "CN_ADR": "중국ADR",
+    "CN_HK": "중국/홍콩",
+    "CN_A": "중국A주",
+}
+_SOURCE_KO = {
+    "finviz+nasdaqtrader": "미국 공식상장+Finviz",
+    "finviz": "미국 Finviz",
+    "nasdaqtrader:fallback_no_cap": "미국 공식상장 fallback",
+    "naver_market_sum_fallback": "한국 Naver 시총",
+    "pykrx": "한국 KRX",
+    "jpx_official+yfinance": "일본 JPX+yfinance",
+    "yfinance_seed_fallback": "yfinance seed fallback",
+    "yfinance_cn_adr": "중국 ADR seed",
+    "yfinance_hk_china_seed": "중국/홍콩 seed",
+    "yfinance_cn_a_seed": "중국 A주 seed",
+    "akshare_eastmoney_a": "중국 A주 Eastmoney",
+    "akshare_eastmoney_hk": "중국/홍콩 Eastmoney",
 }
 _QUADRANT_KO = {
     "LEADING": "주도",
@@ -676,14 +696,19 @@ class DigestAgent(BaseAgent):
             lines.append("")
 
         # ── 2. SCOUT 후보 ──
+        radar_summary = scout_out.get("radar_summary", {}) or {}
+        radar_count = int(radar_summary.get("radar_pool_count", 0) or 0)
+        top_signals = radar_summary.get("top_signals", []) or []
         if candidates:
             lines.append(f"<b>🎯 신규 후보 ({len(candidates)}개)</b>")
+            if radar_count:
+                lines.append(f"<i>내부 관찰풀 {radar_count}개 중 엄선</i>")
             for c in candidates:
                 flag = _COUNTRY_FLAG.get(c["country"], "·")
                 cap = _format_market_cap(c.get("market_cap", 0))
                 sig_short = _format_signals_short(c["signals"])
                 lines.append(
-                    f"{flag} <b>{c['ticker']}</b> ({c.get('name', '')[:30]}) {cap} | 점수 {c['score']}/5"
+                    f"{flag} <b>{c['ticker']}</b> ({c.get('name', '')[:30]}) {cap} | 레이더 {c.get('score', 0)}"
                 )
                 lines.append(f"  신호: {sig_short}")
                 if c.get("comment"):
@@ -699,7 +724,15 @@ class DigestAgent(BaseAgent):
                         self.log.debug("[digest] M1.5 텔레그램 포맷 실패: %s", e)
             lines.append("")
         else:
-            lines.append(f"<b>🎯 신규 후보</b> 오늘 없음 (사전 감지 임계 미달)")
+            reason = radar_summary.get("no_candidate_reason") or "최종 보고 기준 미달"
+            lines.append(f"<b>🎯 신규 후보</b> 오늘 없음")
+            lines.append(f"<i>{reason}</i>")
+            if radar_count:
+                lines.append(f"내부 관찰풀은 {radar_count}개 쌓임")
+            if top_signals:
+                sig_name = top_signals[0][0] if isinstance(top_signals[0], (list, tuple)) else ""
+                count = top_signals[0][1] if isinstance(top_signals[0], (list, tuple)) and len(top_signals[0]) > 1 else 0
+                lines.append(f"가장 많이 나온 조짐: {_SIGNAL_KO.get(sig_name, sig_name)} {count}개")
             lines.append("")
 
         # ── 2-A. M6 SCOUT 추적 (D86 신규) ──
@@ -971,14 +1004,43 @@ class DigestAgent(BaseAgent):
         cooldown = scout_out.get("cooldown_skipped", 0)
         ohlcv_eval = scout_out.get("ohlcv_evaluated", 0)
         by_country = scout_out.get("by_country", {}) or {}
+        radar_summary = scout_out.get("radar_summary", {}) or {}
+        radar_count = int(radar_summary.get("radar_pool_count", 0) or 0)
+        theme_count = int(radar_summary.get("theme_count", 0) or 0)
+        top_signals = radar_summary.get("top_signals", []) or []
+        coverage_warnings = radar_summary.get("coverage_warnings", []) or []
+        source_counts = radar_summary.get("source_counts", {}) or {}
+        no_candidate_reason = radar_summary.get("no_candidate_reason", "")
         passed = len(candidates)
 
         lines.append(f"  • 스캔 종목   : {scanned:,}개 (재선정대기 제외 {cooldown}개)")
         lines.append(f"  • 시세 평가   : {ohlcv_eval:,}개")
-        lines.append(f"  • 통과 후보   : {passed}개")
+        lines.append(f"  • 관찰풀     : {radar_count:,}개 (테마 가치사슬 {theme_count:,}개)")
+        lines.append(f"  • 엄선 후보   : {passed}개")
         if by_country:
             parts = [f"{_COUNTRY_KO.get(k, k)} {v}" for k, v in by_country.items()]
             lines.append(f"  • 국가별     : {' / '.join(parts)}")
+        if source_counts:
+            parts = []
+            for source, count in sorted(source_counts.items(), key=lambda item: -int(item[1] or 0))[:5]:
+                label = _SOURCE_KO.get(source, source)
+                parts.append(f"{label} {count}")
+            if parts:
+                lines.append(f"  • 데이터 경로 : {' / '.join(parts)}")
+        if top_signals:
+            parts = []
+            for item in top_signals[:3]:
+                sig_name = item[0] if isinstance(item, (list, tuple)) and item else ""
+                count = item[1] if isinstance(item, (list, tuple)) and len(item) > 1 else 0
+                parts.append(f"{_SIGNAL_KO.get(sig_name, sig_name)} {count}")
+            if parts:
+                lines.append(f"  • 자주 나온 신호: {' / '.join(parts)}")
+        if coverage_warnings:
+            warn_parts = []
+            for w in coverage_warnings[:4]:
+                country = _COUNTRY_KO.get(w.get("country", ""), w.get("country", ""))
+                warn_parts.append(f"{country} {w.get('count', 0)}/{w.get('threshold', 0)}")
+            lines.append(f"  • 커버리지 경고: {' / '.join(warn_parts)}")
         lines.append("")
 
         if candidates:
@@ -988,7 +1050,7 @@ class DigestAgent(BaseAgent):
                 name = (c.get("name", "") or "")[:40]
                 lines.append(f"▷ 후보 {idx}: {c['ticker']} ({name}) — {country_ko}")
                 lines.append(f"    섹터    : {c.get('sector', '미분류')} | 시총 : {cap}")
-                lines.append(f"    점수    : {c['score']}/5")
+                lines.append(f"    레이더 점수: {c.get('score', 0)} | 신호 {c.get('signal_count', len(c.get('signals', {}) or {}))}개")
 
                 sigs = c.get("signals", {}) or {}
                 if sigs:
@@ -1021,7 +1083,10 @@ class DigestAgent(BaseAgent):
                         lines.append(f"      ⚠️ 리스크 : {risk_text}")
                 lines.append("")
         else:
-            lines.append("  (오늘 채택 후보 없음 — 사전 감지 임계 미달)")
+            reason = no_candidate_reason or "최종 보고 기준 미달"
+            lines.append(f"  (오늘 엄선 후보 없음 — {reason})")
+            if radar_count > 0:
+                lines.append("  관찰풀은 쌓였으니 억지로 종목을 찾기보다 다음 신호 확인을 기다리는 구간입니다.")
             lines.append("")
 
         # ── M6 SCOUT 추적 (D86 신규: 시트는 풀버전, 종목별 상세) ──

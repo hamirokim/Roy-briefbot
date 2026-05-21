@@ -13,6 +13,8 @@ v2.9 (2026-04-19): portfolio.json → Sheets 우선
 위치: src/modules/m7_correlation.py
 """
 
+from __future__ import annotations
+
 import json
 import os
 import logging
