@@ -740,6 +740,11 @@ class DigestAgent(BaseAgent):
                 lines.append(f"  신호: {sig_short}")
                 if c.get("comment"):
                     lines.append(f"  <i>{c['comment']}</i>")
+                catalyst = c.get("catalyst_context", {}) or {}
+                if catalyst.get("status") == "found" and catalyst.get("news"):
+                    headline = (catalyst.get("news", [{}])[0].get("headline", "") or "")[:90]
+                    if headline:
+                        lines.append(f"  촉매: <i>{headline}</i>")
                 # M1.5 买入三问 LLM 보강 (Z3-4)
                 if c.get("buy_questions"):
                     try:
@@ -1062,6 +1067,7 @@ class DigestAgent(BaseAgent):
             scope = filter_audit.get("evaluation_scope", {}) or {}
             signal = filter_audit.get("signal_audit", {}) or {}
             radar = filter_audit.get("radar_audit", {}) or {}
+            catalyst = filter_audit.get("catalyst_audit", {}) or {}
             lines.append(
                 "  • 필터 감사 : "
                 f"수집 {int(hard.get('universe', scanned) or 0):,}"
@@ -1088,6 +1094,14 @@ class DigestAgent(BaseAgent):
                 lines.append(
                     f"  • 비용 제어   : 내부자/펀더멘털 사전조회 {insider_skipped:,}개 생략"
                     f" (미국 상위 {int(cost.get('insider_eval_top_us', 0) or 0):,}개만)"
+                )
+            if catalyst and catalyst.get("enabled"):
+                lines.append(
+                    f"  • 촉매 확인   : 상위 {int(catalyst.get('evaluated', 0) or 0):,}개 평가"
+                    f" / 확인 {int(catalyst.get('found', 0) or 0):,}"
+                    f" / 리스크 {int(catalyst.get('risk', 0) or 0):,}"
+                    f" / 없음 {int(catalyst.get('none', 0) or 0):,}"
+                    f" / 미연결 {int(catalyst.get('non_us', 0) or 0) + int(catalyst.get('no_key', 0) or 0):,}"
                 )
         if top_signals:
             parts = []
@@ -1121,6 +1135,23 @@ class DigestAgent(BaseAgent):
                 lines.append(f"▷ 후보 {idx}: {c['ticker']} ({name}) — {country_ko}")
                 lines.append(f"    섹터    : {c.get('sector', '미분류')} | 시총 : {cap}")
                 lines.append(f"    레이더 점수: {c.get('score', 0)} | 신호 {c.get('signal_count', len(c.get('signals', {}) or {}))}개")
+                catalyst = c.get("catalyst_context", {}) or {}
+                if catalyst.get("score"):
+                    lines.append(f"    촉매 점수 : {catalyst.get('score'):+.1f}")
+                if catalyst.get("status") == "found" and catalyst.get("news"):
+                    lines.append("    촉매 확인 :")
+                    for n in catalyst.get("news", [])[:2]:
+                        headline = str(n.get("headline", "") or "").strip()
+                        source = str(n.get("source", "") or "").strip()
+                        if headline:
+                            source_part = f" ({source})" if source else ""
+                            lines.append(f"      • {headline}{source_part}")
+                elif catalyst.get("status") == "risk" and catalyst.get("risk_hits"):
+                    lines.append("    촉매 리스크:")
+                    for hit in catalyst.get("risk_hits", [])[:2]:
+                        headline = str(hit.get("headline", "") or "").strip()
+                        if headline:
+                            lines.append(f"      • {headline}")
                 flags = c.get("quality_flags", []) or []
                 if flags:
                     labels = [_QUALITY_FLAG_KO.get(flag, flag) for flag in flags[:3]]

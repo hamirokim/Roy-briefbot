@@ -19,6 +19,7 @@ Q2 (Roy 지시): Daily 통일.
 
 import json
 import logging
+import os
 import time
 from collections import Counter
 from datetime import datetime, timedelta
@@ -27,6 +28,7 @@ from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
+import requests
 
 from src.agents.base import BaseAgent
 from src.utils import today_kst_str
@@ -34,6 +36,8 @@ from src.utils import today_kst_str
 logger = logging.getLogger(__name__)
 
 RADAR_DIR = Path(__file__).resolve().parents[2] / "data" / "scout"
+FINNHUB_KEY = os.environ.get("FINNHUB_API_KEY", "")
+FINNHUB_BASE = "https://finnhub.io/api/v1"
 
 
 # ═══════════════════════════════════════════════════════════
@@ -245,6 +249,7 @@ def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dic
         "signals": signals,
         "quality_flags": list((info.get("quality") or {}).get("flags", [])),
         "quality_metrics": dict((info.get("quality") or {}).get("metrics", {})),
+        "catalyst_context": {"status": "not_checked", "score": 0.0},
     }
 
     if matches:
@@ -257,6 +262,171 @@ def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dic
         item["track_d"] = {"is_theme_beneficiary": False}
 
     return item
+
+
+CATALYST_POSITIVE_KEYWORDS = {
+    "approval", "approved", "beat", "beats", "contract", "deal", "dividend",
+    "earnings", "guidance", "launch", "merger", "partnership", "raises",
+    "raised", "upgrade", "upgraded", "buyback", "repurchase", "record",
+    "expands", "expansion", "acquisition", "order", "profit",
+}
+
+CATALYST_RISK_KEYWORDS = {
+    "bankruptcy", "cuts", "cut", "downgrade", "downgraded", "fraud", "lawsuit",
+    "miss", "misses", "probe", "recall", "investigation", "warning", "slump",
+    "plunge", "decline", "halts", "sanction", "fine", "layoff",
+}
+
+
+def _news_symbol(ticker: str, country: str) -> str:
+    """Finnhub 뉴스 조회용 심볼. v1은 미국 심볼만 적극 연결한다."""
+    symbol = (ticker or "").strip().upper()
+    if symbol.lower().endswith(".us"):
+        symbol = symbol[:-3]
+    if country != "US":
+        return ""
+    return symbol.split(".")[0]
+
+
+def _fetch_catalyst_news(ticker: str, country: str, lookback_days: int, max_items: int) -> tuple[str, list[dict]]:
+    """SCOUT 촉매 확인용 뉴스 수집.
+
+    v1 범위: Finnhub로 미국 후보만 확인한다. 비미국은 별도 소스가 붙을 때까지 점수에 영향을 주지 않는다.
+    """
+    if not bool(FINNHUB_KEY):
+        return "no_key", []
+
+    symbol = _news_symbol(ticker, country)
+    if not symbol:
+        return "non_us", []
+
+    end = datetime.utcnow().date()
+    start = end - timedelta(days=max(1, int(lookback_days or 14)))
+    params = {
+        "symbol": symbol,
+        "from": start.strftime("%Y-%m-%d"),
+        "to": end.strftime("%Y-%m-%d"),
+        "token": FINNHUB_KEY,
+    }
+
+    try:
+        resp = requests.get(f"{FINNHUB_BASE}/company-news", params=params, timeout=12)
+        if resp.status_code != 200:
+            return f"http_{resp.status_code}", []
+        raw_items = resp.json()
+        if not isinstance(raw_items, list):
+            return "bad_response", []
+        items = []
+        for it in raw_items:
+            headline = str(it.get("headline", "") or "").strip()
+            if not headline:
+                continue
+            items.append({
+                "headline": headline[:180],
+                "summary": str(it.get("summary", "") or "").strip()[:300],
+                "source": str(it.get("source", "") or "").strip(),
+                "datetime": int(it.get("datetime", 0) or 0),
+                "url": str(it.get("url", "") or "").strip(),
+            })
+        items.sort(key=lambda x: x.get("datetime", 0), reverse=True)
+        return "ok", items[:max_items]
+    except Exception as e:
+        logger.debug("[scout catalyst] %s 뉴스 수집 실패: %s", ticker, e)
+        return "error", []
+
+
+def _score_catalyst_news(news: list[dict], score_boost: float, risk_penalty: float) -> dict:
+    """뉴스 헤드라인/요약에서 촉매 후보와 리스크 단어를 가볍게 판정한다."""
+    positive_hits = []
+    risk_hits = []
+
+    for item in news:
+        text = f"{item.get('headline', '')} {item.get('summary', '')}".lower()
+        pos = sorted({kw for kw in CATALYST_POSITIVE_KEYWORDS if kw in text})
+        risk = sorted({kw for kw in CATALYST_RISK_KEYWORDS if kw in text})
+        if pos:
+            positive_hits.append({"headline": item.get("headline", ""), "keywords": pos[:4]})
+        if risk:
+            risk_hits.append({"headline": item.get("headline", ""), "keywords": risk[:4]})
+
+    if positive_hits and not risk_hits:
+        score = float(score_boost or 0)
+    elif risk_hits and not positive_hits:
+        score = -float(risk_penalty or 0)
+    elif positive_hits and risk_hits:
+        score = 0.0
+    else:
+        score = 0.0
+
+    status = "found" if positive_hits else "risk" if risk_hits else "none"
+    return {
+        "status": status,
+        "score": round(score, 3),
+        "positive_hits": positive_hits[:3],
+        "risk_hits": risk_hits[:3],
+        "news": news[:3],
+    }
+
+
+def _apply_catalyst_layer(radar_items: list[dict], catalyst_cfg: dict) -> dict:
+    """레이더 상위 일부에만 촉매 레이어를 적용한다.
+
+    목적: 신호를 줄이는 게 아니라, 로이에게 올라갈 최종 후보의 질을 높인다.
+    """
+    audit = {
+        "enabled": bool((catalyst_cfg or {}).get("enabled", False)),
+        "eval_limit": int((catalyst_cfg or {}).get("eval_limit", 0) or 0),
+        "evaluated": 0,
+        "found": 0,
+        "risk": 0,
+        "none": 0,
+        "non_us": 0,
+        "no_key": 0,
+        "error": 0,
+    }
+    if not audit["enabled"] or audit["eval_limit"] <= 0:
+        return audit
+
+    lookback_days = int(catalyst_cfg.get("lookback_days", 14) or 14)
+    max_news = int(catalyst_cfg.get("max_news_per_ticker", 3) or 3)
+    score_boost = float(catalyst_cfg.get("score_boost", 0.3) or 0.0)
+    risk_penalty = float(catalyst_cfg.get("risk_penalty", 0.3) or 0.0)
+
+    targets = radar_items[:audit["eval_limit"]]
+    for item in targets:
+        audit["evaluated"] += 1
+        status, news = _fetch_catalyst_news(
+            item.get("ticker", ""),
+            item.get("country", ""),
+            lookback_days=lookback_days,
+            max_items=max_news,
+        )
+        if status == "ok":
+            context = _score_catalyst_news(news, score_boost, risk_penalty)
+        else:
+            context = {"status": status, "score": 0.0, "positive_hits": [], "risk_hits": [], "news": []}
+
+        item["catalyst_context"] = context
+        item["catalyst_score"] = round(float(context.get("score", 0.0) or 0.0), 3)
+        item["score"] = round(float(item.get("score", 0.0) or 0.0) + item["catalyst_score"], 3)
+
+        ctx_status = str(context.get("status", status) or status)
+        if ctx_status == "found":
+            audit["found"] += 1
+        elif ctx_status == "risk":
+            audit["risk"] += 1
+        elif ctx_status == "none":
+            audit["none"] += 1
+        elif ctx_status == "non_us":
+            audit["non_us"] += 1
+        elif ctx_status == "no_key":
+            audit["no_key"] += 1
+        else:
+            audit["error"] += 1
+
+        time.sleep(0.05)
+
+    return audit
 
 
 def _summarize_radar(
@@ -348,6 +518,8 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "signal_score": item.get("signal_score"),
                 "theme_score": item.get("theme_score"),
                 "liquidity_score": item.get("liquidity_score"),
+                "catalyst_score": item.get("catalyst_score", 0.0),
+                "catalyst_status": item.get("catalyst_context", {}).get("status", ""),
                 "signal_count": item.get("signal_count"),
                 "signal_keys": ",".join(item.get("signal_keys", [])),
                 "quality_flags": ",".join(item.get("quality_flags", [])),
@@ -780,6 +952,8 @@ class ScoutAgent(BaseAgent):
                 radar_eligible.append(item)
 
         radar_eligible.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
+        catalyst_audit = _apply_catalyst_layer(radar_eligible, scout_cfg.get("catalyst", {}) or {})
+        radar_eligible.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
         radar_pool = radar_eligible[:radar_pool_size]
 
         # ── Stage 5: 로이에게 보고할 엄선 후보만 추출 ──
@@ -821,6 +995,7 @@ class ScoutAgent(BaseAgent):
                 "brief_rejected_after_radar": int(max(0, len(radar_pool) - len(candidates))),
                 "brief_picks": int(len(candidates)),
             },
+            "catalyst_audit": catalyst_audit,
         }
 
         radar_summary = _summarize_radar(

@@ -54,9 +54,17 @@ scout:
   # 내부에는 넓게 저장하고, 로이에게는 엄선 후보만 보고한다.
   radar_pool_size: 100                 # 내부 관찰풀 최대 저장 수
   radar_min_score: 1.0                 # 관찰풀 편입 최소 점수
-  brief_min_score: 2.0                 # 최종 브리핑 후보 최소 점수
+  brief_min_score: 2.4                 # 최종 브리핑 후보 최소 점수
   ohlcv_top_per_country: 500           # 무신호 종목 중 국가별 OHLCV 평가 상한
   theme_boost_enabled: true            # themes.yaml 가치사슬 종목 보너스
+
+  catalyst:
+    enabled: true
+    eval_limit: 20                     # 레이더 상위 N개만 촉매 확인
+    lookback_days: 14
+    max_news_per_ticker: 3
+    score_boost: 0.3
+    risk_penalty: 0.3
 
   scoring_weights:
     bb_squeeze: 1.2
