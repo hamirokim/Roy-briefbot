@@ -1,0 +1,4252 @@
+{
+  "date": "2026-05-22",
+  "summary": {
+    "scanned_total": 2897,
+    "ohlcv_evaluated": 1753,
+    "cooldown_skipped": 13,
+    "radar_pool_count": 100,
+    "brief_pick_count": 5,
+    "theme_count": 7,
+    "top_signals": [
+      [
+        "bb_squeeze",
+        57
+      ],
+      [
+        "rrg_improving",
+        47
+      ],
+      [
+        "volume_compression",
+        10
+      ],
+      [
+        "insider_buying",
+        1
+      ]
+    ],
+    "top_quality_flags": [
+      [
+        "low_liquidity_buffer",
+        48
+      ],
+      [
+        "left_side_context",
+        23
+      ],
+      [
+        "near_52w_high",
+        15
+      ],
+      [
+        "overextended_20d",
+        6
+      ]
+    ],
+    "radar_by_country": {
+      "US": 48,
+      "CN_HK": 16,
+      "JP": 7,
+      "KR": 12,
+      "CN_ADR": 10,
+      "CN_A": 7
+    },
+    "source_counts": {
+      "finviz+nasdaqtrader": 1936,
+      "jpx_official+yfinance": 500,
+      "naver_market_sum_fallback": 294,
+      "yfinance_cn_a_seed": 75,
+      "yfinance_cn_adr": 38,
+      "yfinance_hk_china_seed": 54
+    },
+    "filter_audit": {
+      "hard_filter": {
+        "universe": 2897,
+        "cooldown_skipped": 13,
+        "after_cooldown": 2884,
+        "after_cooldown_by_country": {
+          "US": 1923,
+          "KR": 294,
+          "JP": 500,
+          "CN_HK": 54,
+          "CN_A": 75,
+          "CN_ADR": 38
+        }
+      },
+      "cost_control": {
+        "insider_eval_top_us": 250,
+        "insider_skipped_cost_limit": 1673
+      },
+      "evaluation_scope": {
+        "ohlcv_selected": 1753,
+        "ohlcv_not_selected": 1131,
+        "ohlcv_missing": 1,
+        "ohlcv_selected_by_country": {
+          "US": 792,
+          "CN_ADR": 38,
+          "CN_HK": 54,
+          "CN_A": 75,
+          "KR": 294,
+          "JP": 500
+        },
+        "ohlcv_missing_by_country": {
+          "US": 1
+        }
+      },
+      "signal_audit": {
+        "with_signal": 414,
+        "without_signal": 2445,
+        "hit_counts": {
+          "bb_squeeze": 57,
+          "rrg_improving": 327,
+          "volume_compression": 37,
+          "insider_buying": 8
+        }
+      },
+      "radar_audit": {
+        "radar_min_score": 1.0,
+        "radar_eligible_before_cap": 407,
+        "radar_pool_cap": 100,
+        "radar_cap_dropped": 307,
+        "brief_min_score": 2.0,
+        "signals_required": 3,
+        "brief_rejected_after_radar": 95,
+        "brief_picks": 5
+      }
+    },
+    "coverage_warnings": [],
+    "no_candidate_reason": ""
+  },
+  "items": [
+    {
+      "ticker": "SPG",
+      "name": "Simon Property Group Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 66300000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.2,
+      "signal_score": 2.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "bb_squeeze": {
+          "current_width": 0.033,
+          "avg_width": 0.0744,
+          "ratio": 0.444,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 204.1,
+        "ret_20d": 0.012,
+        "ma50": 196.062,
+        "ma200": 186.963,
+        "drawdown_from_high": -0.0167,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "BXP",
+      "name": "BXP Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 10490000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.2,
+      "signal_score": 2.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "bb_squeeze": {
+          "current_width": 0.0493,
+          "avg_width": 0.1242,
+          "ratio": 0.397,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 60.13,
+        "ret_20d": 0.0549,
+        "ma50": 55.81,
+        "ma200": 65.34,
+        "drawdown_from_high": -0.2382,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "FR",
+      "name": "First Industrial Realty Trust Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 8529999999.999999,
+      "avg_volume_value": 0.0,
+      "score": 2.2,
+      "signal_score": 2.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "bb_squeeze": {
+          "current_width": 0.0353,
+          "avg_width": 0.0763,
+          "ratio": 0.462,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 62.44,
+        "ret_20d": -0.0065,
+        "ma50": 60.803,
+        "ma200": 57.007,
+        "drawdown_from_high": -0.0304,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "REXR",
+      "name": "Rexford Industrial Realty Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 8130000000.000001,
+      "avg_volume_value": 0.0,
+      "score": 2.2,
+      "signal_score": 2.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "bb_squeeze": {
+          "current_width": 0.0475,
+          "avg_width": 0.1005,
+          "ratio": 0.473,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 36.06,
+        "ret_20d": -0.0074,
+        "ma50": 34.943,
+        "ma200": 38.927,
+        "drawdown_from_high": -0.1853,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "EPRT",
+      "name": "Essential Properties Realty Trust Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 6770000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.2,
+      "signal_score": 2.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "bb_squeeze": {
+          "current_width": 0.0424,
+          "avg_width": 0.0924,
+          "ratio": 0.459,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 31.38,
+        "ret_20d": -0.0038,
+        "ma50": 31.631,
+        "ma200": 31.021,
+        "drawdown_from_high": -0.0928,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "PECO",
+      "name": "Phillips Edison & Company Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 5550000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.2,
+      "signal_score": 2.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "bb_squeeze": {
+          "current_width": 0.0332,
+          "avg_width": 0.0675,
+          "ratio": 0.492,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 40.53,
+        "ret_20d": 0.0382,
+        "ma50": 38.709,
+        "ma200": 36.265,
+        "drawdown_from_high": 0.0,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "KRC",
+      "name": "Kilroy Realty Corp",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 4019999999.9999995,
+      "avg_volume_value": 0.0,
+      "score": 2.2,
+      "signal_score": 2.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "bb_squeeze": {
+          "current_width": 0.0993,
+          "avg_width": 0.2015,
+          "ratio": 0.493,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 34.14,
+        "ret_20d": 0.0852,
+        "ma50": 31.1,
+        "ma200": 36.903,
+        "drawdown_from_high": -0.2318,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "NHI",
+      "name": "National Health Investors Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 3760000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.2,
+      "signal_score": 2.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "bb_squeeze": {
+          "current_width": 0.069,
+          "avg_width": 0.1772,
+          "ratio": 0.389,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 76.55,
+        "ret_20d": -0.0138,
+        "ma50": 80.458,
+        "ma200": 79.287,
+        "drawdown_from_high": -0.159,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "HR",
+      "name": "Healthcare Realty Trust Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 7090000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.0,
+      "signal_score": 2.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "volume_compression"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "volume_compression": {
+          "short_avg": 2842282,
+          "long_avg": 4846155,
+          "ratio": 0.587,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 20.47,
+        "ret_20d": 0.118,
+        "ma50": 18.482,
+        "ma200": 17.826,
+        "drawdown_from_high": 0.0,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "GBTG",
+      "name": "Global Business Travel Group Inc",
+      "country": "US",
+      "sector": "Consumer Cyclical",
+      "market_cap": 4910000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.0,
+      "signal_score": 2.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "volume_compression"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "volume_compression": {
+          "short_avg": 2737460,
+          "long_avg": 7142555,
+          "ratio": 0.383,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high",
+        "overextended_20d"
+      ],
+      "quality_metrics": {
+        "last_close": 9.41,
+        "ret_20d": 0.5949,
+        "ma50": 6.635,
+        "ma200": 7.219,
+        "drawdown_from_high": -0.0074,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CUZ",
+      "name": "Cousins Properties Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 4340000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.0,
+      "signal_score": 2.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "volume_compression"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "volume_compression": {
+          "short_avg": 1197297,
+          "long_avg": 2148209,
+          "ratio": 0.557,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 26.42,
+        "ret_20d": 0.0744,
+        "ma50": 24.122,
+        "ma200": 25.727,
+        "drawdown_from_high": -0.1346,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "COLD",
+      "name": "Americold Realty Trust Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 4110000000.0000005,
+      "avg_volume_value": 0.0,
+      "score": 2.0,
+      "signal_score": 2.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "volume_compression"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "volume_compression": {
+          "short_avg": 2538523,
+          "long_avg": 4524235,
+          "ratio": 0.561,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 14.44,
+        "ret_20d": 0.1769,
+        "ma50": 12.48,
+        "ma200": 12.782,
+        "drawdown_from_high": -0.1869,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "JOE",
+      "name": "St. Joe Co",
+      "country": "US",
+      "sector": "Real Estate",
+      "market_cap": 3730000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.0,
+      "signal_score": 2.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "volume_compression"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "volume_compression": {
+          "short_avg": 136687,
+          "long_avg": 248481,
+          "ratio": 0.55,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 64.03,
+        "ret_20d": -0.0798,
+        "ma50": 66.103,
+        "ma200": 60.117,
+        "drawdown_from_high": -0.1203,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "LCII",
+      "name": "LCI Industries",
+      "country": "US",
+      "sector": "Consumer Cyclical",
+      "market_cap": 2670000000.0,
+      "avg_volume_value": 0.0,
+      "score": 2.0,
+      "signal_score": 2.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "rrg_improving",
+        "volume_compression"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        },
+        "volume_compression": {
+          "short_avg": 182340,
+          "long_avg": 315825,
+          "ratio": 0.577,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 109.85,
+        "ret_20d": -0.0821,
+        "ma50": 119.47,
+        "ma200": 116.629,
+        "drawdown_from_high": -0.3009,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "AVGO",
+      "name": "Broadcom Inc",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 1977950000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.8,
+      "signal_score": 1.2,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0839,
+          "avg_width": 0.2368,
+          "ratio": 0.354,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 417.76,
+        "ret_20d": -0.0116,
+        "ma50": 374.017,
+        "ma200": 348.674,
+        "drawdown_from_high": -0.0501,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "ai_infrastructure",
+            "theme_label": "AI 인프라 (학습/추론)",
+            "role": "AI 네트워킹 칩 + VMware",
+            "priority": "A",
+            "layer": "downstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      }
+    },
+    {
+      "ticker": "RTX",
+      "name": "RTX Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 235470000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.8,
+      "signal_score": 1.2,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0512,
+          "avg_width": 0.1905,
+          "ratio": 0.269,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 174.85,
+        "ret_20d": -0.0335,
+        "ma50": 188.739,
+        "ma200": 180.073,
+        "drawdown_from_high": -0.1759,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "space_economy",
+            "theme_label": "우주 경제 (SpaceX + 위성)",
+            "role": "Raytheon (미사일/방산)",
+            "priority": "A",
+            "layer": "upstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      }
+    },
+    {
+      "ticker": "LMT",
+      "name": "Lockheed Martin Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 120490000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.8,
+      "signal_score": 1.2,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0502,
+          "avg_width": 0.2484,
+          "ratio": 0.202,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 522.59,
+        "ret_20d": -0.0591,
+        "ma50": 577.869,
+        "ma200": 529.89,
+        "drawdown_from_high": -0.2277,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "space_economy",
+            "theme_label": "우주 경제 (SpaceX + 위성)",
+            "role": "Lockheed Martin (방산 최대)",
+            "priority": "A",
+            "layer": "upstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      }
+    },
+    {
+      "ticker": "NOC",
+      "name": "Northrop Grumman Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 78430000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.8,
+      "signal_score": 1.2,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0926,
+          "avg_width": 0.2586,
+          "ratio": 0.358,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 552.17,
+        "ret_20d": -0.0635,
+        "ma50": 637.794,
+        "ma200": 620.007,
+        "drawdown_from_high": -0.281,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "space_economy",
+            "theme_label": "우주 경제 (SpaceX + 위성)",
+            "role": "Northrop Grumman (B-21 + 우주)",
+            "priority": "A",
+            "layer": "upstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      }
+    },
+    {
+      "ticker": "NKE",
+      "name": "Nike Inc",
+      "country": "US",
+      "sector": "Consumer Cyclical",
+      "market_cap": 65440000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.7,
+      "signal_score": 1.7,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 2,
+      "signal_keys": [
+        "insider_buying",
+        "rrg_improving"
+      ],
+      "signals": {
+        "insider_buying": {
+          "insider_trans_pct": 0.04,
+          "lookback_days": 7,
+          "label_ko": "메인자금 진입 흔적",
+          "phase": "主力 진입"
+        },
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context",
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 44.19,
+        "ret_20d": -0.0326,
+        "ma50": 46.787,
+        "ma200": 61.921,
+        "drawdown_from_high": -0.4423,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "TSLA",
+      "name": "Tesla Inc",
+      "country": "US",
+      "sector": "Consumer Cyclical",
+      "market_cap": 1567110000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 417.26,
+        "ret_20d": 0.0768,
+        "ma50": 387.514,
+        "ma200": 408.952,
+        "drawdown_from_high": -0.1482,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "robotics",
+            "theme_label": "로봇 산업 (휴머노이드 + 산업용)",
+            "role": "Optimus (휴머노이드)",
+            "priority": "B+",
+            "layer": "downstream"
+          },
+          {
+            "theme_key": "energy_transition",
+            "theme_label": "에너지 전환 (전기차/수소/배터리)",
+            "role": "전기차 + 에너지 저장",
+            "priority": "A",
+            "layer": "downstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      }
+    },
+    {
+      "ticker": "MRVL",
+      "name": "Marvell Technology Inc",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 163550000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.2,
+      "theme_score": 0.4,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.2052,
+          "avg_width": 0.4262,
+          "ratio": 0.481,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 186.8,
+        "ret_20d": 0.1874,
+        "ma50": 133.321,
+        "ma200": 94.732,
+        "drawdown_from_high": 0.0,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "ai_infrastructure",
+            "theme_label": "AI 인프라 (학습/추론)",
+            "role": "데이터센터 칩",
+            "priority": "B+",
+            "layer": "downstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      }
+    },
+    {
+      "ticker": "0005.HK",
+      "name": "HSBC Holdings plc",
+      "country": "CN_HK",
+      "sector": "Financial Services",
+      "market_cap": 311525745690.2564,
+      "avg_volume_value": 338455409.5,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0482,
+          "avg_width": 0.0999,
+          "ratio": 0.483,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 141.7,
+        "ret_20d": -0.016,
+        "ma50": 135.18,
+        "ma200": 119.588,
+        "drawdown_from_high": -0.038,
+        "avg_volume_value": 338455409.5
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "0939.HK",
+      "name": "China Construction Bank Corporation",
+      "country": "CN_HK",
+      "sector": "Financial Services",
+      "market_cap": 291449649099.4872,
+      "avg_volume_value": 275361518.4410256,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0351,
+          "avg_width": 0.0799,
+          "ratio": 0.439,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 8.69,
+        "ret_20d": -0.0091,
+        "ma50": 8.496,
+        "ma200": 7.983,
+        "drawdown_from_high": -0.0334,
+        "avg_volume_value": 275361518.44
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "9983.T",
+      "name": "ファーストリテイリング",
+      "country": "JP",
+      "sector": "小売",
+      "market_cap": 145105505273.39355,
+      "avg_volume_value": 549476189.032258,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0994,
+          "avg_width": 0.2048,
+          "ratio": 0.485,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 74740.0,
+        "ret_20d": -0.0013,
+        "ma50": 68618.8,
+        "ma200": 58142.95,
+        "drawdown_from_high": -0.0135,
+        "avg_volume_value": 549476189.03
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "329180.KS",
+      "name": "HD현대중공업",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 47949626104.69069,
+      "avg_volume_value": 223183031.9510537,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.1899,
+          "avg_width": 0.5049,
+          "ratio": 0.376,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 672000.0,
+        "ret_20d": 0.1667,
+        "ma50": 574790.0,
+        "ma200": 547345.0,
+        "drawdown_from_high": -0.0832,
+        "avg_volume_value": 223183031.95
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "006400.KS",
+      "name": "삼성SDI",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 33746227056.424202,
+      "avg_volume_value": 216458044.86743712,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.2464,
+          "avg_width": 0.5586,
+          "ratio": 0.441,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 570000.0,
+        "ret_20d": 0.0595,
+        "ma50": 520130.0,
+        "ma200": 342241.5,
+        "drawdown_from_high": -0.1994,
+        "avg_volume_value": 216458044.87
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "2269.HK",
+      "name": "WuXi Biologics (Cayman) Inc.",
+      "country": "CN_HK",
+      "sector": "Healthcare",
+      "market_cap": 17403427183.589745,
+      "avg_volume_value": 120814991.7948718,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0609,
+          "avg_width": 0.1461,
+          "ratio": 0.417,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 32.84,
+        "ret_20d": -0.0623,
+        "ma50": 34.222,
+        "ma200": 35.202,
+        "drawdown_from_high": -0.2214,
+        "avg_volume_value": 120814991.79
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "9531.T",
+      "name": "東京瓦斯",
+      "country": "JP",
+      "sector": "電力・ガス",
+      "market_cap": 14317660913.135485,
+      "avg_volume_value": 56880801.85806452,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0713,
+          "avg_width": 0.1599,
+          "ratio": 0.446,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 6656.0,
+        "ret_20d": -0.0373,
+        "ma50": 7088.82,
+        "ma200": 6316.06,
+        "drawdown_from_high": -0.1533,
+        "avg_volume_value": 56880801.86
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "9532.T",
+      "name": "大阪瓦斯",
+      "country": "JP",
+      "sector": "電力・ガス",
+      "market_cap": 13996646981.367743,
+      "avg_volume_value": 43446243.896774195,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.07,
+          "avg_width": 0.1451,
+          "ratio": 0.483,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 5668.0,
+        "ret_20d": -0.0751,
+        "ma50": 6119.0,
+        "ma200": 5271.29,
+        "drawdown_from_high": -0.1587,
+        "avg_volume_value": 43446243.9
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "5019.T",
+      "name": "出光興産",
+      "country": "JP",
+      "sector": "エネルギー資源",
+      "market_cap": 10522310484.232258,
+      "avg_volume_value": 42552444.0,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0973,
+          "avg_width": 0.2106,
+          "ratio": 0.462,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 1346.0,
+        "ret_20d": -0.0951,
+        "ma50": 1456.16,
+        "ma200": 1214.5,
+        "drawdown_from_high": -0.1887,
+        "avg_volume_value": 42552444.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "4151.T",
+      "name": "協和キリン",
+      "country": "JP",
+      "sector": "医薬品",
+      "market_cap": 8105602411.354838,
+      "avg_volume_value": 24755520.0,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.067,
+          "avg_width": 0.1363,
+          "ratio": 0.492,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 2400.0,
+        "ret_20d": -0.027,
+        "ma50": 2431.4,
+        "ma200": 2492.325,
+        "drawdown_from_high": -0.1681,
+        "avg_volume_value": 24755520.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "3391.T",
+      "name": "ツルハホールディングス",
+      "country": "JP",
+      "sector": "小売",
+      "market_cap": 6216026600.877419,
+      "avg_volume_value": 30336303.19354839,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0699,
+          "avg_width": 0.2357,
+          "ratio": 0.297,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 2127.0,
+        "ret_20d": 0.0323,
+        "ma50": 2224.02,
+        "ma200": 2473.983,
+        "drawdown_from_high": -0.2804,
+        "avg_volume_value": 30336303.19
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "000250.KQ",
+      "name": "삼천당제약",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 5661046906.866077,
+      "avg_volume_value": 35774877.634262405,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.2617,
+          "avg_width": 0.5947,
+          "ratio": 0.44,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 355000.0,
+        "ret_20d": -0.2534,
+        "ma50": 594900.0,
+        "ma200": 365613.5,
+        "drawdown_from_high": -0.7002,
+        "avg_volume_value": 35774877.63
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "000990.KS",
+      "name": "DB하이텍",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 5353025152.957172,
+      "avg_volume_value": 61553411.9646499,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.3648,
+          "avg_width": 0.7382,
+          "ratio": 0.494,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "overextended_20d"
+      ],
+      "quality_metrics": {
+        "last_close": 181000.0,
+        "ret_20d": 0.4836,
+        "ma50": 119566.0,
+        "ma200": 79626.5,
+        "drawdown_from_high": -0.0305,
+        "avg_volume_value": 61553411.96
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "6323.T",
+      "name": "ローツェ",
+      "country": "JP",
+      "sector": "機械",
+      "market_cap": 4198167241.496774,
+      "avg_volume_value": 49225005.47096774,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.1879,
+          "avg_width": 0.3994,
+          "ratio": 0.47,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 3752.0,
+        "ret_20d": 0.0347,
+        "ma50": 3331.81,
+        "ma200": 2612.695,
+        "drawdown_from_high": -0.0754,
+        "avg_volume_value": 49225005.47
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "082740.KS",
+      "name": "한화엔진",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 4118490822.5696807,
+      "avg_volume_value": 44262161.93065941,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.3896,
+          "avg_width": 0.8155,
+          "ratio": 0.478,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 72600.0,
+        "ret_20d": 0.198,
+        "ma50": 60010.0,
+        "ma200": 49441.25,
+        "drawdown_from_high": -0.1888,
+        "avg_volume_value": 44262161.93
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "100790.KQ",
+      "name": "미래에셋벤처투자",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 2033242692.046227,
+      "avg_volume_value": 85883678.92590074,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.2611,
+          "avg_width": 0.8697,
+          "ratio": 0.3,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 56300.0,
+        "ret_20d": 0.189,
+        "ma50": 40745.0,
+        "ma200": 18629.75,
+        "drawdown_from_high": -0.1647,
+        "avg_volume_value": 85883678.93
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "027360.KQ",
+      "name": "아주IB투자",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 1319306594.153637,
+      "avg_volume_value": 117791313.65057784,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.3344,
+          "avg_width": 0.8208,
+          "ratio": 0.407,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "overextended_20d"
+      ],
+      "quality_metrics": {
+        "last_close": 16020.0,
+        "ret_20d": 0.3218,
+        "ma50": 11704.6,
+        "ma200": 5051.155,
+        "drawdown_from_high": -0.1442,
+        "avg_volume_value": 117791313.65
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "089970.KQ",
+      "name": "브이엠",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 1008701563.5622026,
+      "avg_volume_value": 33123722.70564242,
+      "score": 1.4,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.1653,
+          "avg_width": 0.3516,
+          "ratio": 0.47,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 59900.0,
+        "ret_20d": 0.0971,
+        "ma50": 49450.0,
+        "ma200": 29871.3,
+        "drawdown_from_high": -0.0017,
+        "avg_volume_value": 33123722.71
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft Corp",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 3127820000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.065,
+          "avg_width": 0.1573,
+          "ratio": 0.413,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 421.06,
+        "ret_20d": -0.0274,
+        "ma50": 399.823,
+        "ma200": 461.476,
+        "drawdown_from_high": -0.2232,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "BABA",
+      "name": "Alibaba Group Holding Limited",
+      "country": "CN_ADR",
+      "sector": "Consumer Cyclical",
+      "market_cap": 322611544064.0,
+      "avg_volume_value": 1533442092.0,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 134.47,
+        "ret_20d": -0.0143,
+        "ma50": 131.954,
+        "ma200": 149.379,
+        "drawdown_from_high": -0.2898,
+        "avg_volume_value": 1533442092.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "MS",
+      "name": "Morgan Stanley",
+      "country": "US",
+      "sector": "Financial",
+      "market_cap": 311940000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0543,
+          "avg_width": 0.1186,
+          "ratio": 0.457,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 197.77,
+        "ret_20d": 0.0352,
+        "ma50": 178.559,
+        "ma200": 169.011,
+        "drawdown_from_high": 0.0,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "9988.HK",
+      "name": "Alibaba Group Holding Limited",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 310041909825.64105,
+      "avg_volume_value": 1424035248.4615386,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 126.0,
+        "ret_20d": -0.0418,
+        "ma50": 129.868,
+        "ma200": 144.907,
+        "drawdown_from_high": -0.3193,
+        "avg_volume_value": 1424035248.46
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "AZN",
+      "name": "Astrazeneca plc",
+      "country": "US",
+      "sector": "Healthcare",
+      "market_cap": 290720000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0613,
+          "avg_width": 0.1337,
+          "ratio": 0.459,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 187.46,
+        "ret_20d": -0.0377,
+        "ma50": 191.412,
+        "ma200": 179.836,
+        "drawdown_from_high": -0.1051,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "MRK",
+      "name": "Merck & Co Inc",
+      "country": "US",
+      "sector": "Healthcare",
+      "market_cap": 279090000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0511,
+          "avg_width": 0.1113,
+          "ratio": 0.459,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 113.0,
+        "ret_20d": 0.001,
+        "ma50": 115.575,
+        "ma200": 101.915,
+        "drawdown_from_high": -0.0882,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "TXN",
+      "name": "Texas Instruments Inc",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 277470000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.1837,
+          "avg_width": 0.4099,
+          "ratio": 0.448,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high",
+        "overextended_20d"
+      ],
+      "quality_metrics": {
+        "last_close": 304.88,
+        "ret_20d": 0.2902,
+        "ma50": 237.662,
+        "ma200": 199.545,
+        "drawdown_from_high": -0.0107,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "UNP",
+      "name": "Union Pacific Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 157810000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0478,
+          "avg_width": 0.1192,
+          "ratio": 0.401,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 265.8,
+        "ret_20d": 0.0658,
+        "ma50": 253.842,
+        "ma200": 237.718,
+        "drawdown_from_high": -0.0339,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "PDD",
+      "name": "PDD Holdings Inc.",
+      "country": "CN_ADR",
+      "sector": "Consumer Cyclical",
+      "market_cap": 139706368000.0,
+      "avg_volume_value": 680642375.4000001,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 98.15,
+        "ret_20d": -0.019,
+        "ma50": 99.878,
+        "ma200": 113.94,
+        "drawdown_from_high": -0.2894,
+        "avg_volume_value": 680642375.4
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "HON",
+      "name": "Honeywell International Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 137750000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0573,
+          "avg_width": 0.133,
+          "ratio": 0.431,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 217.39,
+        "ret_20d": -0.0117,
+        "ma50": 223.235,
+        "ma200": 211.526,
+        "drawdown_from_high": -0.1236,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "002594.SZ",
+      "name": "BYD Company Limited",
+      "country": "CN_A",
+      "sector": "Consumer Cyclical",
+      "market_cap": 118409598293.33333,
+      "avg_volume_value": 767106297.8750001,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 93.51,
+        "ret_20d": -0.0913,
+        "ma50": 101.21,
+        "ma200": 100.729,
+        "drawdown_from_high": -0.3073,
+        "avg_volume_value": 767106297.88
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "1211.HK",
+      "name": "BYD Company Limited",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 105841312164.10257,
+      "avg_volume_value": 363292056.21794873,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 90.55,
+        "ret_20d": -0.1537,
+        "ma50": 102.68,
+        "ma200": 102.666,
+        "drawdown_from_high": -0.4161,
+        "avg_volume_value": 363292056.22
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "SNPS",
+      "name": "Synopsys Inc",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 95580000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.114,
+          "avg_width": 0.253,
+          "ratio": 0.451,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 498.93,
+        "ret_20d": 0.0454,
+        "ma50": 450.898,
+        "ma200": 472.487,
+        "drawdown_from_high": -0.2269,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "000333.SZ",
+      "name": "Midea Group Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Consumer Cyclical",
+      "market_cap": 86136367786.66667,
+      "avg_volume_value": 319283811.3888889,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 81.5,
+        "ret_20d": 0.0241,
+        "ma50": 78.02,
+        "ma200": 76.713,
+        "drawdown_from_high": -0.0161,
+        "avg_volume_value": 319283811.39
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CSX",
+      "name": "CSX Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 85360000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0526,
+          "avg_width": 0.1123,
+          "ratio": 0.468,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 45.94,
+        "ret_20d": 0.0639,
+        "ma50": 42.679,
+        "ma200": 37.911,
+        "drawdown_from_high": -0.0056,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CP",
+      "name": "Canadian Pacific Kansas City Limited",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 76650000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0532,
+          "avg_width": 0.1072,
+          "ratio": 0.496,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 86.34,
+        "ret_20d": 0.0492,
+        "ma50": 82.505,
+        "ma200": 77.323,
+        "drawdown_from_high": -0.0341,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "MPWR",
+      "name": "Monolithic Power System Inc",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 76310000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.1355,
+          "avg_width": 0.3032,
+          "ratio": 0.447,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 1553.27,
+        "ret_20d": 0.0205,
+        "ma50": 1355.336,
+        "ma200": 1070.728,
+        "drawdown_from_high": -0.0649,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "3690.HK",
+      "name": "Meituan",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 64989337337.4359,
+      "avg_volume_value": 519934700.29487175,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 82.1,
+        "ret_20d": -0.0255,
+        "ma50": 83.088,
+        "ma200": 96.899,
+        "drawdown_from_high": -0.4468,
+        "avg_volume_value": 519934700.29
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "TEL",
+      "name": "TE Connectivity plc",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 58780000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.1032,
+          "avg_width": 0.2423,
+          "ratio": 0.426,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context",
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 201.39,
+        "ret_20d": -0.0889,
+        "ma50": 212.122,
+        "ma200": 220.902,
+        "drawdown_from_high": -0.1912,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "TAK",
+      "name": "Takeda Pharmaceutical Co ADR",
+      "country": "US",
+      "sector": "Healthcare",
+      "market_cap": 52700000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0299,
+          "avg_width": 0.1318,
+          "ratio": 0.227,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 16.68,
+        "ret_20d": 0.0048,
+        "ma50": 17.436,
+        "ma200": 15.924,
+        "drawdown_from_high": -0.1128,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "NUE",
+      "name": "Nucor Corp",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 51390000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.108,
+          "avg_width": 0.2768,
+          "ratio": 0.39,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 225.67,
+        "ret_20d": 0.0533,
+        "ma50": 195.949,
+        "ma200": 166.349,
+        "drawdown_from_high": -0.0365,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "0016.HK",
+      "name": "Sun Hung Kai Properties Limited",
+      "country": "CN_HK",
+      "sector": "Real Estate",
+      "market_cap": 51082665353.84615,
+      "avg_volume_value": 108425783.65384616,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 137.5,
+        "ret_20d": -0.0036,
+        "ma50": 136.298,
+        "ma200": 111.464,
+        "drawdown_from_high": -0.0595,
+        "avg_volume_value": 108425783.65
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "JD",
+      "name": "JD.com, Inc.",
+      "country": "CN_ADR",
+      "sector": "Consumer Cyclical",
+      "market_cap": 43837227008.0,
+      "avg_volume_value": 354711519.0,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 32.46,
+        "ret_20d": 0.0604,
+        "ma50": 29.826,
+        "ma200": 30.492,
+        "drawdown_from_high": -0.1026,
+        "avg_volume_value": 354711519.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "9618.HK",
+      "name": "JD.com, Inc.",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 43250987323.07693,
+      "avg_volume_value": 198353160.0,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 123.5,
+        "ret_20d": 0.0275,
+        "ma50": 116.256,
+        "ma200": 118.741,
+        "drawdown_from_high": -0.1352,
+        "avg_volume_value": 198353160.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "ON",
+      "name": "ON Semiconductor Corp",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 43190000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.246,
+          "avg_width": 0.519,
+          "ratio": 0.474,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "overextended_20d"
+      ],
+      "quality_metrics": {
+        "last_close": 110.21,
+        "ret_20d": 0.2385,
+        "ma50": 81.666,
+        "ma200": 61.407,
+        "drawdown_from_high": -0.0689,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "STT",
+      "name": "State Street Corp",
+      "country": "US",
+      "sector": "Financial",
+      "market_cap": 42640000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0483,
+          "avg_width": 0.1514,
+          "ratio": 0.319,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 154.07,
+        "ret_20d": 0.011,
+        "ma50": 139.617,
+        "ma200": 125.544,
+        "drawdown_from_high": 0.0,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "XYZ",
+      "name": "Block Inc",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 42230000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0765,
+          "avg_width": 0.1879,
+          "ratio": 0.407,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 70.89,
+        "ret_20d": -0.0222,
+        "ma50": 65.973,
+        "ma200": 67.818,
+        "drawdown_from_high": -0.126,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "SLF",
+      "name": "Sun Life Financial Inc",
+      "country": "US",
+      "sector": "Financial",
+      "market_cap": 40440000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0596,
+          "avg_width": 0.1221,
+          "ratio": 0.489,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 73.02,
+        "ret_20d": 0.036,
+        "ma50": 67.506,
+        "ma200": 62.756,
+        "drawdown_from_high": -0.0026,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "KDP",
+      "name": "Keurig Dr Pepper Inc",
+      "country": "US",
+      "sector": "Consumer Defensive",
+      "market_cap": 39030000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.045,
+          "avg_width": 0.1582,
+          "ratio": 0.285,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 28.69,
+        "ret_20d": 0.081,
+        "ma50": 27.429,
+        "ma200": 28.193,
+        "drawdown_from_high": -0.1849,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CRDO",
+      "name": "Credo Technology Group Holding Ltd",
+      "country": "US",
+      "sector": "Technology",
+      "market_cap": 33750000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.2756,
+          "avg_width": 0.5906,
+          "ratio": 0.467,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 182.98,
+        "ret_20d": -0.0344,
+        "ma50": 146.15,
+        "ma200": 142.223,
+        "drawdown_from_high": -0.1296,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "STLD",
+      "name": "Steel Dynamics Inc",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 32920000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.088,
+          "avg_width": 0.2714,
+          "ratio": 0.324,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 228.3,
+        "ret_20d": 0.0037,
+        "ma50": 202.408,
+        "ma200": 170.332,
+        "drawdown_from_high": -0.056,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "RVMD",
+      "name": "Revolution Medicines Inc",
+      "country": "US",
+      "sector": "Healthcare",
+      "market_cap": 31960000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.1503,
+          "avg_width": 0.4308,
+          "ratio": 0.349,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 150.33,
+        "ret_20d": 0.0624,
+        "ma50": 123.4,
+        "ma200": 83.426,
+        "drawdown_from_high": -0.0145,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "NTRS",
+      "name": "Northern Trust Corp",
+      "country": "US",
+      "sector": "Financial",
+      "market_cap": 30710000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0539,
+          "avg_width": 0.1533,
+          "ratio": 0.351,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 165.96,
+        "ret_20d": -0.0111,
+        "ma50": 152.946,
+        "ma200": 139.666,
+        "drawdown_from_high": -0.0337,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "TCOM",
+      "name": "Trip.com Group Limited",
+      "country": "CN_ADR",
+      "sector": "Consumer Cyclical",
+      "market_cap": 30578485248.0,
+      "avg_volume_value": 140102689.76000002,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 48.56,
+        "ret_20d": -0.0999,
+        "ma50": 51.909,
+        "ma200": 63.725,
+        "drawdown_from_high": -0.385,
+        "avg_volume_value": 140102689.76
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "9961.HK",
+      "name": "Trip.com Group Limited",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 30258141341.538464,
+      "avg_volume_value": 129878723.23076925,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 374.8,
+        "ret_20d": -0.1135,
+        "ma50": 405.136,
+        "ma200": 497.24,
+        "drawdown_from_high": -0.3846,
+        "avg_volume_value": 129878723.23
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "000651.SZ",
+      "name": "Gree Electric Appliances, Inc. of Zhuhai",
+      "country": "CN_A",
+      "sector": "Consumer Cyclical",
+      "market_cap": 30232032142.22222,
+      "avg_volume_value": 208106866.24722221,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 38.86,
+        "ret_20d": 0.052,
+        "ma50": 38.328,
+        "ma200": 40.658,
+        "drawdown_from_high": -0.1929,
+        "avg_volume_value": 208106866.25
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "2020.HK",
+      "name": "ANTA Sports Products Limited",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 26994610281.025642,
+      "avg_volume_value": 85737938.46153846,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 76.0,
+        "ret_20d": -0.1038,
+        "ma50": 79.666,
+        "ma200": 84.601,
+        "drawdown_from_high": -0.272,
+        "avg_volume_value": 85737938.46
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "600690.SS",
+      "name": "Haier Smart Home Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Consumer Cyclical",
+      "market_cap": 25852668586.666664,
+      "avg_volume_value": 147212295.18333334,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 20.44,
+        "ret_20d": -0.0159,
+        "ma50": 22.05,
+        "ma200": 25.104,
+        "drawdown_from_high": -0.2682,
+        "avg_volume_value": 147212295.18
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "6690.HK",
+      "name": "Haier Smart Home Co., Ltd.",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 23443697558.974358,
+      "avg_volume_value": 47778089.41538461,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 20.08,
+        "ret_20d": -0.0492,
+        "ma50": 22.048,
+        "ma200": 24.88,
+        "drawdown_from_high": -0.2782,
+        "avg_volume_value": 47778089.42
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "AFRM",
+      "name": "Affirm Holdings Inc",
+      "country": "US",
+      "sector": "Financial",
+      "market_cap": 22350000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0966,
+          "avg_width": 0.34,
+          "ratio": 0.284,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 67.12,
+        "ret_20d": 0.0081,
+        "ma50": 56.309,
+        "ma200": 67.538,
+        "drawdown_from_high": -0.2719,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "PFG",
+      "name": "Principal Financial Group Inc",
+      "country": "US",
+      "sector": "Financial",
+      "market_cap": 22210000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0482,
+          "avg_width": 0.1083,
+          "ratio": 0.445,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer",
+        "near_52w_high"
+      ],
+      "quality_metrics": {
+        "last_close": 102.81,
+        "ret_20d": 0.0552,
+        "ma50": 94.423,
+        "ma200": 87.943,
+        "drawdown_from_high": 0.0,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "WST",
+      "name": "West Pharmaceutical Services Inc",
+      "country": "US",
+      "sector": "Healthcare",
+      "market_cap": 21580000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.1176,
+          "avg_width": 0.2364,
+          "ratio": 0.497,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 305.5,
+        "ret_20d": 0.1133,
+        "ma50": 274.396,
+        "ma200": 263.839,
+        "drawdown_from_high": -0.0627,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "601633.SS",
+      "name": "Great Wall Motor Company Limited",
+      "country": "CN_A",
+      "sector": "Consumer Cyclical",
+      "market_cap": 21191584426.666668,
+      "avg_volume_value": 38546355.06944444,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 17.83,
+        "ret_20d": -0.1386,
+        "ma50": 20.325,
+        "ma200": 22.174,
+        "drawdown_from_high": -0.3215,
+        "avg_volume_value": 38546355.07
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "010130.KS",
+      "name": "고려아연",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 19936437797.416725,
+      "avg_volume_value": 23497216.17946975,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "volume_compression"
+      ],
+      "signals": {
+        "volume_compression": {
+          "short_avg": 25002,
+          "long_avg": 43195,
+          "ratio": 0.579,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 1405000.0,
+        "ret_20d": -0.1587,
+        "ma50": 1567420.0,
+        "ma200": 1312695.0,
+        "drawdown_from_high": -0.3357,
+        "avg_volume_value": 23497216.18
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "600104.SS",
+      "name": "SAIC Motor Corporation Limited",
+      "country": "CN_A",
+      "sector": "Consumer Cyclical",
+      "market_cap": 19797422080.0,
+      "avg_volume_value": 86218601.8888889,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 12.4,
+        "ret_20d": -0.1079,
+        "ma50": 13.896,
+        "ma200": 15.756,
+        "drawdown_from_high": -0.396,
+        "avg_volume_value": 86218601.89
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "BEKE",
+      "name": "KE Holdings Inc.",
+      "country": "CN_ADR",
+      "sector": "Real Estate",
+      "market_cap": 19345684480.0,
+      "avg_volume_value": 81379112.36,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLRE",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 18.07,
+        "ret_20d": 0.1301,
+        "ma50": 16.62,
+        "ma200": 17.446,
+        "drawdown_from_high": -0.1125,
+        "avg_volume_value": 81379112.36
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "0027.HK",
+      "name": "Galaxy Entertainment Group Limited",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 18246837694.358974,
+      "avg_volume_value": 53359716.666666664,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 32.5,
+        "ret_20d": -0.0497,
+        "ma50": 34.573,
+        "ma200": 38.787,
+        "drawdown_from_high": -0.2597,
+        "avg_volume_value": 53359716.67
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "RIVN",
+      "name": "Rivian Automotive Inc",
+      "country": "US",
+      "sector": "Consumer Cyclical",
+      "market_cap": 17310000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.2,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "low_liquidity_buffer"
+      ],
+      "quality_metrics": {
+        "last_close": 13.73,
+        "ret_20d": -0.226,
+        "ma50": 15.366,
+        "ma200": 15.345,
+        "drawdown_from_high": -0.3884,
+        "avg_volume_value": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "energy_transition",
+            "theme_label": "에너지 전환 (전기차/수소/배터리)",
+            "role": "Rivian",
+            "priority": "C",
+            "layer": "downstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      }
+    },
+    {
+      "ticker": "LI",
+      "name": "Li Auto Inc.",
+      "country": "CN_ADR",
+      "sector": "Consumer Cyclical",
+      "market_cap": 16490167296.0,
+      "avg_volume_value": 55161001.62,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 16.18,
+        "ret_20d": -0.1324,
+        "ma50": 18.026,
+        "ma200": 19.764,
+        "drawdown_from_high": -0.4912,
+        "avg_volume_value": 55161001.62
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "601888.SS",
+      "name": "China Tourism Group Duty Free Corporation Limited",
+      "country": "CN_A",
+      "sector": "Consumer Cyclical",
+      "market_cap": 16478080568.88889,
+      "avg_volume_value": 210387210.2083333,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 57.1,
+        "ret_20d": -0.1564,
+        "ma50": 67.731,
+        "ma200": 75.657,
+        "drawdown_from_high": -0.4119,
+        "avg_volume_value": 210387210.21
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "2015.HK",
+      "name": "Li Auto Inc.",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 16267518162.051283,
+      "avg_volume_value": 100054680.38461539,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 62.25,
+        "ret_20d": -0.1525,
+        "ma50": 69.93,
+        "ma200": 77.706,
+        "drawdown_from_high": -0.5,
+        "avg_volume_value": 100054680.38
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "1928.HK",
+      "name": "Sands China Ltd.",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 15782090699.48718,
+      "avg_volume_value": 24208633.8,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 15.21,
+        "ret_20d": -0.1121,
+        "ma50": 16.632,
+        "ma200": 18.979,
+        "drawdown_from_high": -0.3149,
+        "avg_volume_value": 24208633.8
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "9868.HK",
+      "name": "XPeng Inc.",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 14850895556.923077,
+      "avg_volume_value": 122959909.46153848,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 60.6,
+        "ret_20d": -0.0867,
+        "ma50": 67.289,
+        "ma200": 76.861,
+        "drawdown_from_high": -0.4415,
+        "avg_volume_value": 122959909.46
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "064350.KS",
+      "name": "현대로템",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 14505302515.295717,
+      "avg_volume_value": 69556268.52481306,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "volume_compression"
+      ],
+      "signals": {
+        "volume_compression": {
+          "short_avg": 552538,
+          "long_avg": 929579,
+          "ratio": 0.594,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 195500.0,
+        "ret_20d": -0.1174,
+        "ma50": 210090.0,
+        "ma200": 205342.0,
+        "drawdown_from_high": -0.2732,
+        "avg_volume_value": 69556268.52
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "XPEV",
+      "name": "XPeng Inc.",
+      "country": "CN_ADR",
+      "sector": "Consumer Cyclical",
+      "market_cap": 14470066176.0,
+      "avg_volume_value": 100797154.08,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 15.14,
+        "ret_20d": -0.1078,
+        "ma50": 17.212,
+        "ma200": 19.743,
+        "drawdown_from_high": -0.4606,
+        "avg_volume_value": 100797154.08
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "HTHT",
+      "name": "H World Group Limited",
+      "country": "CN_ADR",
+      "sector": "Consumer Cyclical",
+      "market_cap": 14327534592.0,
+      "avg_volume_value": 87062034.15,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 46.59,
+        "ret_20d": -0.1051,
+        "ma50": 50.537,
+        "ma200": 45.438,
+        "drawdown_from_high": -0.1689,
+        "avg_volume_value": 87062034.15
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "NIO",
+      "name": "NIO Inc.",
+      "country": "CN_ADR",
+      "sector": "Consumer Cyclical",
+      "market_cap": 14006679552.0,
+      "avg_volume_value": 223554357.65,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 5.59,
+        "ret_20d": -0.1373,
+        "ma50": 6.079,
+        "ma200": 5.816,
+        "drawdown_from_high": -0.2915,
+        "avg_volume_value": 223554357.65
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "6862.HK",
+      "name": "Haidilao International Holding Ltd.",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 9372942966.153847,
+      "avg_volume_value": 33196025.76923077,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 13.5,
+        "ret_20d": -0.1,
+        "ma50": 15.019,
+        "ma200": 14.51,
+        "drawdown_from_high": -0.2364,
+        "avg_volume_value": 33196025.77
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "001440.KS",
+      "name": "대한전선",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 7461318830.727396,
+      "avg_volume_value": 187543200.5438477,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "volume_compression"
+      ],
+      "signals": {
+        "volume_compression": {
+          "short_avg": 5289364,
+          "long_avg": 14258069,
+          "ratio": 0.371,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [
+        "overextended_20d"
+      ],
+      "quality_metrics": {
+        "last_close": 56000.0,
+        "ret_20d": 0.3478,
+        "ma50": 41666.0,
+        "ma200": 27052.55,
+        "drawdown_from_high": -0.2254,
+        "avg_volume_value": 187543200.54
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "443060.KS",
+      "name": "HD현대마린솔루션",
+      "country": "KR",
+      "sector": "",
+      "market_cap": 7009993201.903467,
+      "avg_volume_value": 25956852.481305234,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "volume_compression"
+      ],
+      "signals": {
+        "volume_compression": {
+          "short_avg": 263860,
+          "long_avg": 441214,
+          "ratio": 0.598,
+          "threshold": 0.6,
+          "label_ko": "거래량 압축",
+          "phase": "建仓 진행 중"
+        }
+      },
+      "quality_flags": [],
+      "quality_metrics": {
+        "last_close": 230000.0,
+        "ret_20d": 0.0,
+        "ma50": 207276.0,
+        "ma200": 202450.5,
+        "drawdown_from_high": -0.18,
+        "avg_volume_value": 25956852.48
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "VIPS",
+      "name": "Vipshop Holdings Limited",
+      "country": "CN_ADR",
+      "sector": "Consumer Cyclical",
+      "market_cap": 6829447168.0,
+      "avg_volume_value": 30687712.740000002,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "quality_metrics": {
+        "last_close": 14.22,
+        "ret_20d": -0.028,
+        "ma50": 15.013,
+        "ma200": 17.368,
+        "drawdown_from_high": -0.3124,
+        "avg_volume_value": 30687712.74
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    }
+  ]
+}

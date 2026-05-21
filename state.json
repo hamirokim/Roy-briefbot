@@ -1,9 +1,88 @@
 {
-  "last_run_date": "2026-05-21",
-  "last_run_at": "2026-05-21T23:43:16.262309+09:00",
+  "last_run_date": "2026-05-22",
+  "last_run_at": "2026-05-22T08:20:37.529800+09:00",
   "last_monthly_run": "2026-05-01",
   "last_weekly_run": "2026-W21",
   "m2_history": {
+    "2026-05-22": {
+      "XLK": {
+        "quadrant": "WEAKENING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 101.95,
+        "momentum": 99.94
+      },
+      "XLV": {
+        "quadrant": "LEADING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 100.82,
+        "momentum": 103.02
+      },
+      "XLF": {
+        "quadrant": "IMPROVING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 99.68,
+        "momentum": 101.5
+      },
+      "XLY": {
+        "quadrant": "IMPROVING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 99.52,
+        "momentum": 100.79
+      },
+      "XLP": {
+        "quadrant": "LAGGING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 99.21,
+        "momentum": 98.9
+      },
+      "XLE": {
+        "quadrant": "WEAKENING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 100.29,
+        "momentum": 98.52
+      },
+      "XLI": {
+        "quadrant": "LAGGING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 97.91,
+        "momentum": 99.1
+      },
+      "XLB": {
+        "quadrant": "LAGGING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 97.08,
+        "momentum": 99.28
+      },
+      "XLC": {
+        "quadrant": "IMPROVING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 98.86,
+        "momentum": 100.73
+      },
+      "XLU": {
+        "quadrant": "LAGGING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 99.14,
+        "momentum": 99.6
+      },
+      "XLRE": {
+        "quadrant": "IMPROVING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 99.78,
+        "momentum": 100.41
+      }
+    },
     "2026-05-21": {
       "XLK": {
         "quadrant": "WEAKENING",
@@ -2466,6 +2545,81 @@
       ],
       "track_d": "",
       "source": "SCOUT"
+    },
+    {
+      "ticker": "SPG",
+      "name": "Simon Property Group Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "date_added": "2026-05-22",
+      "price_at_add": 204.9,
+      "score": 2.2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "track_d": "",
+      "source": "SCOUT"
+    },
+    {
+      "ticker": "BXP",
+      "name": "BXP Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "date_added": "2026-05-22",
+      "price_at_add": 60.13,
+      "score": 2.2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "track_d": "",
+      "source": "SCOUT"
+    },
+    {
+      "ticker": "FR",
+      "name": "First Industrial Realty Trust Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "date_added": "2026-05-22",
+      "price_at_add": 62.44,
+      "score": 2.2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "track_d": "",
+      "source": "SCOUT"
+    },
+    {
+      "ticker": "REXR",
+      "name": "Rexford Industrial Realty Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "date_added": "2026-05-22",
+      "price_at_add": 36.06,
+      "score": 2.2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "track_d": "",
+      "source": "SCOUT"
+    },
+    {
+      "ticker": "EPRT",
+      "name": "Essential Properties Realty Trust Inc",
+      "country": "US",
+      "sector": "Real Estate",
+      "date_added": "2026-05-22",
+      "price_at_add": 31.38,
+      "score": 2.2,
+      "signal_keys": [
+        "rrg_improving",
+        "bb_squeeze"
+      ],
+      "track_d": "",
+      "source": "SCOUT"
     }
   ],
   "scout_cooldown": {
@@ -2485,16 +2639,21 @@
     "CM": "2026-05-21",
     "TNL": "2026-05-21",
     "VC": "2026-05-21",
-    "PLBL": "2026-05-21"
+    "PLBL": "2026-05-21",
+    "SPG": "2026-05-22",
+    "BXP": "2026-05-22",
+    "FR": "2026-05-22",
+    "REXR": "2026-05-22",
+    "EPRT": "2026-05-22"
   },
   "prev_day": {
     "candidates": [
       {
-        "ticker": "TM",
-        "name": "Toyota Motor Corp ADR",
+        "ticker": "SPG",
+        "name": "Simon Property Group Inc",
         "country": "US",
-        "sector": "Consumer Cyclical",
-        "market_cap": 247560000000.0,
+        "sector": "Real Estate",
+        "market_cap": 66300000000.0,
         "avg_volume_value": 0.0,
         "score": 2.2,
         "signal_score": 2.2,
@@ -2507,47 +2666,59 @@
         ],
         "signals": {
           "rrg_improving": {
-            "etf": "XLY",
+            "etf": "XLRE",
             "today_quadrant": "IMPROVING",
             "transition_found": true,
             "label_ko": "활성 섹터 진입 (회전)",
             "phase": "拉离 (메인자금 회전 시작)"
           },
           "bb_squeeze": {
-            "current_width": 0.0756,
-            "avg_width": 0.168,
-            "ratio": 0.45,
+            "current_width": 0.033,
+            "avg_width": 0.0744,
+            "ratio": 0.444,
             "threshold": 0.5,
             "label_ko": "변동성 압축",
             "phase": "拉升 직전 (매집 완료)"
           }
         },
+        "quality_flags": [
+          "low_liquidity_buffer",
+          "near_52w_high"
+        ],
+        "quality_metrics": {
+          "last_close": 204.1,
+          "ret_20d": 0.012,
+          "ma50": 196.062,
+          "ma200": 186.963,
+          "drawdown_from_high": -0.0167,
+          "avg_volume_value": 0.0
+        },
         "track_d": {
           "is_theme_beneficiary": false
         },
         "buy_questions": {
-          "industry": "자동차/모빌리티",
-          "thesis": "PE와 Forward PE가 낮고 내년 EPS Growth가 22.5%로 제시되어 있어, 실적 대비 밸류에이션 부담이 크지 않은 편입니다. 다만 매집 신호 통과가 2.2/5로 강하지 않아, 현재는 저평가+회전 수급이 붙는 초기 관찰 구간으로 보입니다.",
-          "catalyst": "최근 6개월 내 가능 catalyst는 정보 부족입니다. 다만 활성 섹터 진입과 변동성 압축이 확인되어, 수급 회전이 이어질 경우 단기 재평가 여지는 있습니다.",
-          "q1_why": "PE 9.6, Forward PE 8.3은 시장 대비 낮은 편이고, EPS Growth 22.5%와 PEG 0.87은 성장 대비 가격이 과도하지 않음을 시사합니다. 즉, 실적이 예상대로만 나와도 밸류에이션 확장 여지가 있습니다.",
-          "q2_who": "기관 거래가 +5.7%로 순유입이 확인되어 기관 중심의 매집 가능성은 있습니다. 다만 insider 매집 정보는 없어, 누가 강하게 사는지에 대한 확정 근거는 부족합니다.",
-          "q3_space": "RSI 42.0은 과열이 아니어서 추가 상승 여지는 남아 있고, 활성 섹터 진입과 변동성 압축은 추세 전환 전 단계일 수 있습니다. 다만 52주 저점 정보가 없어 저점 매력은 정보 부족입니다.",
+          "industry": "리츠/상업용 부동산",
+          "thesis": "활성 섹터 진입과 변동성 압축은 수급이 붙을 수 있는 환경이지만, 현재 PE와 EPS 성장률만 보면 강한 저평가 매집 신호는 아닙니다. RSI도 중립권이라 과열은 아니지만, insider와 기관 수급이 모두 순매도라 매집 근거는 약합니다.",
+          "catalyst": "촉매 데이터 미연결",
+          "q1_why": "Forward PE 29.3배에 내년 EPS 성장률 7.0%로, 성장 대비 밸류에이션 부담이 있습니다. PE 37.5배도 높아 실적 개선이 더 확인되어야 상승 논리가 강해집니다.",
+          "q2_who": "Insider Trans -0.2%, Institutional Trans -0.5%로 내부자와 기관 모두 순매수 신호가 아닙니다. 현재 입력된 fact 기준으로는 누가 적극적으로 매집하는지 확인되지 않습니다.",
+          "q3_space": "RSI 56.9는 과열이 아니어서 추가 상승 여지는 남아 있습니다. 다만 PE가 높고 52주 저점 정보가 없어, 공간이 크다고 단정할 정보는 부족합니다.",
           "risk_flags": [
-            "매집 신호 점수 2.2/5로 강한 확신 구간은 아님",
-            "insider 매집 및 52주 저점 정보 부족"
+            "기관 및 내부자 순매도",
+            "높은 밸류에이션 대비 제한적 EPS 성장"
           ],
           "star_rating": "★",
-          "summary": "저평가 관찰",
+          "summary": "관찰 필요",
           "_llm_used": true
         },
-        "price_at_add": 187.0742
+        "price_at_add": 204.9
       },
       {
-        "ticker": "CM",
-        "name": "Canadian Imperial Bank Of Commerce",
+        "ticker": "BXP",
+        "name": "BXP Inc",
         "country": "US",
-        "sector": "Financial",
-        "market_cap": 105970000000.0,
+        "sector": "Real Estate",
+        "market_cap": 10490000000.0,
         "avg_volume_value": 0.0,
         "score": 2.2,
         "signal_score": 2.2,
@@ -2555,53 +2726,127 @@
         "liquidity_score": 0.0,
         "signal_count": 2,
         "signal_keys": [
-          "bb_squeeze",
-          "volume_compression"
+          "rrg_improving",
+          "bb_squeeze"
         ],
         "signals": {
+          "rrg_improving": {
+            "etf": "XLRE",
+            "today_quadrant": "IMPROVING",
+            "transition_found": true,
+            "label_ko": "활성 섹터 진입 (회전)",
+            "phase": "拉离 (메인자금 회전 시작)"
+          },
           "bb_squeeze": {
-            "current_width": 0.0544,
-            "avg_width": 0.1173,
-            "ratio": 0.464,
+            "current_width": 0.0493,
+            "avg_width": 0.1242,
+            "ratio": 0.397,
             "threshold": 0.5,
             "label_ko": "변동성 압축",
             "phase": "拉升 직전 (매집 완료)"
-          },
-          "volume_compression": {
-            "short_avg": 644021,
-            "long_avg": 1075105,
-            "ratio": 0.599,
-            "threshold": 0.6,
-            "label_ko": "거래량 압축",
-            "phase": "建仓 진행 중"
           }
+        },
+        "quality_flags": [
+          "low_liquidity_buffer"
+        ],
+        "quality_metrics": {
+          "last_close": 60.13,
+          "ret_20d": 0.0549,
+          "ma50": 55.81,
+          "ma200": 65.34,
+          "drawdown_from_high": -0.2382,
+          "avg_volume_value": 0.0
         },
         "track_d": {
           "is_theme_beneficiary": false
         },
         "buy_questions": {
-          "industry": "금융/보험",
-          "thesis": "변동성과 거래량이 압축된 상태라 단기 수급이 모일 여지는 있으나, 제공된 수치상 강한 매집 근거는 제한적입니다. 밸류에이션은 과도하지 않지만 EPS 성장률이 높지 않아 공격적 재평가 신호는 약합니다.",
-          "catalyst": "최근 6개월 내 촉매는 정보 부족입니다. 다만 변동성·거래량 압축이 해소되는 구간에서 실적 발표나 가이던스 변화가 단기 촉매가 될 수 있습니다.",
-          "q1_why": "Forward PE 14.0, PEG 1.05로 밸류에이션은 무리한 수준은 아닙니다. 다만 EPS Growth(다음 해) 8.2%로 성장률이 높지 않아 PE 확장 여력은 제한적입니다.",
-          "q2_who": "Insider Trans +0.0%로 내부자 매집 신호는 보이지 않습니다. Institutional Trans -0.3%로 기관 수급도 순매수라고 보기 어려워, 뚜렷한 매집 주체는 확인되지 않습니다.",
-          "q3_space": "PE 16.6과 Forward PE 14.0은 추가 상승 여지가 완전히 막힌 수준은 아닙니다. RSI 65.6은 과열 직전은 아니지만 이미 중립 상단이라, 52주 저점 기반의 강한 저평가 매력은 정보 부족입니다.",
+          "industry": "리츠/오피스 부동산",
+          "thesis": "활성 섹터 진입과 변동성 압축은 단기 매집 신호로 볼 수 있지만, PE와 EPS 성장 수치가 약해 강한 펀더멘털 매집으로 보기엔 제한적입니다. 내부자와 기관 수급도 뚜렷한 순매수로 확인되지 않아 현재는 관찰 단계에 가깝습니다.",
+          "catalyst": "촉매 데이터 미연결",
+          "q1_why": "PE 30.2와 Forward PE 33.6은 밸류에이션 부담이 있으며, next Y EPS Growth 1.8%로 이익 성장 기대도 낮습니다. PEG 7.41은 성장 대비 가격 매력이 크지 않음을 시사합니다.",
+          "q2_who": "Insider Trans -7.2%로 내부자 매수 신호는 약하고, Institutional Trans -0.2%도 기관의 강한 순매집으로 보기 어렵습니다. 따라서 누가 적극적으로 사는지에 대한 근거가 부족합니다.",
+          "q3_space": "RSI 60.0은 과열은 아니지만 강한 저평가 구간도 아니며, 52주 저점 정보가 없어 추가 상승 여력 판단은 제한적입니다. 현재 수치만 보면 공간은 있으나 매력은 중립 수준입니다.",
           "risk_flags": [
-            "기관 순매수 부재",
-            "성장률 대비 밸류에이션 매력 제한"
+            "높은 PE와 낮은 EPS 성장",
+            "내부자·기관 순매수 부재"
+          ],
+          "star_rating": "★",
+          "summary": "관찰 단계",
+          "_llm_used": true
+        },
+        "price_at_add": 60.13
+      },
+      {
+        "ticker": "FR",
+        "name": "First Industrial Realty Trust Inc",
+        "country": "US",
+        "sector": "Real Estate",
+        "market_cap": 8529999999.999999,
+        "avg_volume_value": 0.0,
+        "score": 2.2,
+        "signal_score": 2.2,
+        "theme_score": 0.0,
+        "liquidity_score": 0.0,
+        "signal_count": 2,
+        "signal_keys": [
+          "rrg_improving",
+          "bb_squeeze"
+        ],
+        "signals": {
+          "rrg_improving": {
+            "etf": "XLRE",
+            "today_quadrant": "IMPROVING",
+            "transition_found": true,
+            "label_ko": "활성 섹터 진입 (회전)",
+            "phase": "拉离 (메인자금 회전 시작)"
+          },
+          "bb_squeeze": {
+            "current_width": 0.0353,
+            "avg_width": 0.0763,
+            "ratio": 0.462,
+            "threshold": 0.5,
+            "label_ko": "변동성 압축",
+            "phase": "拉升 직전 (매집 완료)"
+          }
+        },
+        "quality_flags": [
+          "low_liquidity_buffer"
+        ],
+        "quality_metrics": {
+          "last_close": 62.44,
+          "ret_20d": -0.0065,
+          "ma50": 60.803,
+          "ma200": 57.007,
+          "drawdown_from_high": -0.0304,
+          "avg_volume_value": 0.0
+        },
+        "track_d": {
+          "is_theme_beneficiary": false
+        },
+        "buy_questions": {
+          "industry": "리츠/부동산",
+          "thesis": "섹터 회전과 변동성 압축이 확인되지만, 실적 성장과 밸류에이션 개선 폭은 크지 않아 강한 매집 신호로 보긴 어렵습니다. 기관 순매수는 플러스이나 내부자 거래는 약해 수급 확신은 제한적입니다.",
+          "catalyst": "촉매 데이터 미연결",
+          "q1_why": "PE 24.2배, Forward PE 33.0배로 현재와 선행 기준 모두 부담이 있으며, EPS Growth도 1.9%로 낮아 이익 성장에 따른 재평가 여지는 제한적입니다. 따라서 상승 논리는 강한 실적 모멘텀보다 섹터 회전과 수급에 더 의존합니다.",
+          "q2_who": "Institutional Trans가 +1.4%로 기관 매집 신호는 일부 확인되지만, Insider Trans는 -0.1%로 내부자 매수는 약합니다. 즉, 사는 주체는 기관 쪽이지만 강도는 중간 이하입니다.",
+          "q3_space": "RSI 55.4는 과열이 아니어서 추가 상승 여지는 남아 있고, 활성 섹터 진입과 변동성 압축은 단기 확장 가능성을 시사합니다. 다만 PE와 Forward PE가 높아 밸류에이션 측면의 상방은 제한적입니다.",
+          "risk_flags": [
+            "EPS Growth 1.9%로 성장성 약함",
+            "Forward PE 33.0배로 밸류에이션 부담"
           ],
           "star_rating": "★",
           "summary": "관찰 우위",
           "_llm_used": true
         },
-        "price_at_add": 114.07
+        "price_at_add": 62.44
       },
       {
-        "ticker": "TNL",
-        "name": "Travel+Leisure Co",
+        "ticker": "REXR",
+        "name": "Rexford Industrial Realty Inc",
         "country": "US",
-        "sector": "Consumer Cyclical",
-        "market_cap": 4050000000.0,
+        "sector": "Real Estate",
+        "market_cap": 8130000000.000001,
         "avg_volume_value": 0.0,
         "score": 2.2,
         "signal_score": 2.2,
@@ -2614,47 +2859,58 @@
         ],
         "signals": {
           "rrg_improving": {
-            "etf": "XLY",
+            "etf": "XLRE",
             "today_quadrant": "IMPROVING",
             "transition_found": true,
             "label_ko": "활성 섹터 진입 (회전)",
             "phase": "拉离 (메인자금 회전 시작)"
           },
           "bb_squeeze": {
-            "current_width": 0.0862,
-            "avg_width": 0.2847,
-            "ratio": 0.303,
+            "current_width": 0.0475,
+            "avg_width": 0.1005,
+            "ratio": 0.473,
             "threshold": 0.5,
             "label_ko": "변동성 압축",
             "phase": "拉升 직전 (매집 완료)"
           }
         },
+        "quality_flags": [
+          "low_liquidity_buffer"
+        ],
+        "quality_metrics": {
+          "last_close": 36.06,
+          "ret_20d": -0.0074,
+          "ma50": 34.943,
+          "ma200": 38.927,
+          "drawdown_from_high": -0.1853,
+          "avg_volume_value": 0.0
+        },
         "track_d": {
           "is_theme_beneficiary": false
         },
         "buy_questions": {
-          "industry": "여행/레저 소비재",
-          "thesis": "활성 섹터 진입과 변동성 압축이 확인되어 단기 매집 후보로 볼 수 있습니다. Forward PE가 낮고 PEG도 1 미만이라 밸류에이션 부담은 크지 않지만, RSI가 중립권이라 강한 추세 전환은 아직 정보가 부족합니다.",
-          "catalyst": "최근 6개월 내 가능 catalyst는 정보 부족입니다. 다만 섹터 회전이 이미 신호로 잡혀 있어 업종 내 자금 유입이 단기 촉매가 될 수 있습니다.",
-          "q1_why": "PE 17.9 대비 Forward PE 7.6으로 향후 이익 기준 밸류에이션이 크게 낮아집니다. EPS Growth 8.4%와 PEG 0.47은 성장 대비 가격이 과도하지 않음을 시사합니다.",
-          "q2_who": "Insider Trans -7.2%와 Institutional Trans -2.0%로 내부자와 기관의 순매수 근거는 약합니다. 현재 제공된 fact만 보면 적극적 매집 주체는 확인되지 않습니다.",
-          "q3_space": "RSI 44.3은 과열 구간이 아니어서 추가 상승 여지는 남아 있습니다. 다만 52주 저점 정보가 없어 저점 매력은 정보 부족입니다.",
+          "industry": "리츠/산업용 부동산",
+          "thesis": "활성 섹터 진입과 변동성 압축은 단기 매집 신호로 볼 수 있지만, 밸류에이션과 성장률이 강하지 않아 확신은 제한적입니다. 현재 입력된 fact만 보면 추세 전환 초기 가능성은 있으나 강한 펀더멘털 매집으로 단정하기 어렵습니다.",
+          "catalyst": "촉매 데이터 미연결",
+          "q1_why": "PE 38.4, Forward PE 32.5로 기대치가 높게 반영돼 있고, EPS Growth(next Y) 1.1%와 PEG 4.39는 성장 대비 가격 부담이 큽니다. 따라서 실적 기반의 강한 상승 논리는 약합니다.",
+          "q2_who": "Insider Trans -8.7%, Institutional Trans -4.1%로 내부자와 기관의 순매집 신호는 확인되지 않습니다. 현재 입력 fact 기준으로는 누가 적극적으로 사는지 뚜렷하지 않습니다.",
+          "q3_space": "RSI 54.8은 과열도 과매도도 아닌 중립 구간이라 추가 상승 여지는 남아 있습니다. 다만 52주 저점 정보가 없어 저평가 여력은 정보 부족이며, PE 수준도 높아 공간은 제한적입니다.",
           "risk_flags": [
-            "insider와 기관이 순매수로 보이지 않음",
-            "RSI가 강한 모멘텀 구간이 아님"
+            "높은 밸류에이션 대비 낮은 EPS 성장",
+            "내부자·기관 순매집 부재"
           ],
           "star_rating": "★",
-          "summary": "가치형 관찰",
+          "summary": "관찰 필요",
           "_llm_used": true
         },
-        "price_at_add": 64.08
+        "price_at_add": 36.06
       },
       {
-        "ticker": "VC",
-        "name": "Visteon Corp",
+        "ticker": "EPRT",
+        "name": "Essential Properties Realty Trust Inc",
         "country": "US",
-        "sector": "Consumer Cyclical",
-        "market_cap": 2920000000.0,
+        "sector": "Real Estate",
+        "market_cap": 6770000000.0,
         "avg_volume_value": 0.0,
         "score": 2.2,
         "signal_score": 2.2,
@@ -2667,96 +2923,54 @@
         ],
         "signals": {
           "rrg_improving": {
-            "etf": "XLY",
+            "etf": "XLRE",
             "today_quadrant": "IMPROVING",
             "transition_found": true,
             "label_ko": "활성 섹터 진입 (회전)",
             "phase": "拉离 (메인자금 회전 시작)"
           },
           "bb_squeeze": {
-            "current_width": 0.1066,
-            "avg_width": 0.2582,
-            "ratio": 0.413,
+            "current_width": 0.0424,
+            "avg_width": 0.0924,
+            "ratio": 0.459,
             "threshold": 0.5,
             "label_ko": "변동성 압축",
             "phase": "拉升 직전 (매집 완료)"
           }
         },
-        "track_d": {
-          "is_theme_beneficiary": false
-        },
-        "buy_questions": {
-          "industry": "소비재 경기민감주",
-          "thesis": "활성 섹터 진입과 변동성 압축이 확인되어 단기 매집 후보로 볼 수 있습니다. 다만 매집 신호 통과가 2.2/5로 강하지 않아, 현재는 강한 추세보다는 초기 관심 유입 단계로 해석됩니다.",
-          "catalyst": "최근 6개월 내 촉매는 정보 부족입니다. 다만 섹터 회전이 이미 신호로 잡혀 있어, 업종 내 자금 유입이 단기 촉매로 작용할 가능성은 있습니다.",
-          "q1_why": "PE 18.1 대비 Forward PE 11.3으로 선행 이익 기준 밸류에이션이 낮아지는 구조입니다. EPS Growth 9.7%와 PEG 0.97은 성장 대비 가격이 과도하게 비싸지 않음을 시사합니다.",
-          "q2_who": "Insider Trans -18.4%로 내부자 매수는 확인되지 않고 오히려 순매도 우위입니다. Institutional Trans +0.0%로 기관의 뚜렷한 순매집도 아직 정보가 부족합니다.",
-          "q3_space": "RSI 53.2는 과열이 아니어서 추가 상승 여지는 남아 있습니다. 다만 52주 저점 정보가 없어 저점 대비 리레이팅 여력은 정보 부족입니다.",
-          "risk_flags": [
-            "내부자 거래가 순매도 우위",
-            "기관 순매집 신호가 약함"
-          ],
-          "star_rating": "★",
-          "summary": "초기매집 관찰",
-          "_llm_used": true
-        },
-        "price_at_add": 108.76
-      },
-      {
-        "ticker": "PLBL",
-        "name": "Polibeli Group Ltd",
-        "country": "US",
-        "sector": "Consumer Cyclical",
-        "market_cap": 2600000000.0,
-        "avg_volume_value": 0.0,
-        "score": 2.2,
-        "signal_score": 2.2,
-        "theme_score": 0.0,
-        "liquidity_score": 0.0,
-        "signal_count": 2,
-        "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
+        "quality_flags": [
+          "low_liquidity_buffer"
         ],
-        "signals": {
-          "rrg_improving": {
-            "etf": "XLY",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
-          "bb_squeeze": {
-            "current_width": 0.1233,
-            "avg_width": 0.3161,
-            "ratio": 0.39,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          }
+        "quality_metrics": {
+          "last_close": 31.38,
+          "ret_20d": -0.0038,
+          "ma50": 31.631,
+          "ma200": 31.021,
+          "drawdown_from_high": -0.0928,
+          "avg_volume_value": 0.0
         },
         "track_d": {
           "is_theme_beneficiary": false
         },
         "buy_questions": {
-          "industry": "소비재 경기민감",
-          "thesis": "활성 섹터 진입과 변동성 압축은 단기 수급 개선 가능성을 시사하지만, 현재 제공된 PE/EPS Growth/insider/기관 매집 근거가 부족해 강한 매집으로 보기 어렵습니다. RSI 45.9는 과열은 아니지만, 뚜렷한 추세 전환 신호로 해석하기엔 정보가 부족합니다.",
-          "catalyst": "최근 6개월 내 촉매는 정보 부족입니다. 제공된 데이터만으로는 실적 개선, 가이던스 상향, 신제품/리오프닝 수요 같은 구체적 이벤트를 확인할 수 없습니다.",
-          "q1_why": "PE와 EPS Growth 정보가 없어 저평가 또는 이익 성장에 기반한 상승 논리를 검증할 수 없습니다. 따라서 현재는 밸류에이션/성장 측면의 매집 근거가 부족합니다.",
-          "q2_who": "Insider Trans와 Institutional Trans가 각각 +0.0%로 제시되어 내부자와 기관의 뚜렷한 순매수는 확인되지 않습니다. 누가 사는지에 대한 매집 근거가 약합니다.",
-          "q3_space": "RSI 45.9는 중립 구간으로 추가 상승 여지는 남아 있을 수 있으나, 52주 저점 정보와 PE 비교가 없어 공간을 정량 검증하기 어렵습니다. 현재 제공 신호만으로는 상방 여력 판단이 제한적입니다.",
+          "industry": "리츠(산업용 부동산)",
+          "thesis": "기관 순매수는 +8.3%로 확인되지만, EPS 성장률이 1.4%로 낮고 PEG가 5.58로 높아 강한 실적 기반 매집으로 보기는 어렵습니다. RSI 50.3과 변동성 압축은 관찰되지만, 현재는 제한적 매집 신호 수준입니다.",
+          "catalyst": "촉매 데이터 미연결",
+          "q1_why": "Forward PE 22.7은 현재 이익 대비 과도하게 낮다고 보기 어렵고, EPS Growth 1.4%도 상승 탄력을 강하게 뒷받침하지 않습니다. 따라서 밸류에이션과 성장 측면에서 추가 상승 논리는 제한적입니다.",
+          "q2_who": "기관 거래가 +8.3%로 순매수 우위이며, 이는 수급 측면에서 가장 뚜렷한 긍정 신호입니다. 반면 insider trans는 -2.0%로 내부자 매수 신호는 약합니다.",
+          "q3_space": "RSI 50.3은 과열도 과매도도 아닌 중립 구간이라 추가 상승 여지는 남아 있습니다. 다만 PE 24.9, Forward PE 22.7, PEG 5.58 조합은 저평가 구간으로 보기 어려워 상방 여력은 제한적입니다.",
           "risk_flags": [
-            "PE/EPS Growth 정보 부족으로 가치·성장 매력 검증 불가",
-            "insider 및 기관 순매수 0.0%로 수급 매집 신호 약함"
+            "EPS 성장률이 1.4%로 낮음",
+            "PEG 5.58로 성장 대비 밸류에이션 부담"
           ],
           "star_rating": "★",
-          "summary": "관찰만 가능",
+          "summary": "기관매수,성장약함",
           "_llm_used": true
         },
-        "price_at_add": 7.1
+        "price_at_add": 31.38
       }
     ],
-    "alerts_count": 2,
-    "vix": 17.7
+    "alerts_count": 1,
+    "vix": 16.76
   }
 }
