@@ -39,6 +39,7 @@ scout:
       enabled: true
       lookback_days: 7
       min_count: 1                     # 매수 거래 최소 횟수
+      eval_top_us: 250                 # Finviz 호출 비용 제한: 미국 시총 상위 N개만 사전 평가
 
     rrg_improving:                     # 섹터 RRG IMPROVING 진입
       enabled: true

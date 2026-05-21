@@ -161,6 +161,63 @@ def _label_signal_dict(signals: dict) -> dict:
     return labeled
 
 
+def _assess_quality_context(df: pd.DataFrame, row: pd.Series, min_liquidity: float) -> dict:
+    """후보를 차단하지 않고, 나중에 판단할 품질 태그를 붙인다.
+
+    v1 원칙: 매수/매도 제안이 아니라 감사용 태그다. 태그가 있어도 후보 탈락은 하지 않는다.
+    """
+    flags = []
+    metrics: dict[str, float | int] = {}
+
+    try:
+        close = df["close"].astype(float).dropna()
+    except Exception:
+        close = pd.Series(dtype=float)
+
+    if len(close) < 60:
+        flags.append("data_short")
+        metrics["close_days"] = int(len(close))
+    if not close.empty:
+        current = float(close.iloc[-1])
+        metrics["last_close"] = round(current, 3)
+
+        if len(close) >= 21:
+            prev_20 = float(close.iloc[-21])
+            if prev_20 > 0:
+                ret_20d = current / prev_20 - 1
+                metrics["ret_20d"] = round(ret_20d, 4)
+                if ret_20d >= 0.20:
+                    flags.append("overextended_20d")
+
+        if len(close) >= 200:
+            ma50 = float(close.iloc[-50:].mean())
+            ma200 = float(close.iloc[-200:].mean())
+            metrics["ma50"] = round(ma50, 3)
+            metrics["ma200"] = round(ma200, 3)
+            if current < ma50 and ma50 < ma200:
+                flags.append("left_side_context")
+
+            high_252 = float(close.iloc[-252:].max()) if len(close) >= 252 else float(close.max())
+            if high_252 > 0:
+                drawdown_from_high = current / high_252 - 1
+                metrics["drawdown_from_high"] = round(drawdown_from_high, 4)
+                if drawdown_from_high > -0.03:
+                    flags.append("near_52w_high")
+
+    try:
+        avg_value = float(row.get("avg_volume_value", 0) or 0)
+    except Exception:
+        avg_value = 0.0
+    metrics["avg_volume_value"] = round(avg_value, 2)
+    if min_liquidity > 0 and avg_value < min_liquidity * 5:
+        flags.append("low_liquidity_buffer")
+
+    return {
+        "flags": sorted(set(flags)),
+        "metrics": metrics,
+    }
+
+
 def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dict, min_liquidity: float) -> dict:
     """SCOUT 내부 관찰풀/브리핑 공용 후보 객체."""
     row = info["row"]
@@ -186,6 +243,8 @@ def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dic
         "signal_count": len(signal_keys),
         "signal_keys": signal_keys,
         "signals": signals,
+        "quality_flags": list((info.get("quality") or {}).get("flags", [])),
+        "quality_metrics": dict((info.get("quality") or {}).get("metrics", {})),
     }
 
     if matches:
@@ -208,11 +267,13 @@ def _summarize_radar(
     cooldown_skipped: int,
     by_country: dict,
     by_source: dict,
+    filter_audit: dict,
     coverage_thresholds: dict,
 ) -> dict:
     """브리핑이 '후보 없음'의 이유까지 말할 수 있게 요약한다."""
     signal_counter = Counter()
     country_counter = Counter()
+    quality_counter = Counter()
     theme_count = 0
     for item in radar_pool:
         country_counter[item.get("country", "")] += 1
@@ -220,6 +281,8 @@ def _summarize_radar(
             theme_count += 1
         for key in item.get("signal_keys", []):
             signal_counter[key] += 1
+        for flag in item.get("quality_flags", []):
+            quality_counter[flag] += 1
 
     coverage_warnings = []
     for country, threshold in (coverage_thresholds or {}).items():
@@ -246,8 +309,10 @@ def _summarize_radar(
         "brief_pick_count": len(candidates),
         "theme_count": theme_count,
         "top_signals": signal_counter.most_common(5),
+        "top_quality_flags": quality_counter.most_common(5),
         "radar_by_country": dict(country_counter),
         "source_counts": by_source,
+        "filter_audit": filter_audit,
         "coverage_warnings": coverage_warnings,
         "no_candidate_reason": no_candidate_reason,
     }
@@ -285,6 +350,7 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "liquidity_score": item.get("liquidity_score"),
                 "signal_count": item.get("signal_count"),
                 "signal_keys": ",".join(item.get("signal_keys", [])),
+                "quality_flags": ",".join(item.get("quality_flags", [])),
                 "is_theme_beneficiary": item.get("track_d", {}).get("is_theme_beneficiary", False),
             })
         pd.DataFrame(flat_rows).to_parquet(parquet_path, index=False)
@@ -597,7 +663,16 @@ class ScoutAgent(BaseAgent):
         # 효율: 모든 종목에 OHLCV 안 주고 일단 OHLCV 무관 신호 먼저 평가, 점수 1+ 인 것만 OHLCV
 
         # 단계 3a: OHLCV 무관 신호 사전 평가
+        insider_cfg = scout_cfg["signals"].get("insider_buying", {}) or {}
+        insider_eval_top_us = int(insider_cfg.get("eval_top_us", 250) or 0)
+        insider_eval_tickers: set[str] = set()
+        if bool(insider_cfg.get("enabled", False)) and insider_eval_top_us > 0:
+            us_rows = [row for row in survivors if row.get("country") == "US"]
+            us_rows.sort(key=lambda row: -float(row.get("market_cap", 0) or 0))
+            insider_eval_tickers = {str(row.get("ticker", "")) for row in us_rows[:insider_eval_top_us]}
+
         prelim_scores: dict[str, dict] = {}
+        insider_skipped_cost_limit = 0
         for row in survivors:
             ticker = row["ticker"]
             country = row["country"]
@@ -606,8 +681,12 @@ class ScoutAgent(BaseAgent):
             sigs: dict[str, Any] = {}
 
             # Insider (US만)
-            if scout_cfg["signals"]["insider_buying"]["enabled"]:
-                hit, info = _signal_insider_buying(ticker, country, scout_cfg["signals"]["insider_buying"])
+            if bool(insider_cfg.get("enabled", False)) and country == "US":
+                if ticker not in insider_eval_tickers:
+                    insider_skipped_cost_limit += 1
+                    hit, info = False, {"reason": "insider cost limit"}
+                else:
+                    hit, info = _signal_insider_buying(ticker, country, insider_cfg)
                 if hit:
                     score += float(weights.get("insider_buying", 1.0))
                     sigs["insider_buying"] = info
@@ -645,6 +724,8 @@ class ScoutAgent(BaseAgent):
                 if df is None or df.empty:
                     continue
 
+                info["quality"] = _assess_quality_context(df, info["row"], min_liquidity)
+
                 # bb_squeeze
                 if scout_cfg["signals"]["bb_squeeze"]["enabled"]:
                     hit, sig_info = _signal_bb_squeeze(df, scout_cfg["signals"]["bb_squeeze"])
@@ -667,20 +748,80 @@ class ScoutAgent(BaseAgent):
                         info["signals"]["after_low_consolidation"] = sig_info
 
         # ── Stage 4: 내부 Radar Pool 구성 ──
-        radar_pool = []
+        signal_counter = Counter()
+        with_signal_count = 0
+        for info in prelim_scores.values():
+            sig_keys = list((info.get("signals") or {}).keys())
+            if sig_keys:
+                with_signal_count += 1
+            for key in sig_keys:
+                signal_counter[key] += 1
+
+        ohlcv_missing = []
+        if ohlcv_targets:
+            ohlcv_missing = [t for t in ohlcv_targets if t not in ohlcv_data]
+
+        survivors_by_country = Counter()
+        for row in survivors:
+            survivors_by_country[str(row.get("country", ""))] += 1
+
+        ohlcv_by_country = Counter()
+        missing_by_country = Counter()
+        for ticker, info in ohlcv_targets.items():
+            country = str(info["row"].get("country", ""))
+            ohlcv_by_country[country] += 1
+            if ticker in ohlcv_missing:
+                missing_by_country[country] += 1
+
+        radar_eligible = []
         for ticker, info in prelim_scores.items():
             item = _build_radar_item(ticker, info, ticker_themes, weights, min_liquidity)
             if item["score"] >= radar_min_score and (item["signal_count"] > 0 or item["theme_score"] > 0):
-                radar_pool.append(item)
+                radar_eligible.append(item)
 
-        radar_pool.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
-        radar_pool = radar_pool[:radar_pool_size]
+        radar_eligible.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
+        radar_pool = radar_eligible[:radar_pool_size]
 
         # ── Stage 5: 로이에게 보고할 엄선 후보만 추출 ──
         candidates = [
             item for item in radar_pool
             if item["score"] >= brief_min_score or item["signal_count"] >= signals_required
         ][:max_output]
+
+        filter_audit = {
+            "hard_filter": {
+                "universe": int(scanned_total),
+                "cooldown_skipped": int(cooldown_skipped),
+                "after_cooldown": int(len(survivors)),
+                "after_cooldown_by_country": dict(survivors_by_country),
+            },
+            "cost_control": {
+                "insider_eval_top_us": int(insider_eval_top_us),
+                "insider_skipped_cost_limit": int(insider_skipped_cost_limit),
+            },
+            "evaluation_scope": {
+                "ohlcv_selected": int(len(ohlcv_targets)),
+                "ohlcv_not_selected": int(max(0, len(survivors) - len(ohlcv_targets))),
+                "ohlcv_missing": int(len(ohlcv_missing)),
+                "ohlcv_selected_by_country": dict(ohlcv_by_country),
+                "ohlcv_missing_by_country": dict(missing_by_country),
+            },
+            "signal_audit": {
+                "with_signal": int(with_signal_count),
+                "without_signal": int(max(0, len(prelim_scores) - with_signal_count)),
+                "hit_counts": {str(k): int(v) for k, v in signal_counter.items()},
+            },
+            "radar_audit": {
+                "radar_min_score": float(radar_min_score),
+                "radar_eligible_before_cap": int(len(radar_eligible)),
+                "radar_pool_cap": int(radar_pool_size),
+                "radar_cap_dropped": int(max(0, len(radar_eligible) - radar_pool_size)),
+                "brief_min_score": float(brief_min_score),
+                "signals_required": int(signals_required),
+                "brief_rejected_after_radar": int(max(0, len(radar_pool) - len(candidates))),
+                "brief_picks": int(len(candidates)),
+            },
+        }
 
         radar_summary = _summarize_radar(
             radar_pool=radar_pool,
@@ -690,6 +831,7 @@ class ScoutAgent(BaseAgent):
             cooldown_skipped=cooldown_skipped,
             by_country=by_country_total,
             by_source=by_source_total,
+            filter_audit=filter_audit,
             coverage_thresholds=coverage_thresholds,
         )
 
@@ -770,7 +912,10 @@ class ScoutAgent(BaseAgent):
             "brief_pick_count": 0,
             "theme_count": 0,
             "top_signals": [],
+            "top_quality_flags": [],
             "radar_by_country": {},
+            "source_counts": {},
+            "filter_audit": {},
             "coverage_warnings": [],
             "no_candidate_reason": "유니버스가 비었거나 재선정대기 필터 후 남은 종목이 없음",
         }
@@ -801,6 +946,9 @@ class ScoutAgent(BaseAgent):
                 "brief_pick_count": 0,
                 "no_candidate_reason": error_msg,
                 "top_signals": [],
+                "top_quality_flags": [],
+                "source_counts": {},
+                "filter_audit": {},
                 "coverage_warnings": [],
             },
             "radar_paths": {},

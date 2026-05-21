@@ -25,6 +25,23 @@ from src.utils import now_kst
 
 logger = logging.getLogger(__name__)
 
+_MISSING_CATALYST_TEXTS = {
+    "정보 부족",
+    "촉매 데이터 미연결",
+    "정보 부족 (LLM 실패)",
+}
+
+
+def _has_real_catalyst(text: str) -> bool:
+    cleaned = (text or "").strip()
+    if not cleaned:
+        return False
+    if cleaned in _MISSING_CATALYST_TEXTS:
+        return False
+    if "촉매 데이터 미연결" in cleaned:
+        return False
+    return True
+
 
 # ═══════════════════════════════════════════════════════════
 # Settings
@@ -72,6 +89,13 @@ _SOURCE_KO = {
     "yfinance_cn_a_seed": "중국 A주 seed",
     "akshare_eastmoney_a": "중국 A주 Eastmoney",
     "akshare_eastmoney_hk": "중국/홍콩 Eastmoney",
+}
+_QUALITY_FLAG_KO = {
+    "overextended_20d": "20일 급등",
+    "near_52w_high": "52주 고점 근처",
+    "left_side_context": "좌측 관찰 구간",
+    "low_liquidity_buffer": "유동성 여유 부족",
+    "data_short": "시세 데이터 짧음",
 }
 _QUADRANT_KO = {
     "LEADING": "주도",
@@ -1011,8 +1035,10 @@ class DigestAgent(BaseAgent):
         radar_count = int(radar_summary.get("radar_pool_count", 0) or 0)
         theme_count = int(radar_summary.get("theme_count", 0) or 0)
         top_signals = radar_summary.get("top_signals", []) or []
+        top_quality_flags = radar_summary.get("top_quality_flags", []) or []
         coverage_warnings = radar_summary.get("coverage_warnings", []) or []
         source_counts = radar_summary.get("source_counts", {}) or {}
+        filter_audit = radar_summary.get("filter_audit", {}) or {}
         no_candidate_reason = radar_summary.get("no_candidate_reason", "")
         passed = len(candidates)
 
@@ -1030,6 +1056,39 @@ class DigestAgent(BaseAgent):
                 parts.append(f"{label} {count}")
             if parts:
                 lines.append(f"  • 데이터 경로 : {' / '.join(parts)}")
+        if filter_audit:
+            hard = filter_audit.get("hard_filter", {}) or {}
+            cost = filter_audit.get("cost_control", {}) or {}
+            scope = filter_audit.get("evaluation_scope", {}) or {}
+            signal = filter_audit.get("signal_audit", {}) or {}
+            radar = filter_audit.get("radar_audit", {}) or {}
+            lines.append(
+                "  • 필터 감사 : "
+                f"수집 {int(hard.get('universe', scanned) or 0):,}"
+                f" → 대기제외 후 {int(hard.get('after_cooldown', 0) or 0):,}"
+                f" → 시세평가 {int(scope.get('ohlcv_selected', ohlcv_eval) or 0):,}"
+                f" → 신호발생 {int(signal.get('with_signal', 0) or 0):,}"
+                f" → 관찰후보 {int(radar.get('radar_eligible_before_cap', radar_count) or 0):,}"
+                f" → 엄선 {int(radar.get('brief_picks', passed) or 0):,}"
+            )
+            skipped = int(scope.get("ohlcv_not_selected", 0) or 0)
+            missing = int(scope.get("ohlcv_missing", 0) or 0)
+            capped = int(radar.get("radar_cap_dropped", 0) or 0)
+            if skipped or missing or capped:
+                parts = []
+                if skipped:
+                    parts.append(f"시세 미평가 {skipped:,}")
+                if missing:
+                    parts.append(f"시세누락 {missing:,}")
+                if capped:
+                    parts.append(f"관찰풀 상한 제외 {capped:,}")
+                lines.append(f"  • 감사 메모   : {' / '.join(parts)}")
+            insider_skipped = int(cost.get("insider_skipped_cost_limit", 0) or 0)
+            if insider_skipped:
+                lines.append(
+                    f"  • 비용 제어   : 내부자/펀더멘털 사전조회 {insider_skipped:,}개 생략"
+                    f" (미국 상위 {int(cost.get('insider_eval_top_us', 0) or 0):,}개만)"
+                )
         if top_signals:
             parts = []
             for item in top_signals[:3]:
@@ -1038,6 +1097,14 @@ class DigestAgent(BaseAgent):
                 parts.append(f"{_SIGNAL_KO.get(sig_name, sig_name)} {count}")
             if parts:
                 lines.append(f"  • 자주 나온 신호: {' / '.join(parts)}")
+        if top_quality_flags:
+            parts = []
+            for item in top_quality_flags[:3]:
+                flag = item[0] if isinstance(item, (list, tuple)) and item else ""
+                count = item[1] if isinstance(item, (list, tuple)) and len(item) > 1 else 0
+                parts.append(f"{_QUALITY_FLAG_KO.get(flag, flag)} {count}")
+            if parts:
+                lines.append(f"  • 관찰 태그   : {' / '.join(parts)}")
         if coverage_warnings:
             warn_parts = []
             for w in coverage_warnings[:4]:
@@ -1054,6 +1121,10 @@ class DigestAgent(BaseAgent):
                 lines.append(f"▷ 후보 {idx}: {c['ticker']} ({name}) — {country_ko}")
                 lines.append(f"    섹터    : {c.get('sector', '미분류')} | 시총 : {cap}")
                 lines.append(f"    레이더 점수: {c.get('score', 0)} | 신호 {c.get('signal_count', len(c.get('signals', {}) or {}))}개")
+                flags = c.get("quality_flags", []) or []
+                if flags:
+                    labels = [_QUALITY_FLAG_KO.get(flag, flag) for flag in flags[:3]]
+                    lines.append(f"    관찰 태그 : {', '.join(labels)}")
 
                 sigs = c.get("signals", {}) or {}
                 if sigs:
@@ -1075,7 +1146,7 @@ class DigestAgent(BaseAgent):
                         lines.append(f"      📂 산업    : {bq['industry']}")
                     if bq.get("thesis"):
                         lines.append(f"      💡 thesis  : {bq['thesis']}")
-                    if bq.get("catalyst"):
+                    if _has_real_catalyst(bq.get("catalyst", "")):
                         lines.append(f"      🎯 catalyst: {bq['catalyst']}")
                     lines.append(f"      Q1 왜 오르나: {bq.get('q1_why', '')}")
                     lines.append(f"      Q2 누가 사나: {bq.get('q2_who', '')}")
