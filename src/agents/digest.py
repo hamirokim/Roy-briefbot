@@ -211,6 +211,7 @@ class DigestAgent(BaseAgent):
         # ── 텔레그램 메시지 생성 ──
         telegram_text = self._build_telegram(
             candidates_with_explanation, guard_out_translated, regime_out,
+            scout_out=scout_out,
             briefing_mode=briefing_mode,
             period_summary=period_summary,
             macro_interp=macro_interp,
@@ -592,6 +593,7 @@ class DigestAgent(BaseAgent):
         candidates: list,
         guard_out: dict,
         regime_out: dict,
+        scout_out: dict | None = None,
         briefing_mode: str = "daily",
         period_summary: str = "",
         macro_interp: str = "",
@@ -604,6 +606,7 @@ class DigestAgent(BaseAgent):
         """
         max_chars = self.settings["digest"]["telegram"]["max_chars"]
         date_str = now_kst().strftime("%Y-%m-%d (%a)")
+        scout_out = scout_out or {}
         m6_out = m6_out or {}
 
         # 모드별 헤더 라벨
