@@ -2,36 +2,36 @@
   "date": "2026-05-21",
   "summary": {
     "scanned_total": 2897,
-    "ohlcv_evaluated": 1663,
-    "cooldown_skipped": 3,
+    "ohlcv_evaluated": 1658,
+    "cooldown_skipped": 8,
     "radar_pool_count": 100,
     "brief_pick_count": 5,
-    "theme_count": 8,
+    "theme_count": 7,
     "top_signals": [
       [
         "bb_squeeze",
-        56
+        55
       ],
       [
         "rrg_improving",
-        52
+        49
       ],
       [
         "insider_buying",
-        28
+        26
       ],
       [
         "volume_compression",
-        5
+        3
       ]
     ],
     "radar_by_country": {
-      "US": 68,
-      "CN_HK": 9,
+      "US": 66,
+      "CN_HK": 10,
       "JP": 7,
       "KR": 8,
       "CN_ADR": 4,
-      "CN_A": 4
+      "CN_A": 5
     },
     "source_counts": {
       "finviz+nasdaqtrader": 1936,
@@ -45,224 +45,6 @@
     "no_candidate_reason": ""
   },
   "items": [
-    {
-      "ticker": "DOO",
-      "name": "BRP Inc",
-      "country": "US",
-      "sector": "Consumer Cyclical",
-      "market_cap": 4019999999.9999995,
-      "avg_volume_value": 0.0,
-      "score": 3.2,
-      "signal_score": 3.2,
-      "theme_score": 0.0,
-      "liquidity_score": 0.0,
-      "signal_count": 3,
-      "signal_keys": [
-        "rrg_improving",
-        "bb_squeeze",
-        "volume_compression"
-      ],
-      "signals": {
-        "rrg_improving": {
-          "etf": "XLY",
-          "today_quadrant": "IMPROVING",
-          "transition_found": true,
-          "label_ko": "활성 섹터 진입 (회전)",
-          "phase": "拉离 (메인자금 회전 시작)"
-        },
-        "bb_squeeze": {
-          "current_width": 0.0821,
-          "avg_width": 0.4102,
-          "ratio": 0.2,
-          "threshold": 0.5,
-          "label_ko": "변동성 압축",
-          "phase": "拉升 직전 (매집 완료)"
-        },
-        "volume_compression": {
-          "short_avg": 185300,
-          "long_avg": 376260,
-          "ratio": 0.492,
-          "threshold": 0.6,
-          "label_ko": "거래량 압축",
-          "phase": "建仓 진행 중"
-        }
-      },
-      "track_d": {
-        "is_theme_beneficiary": false
-      }
-    },
-    {
-      "ticker": "ANDG",
-      "name": "Andersen Group Inc",
-      "country": "US",
-      "sector": "Consumer Cyclical",
-      "market_cap": 4179999999.9999995,
-      "avg_volume_value": 0.0,
-      "score": 2.9,
-      "signal_score": 2.9,
-      "theme_score": 0.0,
-      "liquidity_score": 0.0,
-      "signal_count": 3,
-      "signal_keys": [
-        "insider_buying",
-        "rrg_improving",
-        "bb_squeeze"
-      ],
-      "signals": {
-        "insider_buying": {
-          "insider_trans_pct": 168.1,
-          "lookback_days": 7,
-          "label_ko": "메인자금 진입 흔적",
-          "phase": "主力 진입"
-        },
-        "rrg_improving": {
-          "etf": "XLY",
-          "today_quadrant": "IMPROVING",
-          "transition_found": true,
-          "label_ko": "활성 섹터 진입 (회전)",
-          "phase": "拉离 (메인자금 회전 시작)"
-        },
-        "bb_squeeze": {
-          "current_width": 0.1168,
-          "avg_width": 0.255,
-          "ratio": 0.458,
-          "threshold": 0.5,
-          "label_ko": "변동성 압축",
-          "phase": "拉升 직전 (매집 완료)"
-        }
-      },
-      "track_d": {
-        "is_theme_beneficiary": false
-      }
-    },
-    {
-      "ticker": "GME",
-      "name": "Gamestop Corp",
-      "country": "US",
-      "sector": "Consumer Cyclical",
-      "market_cap": 10120000000.0,
-      "avg_volume_value": 0.0,
-      "score": 2.7,
-      "signal_score": 2.7,
-      "theme_score": 0.0,
-      "liquidity_score": 0.0,
-      "signal_count": 3,
-      "signal_keys": [
-        "insider_buying",
-        "rrg_improving",
-        "volume_compression"
-      ],
-      "signals": {
-        "insider_buying": {
-          "insider_trans_pct": 2.54,
-          "lookback_days": 7,
-          "label_ko": "메인자금 진입 흔적",
-          "phase": "主力 진입"
-        },
-        "rrg_improving": {
-          "etf": "XLY",
-          "today_quadrant": "IMPROVING",
-          "transition_found": true,
-          "label_ko": "활성 섹터 진입 (회전)",
-          "phase": "拉离 (메인자금 회전 시작)"
-        },
-        "volume_compression": {
-          "short_avg": 5328204,
-          "long_avg": 10226421,
-          "ratio": 0.521,
-          "threshold": 0.6,
-          "label_ko": "거래량 압축",
-          "phase": "建仓 진행 중"
-        }
-      },
-      "track_d": {
-        "is_theme_beneficiary": false
-      }
-    },
-    {
-      "ticker": "LCID",
-      "name": "Lucid Group Inc",
-      "country": "US",
-      "sector": "Consumer Cyclical",
-      "market_cap": 2220000000.0,
-      "avg_volume_value": 0.0,
-      "score": 2.4,
-      "signal_score": 2.2,
-      "theme_score": 0.2,
-      "liquidity_score": 0.0,
-      "signal_count": 2,
-      "signal_keys": [
-        "rrg_improving",
-        "bb_squeeze"
-      ],
-      "signals": {
-        "rrg_improving": {
-          "etf": "XLY",
-          "today_quadrant": "IMPROVING",
-          "transition_found": true,
-          "label_ko": "활성 섹터 진입 (회전)",
-          "phase": "拉离 (메인자금 회전 시작)"
-        },
-        "bb_squeeze": {
-          "current_width": 0.1918,
-          "avg_width": 0.4915,
-          "ratio": 0.39,
-          "threshold": 0.5,
-          "label_ko": "변동성 압축",
-          "phase": "拉升 직전 (매집 완료)"
-        }
-      },
-      "track_d": {
-        "is_theme_beneficiary": true,
-        "matches": [
-          {
-            "theme_key": "energy_transition",
-            "theme_label": "에너지 전환 (전기차/수소/배터리)",
-            "role": "Lucid Motors",
-            "priority": "C",
-            "layer": "downstream"
-          }
-        ],
-        "track": "D (提前布局)"
-      }
-    },
-    {
-      "ticker": "AMZN",
-      "name": "Amazon.com Inc",
-      "country": "US",
-      "sector": "Consumer Cyclical",
-      "market_cap": 2850740000000.0,
-      "avg_volume_value": 0.0,
-      "score": 2.2,
-      "signal_score": 2.2,
-      "theme_score": 0.0,
-      "liquidity_score": 0.0,
-      "signal_count": 2,
-      "signal_keys": [
-        "rrg_improving",
-        "bb_squeeze"
-      ],
-      "signals": {
-        "rrg_improving": {
-          "etf": "XLY",
-          "today_quadrant": "IMPROVING",
-          "transition_found": true,
-          "label_ko": "활성 섹터 진입 (회전)",
-          "phase": "拉离 (메인자금 회전 시작)"
-        },
-        "bb_squeeze": {
-          "current_width": 0.0788,
-          "avg_width": 0.2068,
-          "ratio": 0.381,
-          "threshold": 0.5,
-          "label_ko": "변동성 압축",
-          "phase": "拉升 직전 (매집 완료)"
-        }
-      },
-      "track_d": {
-        "is_theme_beneficiary": false
-      }
-    },
     {
       "ticker": "TM",
       "name": "Toyota Motor Corp ADR",
@@ -3272,6 +3054,149 @@
       "sector": "Consumer Cyclical",
       "market_cap": 25852668586.666664,
       "avg_volume_value": 147212295.18333334,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "6690.HK",
+      "name": "Haier Smart Home Co., Ltd.",
+      "country": "CN_HK",
+      "sector": "Consumer Cyclical",
+      "market_cap": 23443697558.974358,
+      "avg_volume_value": 47778089.41538461,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLY",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "AFRM",
+      "name": "Affirm Holdings Inc",
+      "country": "US",
+      "sector": "Financial",
+      "market_cap": 22350000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0966,
+          "avg_width": 0.34,
+          "ratio": 0.284,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "PFG",
+      "name": "Principal Financial Group Inc",
+      "country": "US",
+      "sector": "Financial",
+      "market_cap": 22210000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.0482,
+          "avg_width": 0.1083,
+          "ratio": 0.445,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "WST",
+      "name": "West Pharmaceutical Services Inc",
+      "country": "US",
+      "sector": "Healthcare",
+      "market_cap": 21580000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.2,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "signal_count": 1,
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "signals": {
+        "bb_squeeze": {
+          "current_width": 0.1176,
+          "avg_width": 0.2364,
+          "ratio": 0.497,
+          "threshold": 0.5,
+          "label_ko": "변동성 압축",
+          "phase": "拉升 직전 (매집 완료)"
+        }
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "601633.SS",
+      "name": "Great Wall Motor Company Limited",
+      "country": "CN_A",
+      "sector": "Consumer Cyclical",
+      "market_cap": 21191584426.666668,
+      "avg_volume_value": 38546355.06944444,
       "score": 1.2,
       "signal_score": 1.0,
       "theme_score": 0.0,
