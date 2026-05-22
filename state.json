@@ -1,9 +1,88 @@
 {
-  "last_run_date": "2026-05-22",
-  "last_run_at": "2026-05-22T10:32:07.115135+09:00",
+  "last_run_date": "2026-05-23",
+  "last_run_at": "2026-05-23T08:23:23.214224+09:00",
   "last_monthly_run": "2026-05-22",
   "last_weekly_run": "2026-W21",
   "m2_history": {
+    "2026-05-23": {
+      "XLK": {
+        "quadrant": "WEAKENING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 102.06,
+        "momentum": 99.98
+      },
+      "XLV": {
+        "quadrant": "LEADING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 101.63,
+        "momentum": 103.31
+      },
+      "XLF": {
+        "quadrant": "IMPROVING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 99.92,
+        "momentum": 101.76
+      },
+      "XLY": {
+        "quadrant": "IMPROVING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 99.71,
+        "momentum": 101.23
+      },
+      "XLP": {
+        "quadrant": "LAGGING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 99.14,
+        "momentum": 99.16
+      },
+      "XLE": {
+        "quadrant": "WEAKENING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 100.77,
+        "momentum": 97.92
+      },
+      "XLI": {
+        "quadrant": "IMPROVING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 98.47,
+        "momentum": 100.12
+      },
+      "XLB": {
+        "quadrant": "IMPROVING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 97.54,
+        "momentum": 100.33
+      },
+      "XLC": {
+        "quadrant": "LAGGING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 98.23,
+        "momentum": 99.99
+      },
+      "XLU": {
+        "quadrant": "IMPROVING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 99.96,
+        "momentum": 100.18
+      },
+      "XLRE": {
+        "quadrant": "IMPROVING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 99.72,
+        "momentum": 100.39
+      }
+    },
     "2026-05-22": {
       "XLK": {
         "quadrant": "WEAKENING",
@@ -2735,300 +2814,8 @@
     "3038.T": "2026-05-22"
   },
   "prev_day": {
-    "candidates": [
-      {
-        "ticker": "000990.KS",
-        "name": "DB하이텍",
-        "country": "KR",
-        "sector": "",
-        "market_cap": 5353025152.957172,
-        "avg_volume_value": 61553411.9646499,
-        "score": 2.4,
-        "signal_score": 2.2,
-        "theme_score": 0.0,
-        "liquidity_score": 0.2,
-        "factor_score": 0.0,
-        "factor_context": {
-          "score": 0.0,
-          "positives": [
-            "liquidity_good",
-            "volatility_healthy"
-          ],
-          "negatives": [
-            "chasing_extreme"
-          ],
-          "metrics": {
-            "close_days": 244,
-            "avg_volume_value": 61553411.96,
-            "ret_20d": 0.3698,
-            "drawdown_from_high": -0.0616,
-            "atr_pct": 0.0748
-          }
-        },
-        "signal_count": 2,
-        "signal_keys": [
-          "bb_squeeze",
-          "volume_compression"
-        ],
-        "signals": {
-          "bb_squeeze": {
-            "current_width": 0.3067,
-            "avg_width": 0.7217,
-            "ratio": 0.425,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          },
-          "volume_compression": {
-            "short_avg": 446964,
-            "long_avg": 747960,
-            "ratio": 0.598,
-            "threshold": 0.6,
-            "label_ko": "거래량 압축",
-            "phase": "建仓 진행 중"
-          }
-        },
-        "shadow_signal_count": 0,
-        "shadow_signal_keys": [],
-        "shadow_signals": {},
-        "quality_flags": [
-          "overextended_20d"
-        ],
-        "quality_metrics": {
-          "last_close": 175200.0,
-          "ret_20d": 0.3698,
-          "ma50": 121370.0,
-          "ma200": 80274.0,
-          "drawdown_from_high": -0.0616,
-          "avg_volume_value": 61553411.96
-        },
-        "catalyst_context": {
-          "status": "non_us",
-          "score": 0.0,
-          "positive_hits": [],
-          "risk_hits": [],
-          "news": []
-        },
-        "track_d": {
-          "is_theme_beneficiary": false
-        },
-        "catalyst_score": 0.0,
-        "buy_questions": {
-          "industry": "정보 부족",
-          "thesis": "변동성 압축과 거래량 압축은 수급이 조용히 모이는 구간일 수 있지만, 현재 입력에는 PE/EPS Growth/RSI/insider/기관 fact가 없어 매집 근거를 강하게 검증할 수 없습니다. 따라서 매집 가능성은 일부 신호만 확인된 상태입니다.",
-          "catalyst": "촉매 데이터 미연결",
-          "q1_why": "PE와 EPS Growth 정보가 없어 밸류에이션 대비 이익 성장 기대를 판단할 수 없습니다. 따라서 현재는 가격·수급 신호만으로는 상승 논리를 확정하기 어렵습니다.",
-          "q2_who": "insider 및 기관 매집 fact가 입력되지 않아 누가 사는지 확인할 수 없습니다. 매집 주체가 검증되지 않아 신호 신뢰도는 제한적입니다.",
-          "q3_space": "RSI, 52주 저점, PE 정보가 없어 추가 상승 여지와 과열 여부를 판단하기 어렵습니다. 다만 변동성·거래량 압축은 아직 방향성이 열려 있다는 정도만 시사합니다.",
-          "risk_flags": [
-            "PE/EPS Growth/RSI/insider/기관 fact 미입력으로 검증 부족",
-            "촉매 데이터 미연결로 추세 전환 근거 부족"
-          ],
-          "star_rating": "★",
-          "summary": "관찰 필요",
-          "_llm_used": true
-        },
-        "price_at_add": 177200.0
-      },
-      {
-        "ticker": "082740.KS",
-        "name": "한화엔진",
-        "country": "KR",
-        "sector": "",
-        "market_cap": 4118490822.5696807,
-        "avg_volume_value": 44262161.93065941,
-        "score": 2.4,
-        "signal_score": 2.2,
-        "theme_score": 0.0,
-        "liquidity_score": 0.2,
-        "factor_score": 0.0,
-        "factor_context": {
-          "score": 0.6,
-          "positives": [
-            "liquidity_good",
-            "not_chasing",
-            "volatility_healthy"
-          ],
-          "negatives": [],
-          "metrics": {
-            "close_days": 244,
-            "avg_volume_value": 44262161.93,
-            "ret_20d": 0.0978,
-            "drawdown_from_high": -0.1721,
-            "atr_pct": 0.076
-          }
-        },
-        "signal_count": 2,
-        "signal_keys": [
-          "bb_squeeze",
-          "volume_compression"
-        ],
-        "signals": {
-          "bb_squeeze": {
-            "current_width": 0.3705,
-            "avg_width": 0.8081,
-            "ratio": 0.458,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          },
-          "volume_compression": {
-            "short_avg": 818395,
-            "long_avg": 1455887,
-            "ratio": 0.562,
-            "threshold": 0.6,
-            "label_ko": "거래량 압축",
-            "phase": "建仓 진행 중"
-          }
-        },
-        "shadow_signal_count": 0,
-        "shadow_signal_keys": [],
-        "shadow_signals": {},
-        "quality_flags": [],
-        "quality_metrics": {
-          "last_close": 74100.0,
-          "ret_20d": 0.0978,
-          "ma50": 60504.0,
-          "ma200": 49652.5,
-          "drawdown_from_high": -0.1721,
-          "avg_volume_value": 44262161.93
-        },
-        "catalyst_context": {
-          "status": "non_us",
-          "score": 0.0,
-          "positive_hits": [],
-          "risk_hits": [],
-          "news": []
-        },
-        "track_d": {
-          "is_theme_beneficiary": false
-        },
-        "catalyst_score": 0.0,
-        "buy_questions": {
-          "industry": "정보 부족",
-          "thesis": "변동성 압축과 거래량 압축은 매집 가능성을 시사할 수 있지만, 현재 입력에는 PE/EPS Growth, RSI, insider, 기관 매집 fact가 없어 강한 매집 근거로 검증할 수 없습니다. 따라서 사실 기반으로는 관찰 수준입니다.",
-          "catalyst": "촉매 데이터 미연결",
-          "q1_why": "PE와 EPS Growth 입력이 없어 실적 대비 저평가 또는 성장 가속 여부를 판단할 수 없습니다. 따라서 상승 논리는 정보 부족입니다.",
-          "q2_who": "insider 및 기관 매집 fact가 입력되지 않아 누가 사는지 확인할 수 없습니다. 매집 주체는 정보 부족입니다.",
-          "q3_space": "RSI, PE, 52주 저점 관련 fact가 없어 추가 상승 여력이나 과열 여부를 검증할 수 없습니다. 현재는 정보 부족입니다.",
-          "risk_flags": [
-            "PE/EPS Growth/RSI/insider/기관 fact 미제공",
-            "촉매 데이터 미연결"
-          ],
-          "star_rating": "★",
-          "summary": "관찰만 가능",
-          "_llm_used": true
-        },
-        "price_at_add": 74100.0
-      },
-      {
-        "ticker": "3038.T",
-        "name": "神戸物産",
-        "country": "JP",
-        "sector": "商社・卸売",
-        "market_cap": 3945131477.0580645,
-        "avg_volume_value": 36500492.993548386,
-        "score": 2.4,
-        "signal_score": 2.2,
-        "theme_score": 0.0,
-        "liquidity_score": 0.2,
-        "factor_score": 0.0,
-        "factor_context": {
-          "score": 0.6,
-          "positives": [
-            "liquidity_good",
-            "not_chasing",
-            "volatility_healthy"
-          ],
-          "negatives": [],
-          "metrics": {
-            "close_days": 244,
-            "avg_volume_value": 36500492.99,
-            "ret_20d": -0.1158,
-            "drawdown_from_high": -0.42,
-            "atr_pct": 0.0299
-          }
-        },
-        "signal_count": 2,
-        "signal_keys": [
-          "bb_squeeze",
-          "volume_compression"
-        ],
-        "signals": {
-          "bb_squeeze": {
-            "current_width": 0.0805,
-            "avg_width": 0.2385,
-            "ratio": 0.338,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          },
-          "volume_compression": {
-            "short_avg": 1100520,
-            "long_avg": 1959360,
-            "ratio": 0.562,
-            "threshold": 0.6,
-            "label_ko": "거래량 압축",
-            "phase": "建仓 진행 중"
-          }
-        },
-        "shadow_signal_count": 1,
-        "shadow_signal_keys": [
-          "ronin_structure_support"
-        ],
-        "shadow_signals": {
-          "ronin_structure_support": {
-            "kind": "support",
-            "zone_lo": 2667.5,
-            "zone_hi": 2681.0,
-            "distance": 26.0,
-            "margin": 39.837,
-            "bar_age": 13,
-            "label_ko": "RONIN 구조 지지 근접",
-            "phase": "구조존 재진입"
-          }
-        },
-        "quality_flags": [
-          "left_side_context"
-        ],
-        "quality_metrics": {
-          "last_close": 2750.0,
-          "ret_20d": -0.1158,
-          "ma50": 3172.47,
-          "ma200": 3708.452,
-          "drawdown_from_high": -0.42,
-          "avg_volume_value": 36500492.99
-        },
-        "catalyst_context": {
-          "status": "non_us",
-          "score": 0.0,
-          "positive_hits": [],
-          "risk_hits": [],
-          "news": []
-        },
-        "track_d": {
-          "is_theme_beneficiary": false
-        },
-        "catalyst_score": 0.0,
-        "buy_questions": {
-          "industry": "상사/도매",
-          "thesis": "변동성과 거래량이 함께 압축되어 있어 수급이 조용히 모이는 구간일 가능성은 있으나, 현재 입력된 사실만으로는 강한 매집 확정은 어렵습니다. 촉매 데이터가 연결되지 않아 상승 동력의 근거는 제한적입니다.",
-          "catalyst": "촉매 데이터 미연결",
-          "q1_why": "PE와 EPS Growth 정보가 입력되지 않아 밸류에이션과 이익 성장 기반의 상승 논리를 검증할 수 없습니다. 따라서 현재는 실적 개선 기대보다 수급 압축 신호에만 의존한 관찰 단계입니다.",
-          "q2_who": "insider와 기관 매집 fact가 입력되지 않아 누가 사는지 확인할 수 없습니다. 현재 데이터만으로는 내부자 또는 기관의 적극적 매집 여부는 정보 부족입니다.",
-          "q3_space": "PE, RSI, 52주 저점 정보가 없어 추가 상승 여지와 과열 여부를 판단하기 어렵습니다. 다만 변동성·거래량 압축은 추세 전환 전 대기 구간일 수 있으나, 이는 추측에 해당해 확정할 수 없습니다.",
-          "risk_flags": [
-            "촉매 데이터 미연결로 상승 근거 부족",
-            "PE/EPS Growth/RSI/insider/기관 fact 정보 부족"
-          ],
-          "star_rating": "★",
-          "summary": "수급압축 관찰",
-          "_llm_used": true
-        },
-        "price_at_add": 2745.5
-      }
-    ],
+    "candidates": [],
     "alerts_count": 1,
-    "vix": 16.76
+    "vix": 16.7
   }
 }
