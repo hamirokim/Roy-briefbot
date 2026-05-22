@@ -5,8 +5,8 @@ M6 피드백 루프 — SCOUT 후보 사후 성과 추적 (Z3-4 재설계, D86)
       후보 시점 대비 현재가 수익률 계산 → DIGEST 컨텍스트에 주입.
 
 원칙:
-  - 28일 (≈20영업일) 추적 후 자동 만료
-  - 최대 50개 추적
+  - 기본 45일 추적 후 자동 만료 (월간 개선 리포트 + D+28 확인용)
+  - 최대 200개 추적
   - 추적 종목 0개면 빈 컨텍스트 반환 (희소 원칙)
   - yfinance 단일화 (D32)
   - source = "SCOUT" (M3 폐기 D82 정합)
@@ -41,8 +41,8 @@ logger = logging.getLogger(__name__)
 # 환경변수
 # ═══════════════════════════════════════════════════════════
 
-TRACK_DAYS = int(os.getenv("M6_TRACK_DAYS", "28"))   # 캘린더일 기준 만료 (≈20영업일)
-MAX_HISTORY = int(os.getenv("M6_MAX_HISTORY", "50")) # 최대 추적 종목 수 (옛 20 → 50)
+TRACK_DAYS = int(os.getenv("M6_TRACK_DAYS", "45"))   # 월간 개선 리포트 + D+28 follow-up 보관
+MAX_HISTORY = int(os.getenv("M6_MAX_HISTORY", "200")) # 매일 후보가 나와도 월간 표본이 잘리지 않게 보관
 FETCH_DELAY = float(os.getenv("M6_FETCH_DELAY", "0.3"))  # yfinance 요청 간격
 MIN_DAYS_FOR_REPORT = int(os.getenv("M6_MIN_DAYS_FOR_REPORT", "3"))  # 최소 N일 경과 종목만 리포트
 
@@ -76,11 +76,15 @@ def scout_candidates_to_m6_entries(candidates: list[dict]) -> list[dict]:
             continue
 
         sig_keys = list((c.get("signals") or {}).keys())
+        shadow_sig_keys = list((c.get("shadow_signals") or {}).keys())
         track_d_match = ""
         td = c.get("track_d") or {}
         if td.get("is_theme_beneficiary"):
             matches = td.get("matches", [])
             track_d_match = ", ".join(str(m) for m in matches[:2])
+
+        factor_context = c.get("factor_context") or {}
+        catalyst_context = c.get("catalyst_context") or {}
 
         entries.append({
             "ticker": ticker,
@@ -91,6 +95,13 @@ def scout_candidates_to_m6_entries(candidates: list[dict]) -> list[dict]:
             "price_at_add": round(price, 4),
             "score": c.get("score", 0),
             "signal_keys": sig_keys,
+            "shadow_signal_keys": shadow_sig_keys,
+            "factor_score": c.get("factor_score", 0),
+            "factor_positives": list(factor_context.get("positives") or []),
+            "factor_negatives": list(factor_context.get("negatives") or []),
+            "quality_flags": list(c.get("quality_flags") or []),
+            "catalyst_status": catalyst_context.get("status", ""),
+            "catalyst_score": catalyst_context.get("score", 0),
             "track_d": track_d_match,
             "source": "SCOUT",
         })
@@ -221,6 +232,13 @@ def _compute_performance(history: list[dict]) -> list[dict]:
             "score": h.get("score", 0),
             "track_d": h.get("track_d", ""),
             "signal_keys": h.get("signal_keys", []),
+            "shadow_signal_keys": h.get("shadow_signal_keys", []),
+            "factor_score": h.get("factor_score", 0),
+            "factor_positives": h.get("factor_positives", []),
+            "factor_negatives": h.get("factor_negatives", []),
+            "quality_flags": h.get("quality_flags", []),
+            "catalyst_status": h.get("catalyst_status", ""),
+            "catalyst_score": h.get("catalyst_score", 0),
         })
 
     return results

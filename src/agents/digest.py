@@ -232,12 +232,23 @@ class DigestAgent(BaseAgent):
 
         # ── LLM 호출 3 (조건부) — 주간/월간 종합 + 방향 안내 ──
         period_summary = ""
+        improvement_report = {}
         if briefing_mode == "weekly":
             period_summary = self._build_weekly_summary(state, regime_out, scout_out)
             self.log.info("[digest] 주간 종합 생성: %d자", len(period_summary))
         elif briefing_mode == "monthly":
             period_summary = self._build_monthly_summary(state, regime_out, scout_out)
             self.log.info("[digest] 월간 정리 생성: %d자", len(period_summary))
+            try:
+                from src.modules.monthly_improvement import build_monthly_improvement_report
+                improvement_report = build_monthly_improvement_report(state, scout_out, m6_out)
+                self.log.info(
+                    "[digest] 월간 개선 리포트 생성: %d자",
+                    len(improvement_report.get("summary_text", "")),
+                )
+            except Exception as e:
+                self.log.warning("[digest] 월간 개선 리포트 생성 실패: %s", e)
+                improvement_report = {}
 
         # ── LLM 호출 4 (Z3-4 D87 신규) — 매일 매크로 1줄 해석 ──
         # 후보 0일/알람 0일에도 콘텐츠 풍성하게 만들기 위함
@@ -252,6 +263,7 @@ class DigestAgent(BaseAgent):
             period_summary=period_summary,
             macro_interp=macro_interp,
             m6_out=m6_out,
+            improvement_report=improvement_report,
         )
 
         # ── 저널 BRIEFING 시트 메시지 생성 (상세) ──
@@ -261,6 +273,7 @@ class DigestAgent(BaseAgent):
             period_summary=period_summary,
             macro_interp=macro_interp,
             m6_out=m6_out,
+            improvement_report=improvement_report,
         )
 
         return {
@@ -634,6 +647,7 @@ class DigestAgent(BaseAgent):
         period_summary: str = "",
         macro_interp: str = "",
         m6_out: dict | None = None,
+        improvement_report: dict | None = None,
     ) -> str:
         """텔레그램 메시지 생성.
 
@@ -644,6 +658,7 @@ class DigestAgent(BaseAgent):
         date_str = now_kst().strftime("%Y-%m-%d (%a)")
         scout_out = scout_out or {}
         m6_out = m6_out or {}
+        improvement_report = improvement_report or {}
 
         # 모드별 헤더 라벨
         mode_badge = ""
@@ -786,6 +801,14 @@ class DigestAgent(BaseAgent):
             lines.append(f"<i>{m6_summary}</i>")
             lines.append("")
 
+        if briefing_mode == "monthly" and improvement_report.get("summary_text"):
+            lines.append("<b>🛠 월간 개선 리포트</b>")
+            lines.append(f"<i>{improvement_report['summary_text'][:700]}</i>")
+            actions = improvement_report.get("actions", []) or []
+            for action in actions[:3]:
+                lines.append(f"• {action}")
+            lines.append("")
+
         # ── 3. GUARD 보유 포지션 ──
         alerts = guard_out.get("alerts", [])
         quiet_full = guard_out.get("quiet_full", []) or []  # D87: 전체 quiet 데이터 (티커+가격+뉴스)
@@ -874,6 +897,7 @@ class DigestAgent(BaseAgent):
         period_summary: str = "",
         macro_interp: str = "",
         m6_out: dict | None = None,
+        improvement_report: dict | None = None,
     ) -> str:
         """저널 본문 빌드.
 
@@ -882,6 +906,7 @@ class DigestAgent(BaseAgent):
         """
         SEP = "═" * 60
         m6_out = m6_out or {}
+        improvement_report = improvement_report or {}
 
         now = now_kst()
         date_str = now.strftime("%Y-%m-%d (%a) %H:%M KST")
@@ -910,6 +935,10 @@ class DigestAgent(BaseAgent):
             lines.append("")
             for ln in period_summary.split("\n"):
                 lines.append(f"  {ln}" if ln.strip() else "")
+            lines.append("")
+
+        if briefing_mode == "monthly" and improvement_report.get("detailed_lines"):
+            lines.extend(improvement_report.get("detailed_lines", []))
             lines.append("")
 
         # ▣ 매크로 환경 (D87: macro_interp 풀버전 포함)
