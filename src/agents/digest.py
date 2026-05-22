@@ -1116,18 +1116,32 @@ class DigestAgent(BaseAgent):
                     "  • 최종 게이트 : RONIN Entry v2 / 촉매 확인 / 신호 "
                     f"{int(gate.get('allow_signal_count_at_least', 4) or 4)}개 이상 중 하나 필요"
                 )
+            shadow_hits = signal.get("shadow_hit_counts", {}) or {}
+            if shadow_hits:
+                parts = []
+                for key, count in sorted(shadow_hits.items(), key=lambda item: -int(item[1] or 0))[:3]:
+                    parts.append(f"{_SIGNAL_KO.get(str(key), str(key))} {int(count or 0):,}")
+                if parts:
+                    lines.append(f"  • Shadow 검증 : {' / '.join(parts)} (점수/후보선정 미반영)")
             if catalyst and catalyst.get("enabled"):
+                catalyst_mode = (
+                    "shadow"
+                    if float(catalyst.get("score_boost", 0) or 0) == 0 and float(catalyst.get("risk_penalty", 0) or 0) == 0
+                    else "score"
+                )
                 lines.append(
                     f"  • 촉매 확인   : 상위 {int(catalyst.get('evaluated', 0) or 0):,}개 평가"
                     f" / 확인 {int(catalyst.get('found', 0) or 0):,}"
                     f" / 리스크 {int(catalyst.get('risk', 0) or 0):,}"
                     f" / 없음 {int(catalyst.get('none', 0) or 0):,}"
                     f" / 미연결 {int(catalyst.get('non_us', 0) or 0) + int(catalyst.get('no_key', 0) or 0):,}"
+                    f" / {catalyst_mode}"
                 )
             if factor_audit and factor_audit.get("enabled"):
+                factor_mode = "shadow" if float(factor_audit.get("score_weight", 0) or 0) == 0 else "score"
                 lines.append(
-                    f"  • 因子 보정   : 유동성/추격위험/변동성/데이터 품질 반영"
-                    f" (상한 ±{float(factor_audit.get('score_cap', 0) or 0):.1f})"
+                    f"  • 因子 보정   : 유동성/추격위험/변동성/데이터 품질"
+                    f" ({factor_mode}, 상한 ±{float(factor_audit.get('score_cap', 0) or 0):.1f})"
                 )
         if top_signals:
             parts = []

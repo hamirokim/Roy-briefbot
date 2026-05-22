@@ -337,6 +337,8 @@ def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dic
     radar_score = round(signal_score + theme_score + liquidity_score + factor_score, 3)
     signals = _label_signal_dict(info.get("signals", {}))
     signal_keys = list(signals.keys())
+    shadow_signals = _label_signal_dict(info.get("shadow_signals", {}))
+    shadow_signal_keys = list(shadow_signals.keys())
 
     item = {
         "ticker": ticker,
@@ -354,6 +356,9 @@ def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dic
         "signal_count": len(signal_keys),
         "signal_keys": signal_keys,
         "signals": signals,
+        "shadow_signal_count": len(shadow_signal_keys),
+        "shadow_signal_keys": shadow_signal_keys,
+        "shadow_signals": shadow_signals,
         "quality_flags": list((info.get("quality") or {}).get("flags", [])),
         "quality_metrics": dict((info.get("quality") or {}).get("metrics", {})),
         "catalyst_context": {"status": "not_checked", "score": 0.0},
@@ -476,10 +481,7 @@ def _score_catalyst_news(news: list[dict], score_boost: float, risk_penalty: flo
 
 
 def _apply_catalyst_layer(radar_items: list[dict], catalyst_cfg: dict) -> dict:
-    """레이더 상위 일부에만 촉매 레이어를 적용한다.
-
-    목적: 신호를 줄이는 게 아니라, 로이에게 올라갈 최종 후보의 질을 높인다.
-    """
+    """레이더 상위 일부에만 촉매 레이어를 적용한다."""
     audit = {
         "enabled": bool((catalyst_cfg or {}).get("enabled", False)),
         "eval_limit": int((catalyst_cfg or {}).get("eval_limit", 0) or 0),
@@ -490,6 +492,8 @@ def _apply_catalyst_layer(radar_items: list[dict], catalyst_cfg: dict) -> dict:
         "non_us": 0,
         "no_key": 0,
         "error": 0,
+        "score_boost": float((catalyst_cfg or {}).get("score_boost", 0.0) or 0.0),
+        "risk_penalty": float((catalyst_cfg or {}).get("risk_penalty", 0.0) or 0.0),
     }
     if not audit["enabled"] or audit["eval_limit"] <= 0:
         return audit
@@ -1062,6 +1066,8 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "catalyst_status": item.get("catalyst_context", {}).get("status", ""),
                 "signal_count": item.get("signal_count"),
                 "signal_keys": ",".join(item.get("signal_keys", [])),
+                "shadow_signal_count": item.get("shadow_signal_count", 0),
+                "shadow_signal_keys": ",".join(item.get("shadow_signal_keys", [])),
                 "quality_flags": ",".join(item.get("quality_flags", [])),
                 "is_theme_beneficiary": item.get("track_d", {}).get("is_theme_beneficiary", False),
             })
@@ -1414,6 +1420,7 @@ class ScoutAgent(BaseAgent):
                 "row": row,
                 "score": score,
                 "signals": sigs,
+                "shadow_signals": {},
             }
 
         # OHLCV 평가는 — 효율 위해 prelim_scores 점수 0이 아니거나, 무작위 샘플링 통과한 것만
@@ -1466,26 +1473,39 @@ class ScoutAgent(BaseAgent):
                 if bool(ronin_entry_cfg.get("enabled", False)):
                     hit, sig_info = _signal_ronin_entry_v2(df, ronin_entry_cfg)
                     if hit:
-                        info["score"] += float(weights.get("ronin_entry_v2", 1.0))
-                        info["signals"]["ronin_entry_v2"] = sig_info
+                        if bool(ronin_entry_cfg.get("shadow_mode", False)):
+                            info.setdefault("shadow_signals", {})["ronin_entry_v2"] = sig_info
+                        else:
+                            info["score"] += float(weights.get("ronin_entry_v2", 1.0))
+                            info["signals"]["ronin_entry_v2"] = sig_info
 
                 # 구조 지지 근접 근사: 피벗 지지/돌파 저항 근처
                 structure_cfg = scout_cfg["signals"].get("ronin_structure_support", {}) or {}
                 if bool(structure_cfg.get("enabled", False)):
                     hit, sig_info = _signal_ronin_structure_support(df, structure_cfg)
                     if hit:
-                        info["score"] += float(weights.get("ronin_structure_support", 1.0))
-                        info["signals"]["ronin_structure_support"] = sig_info
+                        if bool(structure_cfg.get("shadow_mode", False)):
+                            info.setdefault("shadow_signals", {})["ronin_structure_support"] = sig_info
+                        else:
+                            info["score"] += float(weights.get("ronin_structure_support", 1.0))
+                            info["signals"]["ronin_structure_support"] = sig_info
 
         # ── Stage 4: 내부 Radar Pool 구성 ──
         signal_counter = Counter()
+        shadow_signal_counter = Counter()
         with_signal_count = 0
+        with_shadow_signal_count = 0
         for info in prelim_scores.values():
             sig_keys = list((info.get("signals") or {}).keys())
             if sig_keys:
                 with_signal_count += 1
             for key in sig_keys:
                 signal_counter[key] += 1
+            shadow_keys = list((info.get("shadow_signals") or {}).keys())
+            if shadow_keys:
+                with_shadow_signal_count += 1
+            for key in shadow_keys:
+                shadow_signal_counter[key] += 1
 
         ohlcv_missing = []
         if ohlcv_targets:
@@ -1550,6 +1570,7 @@ class ScoutAgent(BaseAgent):
             "factor_audit": {
                 "enabled": bool(factor_cfg.get("enabled", False)),
                 "score_cap": float(factor_cfg.get("score_cap", 0.0) or 0.0),
+                "score_weight": float(weights.get("factor_quality", 0.0) or 0.0),
             },
             "evaluation_scope": {
                 "ohlcv_selected": int(len(ohlcv_targets)),
@@ -1562,6 +1583,8 @@ class ScoutAgent(BaseAgent):
                 "with_signal": int(with_signal_count),
                 "without_signal": int(max(0, len(prelim_scores) - with_signal_count)),
                 "hit_counts": {str(k): int(v) for k, v in signal_counter.items()},
+                "with_shadow_signal": int(with_shadow_signal_count),
+                "shadow_hit_counts": {str(k): int(v) for k, v in shadow_signal_counter.items()},
             },
             "radar_audit": {
                 "radar_min_score": float(radar_min_score),

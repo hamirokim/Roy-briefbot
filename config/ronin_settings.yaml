@@ -46,7 +46,8 @@ scout:
       transition_lookback_days: 3      # 최근 3일 내 LAGGING→IMPROVING
 
     ronin_entry_v2:                    # 메인지표 Entry 공진 근사: WT/MFI/BB + ST DOWN
-      enabled: true
+      enabled: true                    # shadow 검증: 계산/기록은 하되 운영 점수에는 미반영
+      shadow_mode: true
       recent_bars: 5                   # 최근 N봉 안에 RONIN entry 근사 발생
       wt_n1: 18
       wt_n2: 28
@@ -69,7 +70,8 @@ scout:
       st_hys_atr: 0.14
 
     ronin_structure_support:           # 구조존 근사: 피벗 지지/돌파 저항 근처
-      enabled: true
+      enabled: true                    # shadow 검증: 계산/기록은 하되 운영 점수에는 미반영
+      shadow_mode: true
       pivot_len: 12
       volume_ma: 6
       atr_len: 14
@@ -90,7 +92,7 @@ scout:
   theme_boost_enabled: true            # themes.yaml 가치사슬 종목 보너스
 
   brief_quality_gate:
-    enabled: true                      # 점수만 높은 후보가 5칸 채우는 것 방지
+    enabled: false                     # 안전모드: 새 레이어 검증 전 최종 후보 차단/통과에 사용 금지
     allow_catalyst_found: true
     allow_ronin_entry_v2: true
     allow_signal_count_at_least: 4
@@ -100,8 +102,8 @@ scout:
     eval_limit: 20                     # 레이더 상위 N개만 촉매 확인
     lookback_days: 14
     max_news_per_ticker: 3
-    score_boost: 0.3
-    risk_penalty: 0.3
+    score_boost: 0.0                   # 안전모드: 뉴스 촉매는 표시만 하고 점수에는 미반영
+    risk_penalty: 0.0                  # 안전모드: 키워드 오탐 검증 전 감점 금지
 
   factor_layer:
     enabled: true                      # 저비용 가격/거래량 因子: 후보 품질 보정
@@ -132,7 +134,7 @@ scout:
     rrg_improving: 1.0
     ronin_entry_v2: 1.6
     ronin_structure_support: 0.8
-    factor_quality: 1.0
+    factor_quality: 0.0                # 안전모드: 因子는 표시만 하고 점수에는 미반영
     theme_A_plus: 0.8
     theme_A: 0.6
     theme_B_plus: 0.4
