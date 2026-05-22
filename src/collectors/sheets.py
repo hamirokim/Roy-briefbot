@@ -253,7 +253,7 @@ def read_analytics(min_closed: int = 10) -> str:
 # ════════════ SCOUT 후보발굴 + 통계 시트 (D91, 2026-04-30) ════════════
 # ═══════════════════════════════════════════════════════════
 
-# SCOUT 후보발굴 시트 헤더 (21 컬럼)
+# SCOUT 후보발굴 시트 헤더
 SCOUT_CANDIDATES_HEADERS = [
     "No",          # A: 자동 (=ROW()-2)
     "발생일",       # B: KST YYYY-MM-DD
@@ -276,7 +276,36 @@ SCOUT_CANDIDATES_HEADERS = [
     "방향 적중",     # S: O/X/△ (D+28 후 자동 판정)
     "진입여부",      # T: Position ID 또는 빈 (POSITIONS 매핑 자동)
     "Model",       # U: gpt-5.4-mini 등 모델 버전
+    "운영신호",      # V: 실제 후보 선정에 사용된 신호
+    "Shadow Signals", # W: 검증 중인 실험 신호
+    "Factor Score", # X: 因子 점수(raw)
+    "Factor +",     # Y: 因子 가산 태그
+    "Factor -",     # Z: 因子 감점 태그
+    "Quality Tags", # AA: 관찰 태그
+    "Catalyst Status", # AB: 촉매 상태
+    "Catalyst Score",  # AC: 촉매 점수(raw)
+    "Catalyst Headline", # AD: 대표 뉴스/리스크 헤드라인
 ]
+
+
+SCOUT_CANDIDATES_GUIDE = [
+    "자동", "봇 자동", "봇 자동", "봇 자동", "봇 자동",
+    "LLM", "LLM", "LLM", "LLM", "LLM",
+    "LLM", "LLM", "LLM", "yf 자동", "follow-up",
+    "수식", "follow-up", "수식", "D+28 후",
+    "POSITIONS 매핑", "환경변수", "봇 자동", "shadow",
+    "shadow", "shadow", "shadow", "shadow", "shadow",
+    "shadow", "shadow",
+]
+
+
+def _col_letter(n: int) -> str:
+    """1-based column index → Google Sheets column letter."""
+    result = ""
+    while n > 0:
+        n, rem = divmod(n - 1, 26)
+        result = chr(65 + rem) + result
+    return result
 
 # SCOUT 통계 시트 셀 박제 (수식 자동)
 def _build_scout_stats_layout():
@@ -355,21 +384,29 @@ def _ensure_scout_sheets():
             title="SCOUT 후보발굴", rows=2000, cols=len(SCOUT_CANDIDATES_HEADERS)
         )
         # Row 1 = 헤더
+        end_col = _col_letter(len(SCOUT_CANDIDATES_HEADERS))
         ws_cands.update(
-            f"A1:U1", [SCOUT_CANDIDATES_HEADERS]
+            f"A1:{end_col}1", [SCOUT_CANDIDATES_HEADERS]
         )
         # Row 2 = 입력 가이드 (POSITIONS 패턴 차용)
         ws_cands.update(
-            f"A2:U2",
-            [[
-                "자동", "봇 자동", "봇 자동", "봇 자동", "봇 자동",
-                "LLM", "LLM", "LLM", "LLM", "LLM",
-                "LLM", "LLM", "LLM", "yf 자동", "follow-up",
-                "수식", "follow-up", "수식", "D+28 후",
-                "POSITIONS 매핑", "환경변수",
-            ]],
+            f"A2:{end_col}2",
+            [SCOUT_CANDIDATES_GUIDE],
         )
-        logger.info("[SCOUT] 'SCOUT 후보발굴' 시트 자동 생성 (21 컬럼)")
+        logger.info("[SCOUT] 'SCOUT 후보발굴' 시트 자동 생성 (%d 컬럼)", len(SCOUT_CANDIDATES_HEADERS))
+    else:
+        # 기존 21컬럼 시트를 shadow 검증 컬럼까지 자동 확장.
+        try:
+            end_col = _col_letter(len(SCOUT_CANDIDATES_HEADERS))
+            header = ws_cands.row_values(1)
+            if len(header) < len(SCOUT_CANDIDATES_HEADERS):
+                if getattr(ws_cands, "col_count", 0) < len(SCOUT_CANDIDATES_HEADERS):
+                    ws_cands.add_cols(len(SCOUT_CANDIDATES_HEADERS) - int(ws_cands.col_count))
+                ws_cands.update(f"A1:{end_col}1", [SCOUT_CANDIDATES_HEADERS])
+                ws_cands.update(f"A2:{end_col}2", [SCOUT_CANDIDATES_GUIDE])
+                logger.info("[SCOUT] 후보발굴 시트 컬럼 확장: %d → %d", len(header), len(SCOUT_CANDIDATES_HEADERS))
+        except Exception as e:
+            logger.warning("[SCOUT] 후보발굴 시트 컬럼 확장 실패: %s", e)
 
     # ── SCOUT 통계 ──
     try:
@@ -432,6 +469,8 @@ def _format_signal_keys(signals: dict) -> str:
         "volume_compression": "VOL",
         "after_low_consolidation": "LOW",
         "rrg_improving": "RRG",
+        "ronin_entry_v2": "RONIN_V2",
+        "ronin_structure_support": "STRUCT",
     }
     keys = []
     for k in signals.keys():
@@ -500,6 +539,9 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
 
         bq = c.get("buy_questions") or {}
         signals = c.get("signals") or {}
+        shadow_signals = c.get("shadow_signals") or {}
+        factor_context = c.get("factor_context") or {}
+        catalyst_context = c.get("catalyst_context") or {}
         risk_flags = bq.get("risk_flags") or []
         if isinstance(risk_flags, list):
             risk_str = " / ".join(str(r) for r in risk_flags[:3])
@@ -516,7 +558,17 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
         # 진입여부 매핑
         entry_pid = pos_map.get(ticker, "")
 
-        # 21 컬럼 한 행
+        factor_positives = " / ".join(str(x) for x in (factor_context.get("positives") or [])[:5])
+        factor_negatives = " / ".join(str(x) for x in (factor_context.get("negatives") or [])[:5])
+        quality_tags = " / ".join(str(x) for x in (c.get("quality_flags") or [])[:5])
+        catalyst_headline = ""
+        for item in (catalyst_context.get("news") or catalyst_context.get("risk_hits") or [])[:1]:
+            if isinstance(item, dict):
+                catalyst_headline = str(item.get("headline", "") or "")[:220]
+            else:
+                catalyst_headline = str(item)[:220]
+
+        # 후보 기본 정보 + 실험 검증용 shadow 컬럼
         row = [
             f"=ROW()-2",                              # A: No (수식)
             date_str,                                 # B: 발생일
@@ -539,6 +591,15 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
             "",                                       # S: 방향 적중
             entry_pid,                                # T: 진입여부
             model_name,                               # U: Model
+            _format_signal_keys(signals),              # V: 운영신호
+            _format_signal_keys(shadow_signals),       # W: Shadow Signals
+            round(float(factor_context.get("score") or 0), 3), # X: Factor Score
+            factor_positives,                          # Y: Factor +
+            factor_negatives,                          # Z: Factor -
+            quality_tags,                              # AA: Quality Tags
+            catalyst_context.get("status", ""),        # AB: Catalyst Status
+            round(float(catalyst_context.get("score") or 0), 3), # AC: Catalyst Score
+            catalyst_headline,                         # AD: Catalyst Headline
         ]
         rows_to_append.append(row)
         seen.add((ticker, date_str))
@@ -549,7 +610,8 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
 
     # 일괄 append (USER_ENTERED 모드 → 수식 평가)
     end_row = next_row + len(rows_to_append) - 1
-    range_str = f"A{next_row}:U{end_row}"
+    end_col = _col_letter(len(SCOUT_CANDIDATES_HEADERS))
+    range_str = f"A{next_row}:{end_col}{end_row}"
     try:
         ws_cands.update(range_str, rows_to_append, raw=False)
         logger.info("[SCOUT] 시트 적재 완료: %d행 (range=%s)", len(rows_to_append), range_str)
