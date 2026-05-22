@@ -74,6 +74,16 @@ SIGNAL_LABELS = {
         "zh_phase": "拉离 (메인자금 회전 시작)",
         "desc": "섹터 RRG 3일 내 LAGGING→IMPROVING 전환",
     },
+    "ronin_entry_v2": {
+        "ko": "RONIN Entry v2 근접",
+        "zh_phase": "ENTRY 공진",
+        "desc": "WT/MFI/BB 2개 이상 공진 + ST DOWN",
+    },
+    "ronin_structure_support": {
+        "ko": "RONIN 구조 지지 근접",
+        "zh_phase": "구조존 재진입",
+        "desc": "피벗 지지/돌파 저항 지지 전환 근처",
+    },
 }
 
 
@@ -427,6 +437,427 @@ def _apply_catalyst_layer(radar_items: list[dict], catalyst_cfg: dict) -> dict:
         time.sleep(0.05)
 
     return audit
+
+
+def _rma(series: pd.Series, length: int) -> pd.Series:
+    """TradingView ta.rma 근사. 정확한 시각 복제보다 후보 품질 필터 용도."""
+    return series.astype(float).ewm(alpha=1 / max(1, int(length)), adjust=False).mean()
+
+
+def _mfi(high: pd.Series, low: pd.Series, close: pd.Series, volume: pd.Series, length: int) -> pd.Series:
+    typical = (high.astype(float) + low.astype(float) + close.astype(float)) / 3.0
+    money = typical * volume.astype(float)
+    direction = typical.diff()
+    pos = money.where(direction > 0, 0.0).rolling(length).sum()
+    neg = money.where(direction < 0, 0.0).rolling(length).sum().abs()
+    ratio = pos / neg.replace(0, np.nan)
+    out = 100 - (100 / (1 + ratio))
+    return out.fillna(50.0)
+
+
+def _cross_up(a: pd.Series, b: pd.Series, i: int) -> bool:
+    if i <= 0:
+        return False
+    return bool(a.iloc[i - 1] <= b.iloc[i - 1] and a.iloc[i] > b.iloc[i])
+
+
+def _cross_down(a: pd.Series, b: pd.Series, i: int) -> bool:
+    if i <= 0:
+        return False
+    return bool(a.iloc[i - 1] >= b.iloc[i - 1] and a.iloc[i] < b.iloc[i])
+
+
+def _ronin_st_state(df: pd.DataFrame, params: dict) -> pd.Series:
+    """메인지표 HA2 SuperTrend 방향 근사. -1=DOWN, 1=UP."""
+    open_ = df["open"].astype(float)
+    high = df["high"].astype(float)
+    low = df["low"].astype(float)
+    close = df["close"].astype(float)
+
+    ha1_close = (open_ + high + low + close) / 4.0
+    ha1_open = pd.Series(index=df.index, dtype=float)
+    for i in range(len(df)):
+        if i == 0 or pd.isna(ha1_open.iloc[i - 1]):
+            ha1_open.iloc[i] = (open_.iloc[i] + close.iloc[i]) / 2.0
+        else:
+            ha1_open.iloc[i] = (ha1_open.iloc[i - 1] + ha1_close.iloc[i - 1]) / 2.0
+    ha1_high = pd.concat([high, ha1_open, ha1_close], axis=1).max(axis=1)
+    ha1_low = pd.concat([low, ha1_open, ha1_close], axis=1).min(axis=1)
+
+    ha2_close = (ha1_open + ha1_high + ha1_low + ha1_close) / 4.0
+    ha2_open = pd.Series(index=df.index, dtype=float)
+    for i in range(len(df)):
+        if i == 0 or pd.isna(ha2_open.iloc[i - 1]):
+            ha2_open.iloc[i] = (ha1_open.iloc[i] + ha1_close.iloc[i]) / 2.0
+        else:
+            ha2_open.iloc[i] = (ha2_open.iloc[i - 1] + ha2_close.iloc[i - 1]) / 2.0
+    ha2_high = pd.concat([ha1_high, ha2_open, ha2_close], axis=1).max(axis=1)
+    ha2_low = pd.concat([ha1_low, ha2_open, ha2_close], axis=1).min(axis=1)
+    prev_close = ha2_close.shift(1).fillna(ha2_close)
+    tr = pd.concat([
+        ha2_high - ha2_low,
+        (ha2_high - prev_close).abs(),
+        (ha2_low - prev_close).abs(),
+    ], axis=1).max(axis=1)
+    atr_st = _rma(tr, int(params.get("st_atr_len", 16)))
+    st_mid = (ha2_high + ha2_low) * 0.5
+    upper_basic = st_mid + float(params.get("st_factor", 3.8)) * atr_st
+    lower_basic = st_mid - float(params.get("st_factor", 3.8)) * atr_st
+    hys_atr = float(params.get("st_hys_atr", 0.14))
+    st_confirm = int(params.get("st_confirm", 1))
+
+    states = []
+    st_upper = np.nan
+    st_lower = np.nan
+    st_state: int | None = None
+    st_candidate: int | None = None
+    cand_count = 0
+    lock_band = np.nan
+    lock_h = np.nan
+
+    for i in range(len(df)):
+        if st_state is None:
+            st_state = 1 if ha2_close.iloc[i] >= st_mid.iloc[i] else -1
+            st_upper = upper_basic.iloc[i]
+            st_lower = lower_basic.iloc[i]
+            states.append(st_state)
+            continue
+
+        prev_upper = st_upper
+        prev_lower = st_lower
+        if st_state == 1:
+            st_lower = lower_basic.iloc[i] if np.isnan(prev_lower) else max(lower_basic.iloc[i], prev_lower)
+            st_upper = upper_basic.iloc[i]
+        else:
+            st_upper = upper_basic.iloc[i] if np.isnan(prev_upper) else min(upper_basic.iloc[i], prev_upper)
+            st_lower = lower_basic.iloc[i]
+
+        hys_dist = hys_atr * (atr_st.iloc[i - 1] if i > 0 and not np.isnan(atr_st.iloc[i - 1]) else atr_st.iloc[i])
+        ref_line = prev_lower if st_state == 1 else prev_upper
+        start_dn = st_state == 1 and not np.isnan(ref_line) and ha2_close.iloc[i] < (ref_line - hys_dist)
+        start_up = st_state == -1 and not np.isnan(ref_line) and ha2_close.iloc[i] > (ref_line + hys_dist)
+
+        if st_candidate is None:
+            if start_dn:
+                st_candidate = -1
+                lock_band = ref_line
+                lock_h = hys_dist
+                cand_count = 1
+            elif start_up:
+                st_candidate = 1
+                lock_band = ref_line
+                lock_h = hys_dist
+                cand_count = 1
+        else:
+            passed = ha2_close.iloc[i] < (lock_band - lock_h) if st_candidate == -1 else ha2_close.iloc[i] > (lock_band + lock_h)
+            if passed:
+                cand_count += 1
+                if cand_count >= st_confirm:
+                    st_state = st_candidate
+                    st_candidate = None
+                    cand_count = 0
+                    st_upper = upper_basic.iloc[i]
+                    st_lower = lower_basic.iloc[i]
+            else:
+                st_candidate = None
+                cand_count = 0
+
+        states.append(st_state)
+
+    return pd.Series(states, index=df.index)
+
+
+def _ronin_entry_events(df: pd.DataFrame, params: dict) -> dict:
+    """메인지표 Entry 원형 중 브리프봇에서 안정적으로 이식 가능한 부분만 근사."""
+    min_len = max(
+        int(params.get("bb_len", 40)) + int(params.get("bb_reentry_bars", 6)) + 5,
+        int(params.get("wt_n1", 18)) + int(params.get("wt_n2", 28)) + int(params.get("wt_n3", 5)) + 5,
+        int(params.get("mfi_len", 14)) + int(params.get("mfi_smooth", 5)) + 5,
+        int(params.get("st_atr_len", 16)) + 10,
+    )
+    if len(df) < min_len:
+        return {"hit": False, "reason": f"data short ({len(df)} < {min_len})"}
+
+    high = df["high"].astype(float)
+    low = df["low"].astype(float)
+    close = df["close"].astype(float)
+    volume = df["volume"].astype(float)
+
+    wt_n1 = int(params.get("wt_n1", 18))
+    wt_n2 = int(params.get("wt_n2", 28))
+    wt_n3 = int(params.get("wt_n3", 5))
+    wt_ob = float(params.get("wt_ob", 52.5))
+    wt_os = float(params.get("wt_os", -45.0))
+    wt_esa = close.ewm(span=wt_n1, adjust=False).mean()
+    wt_d = (close - wt_esa).abs().ewm(span=wt_n1, adjust=False).mean()
+    wt_ci = (close - wt_esa) / (0.015 * wt_d.replace(0, np.nan))
+    wt_tci = wt_ci.ewm(span=wt_n2, adjust=False).mean()
+    wt_sig = wt_tci.rolling(wt_n3).mean()
+
+    mfi_len = int(params.get("mfi_len", 14))
+    mfi_smooth = int(params.get("mfi_smooth", 5))
+    mfi_linger = int(params.get("mfi_linger", 1))
+    mfi_os = float(params.get("mfi_os", 38.5))
+    mfi_ob = float(params.get("mfi_ob", 64.5))
+    mfi_raw = _mfi(high, low, close, volume, mfi_len)
+    mfi_val = mfi_raw if mfi_smooth <= 1 else mfi_raw.rolling(mfi_smooth).mean().fillna(mfi_raw)
+
+    bb_len = int(params.get("bb_len", 40))
+    bb_mult = float(params.get("bb_mult", 2.08))
+    bb_rein = max(1, int(params.get("bb_rein", 2)))
+    bb_reentry_bars = int(params.get("bb_reentry_bars", 6))
+    bb_basis = close.rolling(bb_len).mean()
+    bb_dev = close.rolling(bb_len).std() * bb_mult
+    bb_up = bb_basis + bb_dev
+    bb_dn = bb_basis - bb_dev
+    ttl = int(params.get("ttl_cluster", 2))
+
+    st_state = _ronin_st_state(df, params)
+
+    wt_arm_up = wt_arm_dn = False
+    wt_arm_up_outside = wt_arm_dn_outside = 0
+    mfi_arm_l = mfi_arm_h = False
+    mfi_arm_l_age = mfi_arm_h_age = 0
+    mfi_allow_buy = mfi_allow_sell = True
+    bb_buy_armed = False
+    bb_buy_in_cnt = bb_buy_age = 0
+    last_wt_buy = last_mfi_buy = last_bb_buy = None
+    entry_events = []
+    detail_by_bar = {}
+
+    for i in range(len(df)):
+        sig_wt_buy = False
+        sig_mfi_buy = False
+        sig_bb_buy = False
+
+        if not np.isnan(wt_tci.iloc[i]) and not np.isnan(wt_sig.iloc[i]):
+            in_os = wt_tci.iloc[i] <= wt_os
+            in_ob = wt_tci.iloc[i] >= wt_ob
+            if in_os:
+                wt_arm_dn = True
+                wt_arm_dn_outside = 0
+                wt_arm_up = False
+                wt_arm_up_outside = 0
+            elif wt_arm_dn:
+                wt_arm_dn_outside += 1
+                if wt_arm_dn_outside > 2:
+                    wt_arm_dn = False
+                    wt_arm_dn_outside = 0
+            if in_ob:
+                wt_arm_up = True
+                wt_arm_up_outside = 0
+                wt_arm_dn = False
+                wt_arm_dn_outside = 0
+            elif wt_arm_up:
+                wt_arm_up_outside += 1
+                if wt_arm_up_outside > 2:
+                    wt_arm_up = False
+                    wt_arm_up_outside = 0
+            if wt_arm_dn and _cross_up(wt_tci, wt_sig, i):
+                if in_os or 1 <= wt_arm_dn_outside <= 2:
+                    sig_wt_buy = True
+                    if not in_os:
+                        wt_arm_dn = False
+                        wt_arm_dn_outside = 0
+
+        mfi_now = mfi_val.iloc[i]
+        if not np.isnan(mfi_now):
+            mfi_zone_low = mfi_now <= mfi_os
+            mfi_zone_high = mfi_now >= mfi_ob
+            pivot_up = i >= 2 and (mfi_val.iloc[i - 1] - mfi_val.iloc[i - 2] < 0) and (mfi_val.iloc[i] - mfi_val.iloc[i - 1] > 0)
+            pivot_down = i >= 2 and (mfi_val.iloc[i - 1] - mfi_val.iloc[i - 2] > 0) and (mfi_val.iloc[i] - mfi_val.iloc[i - 1] < 0)
+            if mfi_zone_low:
+                mfi_arm_l = True
+                mfi_arm_h = False
+                mfi_arm_l_age = 0
+                mfi_arm_h_age = 0
+                mfi_allow_buy = True
+                mfi_allow_sell = True
+            elif mfi_arm_l and not mfi_zone_low:
+                mfi_arm_l_age += 1
+                if mfi_arm_l_age > mfi_linger:
+                    mfi_arm_l = False
+                    mfi_arm_l_age = 0
+            if mfi_zone_high:
+                mfi_arm_h = True
+                mfi_arm_l = False
+                mfi_arm_h_age = 0
+                mfi_arm_l_age = 0
+                mfi_allow_buy = True
+                mfi_allow_sell = True
+            elif mfi_arm_h and not mfi_zone_high:
+                mfi_arm_h_age += 1
+                if mfi_arm_h_age > mfi_linger:
+                    mfi_arm_h = False
+                    mfi_arm_h_age = 0
+            if pivot_up:
+                mfi_allow_sell = True
+            if pivot_down:
+                mfi_allow_buy = True
+            if mfi_arm_l and mfi_allow_buy and pivot_up:
+                sig_mfi_buy = True
+                mfi_allow_buy = False
+                mfi_arm_l = False
+                mfi_arm_l_age = 0
+
+        if not np.isnan(bb_dn.iloc[i]) and not np.isnan(bb_up.iloc[i]):
+            touch_dn = low.iloc[i] <= bb_dn.iloc[i] <= high.iloc[i]
+            outside_dn = close.iloc[i] < bb_dn.iloc[i]
+            inside_close = bb_dn.iloc[i] <= close.iloc[i] <= bb_up.iloc[i]
+            if (not bb_buy_armed) and (touch_dn or outside_dn):
+                bb_buy_armed = True
+                bb_buy_in_cnt = 0
+                bb_buy_age = 0
+            if bb_buy_armed:
+                bb_buy_age += 1
+                if inside_close:
+                    bb_buy_in_cnt += 1
+                    if bb_buy_in_cnt >= bb_rein:
+                        sig_bb_buy = True
+                        bb_buy_armed = False
+                        bb_buy_in_cnt = 0
+                        bb_buy_age = 0
+                else:
+                    bb_buy_in_cnt = 0
+                if bb_buy_armed and bb_buy_age >= bb_reentry_bars:
+                    bb_buy_armed = False
+                    bb_buy_in_cnt = 0
+                    bb_buy_age = 0
+
+        if sig_wt_buy:
+            last_wt_buy = i
+        if sig_mfi_buy:
+            last_mfi_buy = i
+        if sig_bb_buy:
+            last_bb_buy = i
+
+        active = []
+        for name, last_idx in [("WT", last_wt_buy), ("MFI", last_mfi_buy), ("BB", last_bb_buy)]:
+            if last_idx is not None and i - last_idx <= ttl:
+                active.append(name)
+        buy_cnt = len(active)
+        prev_cnt = detail_by_bar.get(i - 1, {}).get("buy_cnt", 0)
+        raw100 = buy_cnt == 3 and prev_cnt != 3
+        raw50 = buy_cnt >= 2 and prev_cnt < 2 and not raw100
+        final_entry = (raw100 or raw50) and int(st_state.iloc[i]) == -1
+        detail_by_bar[i] = {
+            "buy_cnt": buy_cnt,
+            "active": active,
+            "st_state": int(st_state.iloc[i]),
+            "raw_type": "3/3" if raw100 else "2/3" if raw50 else "",
+        }
+        if final_entry:
+            entry_events.append(i)
+
+    recent_bars = int(params.get("recent_bars", 5))
+    if not entry_events:
+        return {
+            "hit": False,
+            "last_buy_cnt": detail_by_bar.get(len(df) - 1, {}).get("buy_cnt", 0),
+            "st_state": int(st_state.iloc[-1]),
+        }
+    last_event = entry_events[-1]
+    age = len(df) - 1 - last_event
+    last_detail = detail_by_bar.get(last_event, {})
+    return {
+        "hit": age <= recent_bars,
+        "last_entry_age": int(age),
+        "entry_type": last_detail.get("raw_type", ""),
+        "active_components": last_detail.get("active", []),
+        "st_state": int(st_state.iloc[-1]),
+        "recent_bars": recent_bars,
+    }
+
+
+def _signal_ronin_entry_v2(df: pd.DataFrame, params: dict) -> tuple[bool, dict]:
+    result = _ronin_entry_events(df, params)
+    hit = bool(result.pop("hit", False))
+    if not hit and "reason" not in result:
+        result["reason"] = "no recent RONIN entry cluster"
+    return hit, result
+
+
+def _signal_ronin_structure_support(df: pd.DataFrame, params: dict) -> tuple[bool, dict]:
+    pivot_len = int(params.get("pivot_len", 12))
+    volume_ma = int(params.get("volume_ma", 6))
+    atr_len = int(params.get("atr_len", 14))
+    margin_atr = float(params.get("margin_atr", 0.5))
+    max_zones = int(params.get("max_zones", 6))
+    if len(df) < pivot_len * 2 + atr_len + 5:
+        return False, {"reason": "data short"}
+
+    high = df["high"].astype(float).reset_index(drop=True)
+    low = df["low"].astype(float).reset_index(drop=True)
+    open_ = df["open"].astype(float).reset_index(drop=True)
+    close = df["close"].astype(float).reset_index(drop=True)
+    volume = df["volume"].astype(float).reset_index(drop=True)
+    tr = pd.concat([
+        high - low,
+        (high - close.shift(1).fillna(close)).abs(),
+        (low - close.shift(1).fillna(close)).abs(),
+    ], axis=1).max(axis=1)
+    atr = _rma(tr, atr_len)
+    vol_sma = volume.rolling(volume_ma).mean()
+
+    supports: list[dict] = []
+    resistances: list[dict] = []
+    for i in range(pivot_len, len(df) - pivot_len):
+        win_low = low.iloc[i - pivot_len:i + pivot_len + 1]
+        win_high = high.iloc[i - pivot_len:i + pivot_len + 1]
+        vol_ok = volume.iloc[i] > (vol_sma.iloc[i] if not np.isnan(vol_sma.iloc[i]) else 0)
+        if vol_ok and low.iloc[i] <= win_low.min():
+            zlo = float(low.iloc[i])
+            zhi = float(min(open_.iloc[i], close.iloc[i]))
+            if zhi <= zlo:
+                zhi = zlo
+            supports.insert(0, {"lo": zlo, "hi": zhi, "broken": False, "bar": i})
+            supports = supports[:max_zones]
+        if vol_ok and high.iloc[i] >= win_high.max():
+            zhi = float(high.iloc[i])
+            zlo = float(max(open_.iloc[i], close.iloc[i]))
+            if zlo >= zhi:
+                zlo = zhi
+            resistances.insert(0, {"lo": zlo, "hi": zhi, "broken": False, "bar": i})
+            resistances = resistances[:max_zones]
+
+        for zone in supports:
+            if not zone["broken"] and close.iloc[i] < (zone["lo"] + zone["hi"]) / 2:
+                zone["broken"] = True
+        for zone in resistances:
+            if not zone["broken"] and close.iloc[i] > (zone["lo"] + zone["hi"]) / 2:
+                zone["broken"] = True
+
+    last_low = float(low.iloc[-1])
+    last_close = float(close.iloc[-1])
+    margin = float(atr.iloc[-1] if not np.isnan(atr.iloc[-1]) else 0) * margin_atr
+
+    checks = []
+    for zone in supports:
+        if not zone["broken"]:
+            checks.append(("support", zone))
+    for zone in resistances:
+        if zone["broken"] and zone["hi"] < last_close:
+            checks.append(("reclaimed_resistance", zone))
+
+    nearest = None
+    for kind, zone in checks:
+        in_zone = zone["lo"] <= last_low <= zone["hi"]
+        above_near = zone["hi"] < last_low <= zone["hi"] + margin
+        if in_zone or above_near:
+            dist = 0.0 if in_zone else last_low - zone["hi"]
+            if nearest is None or dist < nearest["distance"]:
+                nearest = {
+                    "kind": kind,
+                    "zone_lo": round(zone["lo"], 3),
+                    "zone_hi": round(zone["hi"], 3),
+                    "distance": round(dist, 3),
+                    "margin": round(margin, 3),
+                    "bar_age": int(len(df) - 1 - zone["bar"]),
+                }
+
+    if nearest:
+        return True, nearest
+    return False, {"reason": "not near support/reclaimed resistance", "margin": round(margin, 3)}
 
 
 def _summarize_radar(
@@ -919,6 +1350,22 @@ class ScoutAgent(BaseAgent):
                         info["score"] += float(weights.get("after_low_consolidation", 1.0))
                         info["signals"]["after_low_consolidation"] = sig_info
 
+                # RONIN Entry v2 근사: WT/MFI/BB 공진 + ST DOWN
+                ronin_entry_cfg = scout_cfg["signals"].get("ronin_entry_v2", {}) or {}
+                if bool(ronin_entry_cfg.get("enabled", False)):
+                    hit, sig_info = _signal_ronin_entry_v2(df, ronin_entry_cfg)
+                    if hit:
+                        info["score"] += float(weights.get("ronin_entry_v2", 1.0))
+                        info["signals"]["ronin_entry_v2"] = sig_info
+
+                # 구조 지지 근접 근사: 피벗 지지/돌파 저항 근처
+                structure_cfg = scout_cfg["signals"].get("ronin_structure_support", {}) or {}
+                if bool(structure_cfg.get("enabled", False)):
+                    hit, sig_info = _signal_ronin_structure_support(df, structure_cfg)
+                    if hit:
+                        info["score"] += float(weights.get("ronin_structure_support", 1.0))
+                        info["signals"]["ronin_structure_support"] = sig_info
+
         # ── Stage 4: 내부 Radar Pool 구성 ──
         signal_counter = Counter()
         with_signal_count = 0
@@ -957,9 +1404,25 @@ class ScoutAgent(BaseAgent):
         radar_pool = radar_eligible[:radar_pool_size]
 
         # ── Stage 5: 로이에게 보고할 엄선 후보만 추출 ──
+        quality_gate = scout_cfg.get("brief_quality_gate", {}) or {}
+
+        def _passes_brief_quality_gate(item: dict) -> bool:
+            if not bool(quality_gate.get("enabled", False)):
+                return True
+            signal_keys = set(item.get("signal_keys", []) or [])
+            if bool(quality_gate.get("allow_ronin_entry_v2", True)) and "ronin_entry_v2" in signal_keys:
+                return True
+            if bool(quality_gate.get("allow_catalyst_found", True)) and item.get("catalyst_context", {}).get("status") == "found":
+                return True
+            min_signal_count = int(quality_gate.get("allow_signal_count_at_least", 4) or 0)
+            if min_signal_count > 0 and int(item.get("signal_count", 0) or 0) >= min_signal_count:
+                return True
+            return False
+
         candidates = [
             item for item in radar_pool
-            if item["score"] >= brief_min_score or item["signal_count"] >= signals_required
+            if (item["score"] >= brief_min_score or item["signal_count"] >= signals_required)
+            and _passes_brief_quality_gate(item)
         ][:max_output]
 
         filter_audit = {
@@ -992,6 +1455,7 @@ class ScoutAgent(BaseAgent):
                 "radar_cap_dropped": int(max(0, len(radar_eligible) - radar_pool_size)),
                 "brief_min_score": float(brief_min_score),
                 "signals_required": int(signals_required),
+                "brief_quality_gate": dict(quality_gate),
                 "brief_rejected_after_radar": int(max(0, len(radar_pool) - len(candidates))),
                 "brief_picks": int(len(candidates)),
             },

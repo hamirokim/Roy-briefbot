@@ -45,6 +45,37 @@ scout:
       enabled: true
       transition_lookback_days: 3      # 최근 3일 내 LAGGING→IMPROVING
 
+    ronin_entry_v2:                    # 메인지표 Entry 공진 근사: WT/MFI/BB + ST DOWN
+      enabled: true
+      recent_bars: 5                   # 최근 N봉 안에 RONIN entry 근사 발생
+      wt_n1: 18
+      wt_n2: 28
+      wt_n3: 5
+      wt_ob: 52.5
+      wt_os: -45.0
+      mfi_len: 14
+      mfi_smooth: 5
+      mfi_linger: 1
+      mfi_ob: 64.5
+      mfi_os: 38.5
+      bb_len: 40
+      bb_mult: 2.08
+      bb_rein: 2
+      bb_reentry_bars: 6
+      ttl_cluster: 2
+      st_atr_len: 16
+      st_factor: 3.8
+      st_confirm: 1
+      st_hys_atr: 0.14
+
+    ronin_structure_support:           # 구조존 근사: 피벗 지지/돌파 저항 근처
+      enabled: true
+      pivot_len: 12
+      volume_ma: 6
+      atr_len: 14
+      margin_atr: 0.5
+      max_zones: 6
+
   # 후보 채택 임계치
   signals_required: 3                  # 5개 중 N개 이상 충족 → 후보
   max_candidates_output: 5             # 최종 출력 종목 수
@@ -57,6 +88,12 @@ scout:
   brief_min_score: 2.4                 # 최종 브리핑 후보 최소 점수
   ohlcv_top_per_country: 500           # 무신호 종목 중 국가별 OHLCV 평가 상한
   theme_boost_enabled: true            # themes.yaml 가치사슬 종목 보너스
+
+  brief_quality_gate:
+    enabled: true                      # 점수만 높은 후보가 5칸 채우는 것 방지
+    allow_catalyst_found: true
+    allow_ronin_entry_v2: true
+    allow_signal_count_at_least: 4
 
   catalyst:
     enabled: true
@@ -72,6 +109,8 @@ scout:
     after_low_consolidation: 1.1
     insider_buying: 0.7
     rrg_improving: 1.0
+    ronin_entry_v2: 1.6
+    ronin_structure_support: 0.8
     theme_A_plus: 0.8
     theme_A: 0.6
     theme_B_plus: 0.4

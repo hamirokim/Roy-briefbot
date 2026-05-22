@@ -124,6 +124,8 @@ _SIGNAL_KO = {
     "after_low_consolidation": "신저가 후 횡보 (바닥다지기)",
     "insider_buying": "내부자 매수",
     "rrg_improving": "섹터 상대강도 개선",
+    "ronin_entry_v2": "RONIN Entry v2 근접",
+    "ronin_structure_support": "RONIN 구조 지지 근접",
 }
 
 
@@ -1094,6 +1096,12 @@ class DigestAgent(BaseAgent):
                 lines.append(
                     f"  • 비용 제어   : 내부자/펀더멘털 사전조회 {insider_skipped:,}개 생략"
                     f" (미국 상위 {int(cost.get('insider_eval_top_us', 0) or 0):,}개만)"
+                )
+            gate = radar.get("brief_quality_gate", {}) or {}
+            if gate.get("enabled"):
+                lines.append(
+                    "  • 최종 게이트 : RONIN Entry v2 / 촉매 확인 / 신호 "
+                    f"{int(gate.get('allow_signal_count_at_least', 4) or 4)}개 이상 중 하나 필요"
                 )
             if catalyst and catalyst.get("enabled"):
                 lines.append(
