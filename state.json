@@ -1,7 +1,7 @@
 {
   "last_run_date": "2026-05-22",
-  "last_run_at": "2026-05-22T08:20:37.529800+09:00",
-  "last_monthly_run": "2026-05-01",
+  "last_run_at": "2026-05-22T10:32:07.115135+09:00",
+  "last_monthly_run": "2026-05-22",
   "last_weekly_run": "2026-W21",
   "m2_history": {
     "2026-05-22": {
@@ -2620,6 +2620,91 @@
       ],
       "track_d": "",
       "source": "SCOUT"
+    },
+    {
+      "ticker": "000990.KS",
+      "name": "DB하이텍",
+      "country": "KR",
+      "sector": "",
+      "date_added": "2026-05-22",
+      "price_at_add": 177200.0,
+      "score": 2.4,
+      "signal_keys": [
+        "bb_squeeze",
+        "volume_compression"
+      ],
+      "shadow_signal_keys": [],
+      "factor_score": 0.0,
+      "factor_positives": [
+        "liquidity_good",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [
+        "chasing_extreme"
+      ],
+      "quality_flags": [
+        "overextended_20d"
+      ],
+      "catalyst_status": "non_us",
+      "catalyst_score": 0.0,
+      "track_d": "",
+      "source": "SCOUT"
+    },
+    {
+      "ticker": "082740.KS",
+      "name": "한화엔진",
+      "country": "KR",
+      "sector": "",
+      "date_added": "2026-05-22",
+      "price_at_add": 74100.0,
+      "score": 2.4,
+      "signal_keys": [
+        "bb_squeeze",
+        "volume_compression"
+      ],
+      "shadow_signal_keys": [],
+      "factor_score": 0.0,
+      "factor_positives": [
+        "liquidity_good",
+        "not_chasing",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [],
+      "quality_flags": [],
+      "catalyst_status": "non_us",
+      "catalyst_score": 0.0,
+      "track_d": "",
+      "source": "SCOUT"
+    },
+    {
+      "ticker": "3038.T",
+      "name": "神戸物産",
+      "country": "JP",
+      "sector": "商社・卸売",
+      "date_added": "2026-05-22",
+      "price_at_add": 2745.5,
+      "score": 2.4,
+      "signal_keys": [
+        "bb_squeeze",
+        "volume_compression"
+      ],
+      "shadow_signal_keys": [
+        "ronin_structure_support"
+      ],
+      "factor_score": 0.0,
+      "factor_positives": [
+        "liquidity_good",
+        "not_chasing",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [],
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "catalyst_status": "non_us",
+      "catalyst_score": 0.0,
+      "track_d": "",
+      "source": "SCOUT"
     }
   ],
   "scout_cooldown": {
@@ -2644,330 +2729,303 @@
     "BXP": "2026-05-22",
     "FR": "2026-05-22",
     "REXR": "2026-05-22",
-    "EPRT": "2026-05-22"
+    "EPRT": "2026-05-22",
+    "000990.KS": "2026-05-22",
+    "082740.KS": "2026-05-22",
+    "3038.T": "2026-05-22"
   },
   "prev_day": {
     "candidates": [
       {
-        "ticker": "SPG",
-        "name": "Simon Property Group Inc",
-        "country": "US",
-        "sector": "Real Estate",
-        "market_cap": 66300000000.0,
-        "avg_volume_value": 0.0,
-        "score": 2.2,
+        "ticker": "000990.KS",
+        "name": "DB하이텍",
+        "country": "KR",
+        "sector": "",
+        "market_cap": 5353025152.957172,
+        "avg_volume_value": 61553411.9646499,
+        "score": 2.4,
         "signal_score": 2.2,
         "theme_score": 0.0,
-        "liquidity_score": 0.0,
+        "liquidity_score": 0.2,
+        "factor_score": 0.0,
+        "factor_context": {
+          "score": 0.0,
+          "positives": [
+            "liquidity_good",
+            "volatility_healthy"
+          ],
+          "negatives": [
+            "chasing_extreme"
+          ],
+          "metrics": {
+            "close_days": 244,
+            "avg_volume_value": 61553411.96,
+            "ret_20d": 0.3698,
+            "drawdown_from_high": -0.0616,
+            "atr_pct": 0.0748
+          }
+        },
         "signal_count": 2,
         "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
+          "bb_squeeze",
+          "volume_compression"
         ],
         "signals": {
-          "rrg_improving": {
-            "etf": "XLRE",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
           "bb_squeeze": {
-            "current_width": 0.033,
-            "avg_width": 0.0744,
-            "ratio": 0.444,
+            "current_width": 0.3067,
+            "avg_width": 0.7217,
+            "ratio": 0.425,
             "threshold": 0.5,
             "label_ko": "변동성 압축",
             "phase": "拉升 직전 (매집 완료)"
+          },
+          "volume_compression": {
+            "short_avg": 446964,
+            "long_avg": 747960,
+            "ratio": 0.598,
+            "threshold": 0.6,
+            "label_ko": "거래량 압축",
+            "phase": "建仓 진행 중"
           }
         },
+        "shadow_signal_count": 0,
+        "shadow_signal_keys": [],
+        "shadow_signals": {},
         "quality_flags": [
-          "low_liquidity_buffer",
-          "near_52w_high"
+          "overextended_20d"
         ],
         "quality_metrics": {
-          "last_close": 204.1,
-          "ret_20d": 0.012,
-          "ma50": 196.062,
-          "ma200": 186.963,
-          "drawdown_from_high": -0.0167,
-          "avg_volume_value": 0.0
+          "last_close": 175200.0,
+          "ret_20d": 0.3698,
+          "ma50": 121370.0,
+          "ma200": 80274.0,
+          "drawdown_from_high": -0.0616,
+          "avg_volume_value": 61553411.96
+        },
+        "catalyst_context": {
+          "status": "non_us",
+          "score": 0.0,
+          "positive_hits": [],
+          "risk_hits": [],
+          "news": []
         },
         "track_d": {
           "is_theme_beneficiary": false
         },
+        "catalyst_score": 0.0,
         "buy_questions": {
-          "industry": "리츠/상업용 부동산",
-          "thesis": "활성 섹터 진입과 변동성 압축은 수급이 붙을 수 있는 환경이지만, 현재 PE와 EPS 성장률만 보면 강한 저평가 매집 신호는 아닙니다. RSI도 중립권이라 과열은 아니지만, insider와 기관 수급이 모두 순매도라 매집 근거는 약합니다.",
+          "industry": "정보 부족",
+          "thesis": "변동성 압축과 거래량 압축은 수급이 조용히 모이는 구간일 수 있지만, 현재 입력에는 PE/EPS Growth/RSI/insider/기관 fact가 없어 매집 근거를 강하게 검증할 수 없습니다. 따라서 매집 가능성은 일부 신호만 확인된 상태입니다.",
           "catalyst": "촉매 데이터 미연결",
-          "q1_why": "Forward PE 29.3배에 내년 EPS 성장률 7.0%로, 성장 대비 밸류에이션 부담이 있습니다. PE 37.5배도 높아 실적 개선이 더 확인되어야 상승 논리가 강해집니다.",
-          "q2_who": "Insider Trans -0.2%, Institutional Trans -0.5%로 내부자와 기관 모두 순매수 신호가 아닙니다. 현재 입력된 fact 기준으로는 누가 적극적으로 매집하는지 확인되지 않습니다.",
-          "q3_space": "RSI 56.9는 과열이 아니어서 추가 상승 여지는 남아 있습니다. 다만 PE가 높고 52주 저점 정보가 없어, 공간이 크다고 단정할 정보는 부족합니다.",
+          "q1_why": "PE와 EPS Growth 정보가 없어 밸류에이션 대비 이익 성장 기대를 판단할 수 없습니다. 따라서 현재는 가격·수급 신호만으로는 상승 논리를 확정하기 어렵습니다.",
+          "q2_who": "insider 및 기관 매집 fact가 입력되지 않아 누가 사는지 확인할 수 없습니다. 매집 주체가 검증되지 않아 신호 신뢰도는 제한적입니다.",
+          "q3_space": "RSI, 52주 저점, PE 정보가 없어 추가 상승 여지와 과열 여부를 판단하기 어렵습니다. 다만 변동성·거래량 압축은 아직 방향성이 열려 있다는 정도만 시사합니다.",
           "risk_flags": [
-            "기관 및 내부자 순매도",
-            "높은 밸류에이션 대비 제한적 EPS 성장"
+            "PE/EPS Growth/RSI/insider/기관 fact 미입력으로 검증 부족",
+            "촉매 데이터 미연결로 추세 전환 근거 부족"
           ],
           "star_rating": "★",
           "summary": "관찰 필요",
           "_llm_used": true
         },
-        "price_at_add": 204.9
+        "price_at_add": 177200.0
       },
       {
-        "ticker": "BXP",
-        "name": "BXP Inc",
-        "country": "US",
-        "sector": "Real Estate",
-        "market_cap": 10490000000.0,
-        "avg_volume_value": 0.0,
-        "score": 2.2,
+        "ticker": "082740.KS",
+        "name": "한화엔진",
+        "country": "KR",
+        "sector": "",
+        "market_cap": 4118490822.5696807,
+        "avg_volume_value": 44262161.93065941,
+        "score": 2.4,
         "signal_score": 2.2,
         "theme_score": 0.0,
-        "liquidity_score": 0.0,
+        "liquidity_score": 0.2,
+        "factor_score": 0.0,
+        "factor_context": {
+          "score": 0.6,
+          "positives": [
+            "liquidity_good",
+            "not_chasing",
+            "volatility_healthy"
+          ],
+          "negatives": [],
+          "metrics": {
+            "close_days": 244,
+            "avg_volume_value": 44262161.93,
+            "ret_20d": 0.0978,
+            "drawdown_from_high": -0.1721,
+            "atr_pct": 0.076
+          }
+        },
         "signal_count": 2,
         "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
+          "bb_squeeze",
+          "volume_compression"
         ],
         "signals": {
-          "rrg_improving": {
-            "etf": "XLRE",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
           "bb_squeeze": {
-            "current_width": 0.0493,
-            "avg_width": 0.1242,
-            "ratio": 0.397,
+            "current_width": 0.3705,
+            "avg_width": 0.8081,
+            "ratio": 0.458,
             "threshold": 0.5,
             "label_ko": "변동성 압축",
             "phase": "拉升 직전 (매집 완료)"
+          },
+          "volume_compression": {
+            "short_avg": 818395,
+            "long_avg": 1455887,
+            "ratio": 0.562,
+            "threshold": 0.6,
+            "label_ko": "거래량 압축",
+            "phase": "建仓 진행 중"
           }
         },
-        "quality_flags": [
-          "low_liquidity_buffer"
-        ],
+        "shadow_signal_count": 0,
+        "shadow_signal_keys": [],
+        "shadow_signals": {},
+        "quality_flags": [],
         "quality_metrics": {
-          "last_close": 60.13,
-          "ret_20d": 0.0549,
-          "ma50": 55.81,
-          "ma200": 65.34,
-          "drawdown_from_high": -0.2382,
-          "avg_volume_value": 0.0
+          "last_close": 74100.0,
+          "ret_20d": 0.0978,
+          "ma50": 60504.0,
+          "ma200": 49652.5,
+          "drawdown_from_high": -0.1721,
+          "avg_volume_value": 44262161.93
+        },
+        "catalyst_context": {
+          "status": "non_us",
+          "score": 0.0,
+          "positive_hits": [],
+          "risk_hits": [],
+          "news": []
         },
         "track_d": {
           "is_theme_beneficiary": false
         },
+        "catalyst_score": 0.0,
         "buy_questions": {
-          "industry": "리츠/오피스 부동산",
-          "thesis": "활성 섹터 진입과 변동성 압축은 단기 매집 신호로 볼 수 있지만, PE와 EPS 성장 수치가 약해 강한 펀더멘털 매집으로 보기엔 제한적입니다. 내부자와 기관 수급도 뚜렷한 순매수로 확인되지 않아 현재는 관찰 단계에 가깝습니다.",
+          "industry": "정보 부족",
+          "thesis": "변동성 압축과 거래량 압축은 매집 가능성을 시사할 수 있지만, 현재 입력에는 PE/EPS Growth, RSI, insider, 기관 매집 fact가 없어 강한 매집 근거로 검증할 수 없습니다. 따라서 사실 기반으로는 관찰 수준입니다.",
           "catalyst": "촉매 데이터 미연결",
-          "q1_why": "PE 30.2와 Forward PE 33.6은 밸류에이션 부담이 있으며, next Y EPS Growth 1.8%로 이익 성장 기대도 낮습니다. PEG 7.41은 성장 대비 가격 매력이 크지 않음을 시사합니다.",
-          "q2_who": "Insider Trans -7.2%로 내부자 매수 신호는 약하고, Institutional Trans -0.2%도 기관의 강한 순매집으로 보기 어렵습니다. 따라서 누가 적극적으로 사는지에 대한 근거가 부족합니다.",
-          "q3_space": "RSI 60.0은 과열은 아니지만 강한 저평가 구간도 아니며, 52주 저점 정보가 없어 추가 상승 여력 판단은 제한적입니다. 현재 수치만 보면 공간은 있으나 매력은 중립 수준입니다.",
+          "q1_why": "PE와 EPS Growth 입력이 없어 실적 대비 저평가 또는 성장 가속 여부를 판단할 수 없습니다. 따라서 상승 논리는 정보 부족입니다.",
+          "q2_who": "insider 및 기관 매집 fact가 입력되지 않아 누가 사는지 확인할 수 없습니다. 매집 주체는 정보 부족입니다.",
+          "q3_space": "RSI, PE, 52주 저점 관련 fact가 없어 추가 상승 여력이나 과열 여부를 검증할 수 없습니다. 현재는 정보 부족입니다.",
           "risk_flags": [
-            "높은 PE와 낮은 EPS 성장",
-            "내부자·기관 순매수 부재"
+            "PE/EPS Growth/RSI/insider/기관 fact 미제공",
+            "촉매 데이터 미연결"
           ],
           "star_rating": "★",
-          "summary": "관찰 단계",
+          "summary": "관찰만 가능",
           "_llm_used": true
         },
-        "price_at_add": 60.13
+        "price_at_add": 74100.0
       },
       {
-        "ticker": "FR",
-        "name": "First Industrial Realty Trust Inc",
-        "country": "US",
-        "sector": "Real Estate",
-        "market_cap": 8529999999.999999,
-        "avg_volume_value": 0.0,
-        "score": 2.2,
+        "ticker": "3038.T",
+        "name": "神戸物産",
+        "country": "JP",
+        "sector": "商社・卸売",
+        "market_cap": 3945131477.0580645,
+        "avg_volume_value": 36500492.993548386,
+        "score": 2.4,
         "signal_score": 2.2,
         "theme_score": 0.0,
-        "liquidity_score": 0.0,
+        "liquidity_score": 0.2,
+        "factor_score": 0.0,
+        "factor_context": {
+          "score": 0.6,
+          "positives": [
+            "liquidity_good",
+            "not_chasing",
+            "volatility_healthy"
+          ],
+          "negatives": [],
+          "metrics": {
+            "close_days": 244,
+            "avg_volume_value": 36500492.99,
+            "ret_20d": -0.1158,
+            "drawdown_from_high": -0.42,
+            "atr_pct": 0.0299
+          }
+        },
         "signal_count": 2,
         "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
+          "bb_squeeze",
+          "volume_compression"
         ],
         "signals": {
-          "rrg_improving": {
-            "etf": "XLRE",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
           "bb_squeeze": {
-            "current_width": 0.0353,
-            "avg_width": 0.0763,
-            "ratio": 0.462,
+            "current_width": 0.0805,
+            "avg_width": 0.2385,
+            "ratio": 0.338,
             "threshold": 0.5,
             "label_ko": "변동성 압축",
             "phase": "拉升 직전 (매집 완료)"
+          },
+          "volume_compression": {
+            "short_avg": 1100520,
+            "long_avg": 1959360,
+            "ratio": 0.562,
+            "threshold": 0.6,
+            "label_ko": "거래량 압축",
+            "phase": "建仓 진행 중"
+          }
+        },
+        "shadow_signal_count": 1,
+        "shadow_signal_keys": [
+          "ronin_structure_support"
+        ],
+        "shadow_signals": {
+          "ronin_structure_support": {
+            "kind": "support",
+            "zone_lo": 2667.5,
+            "zone_hi": 2681.0,
+            "distance": 26.0,
+            "margin": 39.837,
+            "bar_age": 13,
+            "label_ko": "RONIN 구조 지지 근접",
+            "phase": "구조존 재진입"
           }
         },
         "quality_flags": [
-          "low_liquidity_buffer"
+          "left_side_context"
         ],
         "quality_metrics": {
-          "last_close": 62.44,
-          "ret_20d": -0.0065,
-          "ma50": 60.803,
-          "ma200": 57.007,
-          "drawdown_from_high": -0.0304,
-          "avg_volume_value": 0.0
+          "last_close": 2750.0,
+          "ret_20d": -0.1158,
+          "ma50": 3172.47,
+          "ma200": 3708.452,
+          "drawdown_from_high": -0.42,
+          "avg_volume_value": 36500492.99
+        },
+        "catalyst_context": {
+          "status": "non_us",
+          "score": 0.0,
+          "positive_hits": [],
+          "risk_hits": [],
+          "news": []
         },
         "track_d": {
           "is_theme_beneficiary": false
         },
+        "catalyst_score": 0.0,
         "buy_questions": {
-          "industry": "리츠/부동산",
-          "thesis": "섹터 회전과 변동성 압축이 확인되지만, 실적 성장과 밸류에이션 개선 폭은 크지 않아 강한 매집 신호로 보긴 어렵습니다. 기관 순매수는 플러스이나 내부자 거래는 약해 수급 확신은 제한적입니다.",
+          "industry": "상사/도매",
+          "thesis": "변동성과 거래량이 함께 압축되어 있어 수급이 조용히 모이는 구간일 가능성은 있으나, 현재 입력된 사실만으로는 강한 매집 확정은 어렵습니다. 촉매 데이터가 연결되지 않아 상승 동력의 근거는 제한적입니다.",
           "catalyst": "촉매 데이터 미연결",
-          "q1_why": "PE 24.2배, Forward PE 33.0배로 현재와 선행 기준 모두 부담이 있으며, EPS Growth도 1.9%로 낮아 이익 성장에 따른 재평가 여지는 제한적입니다. 따라서 상승 논리는 강한 실적 모멘텀보다 섹터 회전과 수급에 더 의존합니다.",
-          "q2_who": "Institutional Trans가 +1.4%로 기관 매집 신호는 일부 확인되지만, Insider Trans는 -0.1%로 내부자 매수는 약합니다. 즉, 사는 주체는 기관 쪽이지만 강도는 중간 이하입니다.",
-          "q3_space": "RSI 55.4는 과열이 아니어서 추가 상승 여지는 남아 있고, 활성 섹터 진입과 변동성 압축은 단기 확장 가능성을 시사합니다. 다만 PE와 Forward PE가 높아 밸류에이션 측면의 상방은 제한적입니다.",
+          "q1_why": "PE와 EPS Growth 정보가 입력되지 않아 밸류에이션과 이익 성장 기반의 상승 논리를 검증할 수 없습니다. 따라서 현재는 실적 개선 기대보다 수급 압축 신호에만 의존한 관찰 단계입니다.",
+          "q2_who": "insider와 기관 매집 fact가 입력되지 않아 누가 사는지 확인할 수 없습니다. 현재 데이터만으로는 내부자 또는 기관의 적극적 매집 여부는 정보 부족입니다.",
+          "q3_space": "PE, RSI, 52주 저점 정보가 없어 추가 상승 여지와 과열 여부를 판단하기 어렵습니다. 다만 변동성·거래량 압축은 추세 전환 전 대기 구간일 수 있으나, 이는 추측에 해당해 확정할 수 없습니다.",
           "risk_flags": [
-            "EPS Growth 1.9%로 성장성 약함",
-            "Forward PE 33.0배로 밸류에이션 부담"
+            "촉매 데이터 미연결로 상승 근거 부족",
+            "PE/EPS Growth/RSI/insider/기관 fact 정보 부족"
           ],
           "star_rating": "★",
-          "summary": "관찰 우위",
+          "summary": "수급압축 관찰",
           "_llm_used": true
         },
-        "price_at_add": 62.44
-      },
-      {
-        "ticker": "REXR",
-        "name": "Rexford Industrial Realty Inc",
-        "country": "US",
-        "sector": "Real Estate",
-        "market_cap": 8130000000.000001,
-        "avg_volume_value": 0.0,
-        "score": 2.2,
-        "signal_score": 2.2,
-        "theme_score": 0.0,
-        "liquidity_score": 0.0,
-        "signal_count": 2,
-        "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
-        ],
-        "signals": {
-          "rrg_improving": {
-            "etf": "XLRE",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
-          "bb_squeeze": {
-            "current_width": 0.0475,
-            "avg_width": 0.1005,
-            "ratio": 0.473,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          }
-        },
-        "quality_flags": [
-          "low_liquidity_buffer"
-        ],
-        "quality_metrics": {
-          "last_close": 36.06,
-          "ret_20d": -0.0074,
-          "ma50": 34.943,
-          "ma200": 38.927,
-          "drawdown_from_high": -0.1853,
-          "avg_volume_value": 0.0
-        },
-        "track_d": {
-          "is_theme_beneficiary": false
-        },
-        "buy_questions": {
-          "industry": "리츠/산업용 부동산",
-          "thesis": "활성 섹터 진입과 변동성 압축은 단기 매집 신호로 볼 수 있지만, 밸류에이션과 성장률이 강하지 않아 확신은 제한적입니다. 현재 입력된 fact만 보면 추세 전환 초기 가능성은 있으나 강한 펀더멘털 매집으로 단정하기 어렵습니다.",
-          "catalyst": "촉매 데이터 미연결",
-          "q1_why": "PE 38.4, Forward PE 32.5로 기대치가 높게 반영돼 있고, EPS Growth(next Y) 1.1%와 PEG 4.39는 성장 대비 가격 부담이 큽니다. 따라서 실적 기반의 강한 상승 논리는 약합니다.",
-          "q2_who": "Insider Trans -8.7%, Institutional Trans -4.1%로 내부자와 기관의 순매집 신호는 확인되지 않습니다. 현재 입력 fact 기준으로는 누가 적극적으로 사는지 뚜렷하지 않습니다.",
-          "q3_space": "RSI 54.8은 과열도 과매도도 아닌 중립 구간이라 추가 상승 여지는 남아 있습니다. 다만 52주 저점 정보가 없어 저평가 여력은 정보 부족이며, PE 수준도 높아 공간은 제한적입니다.",
-          "risk_flags": [
-            "높은 밸류에이션 대비 낮은 EPS 성장",
-            "내부자·기관 순매집 부재"
-          ],
-          "star_rating": "★",
-          "summary": "관찰 필요",
-          "_llm_used": true
-        },
-        "price_at_add": 36.06
-      },
-      {
-        "ticker": "EPRT",
-        "name": "Essential Properties Realty Trust Inc",
-        "country": "US",
-        "sector": "Real Estate",
-        "market_cap": 6770000000.0,
-        "avg_volume_value": 0.0,
-        "score": 2.2,
-        "signal_score": 2.2,
-        "theme_score": 0.0,
-        "liquidity_score": 0.0,
-        "signal_count": 2,
-        "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
-        ],
-        "signals": {
-          "rrg_improving": {
-            "etf": "XLRE",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
-          "bb_squeeze": {
-            "current_width": 0.0424,
-            "avg_width": 0.0924,
-            "ratio": 0.459,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          }
-        },
-        "quality_flags": [
-          "low_liquidity_buffer"
-        ],
-        "quality_metrics": {
-          "last_close": 31.38,
-          "ret_20d": -0.0038,
-          "ma50": 31.631,
-          "ma200": 31.021,
-          "drawdown_from_high": -0.0928,
-          "avg_volume_value": 0.0
-        },
-        "track_d": {
-          "is_theme_beneficiary": false
-        },
-        "buy_questions": {
-          "industry": "리츠(산업용 부동산)",
-          "thesis": "기관 순매수는 +8.3%로 확인되지만, EPS 성장률이 1.4%로 낮고 PEG가 5.58로 높아 강한 실적 기반 매집으로 보기는 어렵습니다. RSI 50.3과 변동성 압축은 관찰되지만, 현재는 제한적 매집 신호 수준입니다.",
-          "catalyst": "촉매 데이터 미연결",
-          "q1_why": "Forward PE 22.7은 현재 이익 대비 과도하게 낮다고 보기 어렵고, EPS Growth 1.4%도 상승 탄력을 강하게 뒷받침하지 않습니다. 따라서 밸류에이션과 성장 측면에서 추가 상승 논리는 제한적입니다.",
-          "q2_who": "기관 거래가 +8.3%로 순매수 우위이며, 이는 수급 측면에서 가장 뚜렷한 긍정 신호입니다. 반면 insider trans는 -2.0%로 내부자 매수 신호는 약합니다.",
-          "q3_space": "RSI 50.3은 과열도 과매도도 아닌 중립 구간이라 추가 상승 여지는 남아 있습니다. 다만 PE 24.9, Forward PE 22.7, PEG 5.58 조합은 저평가 구간으로 보기 어려워 상방 여력은 제한적입니다.",
-          "risk_flags": [
-            "EPS 성장률이 1.4%로 낮음",
-            "PEG 5.58로 성장 대비 밸류에이션 부담"
-          ],
-          "star_rating": "★",
-          "summary": "기관매수,성장약함",
-          "_llm_used": true
-        },
-        "price_at_add": 31.38
+        "price_at_add": 2745.5
       }
     ],
     "alerts_count": 1,
