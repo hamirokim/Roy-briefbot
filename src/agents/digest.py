@@ -97,6 +97,16 @@ _QUALITY_FLAG_KO = {
     "low_liquidity_buffer": "유동성 여유 부족",
     "data_short": "시세 데이터 짧음",
 }
+_FACTOR_KO = {
+    "liquidity_good": "유동성 충분",
+    "liquidity_weak": "유동성 약함",
+    "not_chasing": "추격매수 위험 낮음",
+    "chasing_hot": "20일 급등 추격 위험",
+    "chasing_extreme": "단기 과열 심함",
+    "volatility_healthy": "변동성 정상",
+    "volatility_extreme": "변동성 과도",
+    "data_short": "데이터 짧음",
+}
 _QUADRANT_KO = {
     "LEADING": "주도",
     "IMPROVING": "개선",
@@ -1043,6 +1053,8 @@ class DigestAgent(BaseAgent):
         theme_count = int(radar_summary.get("theme_count", 0) or 0)
         top_signals = radar_summary.get("top_signals", []) or []
         top_quality_flags = radar_summary.get("top_quality_flags", []) or []
+        top_factor_positives = radar_summary.get("top_factor_positives", []) or []
+        top_factor_negatives = radar_summary.get("top_factor_negatives", []) or []
         coverage_warnings = radar_summary.get("coverage_warnings", []) or []
         source_counts = radar_summary.get("source_counts", {}) or {}
         filter_audit = radar_summary.get("filter_audit", {}) or {}
@@ -1066,6 +1078,7 @@ class DigestAgent(BaseAgent):
         if filter_audit:
             hard = filter_audit.get("hard_filter", {}) or {}
             cost = filter_audit.get("cost_control", {}) or {}
+            factor_audit = filter_audit.get("factor_audit", {}) or {}
             scope = filter_audit.get("evaluation_scope", {}) or {}
             signal = filter_audit.get("signal_audit", {}) or {}
             radar = filter_audit.get("radar_audit", {}) or {}
@@ -1111,6 +1124,11 @@ class DigestAgent(BaseAgent):
                     f" / 없음 {int(catalyst.get('none', 0) or 0):,}"
                     f" / 미연결 {int(catalyst.get('non_us', 0) or 0) + int(catalyst.get('no_key', 0) or 0):,}"
                 )
+            if factor_audit and factor_audit.get("enabled"):
+                lines.append(
+                    f"  • 因子 보정   : 유동성/추격위험/변동성/데이터 품질 반영"
+                    f" (상한 ±{float(factor_audit.get('score_cap', 0) or 0):.1f})"
+                )
         if top_signals:
             parts = []
             for item in top_signals[:3]:
@@ -1127,6 +1145,24 @@ class DigestAgent(BaseAgent):
                 parts.append(f"{_QUALITY_FLAG_KO.get(flag, flag)} {count}")
             if parts:
                 lines.append(f"  • 관찰 태그   : {' / '.join(parts)}")
+        if top_factor_positives or top_factor_negatives:
+            pos_parts = []
+            neg_parts = []
+            for item in top_factor_positives[:2]:
+                key = item[0] if isinstance(item, (list, tuple)) and item else ""
+                count = item[1] if isinstance(item, (list, tuple)) and len(item) > 1 else 0
+                pos_parts.append(f"{_FACTOR_KO.get(key, key)} {count}")
+            for item in top_factor_negatives[:2]:
+                key = item[0] if isinstance(item, (list, tuple)) and item else ""
+                count = item[1] if isinstance(item, (list, tuple)) and len(item) > 1 else 0
+                neg_parts.append(f"{_FACTOR_KO.get(key, key)} {count}")
+            factor_text = []
+            if pos_parts:
+                factor_text.append("가산 " + " / ".join(pos_parts))
+            if neg_parts:
+                factor_text.append("감점 " + " / ".join(neg_parts))
+            if factor_text:
+                lines.append(f"  • 因子 요약   : {' | '.join(factor_text)}")
         if coverage_warnings:
             warn_parts = []
             for w in coverage_warnings[:4]:
@@ -1143,6 +1179,17 @@ class DigestAgent(BaseAgent):
                 lines.append(f"▷ 후보 {idx}: {c['ticker']} ({name}) — {country_ko}")
                 lines.append(f"    섹터    : {c.get('sector', '미분류')} | 시총 : {cap}")
                 lines.append(f"    레이더 점수: {c.get('score', 0)} | 신호 {c.get('signal_count', len(c.get('signals', {}) or {}))}개")
+                factor = c.get("factor_context", {}) or {}
+                if factor:
+                    positives = [_FACTOR_KO.get(k, k) for k in (factor.get("positives", []) or [])[:2]]
+                    negatives = [_FACTOR_KO.get(k, k) for k in (factor.get("negatives", []) or [])[:2]]
+                    factor_bits = []
+                    if positives:
+                        factor_bits.append("가산 " + ", ".join(positives))
+                    if negatives:
+                        factor_bits.append("감점 " + ", ".join(negatives))
+                    if factor_bits or factor.get("score"):
+                        lines.append(f"    因子 점수 : {float(factor.get('score', 0) or 0):+.1f}" + (f" ({' / '.join(factor_bits)})" if factor_bits else ""))
                 catalyst = c.get("catalyst_context", {}) or {}
                 if catalyst.get("score"):
                     lines.append(f"    촉매 점수 : {catalyst.get('score'):+.1f}")

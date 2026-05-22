@@ -232,14 +232,109 @@ def _assess_quality_context(df: pd.DataFrame, row: pd.Series, min_liquidity: flo
     }
 
 
+def _assess_factor_profile(df: pd.DataFrame, row: pd.Series, factor_cfg: dict, min_liquidity: float) -> dict:
+    """가격/거래량 기반 저비용 因子 점수.
+
+    목적: 좋은 종목을 새로 찾기보다, 애매한 후보가 최종 브리핑을 채우는 일을 줄인다.
+    """
+    if not bool((factor_cfg or {}).get("enabled", False)):
+        return {"score": 0.0, "positives": [], "negatives": [], "metrics": {}}
+
+    weights = factor_cfg.get("weights", {}) or {}
+    score = 0.0
+    positives: list[str] = []
+    negatives: list[str] = []
+    metrics: dict[str, float | int] = {}
+
+    try:
+        close = df["close"].astype(float).dropna()
+        high = df["high"].astype(float).reindex(close.index)
+        low = df["low"].astype(float).reindex(close.index)
+    except Exception:
+        close = pd.Series(dtype=float)
+        high = pd.Series(dtype=float)
+        low = pd.Series(dtype=float)
+
+    close_days = int(len(close))
+    metrics["close_days"] = close_days
+    if close_days < int(factor_cfg.get("min_close_days", 120) or 120):
+        score += float(weights.get("data_short", -0.3))
+        negatives.append("data_short")
+
+    try:
+        avg_value = float(row.get("avg_volume_value", 0) or 0)
+    except Exception:
+        avg_value = 0.0
+    metrics["avg_volume_value"] = round(avg_value, 2)
+    good_liq = min_liquidity * float(factor_cfg.get("liquidity_good_multiple", 10) or 10)
+    weak_liq = min_liquidity * float(factor_cfg.get("liquidity_weak_multiple", 3) or 3)
+    if min_liquidity > 0 and avg_value >= good_liq:
+        score += float(weights.get("liquidity_good", 0.2))
+        positives.append("liquidity_good")
+    elif min_liquidity > 0 and avg_value < weak_liq:
+        score += float(weights.get("liquidity_weak", -0.25))
+        negatives.append("liquidity_weak")
+
+    if close_days >= 21:
+        current = float(close.iloc[-1])
+        prev_20 = float(close.iloc[-21])
+        ret_20d = current / prev_20 - 1 if prev_20 > 0 else 0.0
+        metrics["ret_20d"] = round(ret_20d, 4)
+        max_ret_20d = float(factor_cfg.get("max_ret_20d", 0.20) or 0.20)
+        severe_ret_20d = float(factor_cfg.get("severe_ret_20d", 0.35) or 0.35)
+        if ret_20d >= severe_ret_20d:
+            score += float(weights.get("chasing_extreme", -0.4))
+            negatives.append("chasing_extreme")
+        elif ret_20d >= max_ret_20d:
+            score += float(weights.get("chasing_hot", -0.25))
+            negatives.append("chasing_hot")
+
+        high_252 = float(close.iloc[-252:].max()) if close_days >= 252 else float(close.max())
+        drawdown = current / high_252 - 1 if high_252 > 0 else 0.0
+        metrics["drawdown_from_high"] = round(drawdown, 4)
+        if ret_20d < max_ret_20d and drawdown <= float(factor_cfg.get("min_drawdown_from_high", -0.03) or -0.03):
+            score += float(weights.get("not_chasing", 0.2))
+            positives.append("not_chasing")
+
+    if close_days >= 22 and not high.empty and not low.empty:
+        prev_close = close.shift(1).fillna(close)
+        tr = pd.concat([
+            high - low,
+            (high - prev_close).abs(),
+            (low - prev_close).abs(),
+        ], axis=1).max(axis=1)
+        atr20 = _rma(tr, 20)
+        current = float(close.iloc[-1])
+        atr_pct = float(atr20.iloc[-1]) / current if current > 0 and not np.isnan(atr20.iloc[-1]) else 0.0
+        metrics["atr_pct"] = round(atr_pct, 4)
+        low_thr = float(factor_cfg.get("atr_pct_low", 0.015) or 0.015)
+        high_thr = float(factor_cfg.get("atr_pct_high", 0.09) or 0.09)
+        if low_thr <= atr_pct <= high_thr:
+            score += float(weights.get("volatility_healthy", 0.2))
+            positives.append("volatility_healthy")
+        elif atr_pct > high_thr:
+            score += float(weights.get("volatility_extreme", -0.25))
+            negatives.append("volatility_extreme")
+
+    cap = abs(float(factor_cfg.get("score_cap", 0.6) or 0.6))
+    score = max(-cap, min(cap, score))
+    return {
+        "score": round(score, 3),
+        "positives": sorted(set(positives)),
+        "negatives": sorted(set(negatives)),
+        "metrics": metrics,
+    }
+
+
 def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dict, min_liquidity: float) -> dict:
     """SCOUT 내부 관찰풀/브리핑 공용 후보 객체."""
     row = info["row"]
     matches = ticker_themes.get(_theme_lookup_key(ticker), [])
     theme_score = _theme_bonus(matches, weights)
     liquidity_score = _liquidity_boost(row, min_liquidity, float(weights.get("liquidity_boost", 0.0)))
+    factor_score = float((info.get("factor") or {}).get("score", 0.0) or 0.0) * float(weights.get("factor_quality", 1.0))
     signal_score = float(info.get("score", 0.0))
-    radar_score = round(signal_score + theme_score + liquidity_score, 3)
+    radar_score = round(signal_score + theme_score + liquidity_score + factor_score, 3)
     signals = _label_signal_dict(info.get("signals", {}))
     signal_keys = list(signals.keys())
 
@@ -254,6 +349,8 @@ def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dic
         "signal_score": round(signal_score, 3),
         "theme_score": round(theme_score, 3),
         "liquidity_score": round(liquidity_score, 3),
+        "factor_score": round(factor_score, 3),
+        "factor_context": dict(info.get("factor") or {}),
         "signal_count": len(signal_keys),
         "signal_keys": signal_keys,
         "signals": signals,
@@ -875,6 +972,8 @@ def _summarize_radar(
     signal_counter = Counter()
     country_counter = Counter()
     quality_counter = Counter()
+    factor_positive_counter = Counter()
+    factor_negative_counter = Counter()
     theme_count = 0
     for item in radar_pool:
         country_counter[item.get("country", "")] += 1
@@ -884,6 +983,11 @@ def _summarize_radar(
             signal_counter[key] += 1
         for flag in item.get("quality_flags", []):
             quality_counter[flag] += 1
+        factor = item.get("factor_context", {}) or {}
+        for key in factor.get("positives", []) or []:
+            factor_positive_counter[key] += 1
+        for key in factor.get("negatives", []) or []:
+            factor_negative_counter[key] += 1
 
     coverage_warnings = []
     for country, threshold in (coverage_thresholds or {}).items():
@@ -911,6 +1015,8 @@ def _summarize_radar(
         "theme_count": theme_count,
         "top_signals": signal_counter.most_common(5),
         "top_quality_flags": quality_counter.most_common(5),
+        "top_factor_positives": factor_positive_counter.most_common(5),
+        "top_factor_negatives": factor_negative_counter.most_common(5),
         "radar_by_country": dict(country_counter),
         "source_counts": by_source,
         "filter_audit": filter_audit,
@@ -949,6 +1055,9 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "signal_score": item.get("signal_score"),
                 "theme_score": item.get("theme_score"),
                 "liquidity_score": item.get("liquidity_score"),
+                "factor_score": item.get("factor_score", 0.0),
+                "factor_positives": ",".join(item.get("factor_context", {}).get("positives", [])),
+                "factor_negatives": ",".join(item.get("factor_context", {}).get("negatives", [])),
                 "catalyst_score": item.get("catalyst_score", 0.0),
                 "catalyst_status": item.get("catalyst_context", {}).get("status", ""),
                 "signal_count": item.get("signal_count"),
@@ -1313,6 +1422,7 @@ class ScoutAgent(BaseAgent):
         self.log.info("[scout] OHLCV 평가 대상: %d종목", len(ohlcv_targets))
 
         # ── Stage 3b: OHLCV 신호 평가 ──
+        factor_cfg = scout_cfg.get("factor_layer", {}) or {}
         if ohlcv_targets:
             from src.collectors.global_ohlcv import fetch_ohlcv
             tickers_by_country: dict[str, list[str]] = {}
@@ -1328,6 +1438,7 @@ class ScoutAgent(BaseAgent):
                     continue
 
                 info["quality"] = _assess_quality_context(df, info["row"], min_liquidity)
+                info["factor"] = _assess_factor_profile(df, info["row"], factor_cfg, min_liquidity)
 
                 # bb_squeeze
                 if scout_cfg["signals"]["bb_squeeze"]["enabled"]:
@@ -1435,6 +1546,10 @@ class ScoutAgent(BaseAgent):
             "cost_control": {
                 "insider_eval_top_us": int(insider_eval_top_us),
                 "insider_skipped_cost_limit": int(insider_skipped_cost_limit),
+            },
+            "factor_audit": {
+                "enabled": bool(factor_cfg.get("enabled", False)),
+                "score_cap": float(factor_cfg.get("score_cap", 0.0) or 0.0),
             },
             "evaluation_scope": {
                 "ohlcv_selected": int(len(ohlcv_targets)),
@@ -1552,6 +1667,8 @@ class ScoutAgent(BaseAgent):
             "theme_count": 0,
             "top_signals": [],
             "top_quality_flags": [],
+            "top_factor_positives": [],
+            "top_factor_negatives": [],
             "radar_by_country": {},
             "source_counts": {},
             "filter_audit": {},
@@ -1586,6 +1703,8 @@ class ScoutAgent(BaseAgent):
                 "no_candidate_reason": error_msg,
                 "top_signals": [],
                 "top_quality_flags": [],
+                "top_factor_positives": [],
+                "top_factor_negatives": [],
                 "source_counts": {},
                 "filter_audit": {},
                 "coverage_warnings": [],
