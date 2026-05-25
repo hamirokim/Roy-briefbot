@@ -1,0 +1,4688 @@
+{
+  "date": "2026-05-26",
+  "summary": {
+    "scanned_total": 2897,
+    "ohlcv_evaluated": 1939,
+    "cooldown_skipped": 8,
+    "radar_pool_count": 100,
+    "brief_pick_count": 0,
+    "theme_count": 12,
+    "top_signals": [
+      [
+        "rrg_improving",
+        100
+      ],
+      [
+        "insider_buying",
+        3
+      ]
+    ],
+    "top_quality_flags": [],
+    "top_factor_positives": [],
+    "top_factor_negatives": [],
+    "radar_by_country": {
+      "US": 72,
+      "CN_A": 23,
+      "CN_HK": 4,
+      "CN_ADR": 1
+    },
+    "source_counts": {
+      "finviz+nasdaqtrader": 1936,
+      "jpx_official+yfinance": 500,
+      "naver_market_sum_fallback": 294,
+      "yfinance_cn_a_seed": 75,
+      "yfinance_cn_adr": 38,
+      "yfinance_hk_china_seed": 54
+    },
+    "filter_audit": {
+      "hard_filter": {
+        "universe": 2897,
+        "cooldown_skipped": 8,
+        "after_cooldown": 2889,
+        "after_cooldown_by_country": {
+          "US": 1931,
+          "KR": 292,
+          "JP": 499,
+          "CN_HK": 54,
+          "CN_A": 75,
+          "CN_ADR": 38
+        }
+      },
+      "cost_control": {
+        "insider_eval_top_us": 250,
+        "insider_skipped_cost_limit": 1681
+      },
+      "factor_audit": {
+        "enabled": true,
+        "score_cap": 0.6,
+        "score_weight": 0.0
+      },
+      "evaluation_scope": {
+        "ohlcv_selected": 1939,
+        "ohlcv_not_selected": 950,
+        "ohlcv_missing": 1939,
+        "ohlcv_selected_by_country": {
+          "US": 981,
+          "CN_ADR": 38,
+          "CN_A": 75,
+          "CN_HK": 54,
+          "KR": 292,
+          "JP": 499
+        },
+        "ohlcv_missing_by_country": {
+          "US": 981,
+          "CN_ADR": 38,
+          "CN_A": 75,
+          "CN_HK": 54,
+          "KR": 292,
+          "JP": 499
+        }
+      },
+      "signal_audit": {
+        "with_signal": 514,
+        "without_signal": 2350,
+        "hit_counts": {
+          "rrg_improving": 509,
+          "insider_buying": 8
+        },
+        "with_shadow_signal": 0,
+        "shadow_hit_counts": {}
+      },
+      "radar_audit": {
+        "radar_min_score": 1.0,
+        "radar_eligible_before_cap": 509,
+        "radar_pool_cap": 100,
+        "radar_cap_dropped": 409,
+        "brief_min_score": 2.4,
+        "signals_required": 3,
+        "brief_quality_gate": {
+          "enabled": false,
+          "allow_catalyst_found": true,
+          "allow_ronin_entry_v2": true,
+          "allow_signal_count_at_least": 4
+        },
+        "brief_rejected_after_radar": 100,
+        "brief_picks": 0
+      },
+      "catalyst_audit": {
+        "enabled": true,
+        "eval_limit": 20,
+        "evaluated": 20,
+        "found": 10,
+        "risk": 2,
+        "none": 2,
+        "non_us": 6,
+        "no_key": 0,
+        "error": 0,
+        "score_boost": 0.0,
+        "risk_penalty": 0.0
+      }
+    },
+    "coverage_warnings": [],
+    "no_candidate_reason": "관찰풀은 있으나 최종 보고 기준 미달"
+  },
+  "items": [
+    {
+      "ticker": "VRT",
+      "name": "Vertiv Holdings Co",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 121250000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.8,
+      "signal_score": 1.0,
+      "theme_score": 0.8,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "TD Cowen Raises its Price Target on Vertiv (VRT)",
+            "keywords": [
+              "raised",
+              "raises"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "TD Cowen Raises its Price Target on Vertiv (VRT)",
+            "summary": "Vertiv Holdings Co (NYSE:VRT) is one of the 10 Best Performing Data Center Stocks So Far in 2026. On May 20, 2026, TD Cowen analyst Lance Vitanza raised the firm’s price target on Vertiv Holdings Co (NYSE:VRT) to $387 from $347 and maintained a Buy rating on the shares. The firm noted that Vertiv le",
+            "source": "Yahoo",
+            "datetime": 1779740533,
+            "url": "https://finnhub.io/api/news?id=cffcbb00b8904c93fb7d93416568fd57583686f7523a56e7f8c784d7566ac1c3"
+          },
+          {
+            "headline": "Vertiv Holdings Co (VRT) Discusses Strategic Direction, Innovation, and Financial Performance at Investor Conference - Slideshow",
+            "summary": "",
+            "source": "SeekingAlpha",
+            "datetime": 1779736601,
+            "url": "https://finnhub.io/api/news?id=7e4ae1ea96679ebfa26dec4c8a78bdca740bf39b46eccef88ad3a1685b2450fb"
+          },
+          {
+            "headline": "10 Industrials Stocks Whale Activity In Today's Session",
+            "summary": "",
+            "source": "Benzinga",
+            "datetime": 1779716145,
+            "url": "https://finnhub.io/api/news?id=28edeb5299426d943ac6a896b3bf8911867cf7c5794941fe237aa468f029fd1a"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "ai_infrastructure",
+            "theme_label": "AI 인프라 (학습/추론)",
+            "role": "데이터센터 전력/냉각",
+            "priority": "A+",
+            "layer": "enabling_layer"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "RKLB",
+      "name": "Rocket Lab Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 77710000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.8,
+      "signal_score": 1.0,
+      "theme_score": 0.8,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "Feel Stocks Are Impossibly High, Me Too, Here's What I'm Doing",
+            "keywords": [
+              "beat",
+              "beats",
+              "earnings"
+            ]
+          },
+          {
+            "headline": "Investors Pour Into NASA ETF Ahead of Anticipated SpaceX IPO",
+            "keywords": [
+              "launch"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "Feel Stocks Are Impossibly High, Me Too, Here's What I'm Doing",
+            "summary": "Despite historic S&P 500 earnings beats and strong macro data, I sense excessive risk-taking and complacency. Read more on the market here.",
+            "source": "SeekingAlpha",
+            "datetime": 1779661369,
+            "url": "https://finnhub.io/api/news?id=6ebc3d0534604a69f40ca78f298e12ed16322755736085f82271c6e746f21c57"
+          },
+          {
+            "headline": "Investors Pour Into NASA ETF Ahead of Anticipated SpaceX IPO",
+            "summary": "Wall Street investors are rushing to the recently launched NASA ETF ahead of the much waited SpaceX IPO, which will happen in June.",
+            "source": "Benzinga",
+            "datetime": 1779624668,
+            "url": "https://finnhub.io/api/news?id=5dd0430da72a26af7733c9af4105de2d638fe93a89f835dfd9ae87224df9eab0"
+          },
+          {
+            "headline": "SpaceX's $2 Trillion Valuation May Be More About Starlink Than Rockets",
+            "summary": "SpaceX&#39;s potential $2 trillion IPO is fueling debate across Wall Street, with Tema ETFs arguing the company is far more than a rocket maker.",
+            "source": "Benzinga",
+            "datetime": 1779530514,
+            "url": "https://finnhub.io/api/news?id=1116fff40a2016b5a4d726a9ee85f550fd7599e29753a3217b329efb2d88ed58"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "space_economy",
+            "theme_label": "우주 경제 (SpaceX + 위성)",
+            "role": "Rocket Lab (소형 위성 발사)",
+            "priority": "A+",
+            "layer": "midstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "NSC",
+      "name": "Norfolk Southern Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 70040000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.7,
+      "signal_score": 1.7,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 2,
+      "signal_keys": [
+        "insider_buying",
+        "rrg_improving"
+      ],
+      "signals": {
+        "insider_buying": {
+          "insider_trans_pct": 0.09,
+          "lookback_days": 7,
+          "label_ko": "메인자금 진입 흔적",
+          "phase": "主力 진입"
+        },
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "Union Pacific Offer Puts Norfolk Southern’s Rail Network Value In Focus",
+            "keywords": [
+              "acquisition",
+              "deal",
+              "merger"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "Union Pacific Offer Puts Norfolk Southern’s Rail Network Value In Focus",
+            "summary": "Union Pacific has proposed a US$85b acquisition of Norfolk Southern (NYSE:NSC). The deal gathered momentum after public comments from President Trump supporting the merger. The proposed combination would create a larger freight rail operator across key U.S. routes. Norfolk Southern, listed as NYSE:N",
+            "source": "Yahoo",
+            "datetime": 1779552888,
+            "url": "https://finnhub.io/api/news?id=f683214016ddac1011a457e6b1adb6c87f1aa6405e4ca04b80bf60c3912dea4b"
+          },
+          {
+            "headline": "Unusual Options Activity in CSX Stock Could Signal More Upside Ahead",
+            "summary": "Railroad operator CSX posted Thursday’s highest Vol/OI ratio. With the stock already up 26% year-to-date, a large institution placed a large options bet that the rally has further room to run in the second half of 2026.",
+            "source": "Yahoo",
+            "datetime": 1779471002,
+            "url": "https://finnhub.io/api/news?id=f6f106ffdd985cb2296c9af27ea6d7271318198888335afd01ffa1c22e42c5d4"
+          },
+          {
+            "headline": "Pete Buttigieg And Donald Trump Agree On Something: Rail Safety Reform",
+            "summary": "Pete Buttigieg supports President Donald Trump-backed rail safety bill, citing past reforms as Transportation Secretary.",
+            "source": "Benzinga",
+            "datetime": 1779426455,
+            "url": "https://finnhub.io/api/news?id=e7042c5937b3a2867c3dec29230e71c6f0f666e4a5d9bdaf9fae0c7647ef8787"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "VALE",
+      "name": "Vale SA ADR",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 69730000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.7,
+      "signal_score": 1.7,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 2,
+      "signal_keys": [
+        "insider_buying",
+        "rrg_improving"
+      ],
+      "signals": {
+        "insider_buying": {
+          "insider_trans_pct": 5.82,
+          "lookback_days": 7,
+          "label_ko": "메인자금 진입 흔적",
+          "phase": "主力 진입"
+        },
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "JP Morgan Maintains Overweight on Vale, Raises Price Target to $19.5",
+            "keywords": [
+              "raises"
+            ]
+          },
+          {
+            "headline": "Vale: Why I'm Not Buying This ~5x EBITDA Multiple Yet",
+            "keywords": [
+              "dividend"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "JP Morgan Maintains Overweight on Vale, Raises Price Target to $19.5",
+            "summary": "JP Morgan  analyst Rodolfo Angele   maintains Vale (NYSE:VALE) with a Overweight and raises the price target from $18.5 to $19.5.",
+            "source": "Benzinga",
+            "datetime": 1779461945,
+            "url": "https://finnhub.io/api/news?id=eb5119ed6ea1b5a8ca0fc2308653fd3d03834f1a29541b3f0c6e2c062661f1a6"
+          },
+          {
+            "headline": "Cobalt Miners News For The Month Of May 2026",
+            "summary": "Cobalt spot prices flat as fundamentals stay tight amid DRC/Indonesia supply risks.",
+            "source": "SeekingAlpha",
+            "datetime": 1779427994,
+            "url": "https://finnhub.io/api/news?id=639ed7c384fafa3b950eddbbb4ea69e1c9cf26305e2c0d57c0ff089389609de3"
+          },
+          {
+            "headline": "Vale: Why I'm Not Buying This ~5x EBITDA Multiple Yet",
+            "summary": "Vale (VALE) stock outlook: attractive valuation and rising nickel/base metals EBITDA plus 6%+ 2026 dividend potentialâbut China/Brazil risks. See more.",
+            "source": "SeekingAlpha",
+            "datetime": 1778900631,
+            "url": "https://finnhub.io/api/news?id=8ca79f0b446b6058a4d1b04b62b4b8fe027223437c06bbbe8e6f6b8a9a4002eb"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "CRH",
+      "name": "CRH Plc",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 67790000000.00001,
+      "avg_volume_value": 0.0,
+      "score": 1.7,
+      "signal_score": 1.7,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 2,
+      "signal_keys": [
+        "insider_buying",
+        "rrg_improving"
+      ],
+      "signals": {
+        "insider_buying": {
+          "insider_trans_pct": 0.28,
+          "lookback_days": 7,
+          "label_ko": "메인자금 진입 흔적",
+          "phase": "主力 진입"
+        },
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "risk",
+        "score": -0.0,
+        "positive_hits": [],
+        "risk_hits": [
+          {
+            "headline": "Driven Brands Generated $1.9 Billion in Revenue. So Why Did an Investor Cut $4 Million?",
+            "keywords": [
+              "cut"
+            ]
+          }
+        ],
+        "news": [
+          {
+            "headline": "Driven Brands Generated $1.9 Billion in Revenue. So Why Did an Investor Cut $4 Million?",
+            "summary": "Driven Brands operates a multi-brand network of automotive service and repair centers serving both retail and commercial clients.",
+            "source": "Yahoo",
+            "datetime": 1779634607,
+            "url": "https://finnhub.io/api/news?id=dfa9dea4c58582680cc028da65f38745784c47f8836cd8a13f3634d59dd68489"
+          },
+          {
+            "headline": "Why CRH (CRH) Is Moving Deeper Into U.S. Water Infrastructure",
+            "summary": "CRH plc (NYSE:CRH) is one of the best stocks to buy for global infrastructure spending. The company’s latest concrete infrastructure angle comes from water, not just roads and aggregates. On April 30, CRH said it had entered into an agreement to acquire Axius Water, a North American provider of spec",
+            "source": "Yahoo",
+            "datetime": 1779392502,
+            "url": "https://finnhub.io/api/news?id=0c17b31e227f67af5cc47c4215e8f99a90e8323e5f73604d6a967f1575344d2c"
+          },
+          {
+            "headline": "Tuesday's session: top gainers and losers in the S&P500 index",
+            "summary": "Stay informed about the performance of the S&P500 index in the middle of the day on Tuesday. Uncover the top gainers and losers in today's session for valuable insights.",
+            "source": "ChartMill",
+            "datetime": 1779208500,
+            "url": "https://finnhub.io/api/news?id=bcc8ebcd866c5f1d7ecbae84f5de38c798a6557a367b0766d929ca6dbd7e1676"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "GEV",
+      "name": "GE Vernova Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 275310000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "Dow Jones Futures Rise, Oil Prices Fall: Trump Says No 'Rush' For Iran Deal",
+            "keywords": [
+              "deal"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "Dow Jones Futures Rise, Oil Prices Fall: Trump Says No 'Rush' For Iran Deal",
+            "summary": "President Donald Trump said an interim agreement is close that would open the Strait of Hormuz, but negotiations continue.",
+            "source": "Yahoo",
+            "datetime": 1779666186,
+            "url": "https://finnhub.io/api/news?id=3727e804f2df9f5256bd896ee2db51355a9040a548227146bddcdd9923a06786"
+          },
+          {
+            "headline": "Is It Too Late To Consider GE Vernova (GEV) After A 124% One Year Surge?",
+            "summary": "Investors may be wondering whether GE Vernova at around US$1,038.74 per share still offers value after a strong run, or if the market has already priced in the story. The stock has pulled back about 1% over the past week and about 9.6% over the past month, yet it is still up 52.9% year to date and 1",
+            "source": "Yahoo",
+            "datetime": 1779624748,
+            "url": "https://finnhub.io/api/news?id=9389e655b9820baaec9743568c609ea0e57476a253d5f9c8a535080c515e5bb0"
+          },
+          {
+            "headline": "Novanta, WillScot Mobile Mini, and Badger Meter Stocks Trade Up, What You Need To Know",
+            "summary": "A number of stocks jumped in the afternoon session after the Dow hit a fresh all-time high above 50,700 as yields cooled off. Industrials are the most direct play on physical economic activity.",
+            "source": "Yahoo",
+            "datetime": 1779588775,
+            "url": "https://finnhub.io/api/news?id=11405e9cf71f064fe444febdeac91b78e6d13d2adc0469e71be1cdfc4ef68d53"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "ai_infrastructure",
+            "theme_label": "AI 인프라 (학습/추론)",
+            "role": "전력 그리드 (GE Vernova)",
+            "priority": "A",
+            "layer": "enabling_layer"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "RTX",
+      "name": "RTX Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 235470000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "risk",
+        "score": -0.0,
+        "positive_hits": [],
+        "risk_hits": [
+          {
+            "headline": "AeroVironment vs. RTX: Which Aerospace-Defense Stock Has the Edge?",
+            "keywords": [
+              "miss"
+            ]
+          }
+        ],
+        "news": [
+          {
+            "headline": "AeroVironment vs. RTX: Which Aerospace-Defense Stock Has the Edge?",
+            "summary": "AVAV and RTX spotlight autonomous loitering munitions and missile-defense systems as militaries ramp up precision strike and integrated targeting technologies.",
+            "source": "Yahoo",
+            "datetime": 1779716400,
+            "url": "https://finnhub.io/api/news?id=481192b479029aeed9ee70e35a4aff542dbc533625dfa923f8c33ce9e86c577e"
+          },
+          {
+            "headline": "RTX Corporation: A Dual Cycle Profile In Play",
+            "summary": "RTX stock is rated Buy with a $201.85 price target (14% upside). Here's what investors need to know about the company.",
+            "source": "SeekingAlpha",
+            "datetime": 1779695557,
+            "url": "https://finnhub.io/api/news?id=40cba415eba07326745e31b33770b35c6a6b3e71907fa7537433049d7d7fd692"
+          },
+          {
+            "headline": "Buried Deep in SpaceX’s Pre-IPO Disclosures: A Threat to Starlink That Sounds Like Science Fiction",
+            "summary": "I’ve been reading SpaceX’s pre-IPO disclosures hunting for the buried sentence others skip. There’s a passage in the risk section that reads like a screenplay: foreign powers, orbital weapons, and a constellation of satellites already in someone’s targeting reticle. It sounds like science fiction. I",
+            "source": "Yahoo",
+            "datetime": 1779622174,
+            "url": "https://finnhub.io/api/news?id=27f5961e7ae29c474d9ed1375fd5930a27b1857de15783b1c848cb6e34f9482a"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "space_economy",
+            "theme_label": "우주 경제 (SpaceX + 위성)",
+            "role": "Raytheon (미사일/방산)",
+            "priority": "A",
+            "layer": "upstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "ETN",
+      "name": "Eaton Corp Plc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 147430000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "Dividend Champion, Contender, And Challenger Highlights: Week Of May 24",
+            "keywords": [
+              "dividend"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "Can Powell's Growth Investments Create Long-Term Value for Investors?",
+            "summary": "POWL is expanding its Houston facilities and boosting capacity to support demand in data centers and energy transition markets.",
+            "source": "Yahoo",
+            "datetime": 1779721860,
+            "url": "https://finnhub.io/api/news?id=45b85bca06e6cfb56f06f9ecbdf34810603aedf096d979ab730507a515fd9087"
+          },
+          {
+            "headline": "10 Industrials Stocks Whale Activity In Today's Session",
+            "summary": "",
+            "source": "Benzinga",
+            "datetime": 1779716145,
+            "url": "https://finnhub.io/api/news?id=28edeb5299426d943ac6a896b3bf8911867cf7c5794941fe237aa468f029fd1a"
+          },
+          {
+            "headline": "Dividend Champion, Contender, And Challenger Highlights: Week Of May 24",
+            "summary": "Get this weekly dividend update on Champions, Contenders & Challengersâsee dividend changes, upcoming ex-dividend dates and pay dates.",
+            "source": "SeekingAlpha",
+            "datetime": 1779484296,
+            "url": "https://finnhub.io/api/news?id=50808523c46c09b54b1b3ead49051f31e2f88c113d80bee637d74d6c0e57d75b"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "ai_infrastructure",
+            "theme_label": "AI 인프라 (학습/추론)",
+            "role": "전력 관리 시스템",
+            "priority": "A",
+            "layer": "enabling_layer"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "LMT",
+      "name": "Lockheed Martin Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 120490000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "BA vs. LMT: Which Aerospace-Defense Giant Offers Better Value Today?",
+            "keywords": [
+              "contract"
+            ]
+          },
+          {
+            "headline": "SpaceX stock is about to join this growing constellation of public companies building a space-based economy",
+            "keywords": [
+              "launch"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "BA vs. LMT: Which Aerospace-Defense Giant Offers Better Value Today?",
+            "summary": "Both Boeing and Lockheed Martin benefit from significant exposure to military aircraft, space systems and government defense contracts.",
+            "source": "Yahoo",
+            "datetime": 1779722400,
+            "url": "https://finnhub.io/api/news?id=40307cca990d80d15c78f1f2f58efb69f866ed19e49de395cf6e5089171e8b55"
+          },
+          {
+            "headline": "The Commercial Space Economy Just Crossed a Real Revenue Threshold and After Following This Industry for Years These Are the 3 ETFs Worth Owning",
+            "summary": "The commercial space sector has crossed into recurring commercial revenue at scale. SpaceX’s Starlink unit is now throwing off subscription cash flow at a scale that supports an IPO pipeline being shepherded by Bank of America as lead underwriter. Pure-play satellite operators are booking recurring ",
+            "source": "Yahoo",
+            "datetime": 1779711230,
+            "url": "https://finnhub.io/api/news?id=4a36c5f36dfcae9f305c8fd1b7551f48b873dcb9fbe7709117542f1c1fc9e7bb"
+          },
+          {
+            "headline": "SpaceX stock is about to join this growing constellation of public companies building a space-based economy",
+            "summary": "In addition to rocket companies that launch payloads into orbit, others in the sector develop satellites and vehicles or provide space-based services like communications or imagery.",
+            "source": "Yahoo",
+            "datetime": 1779651189,
+            "url": "https://finnhub.io/api/news?id=4ecb7d46447e7968e03fa072f6390ef8d3bf21dbb725b6eed37785acc82ca66f"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "space_economy",
+            "theme_label": "우주 경제 (SpaceX + 위성)",
+            "role": "Lockheed Martin (방산 최대)",
+            "priority": "A",
+            "layer": "upstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "CEG",
+      "name": "Constellation Energy Corp",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 101590000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "A Peer Showdown Reveals Why Vistra Stands Out Vs. Other Major IPPs",
+            "keywords": [
+              "contract"
+            ]
+          },
+          {
+            "headline": "Buy 3 Bloomberg Ideal 'Safer' May Dividend Dogs",
+            "keywords": [
+              "deal",
+              "dividend"
+            ]
+          },
+          {
+            "headline": "Constellation Energy Balances DOE Reliability Order With New Gas And Solar Capacity",
+            "keywords": [
+              "order"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "A Peer Showdown Reveals Why Vistra Stands Out Vs. Other Major IPPs",
+            "summary": "Vistra's diverse portfolio enables both contracted stability and rapid deployment for data center needs. Find out why VST stock is a Buy.",
+            "source": "SeekingAlpha",
+            "datetime": 1779676770,
+            "url": "https://finnhub.io/api/news?id=b49a4986ac77d3e6409600207e2dd75cfe387460c50b5ca3e88249e41974f09f"
+          },
+          {
+            "headline": "Buy 3 Bloomberg Ideal 'Safer' May Dividend Dogs",
+            "summary": "Explore Bloombergâs 2026 Dividend Focus: 16 safer high-yield stocks with strong FCF, top picks, and 2027 upside forecastsâsee the list and act now.",
+            "source": "SeekingAlpha",
+            "datetime": 1779620190,
+            "url": "https://finnhub.io/api/news?id=69bf5f783170f8b2145ef3d9e88a6c2c6f63f387f1af2863fcff43da22ee5e06"
+          },
+          {
+            "headline": "Constellation Energy Balances DOE Reliability Order With New Gas And Solar Capacity",
+            "summary": "U.S. Department of Energy directs Constellation Energy (NasdaqGS:CEG) to keep Eddystone Generating Station Units 3 and 4 online through August 2026 to reduce blackout risk. The order delays the planned retirement of the Pennsylvania units and extends their role in regional grid reliability. Constell",
+            "source": "Yahoo",
+            "datetime": 1779527594,
+            "url": "https://finnhub.io/api/news?id=98ab84ad104ac9c6250a9caef3cfbe18feb94766617f1944f0dd79b3bba9d6ce"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "ai_infrastructure",
+            "theme_label": "AI 인프라 (학습/추론)",
+            "role": "원자력 전력 공급",
+            "priority": "A",
+            "layer": "enabling_layer"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "NOC",
+      "name": "Northrop Grumman Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 78430000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "Space rockets, satellites, data centers and Grok: What's the right S&P sector index for SpaceX?",
+            "keywords": [
+              "launch"
+            ]
+          },
+          {
+            "headline": "3 Elite Dividend Growth Stocks That Look Too Cheap To Ignore",
+            "keywords": [
+              "dividend"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "2 of Wall Street’s Favorite Stocks with Exciting Potential and 1 We Brush Off",
+            "summary": "Wall Street has set ambitious price targets for the stocks in this article. While this suggests attractive upside potential, it’s important to remain skeptical because analysts face institutional pressures that can sometimes lead to overly optimistic forecasts.",
+            "source": "Yahoo",
+            "datetime": 1779704871,
+            "url": "https://finnhub.io/api/news?id=2e3edf3f6b4242d4644b9dafa90a69c823598bd9c922ffb87d87401b08fd99ae"
+          },
+          {
+            "headline": "Space rockets, satellites, data centers and Grok: What's the right S&P sector index for SpaceX?",
+            "summary": "What S&P Sector is SpaceX likely to be in once it launches on the public markets.",
+            "source": "CNBC",
+            "datetime": 1779639544,
+            "url": "https://finnhub.io/api/news?id=e395a3dc98ff6ce53f0c42f62f2daed5586588432447e4bc8bf5496243cae1b8"
+          },
+          {
+            "headline": "3 Elite Dividend Growth Stocks That Look Too Cheap To Ignore",
+            "summary": "Northrop Grumman, Home Depot, and McCormick offer attractive risk/reward after significant underperformance vs. AI-driven market. Read more on NOC, HD, and MKC here.",
+            "source": "SeekingAlpha",
+            "datetime": 1779607800,
+            "url": "https://finnhub.io/api/news?id=79aca40f8569b35f7fa83922a089aaa2d7a8b1cd1b6cdb676ba1bfa5c9b89aa7"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "space_economy",
+            "theme_label": "우주 경제 (SpaceX + 위성)",
+            "role": "Northrop Grumman (B-21 + 우주)",
+            "priority": "A",
+            "layer": "upstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "ROK",
+      "name": "Rockwell Automation Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 48540000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "none",
+        "score": 0.0,
+        "positive_hits": [],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "Hubbell, Rockwell Automation, and First Solar Shares Skyrocket, What You Need To Know",
+            "summary": "A number of stocks jumped in the afternoon session after the Dow hit a fresh all-time high above 50,700 as yields cooled off. Industrials are the most direct play on physical economic activity.",
+            "source": "Yahoo",
+            "datetime": 1779587815,
+            "url": "https://finnhub.io/api/news?id=134734da886ecfd75bda957620bb6d1d3624413c7bca89b074b72255742e98a4"
+          },
+          {
+            "headline": "Assessing Rockwell Automation (ROK) Valuation After Recent Share Price Momentum And Planned US$2b Investment",
+            "summary": "Without a specific news event driving Rockwell Automation (ROK) today, the focus turns to how its recent share performance and financial profile might influence how you think about the stock. See our latest analysis for Rockwell Automation. The recent 3.30% 1 day share price gain to $436.23 comes af",
+            "source": "Yahoo",
+            "datetime": 1779390693,
+            "url": "https://finnhub.io/api/news?id=935e43d6a59a400d23fc20b2c25d18bb015b06b70a7fa638c48d0956171d3805"
+          },
+          {
+            "headline": "What Makes Rockwell Automation (ROK) a High-Quality Compounder?",
+            "summary": "Alpha Wealth Funds, LLC, an investment management company, released its Q1 2025 letter for the “Insiders Fund”. A copy of the letter can be downloaded here. The fund lost 7.14% in the quarter, tied to a 6.75% fall in March due to the War in Iran. This compares to the S&P 500’s -4.33% return for […]",
+            "source": "Yahoo",
+            "datetime": 1779375414,
+            "url": "https://finnhub.io/api/news?id=b87509ef361bb014afc86892eb1ad55f31b52c96b2182265eb3cb79b0460c871"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "robotics",
+            "theme_label": "로봇 산업 (휴머노이드 + 산업용)",
+            "role": "Rockwell Automation (산업 자동화)",
+            "priority": "A",
+            "layer": "upstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "ALB",
+      "name": "Albemarle Corp",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 20070000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "none",
+        "score": 0.0,
+        "positive_hits": [],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "Reasons Why You Should Retain IFF Stock in Your Portfolio Now",
+            "summary": "International Flavors eyes long-term growth through portfolio streamlining, emerging market demand and disciplined capital allocation strategies.",
+            "source": "Yahoo",
+            "datetime": 1779719040,
+            "url": "https://finnhub.io/api/news?id=5013bba41070eb02b27ff9ec33585e997523b1e7646140213711126aca29d327"
+          },
+          {
+            "headline": "Here is What to Know Beyond Why Albemarle Corporation (ALB) is a Trending Stock",
+            "summary": "Albemarle (ALB) has received quite a bit of attention from Zacks.com users lately. Therefore, it is wise to be aware of the facts that can impact the stock's prospects.",
+            "source": "Yahoo",
+            "datetime": 1779714005,
+            "url": "https://finnhub.io/api/news?id=6e4ee8673b0f4571d51f5bbea61c4bb02774631e962f7c90fe2fc05a6d415fd6"
+          },
+          {
+            "headline": "Eastman Chemical Certified by SCS Global for Commitment to Circularity",
+            "summary": "EMN earns ISO 59014 certification for its Kingsport site, validating its methanolysis recycling tech and circular economy efforts through 2029.",
+            "source": "Yahoo",
+            "datetime": 1779713580,
+            "url": "https://finnhub.io/api/news?id=cfa2eb66dce9eb3afa46a7a180200871d847b236e9fb7a002987a687986a9821"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "energy_transition",
+            "theme_label": "에너지 전환 (전기차/수소/배터리)",
+            "role": "Albemarle (리튬 1위)",
+            "priority": "A",
+            "layer": "upstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "SQM",
+      "name": "Sociedad Quimica Y Minera de Chile SA ADR",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 11620000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.6,
+      "signal_score": 1.0,
+      "theme_score": 0.6,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "found",
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "SQM (NYSE:SQM): The Affordable Growth Play With a Forward P/E of 12.91 and 66% Expected EPS Growth",
+            "keywords": [
+              "profit"
+            ]
+          },
+          {
+            "headline": "SQM Seen Posting 58% Revenue Growth In 2026 As Lithium Prices Rebound",
+            "keywords": [
+              "earnings",
+              "profit"
+            ]
+          }
+        ],
+        "risk_hits": [],
+        "news": [
+          {
+            "headline": "SQM (NYSE:SQM): The Affordable Growth Play With a Forward P/E of 12.91 and 66% Expected EPS Growth",
+            "summary": "SQM (Sociedad Quimica y Minera) passes the GARP screen with a Growth rating of 9/10, strong profitability, and a reasonable forward P/E of 12.91 despite high debt.",
+            "source": "ChartMill",
+            "datetime": 1779538832,
+            "url": "https://finnhub.io/api/news?id=251bbf5c38e368a15a26de4803339c986cf5f527b723d29f02c96db7b09d8cf4"
+          },
+          {
+            "headline": "SQM Seen Posting 58% Revenue Growth In 2026 As Lithium Prices Rebound",
+            "summary": "Sociedad QuÃ­mica y Minera de Chile SA is poised for significant growth in Q1 2026 earnings, as rebound in lithium prices lifts profitability after 3 years for battery materials sector.",
+            "source": "SeekingAlpha",
+            "datetime": 1779170100,
+            "url": "https://finnhub.io/api/news?id=2987d7903d2ff7f27f2eb3d1ebcb27b7d77596c0e9032b76bbad8a563ca66317"
+          },
+          {
+            "headline": "Phase 2; Commodity Related Stocks",
+            "summary": "Macro shifts and technological advancements are driving a new bull phase for critical and strategic commodities.",
+            "source": "SeekingAlpha",
+            "datetime": 1778836926,
+            "url": "https://finnhub.io/api/news?id=d847c079be45a732397f72e6fddd17508cd69bbaf9995fe2355c810458c02d02"
+          }
+        ]
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "energy_transition",
+            "theme_label": "에너지 전환 (전기차/수소/배터리)",
+            "role": "SQM (칠레 리튬)",
+            "priority": "A",
+            "layer": "upstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "300750.SZ",
+      "name": "Contemporary Amperex Technology Co., Limited",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 264501402737.77777,
+      "avg_volume_value": 1990231393.025,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "non_us",
+        "score": 0.0,
+        "positive_hits": [],
+        "risk_hits": [],
+        "news": []
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "601899.SS",
+      "name": "Zijin Mining Group Company Limited",
+      "country": "CN_A",
+      "sector": "Basic Materials",
+      "market_cap": 110757705955.55556,
+      "avg_volume_value": 1223954941.4791665,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "non_us",
+        "score": 0.0,
+        "positive_hits": [],
+        "risk_hits": [],
+        "news": []
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "2899.HK",
+      "name": "Zijin Mining Group Company Limited",
+      "country": "CN_HK",
+      "sector": "Basic Materials",
+      "market_cap": 110726458026.66667,
+      "avg_volume_value": 269305508.9846153,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "non_us",
+        "score": 0.0,
+        "positive_hits": [],
+        "risk_hits": [],
+        "news": []
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "600900.SS",
+      "name": "China Yangtze Power Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Utilities",
+      "market_cap": 90600370631.11111,
+      "avg_volume_value": 370509212.49722224,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "non_us",
+        "score": 0.0,
+        "positive_hits": [],
+        "risk_hits": [],
+        "news": []
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "300274.SZ",
+      "name": "Sungrow Power Supply Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 47620514702.22222,
+      "avg_volume_value": 1785906279.022222,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "non_us",
+        "score": 0.0,
+        "positive_hits": [],
+        "risk_hits": [],
+        "news": []
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "600150.SS",
+      "name": "China CSSC Holdings Limited",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 40136649386.666664,
+      "avg_volume_value": 570517856.0,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "non_us",
+        "score": 0.0,
+        "positive_hits": [],
+        "risk_hits": [],
+        "news": []
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      },
+      "catalyst_score": 0.0
+    },
+    {
+      "ticker": "0001.HK",
+      "name": "CK Hutchison Holdings Limited",
+      "country": "CN_HK",
+      "sector": "Industrials",
+      "market_cap": 34961429005.128204,
+      "avg_volume_value": 79730042.97435898,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "600309.SS",
+      "name": "Wanhua Chemical Group Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Basic Materials",
+      "market_cap": 33691700337.77778,
+      "avg_volume_value": 404483733.41249996,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "601816.SS",
+      "name": "Beijing-Shanghai High-Speed Railway Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 32956880213.333332,
+      "avg_volume_value": 106792121.03472221,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "601919.SS",
+      "name": "COSCO SHIPPING Holdings Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 31199600640.0,
+      "avg_volume_value": 239838994.625,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "1919.HK",
+      "name": "COSCO SHIPPING Holdings Co., Ltd.",
+      "country": "CN_HK",
+      "sector": "Industrials",
+      "market_cap": 29919870555.897438,
+      "avg_volume_value": 53749650.86153846,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "300124.SZ",
+      "name": "Shenzhen Inovance Technology Co.,Ltd",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 29244170240.0,
+      "avg_volume_value": 360098247.37638885,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "600406.SS",
+      "name": "NARI Technology Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 28624286151.11111,
+      "avg_volume_value": 375364401.8666667,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "601668.SS",
+      "name": "China State Construction Engineering Corporation Limited",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 27546928924.444443,
+      "avg_volume_value": 164042960.0,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "601985.SS",
+      "name": "China National Nuclear Power Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Utilities",
+      "market_cap": 24967268124.444443,
+      "avg_volume_value": 201366039.66388887,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "002352.SZ",
+      "name": "S.F. Holding Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 24833194666.666668,
+      "avg_volume_value": 116351436.55555554,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "600031.SS",
+      "name": "Sany Heavy Industry Co.,Ltd",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 24213510826.666668,
+      "avg_volume_value": 211281060.2,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "002460.SZ",
+      "name": "Ganfeng Lithium Group Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Basic Materials",
+      "market_cap": 21936665031.11111,
+      "avg_volume_value": 705859070.1750001,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "300014.SZ",
+      "name": "EVE Energy Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 19303103146.666668,
+      "avg_volume_value": 656825342.8819444,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "600760.SS",
+      "name": "AVIC Shenyang Aircraft Company Limited",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 18097354524.444443,
+      "avg_volume_value": 132215653.41666667,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "600019.SS",
+      "name": "Baoshan Iron & Steel Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Basic Materials",
+      "market_cap": 17970220373.333332,
+      "avg_volume_value": 104787608.47500001,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "ZTO",
+      "name": "ZTO Express (Cayman) Inc.",
+      "country": "CN_ADR",
+      "sector": "Industrials",
+      "market_cap": 17809426432.0,
+      "avg_volume_value": 42146389.8,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "601390.SS",
+      "name": "China Railway Group Limited",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 16320335644.444445,
+      "avg_volume_value": 172298800.25555554,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "600011.SS",
+      "name": "Huaneng Power International, Inc.",
+      "country": "CN_A",
+      "sector": "Utilities",
+      "market_cap": 15959728355.555555,
+      "avg_volume_value": 137315546.53333333,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "600585.SS",
+      "name": "Anhui Conch Cement Company Limited",
+      "country": "CN_A",
+      "sector": "Basic Materials",
+      "market_cap": 14506839608.88889,
+      "avg_volume_value": 91513661.4,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "601800.SS",
+      "name": "China Communications Construction Company Limited",
+      "country": "CN_A",
+      "sector": "Industrials",
+      "market_cap": 14412255004.444445,
+      "avg_volume_value": 34553464.0,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "1818.HK",
+      "name": "Zhaojin Mining Industry Company Limited",
+      "country": "CN_HK",
+      "sector": "Basic Materials",
+      "market_cap": 9746122174.358974,
+      "avg_volume_value": 52242053.420512825,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "300919.SZ",
+      "name": "CNGR Advanced Material Co., Ltd.",
+      "country": "CN_A",
+      "sector": "Basic Materials",
+      "market_cap": 7890730097.777778,
+      "avg_volume_value": 141445432.48749998,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.2,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "PLUG",
+      "name": "Plug Power Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 4620000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.2,
+      "signal_score": 1.0,
+      "theme_score": 0.2,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": true,
+        "matches": [
+          {
+            "theme_key": "energy_transition",
+            "theme_label": "에너지 전환 (전기차/수소/배터리)",
+            "role": "Plug Power (수소 연료전지)",
+            "priority": "B",
+            "layer": "midstream"
+          }
+        ],
+        "track": "D (提前布局)"
+      }
+    },
+    {
+      "ticker": "CAT",
+      "name": "Caterpillar Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 401930000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "GE",
+      "name": "GE Aerospace",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 313180000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "LIN",
+      "name": "Linde Plc",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 234370000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "BHP",
+      "name": "BHP Group Limited ADR",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 212250000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "NEE",
+      "name": "NextEra Energy Inc",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 184070000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "BA",
+      "name": "Boeing Co",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 175160000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "UNP",
+      "name": "Union Pacific Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 157810000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "DE",
+      "name": "Deere & Co",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 151380000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "SCCO",
+      "name": "Southern Copper Corp",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 145250000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "HON",
+      "name": "Honeywell International Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 137750000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "RIO",
+      "name": "Rio Tinto plc ADR",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 129610000000.00002,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "NEM",
+      "name": "Newmont Corp",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 114640000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "PH",
+      "name": "Parker-Hannifin Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 108360000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "PWR",
+      "name": "Quanta Services Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 106530000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "SO",
+      "name": "Southern Company",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 105540000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "HWM",
+      "name": "Howmet Aerospace Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 104510000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "SBS",
+      "name": "Companhia de Saneamento Basico do Estado de Sao Paulo ADR",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 102750000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "TT",
+      "name": "Trane Technologies plc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 99850000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "DUK",
+      "name": "Duke Energy Corp",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 96520000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CMI",
+      "name": "Cummins Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 92430000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "FDX",
+      "name": "Fedex Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 92300000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "GD",
+      "name": "General Dynamics Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 91880000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "AEM",
+      "name": "Agnico Eagle Mines Ltd",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 89250000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "WM",
+      "name": "Waste Management Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 88180000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "FCX",
+      "name": "Freeport-McMoRan Inc",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 87500000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CSX",
+      "name": "CSX Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 85360000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "NGG",
+      "name": "National Grid Plc ADR",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 84310000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "JCI",
+      "name": "Johnson Controls International plc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 84040000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "BE",
+      "name": "Bloom Energy Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 80300000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "MMM",
+      "name": "3M Co",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 78120000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CP",
+      "name": "Canadian Pacific Kansas City Limited",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 76650000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "SHW",
+      "name": "Sherwin-Williams Co",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 75890000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "EMR",
+      "name": "Emerson Electric Co",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 74410000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "ITW",
+      "name": "Illinois Tool Works Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 72150000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CNI",
+      "name": "Canadian National Railway Co",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 70190000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "AEP",
+      "name": "American Electric Power Company Inc",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 70120000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "ECL",
+      "name": "Ecolab Inc",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 69980000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "B",
+      "name": "Barrick Mining Corp",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 68590000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CTAS",
+      "name": "Cintas Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 68560000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "TDG",
+      "name": "Transdigm Group Incorporated",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 67010000000.00001,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "RSG",
+      "name": "Republic Services Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 65290000000.00001,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "FIX",
+      "name": "Comfort Systems USA Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 64610000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "APD",
+      "name": "Air Products & Chemicals Inc",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 64400000000.00001,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "SRE",
+      "name": "Sempra",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 59790000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "D",
+      "name": "Dominion Energy Inc",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 59570000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "RELX",
+      "name": "RELX Plc ADR",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 59510000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "PCAR",
+      "name": "Paccar Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 58750000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "GWW",
+      "name": "W.W. Grainger Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 58740000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "WPM",
+      "name": "Wheaton Precious Metals Corp",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 57740000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "LHX",
+      "name": "L3Harris Technologies Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 57590000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CARR",
+      "name": "Carrier Global Corp",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 52820000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "CTVA",
+      "name": "Corteva Inc",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 52700000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "AME",
+      "name": "Ametek Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 51500000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "NUE",
+      "name": "Nucor Corp",
+      "country": "US",
+      "sector": "Basic Materials",
+      "market_cap": 51390000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLB",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "ETR",
+      "name": "Entergy Corp",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 51250000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "FAST",
+      "name": "Fastenal Co",
+      "country": "US",
+      "sector": "Industrials",
+      "market_cap": 50150000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLI",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    },
+    {
+      "ticker": "XEL",
+      "name": "Xcel Energy Inc",
+      "country": "US",
+      "sector": "Utilities",
+      "market_cap": 49850000000.0,
+      "avg_volume_value": 0.0,
+      "score": 1.0,
+      "signal_score": 1.0,
+      "theme_score": 0.0,
+      "liquidity_score": 0.0,
+      "factor_score": 0.0,
+      "factor_context": {},
+      "signal_count": 1,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "signals": {
+        "rrg_improving": {
+          "etf": "XLU",
+          "today_quadrant": "IMPROVING",
+          "transition_found": true,
+          "label_ko": "활성 섹터 진입 (회전)",
+          "phase": "拉离 (메인자금 회전 시작)"
+        }
+      },
+      "shadow_signal_count": 0,
+      "shadow_signal_keys": [],
+      "shadow_signals": {},
+      "quality_flags": [],
+      "quality_metrics": {},
+      "catalyst_context": {
+        "status": "not_checked",
+        "score": 0.0
+      },
+      "track_d": {
+        "is_theme_beneficiary": false
+      }
+    }
+  ]
+}
