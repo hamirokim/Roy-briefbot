@@ -71,6 +71,7 @@ def save_state(state: dict) -> None:
             "last_monthly_run": state.get("last_monthly_run", ""),
             "last_weekly_run": state.get("last_weekly_run", ""),
             "m2_history": state.get("m2_history", {}),
+            "m2_theme_history": state.get("m2_theme_history", {}),
             "m6_history": state.get("m6_history", []),
             "scout_cooldown": state.get("scout_cooldown", {}),
             "prev_day": {
@@ -135,19 +136,23 @@ def _stamp_mode_run(state: dict, mode: str) -> None:
 
 
 def update_m2_history_from_regime(state: dict) -> None:
-    """REGIME 출력에서 RRG 스냅샷 추출 → m2_history 누적."""
+    """REGIME 출력에서 섹터/테마 RRG 스냅샷 추출 → 히스토리 누적."""
     try:
         rrg = state.get("regime_out", {}).get("rrg", {})
         snapshot = rrg.get("snapshot", {})
-        if not snapshot:
-            return
-        m2_history = state.get("m2_history", {})
         today = state.get("date") or today_kst_str()
-        m2_history[today] = snapshot
-        # 30일치만 유지 (메모리 절약)
-        sorted_dates = sorted(m2_history.keys(), reverse=True)
-        m2_history = {d: m2_history[d] for d in sorted_dates[:30]}
-        state["m2_history"] = m2_history
+        if snapshot:
+            m2_history = state.get("m2_history", {})
+            m2_history[today] = snapshot
+            sorted_dates = sorted(m2_history.keys(), reverse=True)
+            state["m2_history"] = {d: m2_history[d] for d in sorted_dates[:30]}
+
+        theme_snapshot = rrg.get("theme_snapshot", {})
+        if theme_snapshot:
+            m2_theme_history = state.get("m2_theme_history", {})
+            m2_theme_history[today] = theme_snapshot
+            sorted_dates = sorted(m2_theme_history.keys(), reverse=True)
+            state["m2_theme_history"] = {d: m2_theme_history[d] for d in sorted_dates[:30]}
     except Exception as e:
         logger.warning("m2_history 업데이트 실패: %s", e)
 

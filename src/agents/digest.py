@@ -192,6 +192,23 @@ def _format_signals_short(signals: dict) -> str:
     return ", ".join(parts)
 
 
+def _format_theme_etfs(etfs: list[dict], limit: int = 4) -> str:
+    """테마 내부 ETF 상태를 짧게 표시."""
+    parts = []
+    for etf in (etfs or [])[:limit]:
+        q = _QUADRANT_KO.get(etf.get("quadrant", ""), etf.get("quadrant", ""))
+        parts.append(f"{etf.get('ticker')} {q}")
+    return ", ".join(parts)
+
+
+def _theme_counts_text(counts: dict) -> str:
+    return (
+        f"강함 {int(counts.get('강함', 0) or 0)} / "
+        f"관찰 {int(counts.get('관찰', 0) or 0)} / "
+        f"보류 {int(counts.get('보류', 0) or 0)}"
+    )
+
+
 def _candidate_judgment(candidate: dict) -> dict:
     """텔레그램 첫 화면용 후보 판단 라벨."""
     score = float(candidate.get("score", 0) or 0)
@@ -352,6 +369,8 @@ class DigestAgent(BaseAgent):
         fx = regime_out.get("fx", {}) or {}
         rrg = regime_out.get("rrg", {}) or {}
         by_quad = rrg.get("by_quadrant", {}) or {}
+        theme_intel = rrg.get("theme_intelligence", {}) or {}
+        theme_focus = theme_intel.get("focus", []) or []
         macro = regime_out.get("macro", {}) or {}
         upcoming = macro.get("upcoming", []) or []
 
@@ -363,6 +382,12 @@ class DigestAgent(BaseAgent):
             ko = _QUADRANT_KO.get(q, q)
             tickers = ", ".join(i.get("label", i.get("ticker", "?")) for i in items[:5])
             quad_lines.append(f"  {ko}: {tickers}")
+
+        theme_lines = []
+        for theme in theme_focus[:3]:
+            theme_lines.append(
+                f"  {theme.get('label')}: {theme.get('judgment')} — {theme.get('reason')}"
+            )
 
         upcoming_lines = []
         for evt in upcoming[:3]:
@@ -392,6 +417,8 @@ class DigestAgent(BaseAgent):
             f"  원/달러: {fx.get('current', '?')}원 ({fx.get('label', '')})\n"
             f"\n[섹터 RRG 4분면]\n"
             + ("\n".join(quad_lines) or "  (데이터 부족)")
+            + f"\n\n[테마 흐름판]\n"
+            + ("\n".join(theme_lines) or "  (뚜렷한 주목 테마 없음)")
             + f"\n\n[이번 주 매크로 일정]\n"
             + ("\n".join(upcoming_lines) or "  (없음)")
             + f"\n\n[오늘 시스템 상태]\n"
@@ -770,6 +797,28 @@ class DigestAgent(BaseAgent):
                 lines.append(f"{emoji} {ko}: <i>{tickers}</i>")
             lines.append("")
 
+        # ── 1-A-2. Theme Intelligence Layer ──
+        theme_intel = rrg.get("theme_intelligence", {}) or {}
+        theme_focus = theme_intel.get("focus", []) or []
+        theme_counts = theme_intel.get("counts", {}) or {}
+        if theme_focus:
+            lines.append("<b>🧬 테마 흐름판</b>")
+            lines.append(f"<i>기준: 강함=같은 테마 ETF 2개 이상 주도/개선 / 관찰=1개만 먼저 개선 / 보류=대부분 약화·부진</i>")
+            lines.append(f"<i>오늘 분포: {_theme_counts_text(theme_counts)}</i>")
+            for theme in theme_focus[:3]:
+                etf_text = _format_theme_etfs(theme.get("etfs", []), 4)
+                lines.append(
+                    f"• <b>{theme.get('label')}</b> [{theme.get('judgment')}] "
+                    f"<i>{theme.get('reason')}</i>"
+                )
+                if etf_text:
+                    lines.append(f"  ETF: <i>{etf_text}</i>")
+            lines.append("")
+        elif theme_counts:
+            lines.append("<b>🧬 테마 흐름판</b>")
+            lines.append(f"<i>뚜렷한 주목 테마 없음 — {_theme_counts_text(theme_counts)}</i>")
+            lines.append("")
+
         # 어제 발표 + 해석
         macro = regime_out.get("macro", {})
         yesterday = macro.get("yesterday_announced", [])
@@ -1069,6 +1118,23 @@ class DigestAgent(BaseAgent):
                         f"({t.get('ticker', '?')}): {t.get('transition', '')}"
                     )
 
+            theme_intel = rrg.get("theme_intelligence", {}) or {}
+            theme_groups = theme_intel.get("groups", []) or []
+            theme_counts = theme_intel.get("counts", {}) or {}
+            if theme_groups:
+                lines.append("")
+                lines.append("  • 테마 흐름판:")
+                lines.append(f"      기준: 강함=같은 테마 ETF 2개 이상 주도/개선, 관찰=1개만 먼저 개선, 보류=대부분 약화·부진")
+                lines.append(f"      분포: {_theme_counts_text(theme_counts)}")
+                for theme in theme_groups[:7]:
+                    etf_text = _format_theme_etfs(theme.get("etfs", []), 6)
+                    lines.append(
+                        f"      {theme.get('label')} [{theme.get('judgment')}]: "
+                        f"{theme.get('reason')}"
+                    )
+                    if etf_text:
+                        lines.append(f"        ETF: {etf_text}")
+
         # ▣ 어제 발표 + 해석
         macro = regime_out.get("macro", {}) or {}
         yesterday = macro.get("yesterday_announced", []) or []
@@ -1280,6 +1346,21 @@ class DigestAgent(BaseAgent):
                 lines.append(f"▷ 후보 {idx}: {c['ticker']} ({name}) — {country_ko}")
                 lines.append(f"    섹터    : {c.get('sector', '미분류')} | 시총 : {cap}")
                 lines.append(f"    레이더 점수: {c.get('score', 0)} | 신호 {c.get('signal_count', len(c.get('signals', {}) or {}))}개")
+                track_d = c.get("track_d", {}) or {}
+                if track_d.get("is_theme_beneficiary"):
+                    matches = track_d.get("matches", []) or []
+                    match_text = []
+                    for m in matches[:3]:
+                        if isinstance(m, dict):
+                            theme_label = m.get("theme_label") or m.get("theme_key") or "테마"
+                            role = m.get("role", "")
+                            priority = m.get("priority", "")
+                            detail = " / ".join(str(x) for x in [role, priority] if x)
+                            match_text.append(f"{theme_label}" + (f" ({detail})" if detail else ""))
+                        else:
+                            match_text.append(str(m))
+                    if match_text:
+                        lines.append(f"    테마 연결 : {', '.join(match_text)}")
                 try:
                     from src.modules.m1_5_buyquestions import summarize_data_coverage
                     coverage_text = summarize_data_coverage(c)

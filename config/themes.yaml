@@ -103,6 +103,9 @@ themes:
       - ticker: "BOTZ"
         role: "로봇 ETF (분산 노출)"
         priority: "B"
+      - ticker: "ROBO"
+        role: "로봇·자동화 ETF (분산 노출)"
+        priority: "B"
 
   # ── 3. 우주 경제 (SpaceX 영향권) ──
   space_economy:
@@ -170,6 +173,161 @@ themes:
       - ticker: "RIVN"
         role: "Rivian"
         priority: "C"
+
+  # ── 5. 클라우드·소프트웨어 ──
+  cloud_software:
+    label_ko: "클라우드·소프트웨어"
+    label_zh: "云计算·软件"
+    parent_sector: "XLK"
+    parent_theme_etf: "SKYY"
+    description: "AI 도입이 실제 업무·데이터·보안 시스템으로 확산될 때 수혜를 받는 소프트웨어 가치사슬"
+
+    upstream:
+      - ticker: "MSFT"
+        role: "클라우드 인프라 + AI 플랫폼"
+        priority: "A+"
+      - ticker: "AMZN"
+        role: "AWS 클라우드 인프라"
+        priority: "A"
+      - ticker: "GOOGL"
+        role: "Google Cloud + AI 모델"
+        priority: "A"
+
+    midstream:
+      - ticker: "SNOW"
+        role: "데이터 클라우드"
+        priority: "B+"
+      - ticker: "MDB"
+        role: "개발자 데이터베이스"
+        priority: "B+"
+      - ticker: "DDOG"
+        role: "클라우드 모니터링"
+        priority: "B+"
+
+    downstream:
+      - ticker: "CRM"
+        role: "기업용 SaaS"
+        priority: "A"
+      - ticker: "NOW"
+        role: "워크플로 자동화"
+        priority: "A"
+      - ticker: "ADBE"
+        role: "크리에이티브 소프트웨어 + 생성AI"
+        priority: "B+"
+
+  # ── 6. 사이버보안 ──
+  cybersecurity:
+    label_ko: "사이버보안"
+    label_zh: "网络安全"
+    parent_sector: "XLK"
+    parent_theme_etf: "CIBR"
+    description: "AI·클라우드 확산 후 뒤따르는 보안 예산 증가를 추적하는 테마"
+
+    upstream:
+      - ticker: "PANW"
+        role: "플랫폼 보안"
+        priority: "A+"
+      - ticker: "FTNT"
+        role: "네트워크 보안"
+        priority: "A"
+
+    midstream:
+      - ticker: "CRWD"
+        role: "엔드포인트·클라우드 보안"
+        priority: "A+"
+      - ticker: "ZS"
+        role: "제로트러스트 보안"
+        priority: "A"
+      - ticker: "NET"
+        role: "엣지 네트워크·보안"
+        priority: "B+"
+
+    downstream:
+      - ticker: "OKTA"
+        role: "아이덴티티 보안"
+        priority: "B+"
+      - ticker: "S"
+        role: "AI 기반 엔드포인트 보안"
+        priority: "B"
+
+  # ── 7. 핀테크 ──
+  fintech:
+    label_ko: "핀테크"
+    label_zh: "金融科技"
+    parent_sector: "XLF"
+    parent_theme_etf: "FINX"
+    description: "결제, 디지털 금융, 거래 인프라, 크립토 금융으로 나눠 보는 금융 혁신 테마"
+
+    upstream:
+      - ticker: "V"
+        role: "글로벌 결제 네트워크"
+        priority: "A+"
+      - ticker: "MA"
+        role: "글로벌 결제 네트워크"
+        priority: "A+"
+
+    midstream:
+      - ticker: "PYPL"
+        role: "온라인 결제"
+        priority: "B+"
+      - ticker: "SQ"
+        role: "판매자 결제 + Cash App"
+        priority: "B+"
+      - ticker: "FI"
+        role: "결제 처리 인프라"
+        priority: "B"
+
+    downstream:
+      - ticker: "COIN"
+        role: "크립토 거래 인프라"
+        priority: "B+"
+      - ticker: "HOOD"
+        role: "개인 투자 플랫폼"
+        priority: "B"
+      - ticker: "SOFI"
+        role: "디지털 금융 플랫폼"
+        priority: "B"
+
+  # ── 8. 바이오테크 ──
+  biotech:
+    label_ko: "바이오테크"
+    label_zh: "生物科技"
+    parent_sector: "XLV"
+    parent_theme_etf: "XBI"
+    description: "금리, 임상 이벤트, 빅파마 인수합병에 민감한 고변동 헬스케어 성장 테마"
+
+    upstream:
+      - ticker: "TMO"
+        role: "생명과학 장비·서비스"
+        priority: "A"
+      - ticker: "DHR"
+        role: "바이오 공정·진단 장비"
+        priority: "A"
+
+    midstream:
+      - ticker: "REGN"
+        role: "항체·신약 플랫폼"
+        priority: "A"
+      - ticker: "VRTX"
+        role: "희귀질환 신약"
+        priority: "A"
+      - ticker: "ALNY"
+        role: "RNA 치료제"
+        priority: "B+"
+
+    downstream:
+      - ticker: "AMGN"
+        role: "대형 바이오 제약"
+        priority: "A"
+      - ticker: "GILD"
+        role: "항바이러스·항암"
+        priority: "A"
+      - ticker: "MRNA"
+        role: "mRNA 플랫폼"
+        priority: "B"
+      - ticker: "CRSP"
+        role: "유전자 편집"
+        priority: "B"
 
 # ═══════════════════════════════════════════════════════════
 # 등급 시스템 (priority)

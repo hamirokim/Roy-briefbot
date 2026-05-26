@@ -47,31 +47,31 @@ _DEFAULT_SECTOR_MAP = {
 # 섹터(11개) 안의 sub-industry 또는 cross-sector 테마 추적용
 # AAPL/NVDA 같은 주도주가 매집 단계 못 통과해도 테마 RRG로 잡힘
 _DEFAULT_THEME_MAP = {
-    # 반도체 (Tech 안의 sub-industry, 가장 핫)
-    "SOXX": {"label": "반도체 (iShares)",        "category": "tech_subindustry"},
-    "SMH":  {"label": "반도체 (VanEck)",         "category": "tech_subindustry"},
-    # AI/로봇
-    "AIQ":  {"label": "AI & 빅데이터",            "category": "ai_robotics"},
-    "BOTZ": {"label": "로봇 & AI",                "category": "ai_robotics"},
-    "IRBO": {"label": "AI & 로봇 (iShares)",      "category": "ai_robotics"},
-    # 클라우드/소프트웨어
-    "SKYY": {"label": "클라우드 컴퓨팅",          "category": "tech_subindustry"},
-    "IGV":  {"label": "소프트웨어",               "category": "tech_subindustry"},
+    # AI·반도체·클라우드
+    "SMH":  {"label": "반도체 (VanEck)",          "category": "semiconductor", "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
+    "SOXX": {"label": "반도체 (iShares)",         "category": "semiconductor", "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
+    "AIQ":  {"label": "AI & 빅데이터",             "category": "ai",            "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
+    "ARTY": {"label": "Future AI & Tech",         "category": "ai",            "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
+    "SKYY": {"label": "클라우드 컴퓨팅",           "category": "cloud",         "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
+    "IGV":  {"label": "소프트웨어",                "category": "software",      "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
+    # 로봇·자동화
+    "BOTZ": {"label": "로봇 & AI",                 "category": "robotics",      "theme_group": "robotics_automation", "group_label": "로봇·자동화"},
+    "ROBO": {"label": "로봇 & 자동화",             "category": "robotics",      "theme_group": "robotics_automation", "group_label": "로봇·자동화"},
     # 사이버보안
-    "HACK": {"label": "사이버보안 (ETFMG)",       "category": "tech_subindustry"},
-    "CIBR": {"label": "사이버보안 (First Trust)", "category": "tech_subindustry"},
+    "HACK": {"label": "사이버보안 (ETFMG)",        "category": "cybersecurity", "theme_group": "cybersecurity", "group_label": "사이버보안"},
+    "CIBR": {"label": "사이버보안 (First Trust)",  "category": "cybersecurity", "theme_group": "cybersecurity", "group_label": "사이버보안"},
     # 핀테크
-    "FINX": {"label": "핀테크",                   "category": "fintech"},
-    "ARKF": {"label": "핀테크 혁신 (ARK)",        "category": "fintech"},
-    # 에너지 전환
-    "TAN":  {"label": "태양광",                   "category": "energy_transition"},
-    "LIT":  {"label": "리튬 & 배터리",            "category": "energy_transition"},
-    "ICLN": {"label": "클린에너지",               "category": "energy_transition"},
-    # 우주/방산
-    "ITA":  {"label": "항공우주 & 방산",          "category": "space_defense"},
-    # 바이오
-    "XBI":  {"label": "바이오테크 (S&P)",         "category": "biotech"},
-    "IBB":  {"label": "바이오테크 (NASDAQ)",      "category": "biotech"},
+    "FINX": {"label": "핀테크",                    "category": "fintech",       "theme_group": "fintech", "group_label": "핀테크"},
+    "ARKF": {"label": "핀테크 혁신 (ARK)",         "category": "fintech",       "theme_group": "fintech", "group_label": "핀테크"},
+    # 에너지전환·배터리
+    "ICLN": {"label": "클린에너지",                "category": "clean_energy",  "theme_group": "energy_battery", "group_label": "에너지전환·배터리"},
+    "LIT":  {"label": "리튬 & 배터리",             "category": "battery",       "theme_group": "energy_battery", "group_label": "에너지전환·배터리"},
+    "TAN":  {"label": "태양광",                    "category": "solar",         "theme_group": "energy_battery", "group_label": "에너지전환·배터리"},
+    # 우주·방산
+    "ITA":  {"label": "항공우주 & 방산",           "category": "space_defense", "theme_group": "space_defense", "group_label": "우주·방산"},
+    # 바이오테크
+    "XBI":  {"label": "바이오테크 (S&P)",          "category": "biotech",       "theme_group": "biotech", "group_label": "바이오테크"},
+    "IBB":  {"label": "바이오테크 (NASDAQ)",       "category": "biotech",       "theme_group": "biotech", "group_label": "바이오테크"},
 }
 
 # RRG 4분면 한글 + 中文 번역 (Z1 신규 — 사용자 가독성)
@@ -407,6 +407,8 @@ def _compute_rrg_for_themes(theme_closes: dict, benchmark_close) -> dict:
                 "quadrant": quadrant,
                 "label": theme_info["label"],
                 "category": theme_info["category"],
+                "theme_group": theme_info.get("theme_group", theme_info.get("category", "")),
+                "group_label": theme_info.get("group_label", theme_info.get("label", ticker)),
                 "ratio": round(rs_ratio, 2),
                 "momentum": round(rs_momentum, 2),
             }

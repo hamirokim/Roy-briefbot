@@ -90,6 +90,84 @@ def _compute_fx_percentile(history: list[float], current: float) -> dict:
 # 섹터 RRG — M2 모듈 직접 호출
 # ═══════════════════════════════════════════════════════════
 
+def _group_theme_snapshot(theme_snapshot: dict) -> dict:
+    """테마 ETF를 로이가 보는 테마 흐름판 단위로 묶는다."""
+    groups: dict[str, dict] = {}
+    for ticker, info in (theme_snapshot or {}).items():
+        group_key = info.get("theme_group") or info.get("category") or ticker
+        group = groups.setdefault(
+            group_key,
+            {
+                "key": group_key,
+                "label": info.get("group_label") or info.get("label") or group_key,
+                "etfs": [],
+                "leading": 0,
+                "improving": 0,
+                "weakening": 0,
+                "lagging": 0,
+            },
+        )
+        item = {
+            "ticker": ticker,
+            "label": info.get("label", ticker),
+            "quadrant": info.get("quadrant", ""),
+            "ratio": info.get("ratio", 0),
+            "momentum": info.get("momentum", 0),
+        }
+        group["etfs"].append(item)
+        q = str(info.get("quadrant", "")).lower()
+        if q in ("leading", "improving", "weakening", "lagging"):
+            group[q] += 1
+
+    for group in groups.values():
+        etfs = group["etfs"]
+        if etfs:
+            group["avg_ratio"] = round(sum(float(e.get("ratio", 0) or 0) for e in etfs) / len(etfs), 2)
+            group["avg_momentum"] = round(sum(float(e.get("momentum", 0) or 0) for e in etfs) / len(etfs), 2)
+        else:
+            group["avg_ratio"] = 0
+            group["avg_momentum"] = 0
+
+        strength_count = int(group["leading"]) + int(group["improving"])
+        risk_count = int(group["weakening"]) + int(group["lagging"])
+        if strength_count >= 2:
+            group["judgment"] = "강함"
+            group["reason"] = f"{strength_count}개 ETF가 시장 대비 주도/개선 구간"
+            group["rank_score"] = 3
+        elif strength_count == 1:
+            group["judgment"] = "관찰"
+            group["reason"] = "일부 ETF만 먼저 개선, 확산 확인 필요"
+            group["rank_score"] = 2
+        elif risk_count > 0:
+            group["judgment"] = "보류"
+            group["reason"] = "대부분 약화/부진 구간이라 테마 추격 근거 약함"
+            group["rank_score"] = 1
+        else:
+            group["judgment"] = "없음"
+            group["reason"] = "판단 가능한 흐름 없음"
+            group["rank_score"] = 0
+
+    ranked = sorted(
+        groups.values(),
+        key=lambda g: (
+            -int(g.get("rank_score", 0)),
+            -int(g.get("leading", 0)),
+            -int(g.get("improving", 0)),
+            -float(g.get("avg_momentum", 0) or 0),
+        ),
+    )
+    focus = [g for g in ranked if g.get("judgment") in ("강함", "관찰")]
+    return {
+        "groups": ranked,
+        "focus": focus[:3],
+        "counts": {
+            "강함": sum(1 for g in ranked if g.get("judgment") == "강함"),
+            "관찰": sum(1 for g in ranked if g.get("judgment") == "관찰"),
+            "보류": sum(1 for g in ranked if g.get("judgment") == "보류"),
+        },
+    }
+
+
 def _fetch_sector_rrg(state: dict) -> dict:
     """기존 M2 호출 → 결과 + 4분면 요약 반환."""
     try:
@@ -102,6 +180,8 @@ def _fetch_sector_rrg(state: dict) -> dict:
         result = run_m2(etf_map, state)
         snapshot = result.get("today_snapshot", {})
         transitions = result.get("transitions", [])
+        theme_snapshot = result.get("theme_snapshot", {})
+        theme_transitions = result.get("theme_transitions", [])
 
         # 4분면 요약
         by_quad = {"LEADING": [], "WEAKENING": [], "LAGGING": [], "IMPROVING": []}
@@ -116,15 +196,42 @@ def _fetch_sector_rrg(state: dict) -> dict:
                     "momentum": info.get("momentum", 0),
                 })
 
+        theme_by_quad = {"LEADING": [], "WEAKENING": [], "LAGGING": [], "IMPROVING": []}
+        for ticker, info in theme_snapshot.items():
+            quad = info.get("quadrant")
+            if quad in theme_by_quad:
+                theme_by_quad[quad].append({
+                    "ticker": ticker,
+                    "label": info.get("label", ""),
+                    "category": info.get("category", ""),
+                    "theme_group": info.get("theme_group", ""),
+                    "group_label": info.get("group_label", ""),
+                    "ratio": info.get("ratio", 0),
+                    "momentum": info.get("momentum", 0),
+                })
+
         return {
             "snapshot": snapshot,
             "transitions": transitions,
             "by_quadrant": by_quad,
+            "theme_snapshot": theme_snapshot,
+            "theme_transitions": theme_transitions,
+            "theme_by_quadrant": theme_by_quad,
+            "theme_intelligence": _group_theme_snapshot(theme_snapshot),
             "context_text": result.get("context_text", ""),
         }
     except Exception as e:
         logger.warning("[regime rrg] M2 호출 실패: %s", e)
-        return {"snapshot": {}, "transitions": [], "by_quadrant": {}, "context_text": ""}
+        return {
+            "snapshot": {},
+            "transitions": [],
+            "by_quadrant": {},
+            "theme_snapshot": {},
+            "theme_transitions": [],
+            "theme_by_quadrant": {},
+            "theme_intelligence": {"groups": [], "focus": [], "counts": {}},
+            "context_text": "",
+        }
 
 
 # ═══════════════════════════════════════════════════════════
@@ -392,6 +499,20 @@ class RegimeAgent(BaseAgent):
                 lines.append("  분면 전환:")
                 for t in transitions:
                     lines.append(f"    {t['ticker']} ({t['label']}): {t['transition']}")
+
+        theme_intel = rrg_data.get("theme_intelligence", {}) or {}
+        focus_themes = theme_intel.get("focus", []) or []
+        if focus_themes:
+            lines.append("\n테마 흐름판:")
+            for theme in focus_themes[:3]:
+                etfs = ", ".join(
+                    f"{e.get('ticker')}({e.get('quadrant')})"
+                    for e in (theme.get("etfs", []) or [])[:4]
+                )
+                lines.append(
+                    f"  {theme.get('label')}: {theme.get('judgment')} — "
+                    f"{theme.get('reason')} / {etfs}"
+                )
 
         # 환율
         if fx_data.get("current"):

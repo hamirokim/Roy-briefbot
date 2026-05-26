@@ -46,6 +46,7 @@ class BriefBotState(TypedDict, total=False):
 
     # ── 영속 상태 (state.json 누적) ──
     m2_history: dict                   # 섹터 RRG 히스토리 (REGIME 사용)
+    m2_theme_history: dict             # 테마 RRG 히스토리 (Theme Intelligence 사용)
     m6_history: list                   # SCOUT 후보 추적 history (M6 D86)
     scout_cooldown: dict               # 신호별 cooldown {ticker: last_alert_date}
     prev_day: dict                     # 어제 브리핑 데이터

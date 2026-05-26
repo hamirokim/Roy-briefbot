@@ -117,73 +117,113 @@
     }
   },
   "themes": {
-    "SOXX": {
-      "label": "Semiconductors (iShares)",
-      "category": "tech_subindustry"
-    },
     "SMH": {
       "label": "Semiconductors (VanEck)",
-      "category": "tech_subindustry"
+      "category": "semiconductor",
+      "theme_group": "ai_semis_cloud",
+      "group_label": "AI·Semis·Cloud"
+    },
+    "SOXX": {
+      "label": "Semiconductors (iShares)",
+      "category": "semiconductor",
+      "theme_group": "ai_semis_cloud",
+      "group_label": "AI·Semis·Cloud"
     },
     "AIQ": {
       "label": "AI & Big Data",
-      "category": "ai_robotics"
+      "category": "ai",
+      "theme_group": "ai_semis_cloud",
+      "group_label": "AI·Semis·Cloud"
     },
-    "BOTZ": {
-      "label": "Robotics & AI",
-      "category": "ai_robotics"
-    },
-    "IRBO": {
-      "label": "AI & Robotics (iShares)",
-      "category": "ai_robotics"
+    "ARTY": {
+      "label": "Future AI & Tech",
+      "category": "ai",
+      "theme_group": "ai_semis_cloud",
+      "group_label": "AI·Semis·Cloud"
     },
     "SKYY": {
       "label": "Cloud Computing",
-      "category": "tech_subindustry"
+      "category": "cloud",
+      "theme_group": "ai_semis_cloud",
+      "group_label": "AI·Semis·Cloud"
     },
     "IGV": {
       "label": "Software (iShares)",
-      "category": "tech_subindustry"
+      "category": "software",
+      "theme_group": "ai_semis_cloud",
+      "group_label": "AI·Semis·Cloud"
+    },
+    "BOTZ": {
+      "label": "Robotics & AI",
+      "category": "robotics",
+      "theme_group": "robotics_automation",
+      "group_label": "Robotics·Automation"
+    },
+    "ROBO": {
+      "label": "Robotics & Automation",
+      "category": "robotics",
+      "theme_group": "robotics_automation",
+      "group_label": "Robotics·Automation"
     },
     "HACK": {
       "label": "Cybersecurity (ETFMG)",
-      "category": "tech_subindustry"
+      "category": "cybersecurity",
+      "theme_group": "cybersecurity",
+      "group_label": "Cybersecurity"
     },
     "CIBR": {
       "label": "Cybersecurity (First Trust)",
-      "category": "tech_subindustry"
+      "category": "cybersecurity",
+      "theme_group": "cybersecurity",
+      "group_label": "Cybersecurity"
     },
     "FINX": {
       "label": "FinTech",
-      "category": "fintech"
+      "category": "fintech",
+      "theme_group": "fintech",
+      "group_label": "FinTech"
     },
     "ARKF": {
       "label": "FinTech Innovation (ARK)",
-      "category": "fintech"
-    },
-    "TAN": {
-      "label": "Solar Energy",
-      "category": "energy_transition"
-    },
-    "LIT": {
-      "label": "Lithium & Battery Tech",
-      "category": "energy_transition"
+      "category": "fintech",
+      "theme_group": "fintech",
+      "group_label": "FinTech"
     },
     "ICLN": {
       "label": "Clean Energy",
-      "category": "energy_transition"
+      "category": "clean_energy",
+      "theme_group": "energy_battery",
+      "group_label": "Energy Transition·Battery"
+    },
+    "LIT": {
+      "label": "Lithium & Battery Tech",
+      "category": "battery",
+      "theme_group": "energy_battery",
+      "group_label": "Energy Transition·Battery"
+    },
+    "TAN": {
+      "label": "Solar Energy",
+      "category": "solar",
+      "theme_group": "energy_battery",
+      "group_label": "Energy Transition·Battery"
     },
     "ITA": {
       "label": "Aerospace & Defense",
-      "category": "space_defense"
+      "category": "space_defense",
+      "theme_group": "space_defense",
+      "group_label": "Space·Defense"
     },
     "XBI": {
       "label": "Biotech (S&P)",
-      "category": "biotech"
+      "category": "biotech",
+      "theme_group": "biotech",
+      "group_label": "Biotech"
     },
     "IBB": {
       "label": "Biotech (NASDAQ)",
-      "category": "biotech"
+      "category": "biotech",
+      "theme_group": "biotech",
+      "group_label": "Biotech"
     }
   }
 }

@@ -14,6 +14,7 @@ STATE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "state.json")
 _DEFAULT: dict[str, Any] = {
     "last_run_kst": "",
     "m2_history": {},
+    "m2_theme_history": {},
 }
 
 
@@ -44,10 +45,11 @@ def save_state(state: dict[str, Any]) -> None:
 
 
 def prune_m2_history(state: dict[str, Any]) -> None:
-    """m2_history에서 오래된 날짜 제거. RS_HISTORY_KEEP_DAYS 기준."""
+    """m2_history와 m2_theme_history에서 오래된 날짜 제거."""
     keep_days = env_int("RS_HISTORY_KEEP_DAYS", 7)
     cutoff = (now_kst() - timedelta(days=keep_days)).strftime("%Y-%m-%d")
-    history: dict = state.get("m2_history", {})
-    old_keys = [d for d in history if d < cutoff]
-    for k in old_keys:
-        del history[k]
+    for key in ("m2_history", "m2_theme_history"):
+        history: dict = state.get(key, {})
+        old_keys = [d for d in history if d < cutoff]
+        for k in old_keys:
+            del history[k]
