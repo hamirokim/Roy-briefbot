@@ -1,9 +1,93 @@
 {
-  "last_run_date": "2026-05-26",
-  "last_run_at": "2026-05-26T11:11:19.431441+09:00",
+  "last_run_date": "2026-05-27",
+  "last_run_at": "2026-05-27T08:27:19.603841+09:00",
+  "last_run_status": "OK",
+  "last_error_count": 0,
+  "last_errors": [],
+  "last_telegram_sent": true,
+  "last_sheets_saved": true,
   "last_monthly_run": "2026-05-26",
   "last_weekly_run": "2026-W22",
   "m2_history": {
+    "2026-05-27": {
+      "XLK": {
+        "quadrant": "LEADING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 103.5,
+        "momentum": 100.46
+      },
+      "XLV": {
+        "quadrant": "LEADING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 100.13,
+        "momentum": 101.83
+      },
+      "XLF": {
+        "quadrant": "IMPROVING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 99.31,
+        "momentum": 101.61
+      },
+      "XLY": {
+        "quadrant": "IMPROVING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 99.45,
+        "momentum": 101.23
+      },
+      "XLP": {
+        "quadrant": "LAGGING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 97.42,
+        "momentum": 97.63
+      },
+      "XLE": {
+        "quadrant": "LAGGING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 97.8,
+        "momentum": 95.9
+      },
+      "XLI": {
+        "quadrant": "IMPROVING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 99.44,
+        "momentum": 100.88
+      },
+      "XLB": {
+        "quadrant": "IMPROVING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 98.58,
+        "momentum": 100.24
+      },
+      "XLC": {
+        "quadrant": "IMPROVING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 97.92,
+        "momentum": 100.54
+      },
+      "XLU": {
+        "quadrant": "IMPROVING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 99.68,
+        "momentum": 100.52
+      },
+      "XLRE": {
+        "quadrant": "IMPROVING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 99.57,
+        "momentum": 100.72
+      }
+    },
     "2026-05-26": {
       "XLK": {
         "quadrant": "WEAKENING",
@@ -2294,88 +2378,173 @@
         "ratio": 99.17,
         "momentum": 98.23
       }
-    },
-    "2026-04-23": {
-      "XLK": {
-        "quadrant": "LEADING",
-        "label": "기술",
-        "group": "growth",
-        "ratio": 104.22,
-        "momentum": 104.74
-      },
-      "XLV": {
-        "quadrant": "LAGGING",
-        "label": "헬스케어",
-        "group": "defensive",
-        "ratio": 95.84,
-        "momentum": 95.31
-      },
-      "XLF": {
-        "quadrant": "LAGGING",
-        "label": "금융",
-        "group": "cyclical",
-        "ratio": 98.14,
-        "momentum": 97.59
-      },
-      "XLY": {
-        "quadrant": "LEADING",
-        "label": "임의소비재",
-        "group": "cyclical",
-        "ratio": 100.27,
-        "momentum": 100.25
-      },
-      "XLP": {
-        "quadrant": "LAGGING",
-        "label": "필수소비재",
-        "group": "defensive",
-        "ratio": 96.66,
-        "momentum": 97.89
-      },
-      "XLE": {
-        "quadrant": "LAGGING",
-        "label": "에너지",
-        "group": "cyclical",
-        "ratio": 95.59,
-        "momentum": 97.36
-      },
-      "XLI": {
-        "quadrant": "LAGGING",
-        "label": "산업재",
-        "group": "cyclical",
-        "ratio": 97.06,
-        "momentum": 96.48
-      },
-      "XLB": {
-        "quadrant": "LAGGING",
-        "label": "소재",
-        "group": "cyclical",
-        "ratio": 97.23,
-        "momentum": 94.4
-      },
-      "XLC": {
-        "quadrant": "LAGGING",
-        "label": "통신",
-        "group": "growth",
-        "ratio": 98.6,
-        "momentum": 99.31
-      },
-      "XLU": {
-        "quadrant": "LAGGING",
-        "label": "유틸리티",
-        "group": "defensive",
-        "ratio": 93.82,
-        "momentum": 93.7
-      },
-      "XLRE": {
-        "quadrant": "LAGGING",
-        "label": "리츠",
-        "group": "defensive",
-        "ratio": 97.51,
-        "momentum": 98.09
-      }
     }
   },
   "m2_theme_history": {
+    "2026-05-27": {
+      "SMH": {
+        "quadrant": "LEADING",
+        "label": "반도체 (VanEck)",
+        "category": "semiconductor",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 122.1,
+        "momentum": 108.5
+      },
+      "SOXX": {
+        "quadrant": "LEADING",
+        "label": "반도체 (iShares)",
+        "category": "semiconductor",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 129.96,
+        "momentum": 113.14
+      },
+      "AIQ": {
+        "quadrant": "LEADING",
+        "label": "AI & 빅데이터",
+        "category": "ai",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 113.66,
+        "momentum": 105.67
+      },
+      "ARTY": {
+        "quadrant": "LEADING",
+        "label": "Future AI & Tech",
+        "category": "ai",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 118.55,
+        "momentum": 109.45
+      },
+      "SKYY": {
+        "quadrant": "LEADING",
+        "label": "클라우드 컴퓨팅",
+        "category": "cloud",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 105.46,
+        "momentum": 101.71
+      },
+      "IGV": {
+        "quadrant": "WEAKENING",
+        "label": "소프트웨어",
+        "category": "software",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 102.17,
+        "momentum": 99.66
+      },
+      "BOTZ": {
+        "quadrant": "LEADING",
+        "label": "로봇 & AI",
+        "category": "robotics",
+        "theme_group": "robotics_automation",
+        "group_label": "로봇·자동화",
+        "ratio": 102.61,
+        "momentum": 101.05
+      },
+      "ROBO": {
+        "quadrant": "LEADING",
+        "label": "로봇 & 자동화",
+        "category": "robotics",
+        "theme_group": "robotics_automation",
+        "group_label": "로봇·자동화",
+        "ratio": 108.5,
+        "momentum": 105.13
+      },
+      "HACK": {
+        "quadrant": "LEADING",
+        "label": "사이버보안 (ETFMG)",
+        "category": "cybersecurity",
+        "theme_group": "cybersecurity",
+        "group_label": "사이버보안",
+        "ratio": 110.5,
+        "momentum": 102.91
+      },
+      "CIBR": {
+        "quadrant": "LEADING",
+        "label": "사이버보안 (First Trust)",
+        "category": "cybersecurity",
+        "theme_group": "cybersecurity",
+        "group_label": "사이버보안",
+        "ratio": 114.8,
+        "momentum": 102.74
+      },
+      "FINX": {
+        "quadrant": "LAGGING",
+        "label": "핀테크",
+        "category": "fintech",
+        "theme_group": "fintech",
+        "group_label": "핀테크",
+        "ratio": 93.01,
+        "momentum": 98.35
+      },
+      "ARKF": {
+        "quadrant": "LAGGING",
+        "label": "핀테크 혁신 (ARK)",
+        "category": "fintech",
+        "theme_group": "fintech",
+        "group_label": "핀테크",
+        "ratio": 92.72,
+        "momentum": 98.68
+      },
+      "ICLN": {
+        "quadrant": "LEADING",
+        "label": "클린에너지",
+        "category": "clean_energy",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 108.88,
+        "momentum": 105.79
+      },
+      "LIT": {
+        "quadrant": "LEADING",
+        "label": "리튬 & 배터리",
+        "category": "battery",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 101.49,
+        "momentum": 102.34
+      },
+      "TAN": {
+        "quadrant": "LEADING",
+        "label": "태양광",
+        "category": "solar",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 110.89,
+        "momentum": 108.39
+      },
+      "ITA": {
+        "quadrant": "IMPROVING",
+        "label": "항공우주 & 방산",
+        "category": "space_defense",
+        "theme_group": "space_defense",
+        "group_label": "우주·방산",
+        "ratio": 93.42,
+        "momentum": 102.55
+      },
+      "XBI": {
+        "quadrant": "IMPROVING",
+        "label": "바이오테크 (S&P)",
+        "category": "biotech",
+        "theme_group": "biotech",
+        "group_label": "바이오테크",
+        "ratio": 95.31,
+        "momentum": 102.79
+      },
+      "IBB": {
+        "quadrant": "IMPROVING",
+        "label": "바이오테크 (NASDAQ)",
+        "category": "biotech",
+        "theme_group": "biotech",
+        "group_label": "바이오테크",
+        "ratio": 92.46,
+        "momentum": 101.64
+      }
+    },
     "2026-05-26": {
       "SMH": {
         "quadrant": "LEADING",
@@ -3164,6 +3333,146 @@
       },
       "track_d": "",
       "source": "SCOUT"
+    },
+    {
+      "ticker": "4733.T",
+      "name": "オービックビジネスコンサルタント",
+      "country": "JP",
+      "sector": "情報通信・サービスその他",
+      "date_added": "2026-05-27",
+      "price_at_add": 6009.0,
+      "score": 2.4,
+      "signal_keys": [
+        "bb_squeeze",
+        "volume_compression"
+      ],
+      "shadow_signal_keys": [],
+      "factor_score": 0.0,
+      "factor_positives": [
+        "liquidity_good",
+        "not_chasing",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [],
+      "quality_flags": [
+        "left_side_context"
+      ],
+      "catalyst_status": "non_us",
+      "catalyst_score": 0.0,
+      "data_coverage": {
+        "fundamental": {
+          "status": "not_supported_non_us",
+          "label": "수집 미지원(비미국)",
+          "missing_fields": [
+            "PE",
+            "Forward PE",
+            "EPS Growth",
+            "RSI",
+            "Insider",
+            "Institutional"
+          ]
+        },
+        "catalyst": {
+          "status": "non_us",
+          "label": "수집 미지원(비미국)",
+          "detail": "현재 촉매 뉴스 수집은 미국 심볼 중심"
+        }
+      },
+      "track_d": "",
+      "source": "SCOUT"
+    },
+    {
+      "ticker": "098460.KQ",
+      "name": "고영",
+      "country": "KR",
+      "sector": "",
+      "date_added": "2026-05-27",
+      "price_at_add": 40800.0,
+      "score": 2.4,
+      "signal_keys": [
+        "bb_squeeze",
+        "volume_compression"
+      ],
+      "shadow_signal_keys": [],
+      "factor_score": 0.0,
+      "factor_positives": [
+        "liquidity_good",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [
+        "chasing_hot"
+      ],
+      "quality_flags": [
+        "overextended_20d"
+      ],
+      "catalyst_status": "non_us",
+      "catalyst_score": 0.0,
+      "data_coverage": {
+        "fundamental": {
+          "status": "not_supported_non_us",
+          "label": "수집 미지원(비미국)",
+          "missing_fields": [
+            "PE",
+            "Forward PE",
+            "EPS Growth",
+            "RSI",
+            "Insider",
+            "Institutional"
+          ]
+        },
+        "catalyst": {
+          "status": "non_us",
+          "label": "수집 미지원(비미국)",
+          "detail": "현재 촉매 뉴스 수집은 미국 심볼 중심"
+        }
+      },
+      "track_d": "",
+      "source": "SCOUT"
+    },
+    {
+      "ticker": "3994.T",
+      "name": "マネーフォワード",
+      "country": "JP",
+      "sector": "情報通信・サービスその他",
+      "date_added": "2026-05-27",
+      "price_at_add": 4332.0,
+      "score": 2.4,
+      "signal_keys": [
+        "bb_squeeze",
+        "volume_compression"
+      ],
+      "shadow_signal_keys": [],
+      "factor_score": 0.0,
+      "factor_positives": [
+        "liquidity_good",
+        "not_chasing",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [],
+      "quality_flags": [],
+      "catalyst_status": "non_us",
+      "catalyst_score": 0.0,
+      "data_coverage": {
+        "fundamental": {
+          "status": "not_supported_non_us",
+          "label": "수집 미지원(비미국)",
+          "missing_fields": [
+            "PE",
+            "Forward PE",
+            "EPS Growth",
+            "RSI",
+            "Insider",
+            "Institutional"
+          ]
+        },
+        "catalyst": {
+          "status": "non_us",
+          "label": "수집 미지원(비미국)",
+          "detail": "현재 촉매 뉴스 수집은 미국 심볼 중심"
+        }
+      },
+      "track_d": "",
+      "source": "SCOUT"
     }
   ],
   "scout_cooldown": {
@@ -3196,685 +3505,20 @@
     "RTX": "2026-05-26",
     "LMT": "2026-05-26",
     "NOC": "2026-05-26",
-    "600150.SS": "2026-05-26"
+    "600150.SS": "2026-05-26",
+    "4733.T": "2026-05-27",
+    "098460.KQ": "2026-05-27",
+    "3994.T": "2026-05-27"
   },
   "prev_day": {
     "candidates": [
       {
-        "ticker": "NSC",
-        "name": "Norfolk Southern Corp",
-        "country": "US",
-        "sector": "Industrials",
-        "market_cap": 70040000000.0,
-        "avg_volume_value": 0.0,
-        "score": 2.9,
-        "signal_score": 2.9,
-        "theme_score": 0.0,
-        "liquidity_score": 0.0,
-        "factor_score": -0.0,
-        "factor_context": {
-          "score": -0.05,
-          "positives": [
-            "volatility_healthy"
-          ],
-          "negatives": [
-            "liquidity_weak"
-          ],
-          "metrics": {
-            "close_days": 251,
-            "avg_volume_value": 0.0,
-            "ret_20d": -0.0162,
-            "drawdown_from_high": -0.0215,
-            "atr_pct": 0.0182
-          }
-        },
-        "signal_count": 3,
-        "signal_keys": [
-          "insider_buying",
-          "rrg_improving",
-          "bb_squeeze"
-        ],
-        "signals": {
-          "insider_buying": {
-            "insider_trans_pct": 0.09,
-            "lookback_days": 7,
-            "label_ko": "메인자금 진입 흔적",
-            "phase": "主力 진입"
-          },
-          "rrg_improving": {
-            "etf": "XLI",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
-          "bb_squeeze": {
-            "current_width": 0.0371,
-            "avg_width": 0.1,
-            "ratio": 0.371,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          }
-        },
-        "shadow_signal_count": 0,
-        "shadow_signal_keys": [],
-        "shadow_signals": {},
-        "quality_flags": [
-          "low_liquidity_buffer",
-          "near_52w_high"
-        ],
-        "quality_metrics": {
-          "last_close": 314.53,
-          "ret_20d": -0.0162,
-          "ma50": 301.524,
-          "ma200": 293.663,
-          "drawdown_from_high": -0.0215,
-          "avg_volume_value": 0.0
-        },
-        "catalyst_context": {
-          "status": "found",
-          "score": 0.0,
-          "positive_hits": [
-            {
-              "headline": "Union Pacific Offer Puts Norfolk Southern’s Rail Network Value In Focus",
-              "keywords": [
-                "acquisition",
-                "deal",
-                "merger"
-              ]
-            }
-          ],
-          "risk_hits": [],
-          "news": [
-            {
-              "headline": "Union Pacific Offer Puts Norfolk Southern’s Rail Network Value In Focus",
-              "summary": "Union Pacific has proposed a US$85b acquisition of Norfolk Southern (NYSE:NSC). The deal gathered momentum after public comments from President Trump supporting the merger. The proposed combination would create a larger freight rail operator across key U.S. routes. Norfolk Southern, listed as NYSE:N",
-              "source": "Yahoo",
-              "datetime": 1779552888,
-              "url": "https://finnhub.io/api/news?id=f683214016ddac1011a457e6b1adb6c87f1aa6405e4ca04b80bf60c3912dea4b"
-            },
-            {
-              "headline": "Unusual Options Activity in CSX Stock Could Signal More Upside Ahead",
-              "summary": "Railroad operator CSX posted Thursday’s highest Vol/OI ratio. With the stock already up 26% year-to-date, a large institution placed a large options bet that the rally has further room to run in the second half of 2026.",
-              "source": "Yahoo",
-              "datetime": 1779471002,
-              "url": "https://finnhub.io/api/news?id=f6f106ffdd985cb2296c9af27ea6d7271318198888335afd01ffa1c22e42c5d4"
-            },
-            {
-              "headline": "Pete Buttigieg And Donald Trump Agree On Something: Rail Safety Reform",
-              "summary": "Pete Buttigieg supports President Donald Trump-backed rail safety bill, citing past reforms as Transportation Secretary.",
-              "source": "Benzinga",
-              "datetime": 1779426455,
-              "url": "https://finnhub.io/api/news?id=e7042c5937b3a2867c3dec29230e71c6f0f666e4a5d9bdaf9fae0c7647ef8787"
-            }
-          ]
-        },
-        "track_d": {
-          "is_theme_beneficiary": false
-        },
-        "catalyst_score": 0.0,
-        "fundamental_status": {
-          "status": "ok",
-          "label": "수집 완료",
-          "missing_fields": []
-        },
-        "data_coverage": {
-          "fundamental": {
-            "status": "ok",
-            "label": "수집 완료",
-            "missing_fields": []
-          },
-          "catalyst": {
-            "status": "found",
-            "label": "수집 완료",
-            "detail": "최근 촉매성 뉴스 확인"
-          }
-        },
-        "buy_questions": {
-          "industry": "산업재",
-          "thesis": "메인자금 진입 흔적과 활성 섹터 회전, 변동성 압축이 동시에 확인되어 관찰 대상입니다. 다만 밸류에이션은 낮지 않고 PEG도 높아, 강한 저평가 매집으로 보기는 어렵습니다.",
-          "catalyst": "최근 촉매성 뉴스가 확인되었습니다. Union Pacific의 제안이 Norfolk Southern의 철도 네트워크 가치에 대한 재평가를 유발했고, 철도 안전 개혁 관련 이슈도 함께 노출되었습니다.",
-          "q1_why": "Forward PE 23.3배, EPS Growth 13.5%로 이익 성장 기대는 있으나 PE 26.5배와 PEG 4.02로 성장 대비 가격 부담이 있습니다. 따라서 상승 논리는 존재하지만, 강한 저평가 기반은 아닙니다.",
-          "q2_who": "Insider Trans는 +0.1%로 소폭 순매수, Institutional Trans는 -0.2%로 기관은 미세 순매도입니다. 현재 수치만 보면 뚜렷한 기관 대규모 매집 신호는 제한적입니다.",
-          "q3_space": "RSI 54.5로 과열은 아니며 추가 상승 여지는 남아 있습니다. 다만 52주 저점 정보가 없어 저점 대비 리레이팅 여지는 확인되지 않았고, 밸류에이션도 완전히 싸지 않습니다.",
-          "risk_flags": [
-            "PEG 4.02로 성장 대비 밸류에이션 부담",
-            "기관 순매도(-0.2%)로 강한 수급 확증 부족"
-          ],
-          "star_rating": "★",
-          "summary": "관찰 우위",
-          "_llm_used": true,
-          "_data_coverage": {
-            "fundamental": {
-              "status": "ok",
-              "label": "수집 완료",
-              "missing_fields": []
-            },
-            "catalyst": {
-              "status": "found",
-              "label": "수집 완료",
-              "detail": "최근 촉매성 뉴스 확인"
-            }
-          }
-        },
-        "price_at_add": 314.53
-      },
-      {
-        "ticker": "RTX",
-        "name": "RTX Corp",
-        "country": "US",
-        "sector": "Industrials",
-        "market_cap": 235470000000.0,
-        "avg_volume_value": 0.0,
-        "score": 2.8,
-        "signal_score": 2.2,
-        "theme_score": 0.6,
-        "liquidity_score": 0.0,
-        "factor_score": 0.0,
-        "factor_context": {
-          "score": 0.15,
-          "positives": [
-            "not_chasing",
-            "volatility_healthy"
-          ],
-          "negatives": [
-            "liquidity_weak"
-          ],
-          "metrics": {
-            "close_days": 251,
-            "avg_volume_value": 0.0,
-            "ret_20d": 0.0158,
-            "drawdown_from_high": -0.1657,
-            "atr_pct": 0.0244
-          }
-        },
-        "signal_count": 2,
-        "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
-        ],
-        "signals": {
-          "rrg_improving": {
-            "etf": "XLI",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
-          "bb_squeeze": {
-            "current_width": 0.0475,
-            "avg_width": 0.1795,
-            "ratio": 0.265,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          }
-        },
-        "shadow_signal_count": 0,
-        "shadow_signal_keys": [],
-        "shadow_signals": {},
-        "quality_flags": [
-          "low_liquidity_buffer"
-        ],
-        "quality_metrics": {
-          "last_close": 177.01,
-          "ret_20d": 0.0158,
-          "ma50": 187.593,
-          "ma200": 180.278,
-          "drawdown_from_high": -0.1657,
-          "avg_volume_value": 0.0
-        },
-        "catalyst_context": {
-          "status": "risk",
-          "score": -0.0,
-          "positive_hits": [],
-          "risk_hits": [
-            {
-              "headline": "AeroVironment vs. RTX: Which Aerospace-Defense Stock Has the Edge?",
-              "keywords": [
-                "miss"
-              ]
-            }
-          ],
-          "news": [
-            {
-              "headline": "AeroVironment vs. RTX: Which Aerospace-Defense Stock Has the Edge?",
-              "summary": "AVAV and RTX spotlight autonomous loitering munitions and missile-defense systems as militaries ramp up precision strike and integrated targeting technologies.",
-              "source": "Yahoo",
-              "datetime": 1779716400,
-              "url": "https://finnhub.io/api/news?id=481192b479029aeed9ee70e35a4aff542dbc533625dfa923f8c33ce9e86c577e"
-            },
-            {
-              "headline": "RTX Corporation: A Dual Cycle Profile In Play",
-              "summary": "RTX stock is rated Buy with a $201.85 price target (14% upside). Here's what investors need to know about the company.",
-              "source": "SeekingAlpha",
-              "datetime": 1779695557,
-              "url": "https://finnhub.io/api/news?id=40cba415eba07326745e31b33770b35c6a6b3e71907fa7537433049d7d7fd692"
-            },
-            {
-              "headline": "Buried Deep in SpaceX’s Pre-IPO Disclosures: A Threat to Starlink That Sounds Like Science Fiction",
-              "summary": "I’ve been reading SpaceX’s pre-IPO disclosures hunting for the buried sentence others skip. There’s a passage in the risk section that reads like a screenplay: foreign powers, orbital weapons, and a constellation of satellites already in someone’s targeting reticle. It sounds like science fiction. I",
-              "source": "Yahoo",
-              "datetime": 1779622174,
-              "url": "https://finnhub.io/api/news?id=27f5961e7ae29c474d9ed1375fd5930a27b1857de15783b1c848cb6e34f9482a"
-            }
-          ]
-        },
-        "track_d": {
-          "is_theme_beneficiary": true,
-          "matches": [
-            {
-              "theme_key": "space_economy",
-              "theme_label": "우주 경제 (SpaceX + 위성)",
-              "role": "Raytheon (미사일/방산)",
-              "priority": "A",
-              "layer": "upstream"
-            }
-          ],
-          "track": "D (提前布局)"
-        },
-        "catalyst_score": 0.0,
-        "fundamental_status": {
-          "status": "ok",
-          "label": "수집 완료",
-          "missing_fields": []
-        },
-        "data_coverage": {
-          "fundamental": {
-            "status": "ok",
-            "label": "수집 완료",
-            "missing_fields": []
-          },
-          "catalyst": {
-            "status": "risk",
-            "label": "리스크 뉴스 확인",
-            "detail": "리스크 뉴스 확인"
-          }
-        },
-        "buy_questions": {
-          "industry": "방산/항공우주",
-          "thesis": "활성 섹터 진입과 변동성 압축이 확인되어 수급이 붙을 여지는 있습니다. 다만 PE와 PEG가 높아 밸류에이션 측면의 강한 매집 근거는 제한적입니다.",
-          "catalyst": "촉매 수집 상태가 '리스크 뉴스 확인'이며, 제공된 촉매는 비교 기사 1건입니다. 기사 제목만으로는 신규 호재가 확인되지 않아 촉매는 강한 매집 신호로 보기 어렵습니다.",
-          "q1_why": "Forward PE 23.3배와 내년 EPS Growth 7.6%는 성장 대비 가격 부담이 완전히 낮지는 않지만, 현재 이익 성장 기대는 존재합니다. 다만 PE 33.2배와 PEG 2.31은 상승 여력을 뒷받침하는 강한 저평가 신호는 아닙니다.",
-          "q2_who": "Insider Trans -13.0%로 내부자 매수 우위는 확인되지 않습니다. Institutional Trans +0.7%는 기관 순유입이 소폭 있어 수급 측면의 지지는 있으나 강한 매집으로 보기는 어렵습니다.",
-          "q3_space": "RSI 44.9는 과열 구간이 아니어서 추가 상승 여지는 남아 있습니다. 다만 52주 저점 정보가 없어 저점 매력은 미확인입니다.",
-          "risk_flags": [
-            "PE 33.2배, PEG 2.31로 밸류에이션 부담",
-            "내부자 거래 -13.0%로 매집 신호 약함"
-          ],
-          "star_rating": "★",
-          "summary": "관찰, 밸류 부담",
-          "_llm_used": true,
-          "_data_coverage": {
-            "fundamental": {
-              "status": "ok",
-              "label": "수집 완료",
-              "missing_fields": []
-            },
-            "catalyst": {
-              "status": "risk",
-              "label": "리스크 뉴스 확인",
-              "detail": "리스크 뉴스 확인"
-            }
-          }
-        },
-        "price_at_add": 177.01
-      },
-      {
-        "ticker": "LMT",
-        "name": "Lockheed Martin Corp",
-        "country": "US",
-        "sector": "Industrials",
-        "market_cap": 120490000000.0,
-        "avg_volume_value": 0.0,
-        "score": 2.8,
-        "signal_score": 2.2,
-        "theme_score": 0.6,
-        "liquidity_score": 0.0,
-        "factor_score": 0.0,
-        "factor_context": {
-          "score": 0.15,
-          "positives": [
-            "not_chasing",
-            "volatility_healthy"
-          ],
-          "negatives": [
-            "liquidity_weak"
-          ],
-          "metrics": {
-            "close_days": 251,
-            "avg_volume_value": 0.0,
-            "ret_20d": 0.0385,
-            "drawdown_from_high": -0.212,
-            "atr_pct": 0.0251
-          }
-        },
-        "signal_count": 2,
-        "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
-        ],
-        "signals": {
-          "rrg_improving": {
-            "etf": "XLI",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
-          "bb_squeeze": {
-            "current_width": 0.0537,
-            "avg_width": 0.2333,
-            "ratio": 0.23,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          }
-        },
-        "shadow_signal_count": 0,
-        "shadow_signal_keys": [],
-        "shadow_signals": {},
-        "quality_flags": [
-          "low_liquidity_buffer"
-        ],
-        "quality_metrics": {
-          "last_close": 533.24,
-          "ret_20d": 0.0385,
-          "ma50": 572.944,
-          "ma200": 530.854,
-          "drawdown_from_high": -0.212,
-          "avg_volume_value": 0.0
-        },
-        "catalyst_context": {
-          "status": "found",
-          "score": 0.0,
-          "positive_hits": [
-            {
-              "headline": "BA vs. LMT: Which Aerospace-Defense Giant Offers Better Value Today?",
-              "keywords": [
-                "contract"
-              ]
-            },
-            {
-              "headline": "SpaceX stock is about to join this growing constellation of public companies building a space-based economy",
-              "keywords": [
-                "launch"
-              ]
-            }
-          ],
-          "risk_hits": [],
-          "news": [
-            {
-              "headline": "BA vs. LMT: Which Aerospace-Defense Giant Offers Better Value Today?",
-              "summary": "Both Boeing and Lockheed Martin benefit from significant exposure to military aircraft, space systems and government defense contracts.",
-              "source": "Yahoo",
-              "datetime": 1779722400,
-              "url": "https://finnhub.io/api/news?id=40307cca990d80d15c78f1f2f58efb69f866ed19e49de395cf6e5089171e8b55"
-            },
-            {
-              "headline": "The Commercial Space Economy Just Crossed a Real Revenue Threshold and After Following This Industry for Years These Are the 3 ETFs Worth Owning",
-              "summary": "The commercial space sector has crossed into recurring commercial revenue at scale. SpaceX’s Starlink unit is now throwing off subscription cash flow at a scale that supports an IPO pipeline being shepherded by Bank of America as lead underwriter. Pure-play satellite operators are booking recurring ",
-              "source": "Yahoo",
-              "datetime": 1779711230,
-              "url": "https://finnhub.io/api/news?id=4a36c5f36dfcae9f305c8fd1b7551f48b873dcb9fbe7709117542f1c1fc9e7bb"
-            },
-            {
-              "headline": "SpaceX stock is about to join this growing constellation of public companies building a space-based economy",
-              "summary": "In addition to rocket companies that launch payloads into orbit, others in the sector develop satellites and vehicles or provide space-based services like communications or imagery.",
-              "source": "Yahoo",
-              "datetime": 1779651189,
-              "url": "https://finnhub.io/api/news?id=4ecb7d46447e7968e03fa072f6390ef8d3bf21dbb725b6eed37785acc82ca66f"
-            }
-          ]
-        },
-        "track_d": {
-          "is_theme_beneficiary": true,
-          "matches": [
-            {
-              "theme_key": "space_economy",
-              "theme_label": "우주 경제 (SpaceX + 위성)",
-              "role": "Lockheed Martin (방산 최대)",
-              "priority": "A",
-              "layer": "upstream"
-            }
-          ],
-          "track": "D (提前布局)"
-        },
-        "catalyst_score": 0.0,
-        "fundamental_status": {
-          "status": "ok",
-          "label": "수집 완료",
-          "missing_fields": []
-        },
-        "data_coverage": {
-          "fundamental": {
-            "status": "ok",
-            "label": "수집 완료",
-            "missing_fields": []
-          },
-          "catalyst": {
-            "status": "found",
-            "label": "수집 완료",
-            "detail": "최근 촉매성 뉴스 확인"
-          }
-        },
-        "buy_questions": {
-          "industry": "방산/우주경제",
-          "thesis": "방산 대형주로서 우주경제 테마에 연결되어 있고, 활성 섹터 진입과 변동성 압축 신호가 함께 확인됩니다. Forward PE 16.6배와 내년 EPS 성장률 32.0%로 밸류에이션 대비 성장 기대가 있습니다.",
-          "catalyst": "최근 뉴스에서 방산 가치 비교와 상업 우주경제 확대가 확인됐고, SpaceX 관련 우주경제 확장 기사도 포착되었습니다. 촉매 키워드에 contract와 launch가 포함되어 있어 계약 및 발사 관련 관심이 반영된 상태입니다.",
-          "q1_why": "PE 25.8배 대비 Forward PE 16.6배로 선행 이익 기준 밸류에이션이 낮아집니다. EPS Growth(next Y) 32.0%와 PEG 1.00은 성장 대비 가격 부담이 크지 않음을 보여줍니다.",
-          "q2_who": "Insider Trans는 -0.0%로 내부자 매집 신호는 뚜렷하지 않습니다. Institutional Trans +0.8%로 기관 수급은 소폭 순유입입니다.",
-          "q3_space": "RSI(14) 47.3으로 과열 구간이 아니며, 52주 고점 부담을 직접 보여주는 데이터는 없습니다. 활성 섹터 회전과 변동성 압축은 추가 상승 여지를 시사하는 확인된 신호입니다.",
-          "risk_flags": [
-            "내부자 매집 신호 부재",
-            "방산/계약 뉴스 의존도 높음"
-          ],
-          "star_rating": "★★",
-          "summary": "성장+수급양호",
-          "_llm_used": true,
-          "_data_coverage": {
-            "fundamental": {
-              "status": "ok",
-              "label": "수집 완료",
-              "missing_fields": []
-            },
-            "catalyst": {
-              "status": "found",
-              "label": "수집 완료",
-              "detail": "최근 촉매성 뉴스 확인"
-            }
-          }
-        },
-        "price_at_add": 533.24
-      },
-      {
-        "ticker": "NOC",
-        "name": "Northrop Grumman Corp",
-        "country": "US",
-        "sector": "Industrials",
-        "market_cap": 78430000000.0,
-        "avg_volume_value": 0.0,
-        "score": 2.8,
-        "signal_score": 2.2,
-        "theme_score": 0.6,
-        "liquidity_score": 0.0,
-        "factor_score": 0.0,
-        "factor_context": {
-          "score": 0.15,
-          "positives": [
-            "not_chasing",
-            "volatility_healthy"
-          ],
-          "negatives": [
-            "liquidity_weak"
-          ],
-          "metrics": {
-            "close_days": 251,
-            "avg_volume_value": 0.0,
-            "ret_20d": -0.034,
-            "drawdown_from_high": -0.2766,
-            "atr_pct": 0.0249
-          }
-        },
-        "signal_count": 2,
-        "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
-        ],
-        "signals": {
-          "rrg_improving": {
-            "etf": "XLI",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
-          "bb_squeeze": {
-            "current_width": 0.079,
-            "avg_width": 0.2448,
-            "ratio": 0.323,
-            "threshold": 0.5,
-            "label_ko": "변동성 압축",
-            "phase": "拉升 직전 (매집 완료)"
-          }
-        },
-        "shadow_signal_count": 1,
-        "shadow_signal_keys": [
-          "ronin_structure_support"
-        ],
-        "shadow_signals": {
-          "ronin_structure_support": {
-            "kind": "support",
-            "zone_lo": 543.66,
-            "zone_hi": 545.51,
-            "distance": 4.98,
-            "margin": 6.37,
-            "bar_age": 119,
-            "label_ko": "RONIN 구조 지지 근접",
-            "phase": "구조존 재진입"
-          }
-        },
-        "quality_flags": [
-          "low_liquidity_buffer"
-        ],
-        "quality_metrics": {
-          "last_close": 555.58,
-          "ret_20d": -0.034,
-          "ma50": 630.548,
-          "ma200": 619.647,
-          "drawdown_from_high": -0.2766,
-          "avg_volume_value": 0.0
-        },
-        "catalyst_context": {
-          "status": "found",
-          "score": 0.0,
-          "positive_hits": [
-            {
-              "headline": "Space rockets, satellites, data centers and Grok: What's the right S&P sector index for SpaceX?",
-              "keywords": [
-                "launch"
-              ]
-            },
-            {
-              "headline": "3 Elite Dividend Growth Stocks That Look Too Cheap To Ignore",
-              "keywords": [
-                "dividend"
-              ]
-            }
-          ],
-          "risk_hits": [],
-          "news": [
-            {
-              "headline": "2 of Wall Street’s Favorite Stocks with Exciting Potential and 1 We Brush Off",
-              "summary": "Wall Street has set ambitious price targets for the stocks in this article. While this suggests attractive upside potential, it’s important to remain skeptical because analysts face institutional pressures that can sometimes lead to overly optimistic forecasts.",
-              "source": "Yahoo",
-              "datetime": 1779704871,
-              "url": "https://finnhub.io/api/news?id=2e3edf3f6b4242d4644b9dafa90a69c823598bd9c922ffb87d87401b08fd99ae"
-            },
-            {
-              "headline": "Space rockets, satellites, data centers and Grok: What's the right S&P sector index for SpaceX?",
-              "summary": "What S&P Sector is SpaceX likely to be in once it launches on the public markets.",
-              "source": "CNBC",
-              "datetime": 1779639544,
-              "url": "https://finnhub.io/api/news?id=e395a3dc98ff6ce53f0c42f62f2daed5586588432447e4bc8bf5496243cae1b8"
-            },
-            {
-              "headline": "3 Elite Dividend Growth Stocks That Look Too Cheap To Ignore",
-              "summary": "Northrop Grumman, Home Depot, and McCormick offer attractive risk/reward after significant underperformance vs. AI-driven market. Read more on NOC, HD, and MKC here.",
-              "source": "SeekingAlpha",
-              "datetime": 1779607800,
-              "url": "https://finnhub.io/api/news?id=79aca40f8569b35f7fa83922a089aaa2d7a8b1cd1b6cdb676ba1bfa5c9b89aa7"
-            }
-          ]
-        },
-        "track_d": {
-          "is_theme_beneficiary": true,
-          "matches": [
-            {
-              "theme_key": "space_economy",
-              "theme_label": "우주 경제 (SpaceX + 위성)",
-              "role": "Northrop Grumman (B-21 + 우주)",
-              "priority": "A",
-              "layer": "upstream"
-            }
-          ],
-          "track": "D (提前布局)"
-        },
-        "catalyst_score": 0.0,
-        "fundamental_status": {
-          "status": "ok",
-          "label": "수집 완료",
-          "missing_fields": []
-        },
-        "data_coverage": {
-          "fundamental": {
-            "status": "ok",
-            "label": "수집 완료",
-            "missing_fields": []
-          },
-          "catalyst": {
-            "status": "found",
-            "label": "수집 완료",
-            "detail": "최근 촉매성 뉴스 확인"
-          }
-        },
-        "buy_questions": {
-          "industry": "산업재/우주방산",
-          "thesis": "활성 섹터 진입과 변동성 압축이 확인됐고, RSI 35.1로 과열이 아닌 구간입니다. EPS 성장률 30.1%가 제시돼 있어 실적 성장 기대가 매집 논리를 뒷받침합니다.",
-          "catalyst": "최근 촉매성 뉴스가 확인됐고, 우주 경제 테마와 연관된 기사에서 launch 키워드가 포착됐습니다. 다만 입력된 촉매는 일반 시장/테마 기사 중심이며 NOC 직접 실적·수주 촉매로는 제한적입니다.",
-          "q1_why": "Forward PE 18.4, PE 17.4 대비 EPS Growth(next Y) 30.1%가 제시돼 성장 대비 밸류에이션이 과도하게 비싸지 않습니다. PEG 2.47은 저평가를 강하게 시사하진 않지만, 성장 기대가 가격을 지지할 여지는 있습니다.",
-          "q2_who": "기관 거래는 +0.7%로 순유입이 확인돼 기관 매집 신호가 있습니다. 반면 Insider Trans -12.0%는 내부자 측면의 순매도 신호로, 기관 매집을 일부 상쇄합니다.",
-          "q3_space": "RSI(14) 35.1은 아직 과매수 구간이 아니어서 추가 상승 여지가 남아 있습니다. 활성 섹터 회전과 변동성 압축이 함께 보여 단기 리레이팅 가능성은 있으나, PE가 매우 낮은 수준은 아닙니다.",
-          "risk_flags": [
-            "Insider Trans -12.0%로 내부자 순매도",
-            "PEG 2.47로 성장 대비 밸류에이션 매력은 제한적"
-          ],
-          "star_rating": "★★",
-          "summary": "기관매집·성장양호",
-          "_llm_used": true,
-          "_data_coverage": {
-            "fundamental": {
-              "status": "ok",
-              "label": "수집 완료",
-              "missing_fields": []
-            },
-            "catalyst": {
-              "status": "found",
-              "label": "수집 완료",
-              "detail": "최근 촉매성 뉴스 확인"
-            }
-          }
-        },
-        "price_at_add": 555.58
-      },
-      {
-        "ticker": "600150.SS",
-        "name": "China CSSC Holdings Limited",
-        "country": "CN_A",
-        "sector": "Industrials",
-        "market_cap": 40136649386.666664,
-        "avg_volume_value": 570517856.0,
+        "ticker": "4733.T",
+        "name": "オービックビジネスコンサルタント",
+        "country": "JP",
+        "sector": "情報通信・サービスその他",
+        "market_cap": 2959052086.503226,
+        "avg_volume_value": 13713119.296774194,
         "score": 2.4,
         "signal_score": 2.2,
         "theme_score": 0.0,
@@ -3889,59 +3533,49 @@
           ],
           "negatives": [],
           "metrics": {
-            "close_days": 243,
-            "avg_volume_value": 570517856.0,
-            "ret_20d": -0.0355,
-            "drawdown_from_high": -0.1087,
-            "atr_pct": 0.0378
+            "close_days": 244,
+            "avg_volume_value": 13713119.3,
+            "ret_20d": -0.1087,
+            "drawdown_from_high": -0.3546,
+            "atr_pct": 0.0299
           }
         },
         "signal_count": 2,
         "signal_keys": [
-          "rrg_improving",
-          "bb_squeeze"
+          "bb_squeeze",
+          "volume_compression"
         ],
         "signals": {
-          "rrg_improving": {
-            "etf": "XLI",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          },
           "bb_squeeze": {
-            "current_width": 0.1559,
-            "avg_width": 0.3141,
-            "ratio": 0.496,
+            "current_width": 0.0583,
+            "avg_width": 0.135,
+            "ratio": 0.432,
             "threshold": 0.5,
             "label_ko": "변동성 압축",
             "phase": "拉升 직전 (매집 완료)"
+          },
+          "volume_compression": {
+            "short_avg": 150060,
+            "long_avg": 307795,
+            "ratio": 0.488,
+            "threshold": 0.6,
+            "label_ko": "거래량 압축",
+            "phase": "建仓 진행 중"
           }
         },
-        "shadow_signal_count": 1,
-        "shadow_signal_keys": [
-          "ronin_structure_support"
+        "shadow_signal_count": 0,
+        "shadow_signal_keys": [],
+        "shadow_signals": {},
+        "quality_flags": [
+          "left_side_context"
         ],
-        "shadow_signals": {
-          "ronin_structure_support": {
-            "kind": "reclaimed_resistance",
-            "zone_lo": 36.55,
-            "zone_hi": 36.97,
-            "distance": 0.14,
-            "margin": 0.739,
-            "bar_age": 139,
-            "label_ko": "RONIN 구조 지지 근접",
-            "phase": "구조존 재진입"
-          }
-        },
-        "quality_flags": [],
         "quality_metrics": {
-          "last_close": 37.23,
-          "ret_20d": -0.0355,
-          "ma50": 35.746,
-          "ma200": 35.707,
-          "drawdown_from_high": -0.1087,
-          "avg_volume_value": 570517856.0
+          "last_close": 6016.0,
+          "ret_20d": -0.1087,
+          "ma50": 6270.68,
+          "ma200": 7720.545,
+          "drawdown_from_high": -0.3546,
+          "avg_volume_value": 13713119.3
         },
         "catalyst_context": {
           "status": "non_us",
@@ -3986,18 +3620,18 @@
           }
         },
         "buy_questions": {
-          "industry": "산업재",
-          "thesis": "활성 섹터 진입과 변동성 압축 신호는 확인됐지만, 펀더멘털과 수급 핵심 지표가 비미국이라 수집 미지원입니다. 따라서 현재는 매집 가능성을 사실 기반으로 강하게 확인할 수 없습니다.",
+          "industry": "정보통신·서비스 기타",
+          "thesis": "변동성 압축과 거래량 압축 신호는 확인됐지만, 펀더멘털과 수급 데이터가 비미국 종목이라 수집 미지원 상태입니다. 따라서 현재는 매집 가능성을 사실로 검증할 수 없고, 기술적 압축 신호만 확인된 상태입니다.",
           "catalyst": "촉매 수집 미지원",
-          "q1_why": "PE, Forward PE, EPS Growth가 수집 미지원이라 밸류에이션과 이익 성장 기반의 상승 여력을 검증할 수 없습니다. 따라서 왜 오를지에 대한 펀더멘털 근거는 현재 확인되지 않았습니다.",
-          "q2_who": "Insider와 Institutional 데이터가 수집 미지원이라 누가 매집하는지 확인되지 않았습니다. 기관·내부자 매수 여부를 사실로 판단할 수 없습니다.",
-          "q3_space": "RSI와 52주 저점 정보가 없고 PE도 수집 미지원이라 추가 상승 여지를 정량 검증할 수 없습니다. 다만 변동성 압축 신호는 있으나, 이는 매집 확정 근거로는 부족합니다.",
+          "q1_why": "PE, Forward PE, EPS Growth 데이터가 수집 미지원이라 밸류에이션과 이익 성장 기반의 상승 논리를 확인할 수 없습니다. 따라서 왜 오를지에 대한 펀더멘털 근거는 현재 검증 불가입니다.",
+          "q2_who": "Insider와 Institutional 데이터가 수집 미지원이라 누가 매집하는지 확인할 수 없습니다. 기관·내부자 수급 근거가 없어 매집 주체를 사실 기반으로 특정할 수 없습니다.",
+          "q3_space": "PE와 RSI, 52주 저점 관련 데이터가 모두 미확인/수집 미지원이라 추가 상승 여력을 판단할 근거가 없습니다. 현재 확인된 것은 변동성·거래량 압축뿐이라 공간 판단은 제한적입니다.",
           "risk_flags": [
-            "비미국 종목으로 펀더멘털·수급 데이터 수집 미지원",
-            "촉매 뉴스가 미국 심볼 중심이라 촉매 검증 불가"
+            "펀더멘털 데이터 수집 미지원",
+            "수급 데이터 수집 미지원"
           ],
           "star_rating": "★",
-          "summary": "관찰만 가능",
+          "summary": "기술신호만 확인",
           "_llm_used": true,
           "_data_coverage": {
             "fundamental": {
@@ -4019,10 +3653,295 @@
             }
           }
         },
-        "price_at_add": 37.26
+        "price_at_add": 6009.0
+      },
+      {
+        "ticker": "098460.KQ",
+        "name": "고영",
+        "country": "KR",
+        "sector": "",
+        "market_cap": 1750237933.378654,
+        "avg_volume_value": 51810749.49014276,
+        "score": 2.4,
+        "signal_score": 2.2,
+        "theme_score": 0.0,
+        "liquidity_score": 0.2,
+        "factor_score": 0.0,
+        "factor_context": {
+          "score": 0.15,
+          "positives": [
+            "liquidity_good",
+            "volatility_healthy"
+          ],
+          "negatives": [
+            "chasing_hot"
+          ],
+          "metrics": {
+            "close_days": 244,
+            "avg_volume_value": 51810749.49,
+            "ret_20d": 0.2565,
+            "drawdown_from_high": -0.0598,
+            "atr_pct": 0.0725
+          }
+        },
+        "signal_count": 2,
+        "signal_keys": [
+          "bb_squeeze",
+          "volume_compression"
+        ],
+        "signals": {
+          "bb_squeeze": {
+            "current_width": 0.2691,
+            "avg_width": 0.557,
+            "ratio": 0.483,
+            "threshold": 0.5,
+            "label_ko": "변동성 압축",
+            "phase": "拉升 직전 (매집 완료)"
+          },
+          "volume_compression": {
+            "short_avg": 1947838,
+            "long_avg": 6280430,
+            "ratio": 0.31,
+            "threshold": 0.6,
+            "label_ko": "거래량 압축",
+            "phase": "建仓 진행 중"
+          }
+        },
+        "shadow_signal_count": 0,
+        "shadow_signal_keys": [],
+        "shadow_signals": {},
+        "quality_flags": [
+          "overextended_20d"
+        ],
+        "quality_metrics": {
+          "last_close": 40900.0,
+          "ret_20d": 0.2565,
+          "ma50": 33007.0,
+          "ma200": 24663.15,
+          "drawdown_from_high": -0.0598,
+          "avg_volume_value": 51810749.49
+        },
+        "catalyst_context": {
+          "status": "non_us",
+          "score": 0.0,
+          "positive_hits": [],
+          "risk_hits": [],
+          "news": []
+        },
+        "track_d": {
+          "is_theme_beneficiary": false
+        },
+        "catalyst_score": 0.0,
+        "fundamental_status": {
+          "status": "not_supported_non_us",
+          "label": "수집 미지원(비미국)",
+          "missing_fields": [
+            "PE",
+            "Forward PE",
+            "EPS Growth",
+            "RSI",
+            "Insider",
+            "Institutional"
+          ]
+        },
+        "data_coverage": {
+          "fundamental": {
+            "status": "not_supported_non_us",
+            "label": "수집 미지원(비미국)",
+            "missing_fields": [
+              "PE",
+              "Forward PE",
+              "EPS Growth",
+              "RSI",
+              "Insider",
+              "Institutional"
+            ]
+          },
+          "catalyst": {
+            "status": "non_us",
+            "label": "수집 미지원(비미국)",
+            "detail": "현재 촉매 뉴스 수집은 미국 심볼 중심"
+          }
+        },
+        "buy_questions": {
+          "industry": "미확인",
+          "thesis": "변동성 압축과 거래량 압축 신호는 확인됐지만, 펀더멘털과 수급 데이터가 모두 수집 미지원이라 매집 근거를 사실로 검증할 수 없습니다. 현재로서는 신호 통과만 확인되며, 실제 매집 여부는 미확인입니다.",
+          "catalyst": "촉매 수집 미지원",
+          "q1_why": "PE, Forward PE, EPS Growth 데이터가 수집 미지원이라 밸류에이션과 성장성 기반의 상승 논리를 검증할 수 없습니다. 따라서 왜 오를지에 대한 펀더멘털 근거는 미확인입니다.",
+          "q2_who": "Insider와 Institutional 데이터가 수집 미지원이라 누가 매집하는지 확인할 수 없습니다. 수급 주체를 사실 기반으로 특정할 수 없어 미확인입니다.",
+          "q3_space": "RSI와 52주 저점 데이터가 수집 미지원이라 과열 여부나 추가 상승 여지를 판단할 수 없습니다. 현재 확인된 것은 변동성 압축과 거래량 압축뿐입니다.",
+          "risk_flags": [
+            "펀더멘털 데이터 수집 미지원",
+            "수급/촉매 데이터 수집 미지원"
+          ],
+          "star_rating": "★",
+          "summary": "신호만 확인",
+          "_llm_used": true,
+          "_data_coverage": {
+            "fundamental": {
+              "status": "not_supported_non_us",
+              "label": "수집 미지원(비미국)",
+              "missing_fields": [
+                "PE",
+                "Forward PE",
+                "EPS Growth",
+                "RSI",
+                "Insider",
+                "Institutional"
+              ]
+            },
+            "catalyst": {
+              "status": "non_us",
+              "label": "수집 미지원(비미국)",
+              "detail": "현재 촉매 뉴스 수집은 미국 심볼 중심"
+            }
+          }
+        },
+        "price_at_add": 40800.0
+      },
+      {
+        "ticker": "3994.T",
+        "name": "マネーフォワード",
+        "country": "JP",
+        "sector": "情報通信・サービスその他",
+        "market_cap": 1543815062.2967741,
+        "avg_volume_value": 31225010.322580647,
+        "score": 2.4,
+        "signal_score": 2.2,
+        "theme_score": 0.0,
+        "liquidity_score": 0.2,
+        "factor_score": 0.0,
+        "factor_context": {
+          "score": 0.6,
+          "positives": [
+            "liquidity_good",
+            "not_chasing",
+            "volatility_healthy"
+          ],
+          "negatives": [],
+          "metrics": {
+            "close_days": 244,
+            "avg_volume_value": 31225010.32,
+            "ret_20d": -0.2136,
+            "drawdown_from_high": -0.3407,
+            "atr_pct": 0.0596
+          }
+        },
+        "signal_count": 2,
+        "signal_keys": [
+          "bb_squeeze",
+          "volume_compression"
+        ],
+        "signals": {
+          "bb_squeeze": {
+            "current_width": 0.1988,
+            "avg_width": 0.4864,
+            "ratio": 0.409,
+            "threshold": 0.5,
+            "label_ko": "변동성 압축",
+            "phase": "拉升 직전 (매집 완료)"
+          },
+          "volume_compression": {
+            "short_avg": 327080,
+            "long_avg": 603395,
+            "ratio": 0.542,
+            "threshold": 0.6,
+            "label_ko": "거래량 압축",
+            "phase": "建仓 진행 중"
+          }
+        },
+        "shadow_signal_count": 0,
+        "shadow_signal_keys": [],
+        "shadow_signals": {},
+        "quality_flags": [],
+        "quality_metrics": {
+          "last_close": 4404.0,
+          "ret_20d": -0.2136,
+          "ma50": 4106.18,
+          "ma200": 4656.762,
+          "drawdown_from_high": -0.3407,
+          "avg_volume_value": 31225010.32
+        },
+        "catalyst_context": {
+          "status": "non_us",
+          "score": 0.0,
+          "positive_hits": [],
+          "risk_hits": [],
+          "news": []
+        },
+        "track_d": {
+          "is_theme_beneficiary": false
+        },
+        "catalyst_score": 0.0,
+        "fundamental_status": {
+          "status": "not_supported_non_us",
+          "label": "수집 미지원(비미국)",
+          "missing_fields": [
+            "PE",
+            "Forward PE",
+            "EPS Growth",
+            "RSI",
+            "Insider",
+            "Institutional"
+          ]
+        },
+        "data_coverage": {
+          "fundamental": {
+            "status": "not_supported_non_us",
+            "label": "수집 미지원(비미국)",
+            "missing_fields": [
+              "PE",
+              "Forward PE",
+              "EPS Growth",
+              "RSI",
+              "Insider",
+              "Institutional"
+            ]
+          },
+          "catalyst": {
+            "status": "non_us",
+            "label": "수집 미지원(비미국)",
+            "detail": "현재 촉매 뉴스 수집은 미국 심볼 중심"
+          }
+        },
+        "buy_questions": {
+          "industry": "정보통신·서비스 기타",
+          "thesis": "변동성 압축과 거래량 압축 신호는 확인됐지만, 펀더멘털과 수급 핵심 지표가 모두 수집 미지원이라 매집 근거를 사실로 확정할 수 없습니다. 현재로서는 기술적 압축 신호만 확인된 상태입니다.",
+          "catalyst": "촉매 수집 미지원",
+          "q1_why": "PE, Forward PE, EPS Growth 데이터가 수집 미지원이라 밸류에이션과 이익 성장 기반의 상승 여력을 검증할 수 없습니다. 따라서 왜 오를지에 대한 펀더멘털 근거는 확인되지 않았습니다.",
+          "q2_who": "Insider와 기관 수급 데이터가 수집 미지원이라 누가 매집하는지 확인할 수 없습니다. 현재는 매수 주체를 사실로 특정할 수 없습니다.",
+          "q3_space": "RSI와 52주 저점, PE 데이터가 모두 수집 미지원이라 추가 상승 여지와 과열 여부를 판단할 수 없습니다. 다만 변동성·거래량 압축은 확인됐습니다.",
+          "risk_flags": [
+            "펀더멘털 수집 미지원",
+            "인사이더·기관 수급 수집 미지원"
+          ],
+          "star_rating": "★",
+          "summary": "기술적 압축만 확인",
+          "_llm_used": true,
+          "_data_coverage": {
+            "fundamental": {
+              "status": "not_supported_non_us",
+              "label": "수집 미지원(비미국)",
+              "missing_fields": [
+                "PE",
+                "Forward PE",
+                "EPS Growth",
+                "RSI",
+                "Insider",
+                "Institutional"
+              ]
+            },
+            "catalyst": {
+              "status": "non_us",
+              "label": "수집 미지원(비미국)",
+              "detail": "현재 촉매 뉴스 수집은 미국 심볼 중심"
+            }
+          }
+        },
+        "price_at_add": 4332.0
       }
     ],
     "alerts_count": 1,
-    "vix": 16.59
+    "vix": 17.01
   }
 }
