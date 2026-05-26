@@ -1,4 +1,9 @@
-"""state.json 로드 · 저장 · 정리."""
+"""Legacy-compatible state helpers.
+
+Primary runtime state is the project-root ``state.json`` used by ``main.py``.
+Keep this module pointed at the same file so older imports cannot fork state
+into ``data/state.json`` again.
+"""
 
 from __future__ import annotations
 
@@ -9,7 +14,7 @@ from typing import Any
 
 from src.utils import env_int, now_kst
 
-STATE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "state.json")
+STATE_PATH = os.path.join(os.path.dirname(__file__), "..", "state.json")
 
 _DEFAULT: dict[str, Any] = {
     "last_run_kst": "",
