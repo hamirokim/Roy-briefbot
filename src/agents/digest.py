@@ -192,6 +192,57 @@ def _format_signals_short(signals: dict) -> str:
     return ", ".join(parts)
 
 
+def _candidate_judgment(candidate: dict) -> dict:
+    """텔레그램 첫 화면용 후보 판단 라벨."""
+    score = float(candidate.get("score", 0) or 0)
+    signal_count = int(candidate.get("signal_count", len(candidate.get("signals", {}) or {})) or 0)
+    quality_flags = set(candidate.get("quality_flags", []) or [])
+    bq = candidate.get("buy_questions", {}) or {}
+    star = str(bq.get("star_rating", "") or "")
+    data_coverage = candidate.get("data_coverage", {}) or {}
+    fund_status = str((data_coverage.get("fundamental", {}) or {}).get("status", ""))
+    cat_status = str((data_coverage.get("catalyst", {}) or {}).get("status", ""))
+
+    data_problem = fund_status in {
+        "not_supported_non_us",
+        "collector_import_failed",
+        "collection_failed",
+        "empty_result",
+    } or cat_status in {"no_key", "non_us", "error", "bad_response", "http_400", "http_401", "http_429", "http_500"}
+    hard_risk = bool(quality_flags & {"overextended_20d", "low_liquidity_buffer"})
+
+    if score >= 3.0 and signal_count >= 3 and not data_problem and not hard_risk and star in {"★★", "★★★"}:
+        label = "강함"
+        reason = "신호가 여러 개 겹치고, 확인 데이터도 크게 비지 않음"
+    elif hard_risk:
+        label = "보류"
+        reason = "신호는 있지만 과열이나 유동성 같은 흠이 먼저 보임"
+    elif data_problem:
+        label = "관찰"
+        reason = "가격 신호는 있지만 확인 데이터가 부족하거나 아직 수집 미지원"
+    else:
+        label = "관찰"
+        reason = "조건 일부는 맞지만 강한 후보라고 보기엔 근거가 더 필요"
+
+    return {"label": label, "reason": reason}
+
+
+def _candidate_judgment_summary(candidates: list) -> dict:
+    counts = {"강함": 0, "관찰": 0, "보류": 0}
+    judged = []
+    for c in candidates:
+        judgment = _candidate_judgment(c)
+        counts[judgment["label"]] = counts.get(judgment["label"], 0) + 1
+        judged.append((c, judgment))
+    if counts.get("강함", 0):
+        conclusion = "검토할 만한 후보 있음"
+    elif counts.get("관찰", 0):
+        conclusion = "오늘은 관찰 중심"
+    else:
+        conclusion = "오늘은 무리해서 볼 후보 없음"
+    return {"counts": counts, "judged": judged, "conclusion": conclusion}
+
+
 # ═══════════════════════════════════════════════════════════
 # DIGEST 에이전트
 # ═══════════════════════════════════════════════════════════
@@ -754,40 +805,40 @@ class DigestAgent(BaseAgent):
         radar_count = int(radar_summary.get("radar_pool_count", 0) or 0)
         top_signals = radar_summary.get("top_signals", []) or []
         if candidates:
-            lines.append(f"<b>🎯 신규 후보 ({len(candidates)}개)</b>")
+            judgment_summary = _candidate_judgment_summary(candidates)
+            counts = judgment_summary["counts"]
+            lines.append(f"<b>🎯 신규 후보 판단</b>")
+            lines.append(
+                f"{judgment_summary['conclusion']} — "
+                f"강함 {counts.get('강함', 0)} / 관찰 {counts.get('관찰', 0)} / 보류 {counts.get('보류', 0)}"
+            )
+            lines.append(
+                "<i>기준: 강함=신호 여러 개+데이터 확인 양호 / "
+                "관찰=신호는 있으나 확인 데이터 부족 / 보류=과열·유동성·수집 실패 같은 흠 우선</i>"
+            )
             if radar_count:
                 lines.append(f"<i>내부 관찰풀 {radar_count}개 중 엄선</i>")
-            for c in candidates:
+            for c, judgment in judgment_summary["judged"]:
                 flag = _COUNTRY_FLAG.get(c["country"], "·")
                 cap = _format_market_cap(c.get("market_cap", 0))
                 sig_short = _format_signals_short(c["signals"])
                 lines.append(
-                    f"{flag} <b>{c['ticker']}</b> ({c.get('name', '')[:30]}) {cap} | 레이더 {c.get('score', 0)}"
+                    f"{flag} <b>{c['ticker']}</b> [{judgment['label']}] {cap} | 레이더 {c.get('score', 0)}"
                 )
-                lines.append(f"  신호: {sig_short}")
+                lines.append(f"  판단: <i>{judgment['reason']}</i>")
+                lines.append(f"  신호: {sig_short or '신호 요약 없음'}")
                 try:
                     from src.modules.m1_5_buyquestions import summarize_data_coverage
                     coverage_text = summarize_data_coverage(c)
                     if coverage_text:
-                        lines.append(f"  데이터: <i>{coverage_text[:180]}</i>")
+                        lines.append(f"  데이터: <i>{coverage_text[:160]}</i>")
                 except Exception as e:
                     self.log.debug("[digest] 데이터 커버리지 포맷 실패: %s", e)
-                if c.get("comment"):
-                    lines.append(f"  <i>{c['comment']}</i>")
                 catalyst = c.get("catalyst_context", {}) or {}
                 if catalyst.get("status") == "found" and catalyst.get("news"):
                     headline = (catalyst.get("news", [{}])[0].get("headline", "") or "")[:90]
                     if headline:
                         lines.append(f"  촉매: <i>{headline}</i>")
-                # M1.5 买入三问 LLM 보강 (Z3-4)
-                if c.get("buy_questions"):
-                    try:
-                        from src.modules.m1_5_buyquestions import format_buy_questions_telegram
-                        bq_text = format_buy_questions_telegram(c)
-                        if bq_text:
-                            lines.append(bq_text)
-                    except Exception as e:
-                        self.log.debug("[digest] M1.5 텔레그램 포맷 실패: %s", e)
             lines.append("")
         else:
             reason = radar_summary.get("no_candidate_reason") or "최종 보고 기준 미달"
