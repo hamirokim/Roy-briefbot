@@ -200,6 +200,21 @@ def save_to_sheets(detailed_text: str, mode: str = "daily") -> bool:
         return False
 
 
+def append_status_alert(text: str, run_status: str, errors: list, sheets_saved) -> str:
+    """부분 실패가 있으면 텔레그램 하단에 짧은 운영 알림을 붙인다."""
+    if run_status == "OK":
+        return text
+
+    lines = ["", "⚠️ 시스템 상태: " + run_status]
+    if errors:
+        lines.append("에러 " + str(len(errors)) + "건: " + " / ".join(str(e) for e in errors[:5]))
+        if len(errors) > 5:
+            lines.append("추가 에러 " + str(len(errors) - 5) + "건은 state.json 확인")
+    if sheets_saved is False:
+        lines.append("저널 BRIEFING 저장 실패: 텔레그램 본문은 발송됨")
+    return text.rstrip() + "\n".join(lines)
+
+
 # ═══════════════════════════════════════════════════════════
 # 메인 실행
 # ═══════════════════════════════════════════════════════════
@@ -268,13 +283,6 @@ def main(briefing_mode: str = "auto") -> int:
         logger.warning("DIGEST 출력 없음 — fallback 사용")
         telegram_text = "⚠️ Roy-briefbot — DIGEST 출력 없음. 시스템 점검 필요."
 
-    # 텔레그램
-    sent = send_telegram(telegram_text)
-    if sent:
-        logger.info("텔레그램 발송 OK (%d자)", len(telegram_text))
-    else:
-        logger.error("텔레그램 발송 실패")
-
     # 저널 BRIEFING 시트
     sheets_saved = None
     if sheets_text:
@@ -287,12 +295,21 @@ def main(briefing_mode: str = "auto") -> int:
         for e in errors:
             logger.warning("  - %s", e)
 
-    if not sent:
-        result["run_status"] = "FAILED_DELIVERY"
-    elif errors or sheets_saved is False:
+    if errors or sheets_saved is False:
         result["run_status"] = "PARTIAL"
     else:
         result["run_status"] = "OK"
+
+    telegram_text = append_status_alert(telegram_text, result["run_status"], errors, sheets_saved)
+
+    # 텔레그램
+    sent = send_telegram(telegram_text)
+    if sent:
+        logger.info("텔레그램 발송 OK (%d자)", len(telegram_text))
+    else:
+        logger.error("텔레그램 발송 실패")
+        result["run_status"] = "FAILED_DELIVERY"
+
     result["telegram_sent"] = sent
     result["sheets_saved"] = sheets_saved
     save_state(result)
