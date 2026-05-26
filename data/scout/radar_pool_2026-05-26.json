@@ -158,6 +158,13 @@
         "score": 0.0,
         "positive_hits": [
           {
+            "headline": "Roth Capital Raises its Price Target on Vertiv (VRT)",
+            "keywords": [
+              "raised",
+              "raises"
+            ]
+          },
+          {
             "headline": "TD Cowen Raises its Price Target on Vertiv (VRT)",
             "keywords": [
               "raised",
@@ -167,6 +174,13 @@
         ],
         "risk_hits": [],
         "news": [
+          {
+            "headline": "Roth Capital Raises its Price Target on Vertiv (VRT)",
+            "summary": "Vertiv Holdings Co (NYSE:VRT) is one of the 15 High Growth Stocks to Buy and Hold for the Next Decade. On May 21, 2026, Roth Capital analyst Justin Clare raised the firm’s price target on Vertiv Holdings Co (NYSE:VRT) to $355 from $335 and maintained a Buy rating on the shares. Following the company",
+            "source": "Yahoo",
+            "datetime": 1779752804,
+            "url": "https://finnhub.io/api/news?id=bbae4d45018c5708df990358cedf124d3783b4d6d4a4ea7fe15d33c0323c51fa"
+          },
           {
             "headline": "TD Cowen Raises its Price Target on Vertiv (VRT)",
             "summary": "Vertiv Holdings Co (NYSE:VRT) is one of the 10 Best Performing Data Center Stocks So Far in 2026. On May 20, 2026, TD Cowen analyst Lance Vitanza raised the firm’s price target on Vertiv Holdings Co (NYSE:VRT) to $387 from $347 and maintained a Buy rating on the shares. The firm noted that Vertiv le",
@@ -180,13 +194,6 @@
             "source": "SeekingAlpha",
             "datetime": 1779736601,
             "url": "https://finnhub.io/api/news?id=7e4ae1ea96679ebfa26dec4c8a78bdca740bf39b46eccef88ad3a1685b2450fb"
-          },
-          {
-            "headline": "10 Industrials Stocks Whale Activity In Today's Session",
-            "summary": "",
-            "source": "Benzinga",
-            "datetime": 1779716145,
-            "url": "https://finnhub.io/api/news?id=28edeb5299426d943ac6a896b3bf8911867cf7c5794941fe237aa468f029fd1a"
           }
         ]
       },
