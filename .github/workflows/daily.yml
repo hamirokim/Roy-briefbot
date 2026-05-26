@@ -73,11 +73,11 @@ jobs:
           MODE="${{ github.event.inputs.mode || 'auto' }}"
           python main.py "$MODE"
 
-      - name: Commit state.json
+      - name: Commit runtime state
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add state.json data/cache/ data/scout/ 2>/dev/null || true
+          git add state.json data/scout/ 2>/dev/null || true
           git diff --staged --quiet || git commit -m "auto: state update $(date -u +%Y-%m-%d)"
           git push 2>/dev/null || echo "no changes to push"
