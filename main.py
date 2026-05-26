@@ -68,6 +68,11 @@ def save_state(state: dict) -> None:
         persistable = {
             "last_run_date": state.get("date"),
             "last_run_at": now_kst().isoformat(),
+            "last_run_status": state.get("run_status", ""),
+            "last_error_count": len(state.get("errors", []) or []),
+            "last_errors": (state.get("errors", []) or [])[:20],
+            "last_telegram_sent": state.get("telegram_sent"),
+            "last_sheets_saved": state.get("sheets_saved"),
             "last_monthly_run": state.get("last_monthly_run", ""),
             "last_weekly_run": state.get("last_weekly_run", ""),
             "m2_history": state.get("m2_history", {}),
@@ -182,15 +187,17 @@ def send_telegram(text: str) -> bool:
 # 저널 BRIEFING 시트 저장
 # ═══════════════════════════════════════════════════════════
 
-def save_to_sheets(detailed_text: str, mode: str = "daily") -> None:
+def save_to_sheets(detailed_text: str, mode: str = "daily") -> bool:
     """기존 sheets.save_briefing 활용."""
     try:
         from src.collectors.sheets import save_briefing
         date_str = today_kst_str()
         save_briefing(date_str, detailed_text, mode)
         logger.info("저널 BRIEFING 저장 완료")
+        return True
     except Exception as e:
         logger.warning("저널 BRIEFING 저장 실패 (텔레그램은 정상): %s", e)
+        return False
 
 
 # ═══════════════════════════════════════════════════════════
@@ -242,7 +249,7 @@ def main(briefing_mode: str = "auto") -> int:
         send_telegram(f"⚠️ Roy-briefbot 실행 실패: {e}")
         return 1
 
-    # 4. State 영속화 (다음 실행에서 사용)
+    # 4. State 업데이트 (발송 결과까지 반영한 뒤 저장)
     update_m2_history_from_regime(result)
     update_cooldown_from_scout(result)
 
@@ -251,7 +258,6 @@ def main(briefing_mode: str = "auto") -> int:
     result["last_monthly_run"] = state.get("last_monthly_run", "")
     result["last_weekly_run"] = state.get("last_weekly_run", "")
     _stamp_mode_run(result, briefing_mode)
-    save_state(result)
 
     # 5. 출력 발송
     digest_out = result.get("digest_out", {})
@@ -270,8 +276,9 @@ def main(briefing_mode: str = "auto") -> int:
         logger.error("텔레그램 발송 실패")
 
     # 저널 BRIEFING 시트
+    sheets_saved = None
     if sheets_text:
-        save_to_sheets(sheets_text, briefing_mode)
+        sheets_saved = save_to_sheets(sheets_text, briefing_mode)
 
     # 6. 결과 로깅
     errors = result.get("errors", [])
@@ -280,10 +287,20 @@ def main(briefing_mode: str = "auto") -> int:
         for e in errors:
             logger.warning("  - %s", e)
 
+    if not sent:
+        result["run_status"] = "FAILED_DELIVERY"
+    elif errors or sheets_saved is False:
+        result["run_status"] = "PARTIAL"
+    else:
+        result["run_status"] = "OK"
+    result["telegram_sent"] = sent
+    result["sheets_saved"] = sheets_saved
+    save_state(result)
+
     logger.info("=" * 60)
     logger.info("Roy-briefbot v2.0 종료 (실행 mode=%s)", briefing_mode)
     logger.info("=" * 60)
-    return 0
+    return 0 if sent else 1
 
 
 if __name__ == "__main__":
