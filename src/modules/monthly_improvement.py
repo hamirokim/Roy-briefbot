@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 SCOUT_DATA_DIR = BASE_DIR / "data" / "scout"
 
 REPORT_DAYS = 35
+MIN_DAYS_FOR_DECISION = 7
 MIN_SAMPLE_FOR_DECISION = 5
 TARGET_DAILY_PICKS = 3.0
 
@@ -59,6 +60,18 @@ def _recent_results(m6_out: dict, days: int = REPORT_DAYS) -> list[dict]:
         if added and added >= cutoff:
             results.append(item)
     return results
+
+
+def _days_since_added(item: dict) -> int:
+    added = _parse_date(item.get("date_added", ""))
+    if added:
+        return (now_kst().date() - added).days
+    return int(_safe_float(item.get("days_held"), 0))
+
+
+def _mature_results(results: list[dict], min_days: int = MIN_DAYS_FOR_DECISION) -> list[dict]:
+    """성과 판단용 표본. 너무 최근 후보는 기록만 하고 판단에서 제외."""
+    return [r for r in results if _days_since_added(r) >= min_days]
 
 
 def _summarize_performance(results: list[dict]) -> dict:
@@ -187,7 +200,9 @@ def build_monthly_improvement_report(state: dict, scout_out: dict, m6_out: dict)
       detailed_lines: BRIEFING 시트용 상세
       metrics: 기계 판독용 숫자
     """
-    results = _recent_results(m6_out, REPORT_DAYS)
+    all_results = _recent_results(m6_out, REPORT_DAYS)
+    results = _mature_results(all_results, MIN_DAYS_FOR_DECISION)
+    immature_count = max(0, len(all_results) - len(results))
     perf = _summarize_performance(results)
     signal_rows = _aggregate_by_list_field(results, "signal_keys")
     shadow_rows = _aggregate_by_list_field(results, "shadow_signal_keys", min_count=1)
@@ -200,7 +215,7 @@ def build_monthly_improvement_report(state: dict, scout_out: dict, m6_out: dict)
     actions = []
     if perf["count"] < MIN_SAMPLE_FOR_DECISION:
         actions.append(
-            f"후보 성과 표본 {perf['count']}개: 이번 달은 승격/제거보다 데이터 축적 우선"
+            f"판단 표본 {perf['count']}개: 이번 달은 승격/제거보다 데이터 축적 우선"
         )
     else:
         if perf["avg"] > 0 and perf["win_rate"] >= 0.5:
@@ -225,11 +240,17 @@ def build_monthly_improvement_report(state: dict, scout_out: dict, m6_out: dict)
         actions.append("Shadow 신호: 아직 후보 성과와 연결된 표본 없음")
 
     lines = ["▣ 월간 개선 리포트", ""]
+    lines.append(
+        f"  • 표본 기준: 최근 {REPORT_DAYS}일 후보 {len(all_results)}개 중 "
+        f"{MIN_DAYS_FOR_DECISION}일 이상 지난 {perf['count']}개만 성과 판단"
+    )
+    if immature_count:
+        lines.append(f"    참고: 최근 후보 {immature_count}개는 기록만 하고 판단에서 제외")
     if perf["count"]:
         best = perf.get("best") or {}
         worst = perf.get("worst") or {}
         lines.append(
-            f"  • 후보 성과: {perf['count']}개 추적 / 평균 {_pct(perf['avg'])} / "
+            f"  • 판단 표본 성과: {perf['count']}개 / 평균 {_pct(perf['avg'])} / "
             f"상승 {perf['win_rate'] * 100:.0f}%"
         )
         if best:
@@ -237,7 +258,7 @@ def build_monthly_improvement_report(state: dict, scout_out: dict, m6_out: dict)
         if worst:
             lines.append(f"    최저: {worst.get('ticker')} {_pct(_safe_float(worst.get('pnl_pct')))}")
     else:
-        lines.append("  • 후보 성과: 아직 월간 판단 표본 없음")
+        lines.append("  • 판단 표본 성과: 아직 월간 판단 표본 없음")
 
     if radar_summary["days"]:
         lines.append(
@@ -286,18 +307,25 @@ def build_monthly_improvement_report(state: dict, scout_out: dict, m6_out: dict)
 
     if perf["count"]:
         summary = (
-            f"월간 개선: 후보 {perf['count']}개 평균 {_pct(perf['avg'])}, "
+            f"월간 개선: 판단 표본 {perf['count']}/{len(all_results)}개 평균 {_pct(perf['avg'])}, "
             f"상승 {perf['win_rate'] * 100:.0f}%. "
             f"다음 액션: {actions[0] if actions else '표본 축적'}"
         )
     else:
-        summary = "월간 개선: 아직 후보 성과 표본 부족. 이번 달은 shadow 검증 데이터 축적이 우선."
+        summary = (
+            f"월간 개선: 최근 후보 {len(all_results)}개 중 "
+            f"{MIN_DAYS_FOR_DECISION}일 이상 지난 판단 표본이 부족. "
+            "이번 달은 shadow 검증 데이터 축적이 우선."
+        )
 
     return {
         "summary_text": summary,
         "detailed_lines": lines,
         "metrics": {
             "performance": perf,
+            "total_tracked": len(all_results),
+            "immature_count": immature_count,
+            "min_days_for_decision": MIN_DAYS_FOR_DECISION,
             "radar": radar_summary,
             "signals": signal_rows,
             "shadow": shadow_rows,
