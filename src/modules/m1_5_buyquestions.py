@@ -50,15 +50,22 @@ GPT_TEMPERATURE = float(os.environ.get("GPT_TEMPERATURE", "0.3"))
 
 
 # ── 시스템 프롬프트 ──
-SYSTEM_PROMPT = """당신은 미국 주식 매집 신호 분석 전문가입니다.
+SYSTEM_PROMPT = """당신은 글로벌 주식 매집 신호 분석 전문가입니다.
 입력된 종목의 매집 가능성을 검증하고 한국어 JSON으로 답변합니다.
 
 규칙:
-1. 사실 기반 답변. 모르면 "정보 부족" 명시. 추측 금지
+1. 사실 기반 답변. 추측 금지
 2. 입력된 PE/EPS Growth/RSI/insider/기관 fact 활용
-3. 입력에 촉매 데이터가 없으면 catalyst는 "촉매 데이터 미연결"이라고만 답변. 촉매를 추측하지 말 것
-4. 각 필드 1-2 문장 압축
-5. 한국어 답변
+3. 데이터가 없을 때는 반드시 이유를 구분:
+   - 실제 조회 결과가 비어 있으면 "조회 결과 없음"
+   - 수집기가 실패했으면 "수집 실패"
+   - 해당 국가/소스가 아직 미지원이면 "수집 미지원"
+   - API 키가 없으면 "API 키 없음"
+   - 아직 확인하지 않았으면 "미확인"
+   모든 경우를 뭉뚱그려 "정보 부족"이라고만 쓰지 말 것
+4. 입력에 촉매 데이터가 없으면 catalyst는 수집 상태에 맞춰 "촉매 수집 미지원", "촉매 API 키 없음", "촉매 조회 결과 없음", "촉매 수집 실패" 중 하나로 답변. 촉매를 추측하지 말 것
+5. 각 필드 1-2 문장 압축
+6. 한국어 답변
 
 답변은 반드시 valid JSON. 스키마:
 
@@ -108,6 +115,117 @@ def _is_missing_catalyst(text: str) -> bool:
     } or "촉매 데이터 미연결" in cleaned
 
 
+def _coverage_label(code: str) -> str:
+    labels = {
+        "ok": "수집 완료",
+        "partial": "일부 수집",
+        "not_supported_non_us": "수집 미지원(비미국)",
+        "collector_import_failed": "수집기 로드 실패",
+        "collection_failed": "수집 실패",
+        "empty_result": "조회 결과 없음",
+        "no_key": "API 키 없음",
+        "non_us": "수집 미지원(비미국)",
+        "not_checked": "미확인",
+        "none": "조회 결과 없음",
+        "found": "수집 완료",
+        "risk": "리스크 뉴스 확인",
+        "error": "수집 실패",
+        "bad_response": "수집 실패",
+    }
+    if not code:
+        return "미확인"
+    if code.startswith("http_"):
+        return f"수집 실패({code})"
+    return labels.get(code, code)
+
+
+def _fundamental_status(fundamental: dict, country: str = "") -> dict:
+    if country and country != "US":
+        return {
+            "status": "not_supported_non_us",
+            "label": "수집 미지원(비미국)",
+            "missing_fields": ["PE", "Forward PE", "EPS Growth", "RSI", "Insider", "Institutional"],
+        }
+
+    if not fundamental:
+        return {
+            "status": "empty_result",
+            "label": "조회 결과 없음 또는 수집 실패",
+            "missing_fields": ["PE", "Forward PE", "EPS Growth", "RSI", "Insider", "Institutional"],
+        }
+
+    field_map = {
+        "pe": "PE",
+        "forward_pe": "Forward PE",
+        "eps_growth_next_y": "EPS Growth",
+        "peg": "PEG",
+        "rsi14": "RSI",
+        "insider_trans": "Insider",
+        "inst_trans": "Institutional",
+    }
+    missing = [label for key, label in field_map.items() if _safe_float(fundamental.get(key)) is None]
+    status = "ok" if not missing else "partial"
+    return {
+        "status": status,
+        "label": _coverage_label(status),
+        "missing_fields": missing,
+    }
+
+
+def _catalyst_status(candidate: dict) -> dict:
+    ctx = candidate.get("catalyst_context", {}) or {}
+    status = str(ctx.get("status", "") or "not_checked")
+    if status == "found":
+        detail = "최근 촉매성 뉴스 확인"
+    elif status == "risk":
+        detail = "리스크 뉴스 확인"
+    elif status == "none":
+        detail = "뉴스 조회는 됐지만 촉매 키워드 없음"
+    elif status == "non_us":
+        detail = "현재 촉매 뉴스 수집은 미국 심볼 중심"
+    elif status == "no_key":
+        detail = "FINNHUB_KEY 없음"
+    elif status == "not_checked":
+        detail = "레이더 상위 평가 대상이 아니거나 아직 미확인"
+    elif status.startswith("http_") or status in {"error", "bad_response"}:
+        detail = "뉴스 수집 실패"
+    else:
+        detail = status
+    return {
+        "status": status,
+        "label": _coverage_label(status),
+        "detail": detail,
+    }
+
+
+def _build_data_coverage(candidate: dict, fundamental: dict) -> dict:
+    country = candidate.get("country", "")
+    fundamental_status = dict(candidate.get("fundamental_status") or {})
+    if not fundamental_status:
+        fundamental_status = _fundamental_status(fundamental, country=country)
+    catalyst_status = _catalyst_status(candidate)
+    return {
+        "fundamental": fundamental_status,
+        "catalyst": catalyst_status,
+    }
+
+
+def summarize_data_coverage(candidate: dict) -> str:
+    coverage = candidate.get("data_coverage", {}) or {}
+    fund = coverage.get("fundamental", {}) or {}
+    catalyst = coverage.get("catalyst", {}) or {}
+    parts = []
+    if fund:
+        miss = fund.get("missing_fields", []) or []
+        suffix = f" / 누락: {', '.join(miss[:4])}" if miss else ""
+        parts.append(f"펀더멘털 {_coverage_label(str(fund.get('status', '')))}{suffix}")
+    if catalyst:
+        detail = catalyst.get("detail", "")
+        detail_part = f" ({detail})" if detail else ""
+        parts.append(f"촉매 {_coverage_label(str(catalyst.get('status', '')))}{detail_part}")
+    return " | ".join(parts)
+
+
 def _build_user_prompt(candidate: dict, fundamental: dict, today: str) -> str:
     """LLM에 전달할 fact 정리. 없는 fact는 생략 (hallucination 차단)."""
     ticker = candidate.get("ticker", "?")
@@ -124,6 +242,19 @@ def _build_user_prompt(candidate: dict, fundamental: dict, today: str) -> str:
         facts.append(f"섹터: {sector}")
     if country:
         facts.append(f"국가: {country}")
+
+    coverage = _build_data_coverage(candidate, fundamental)
+    fund_cov = coverage.get("fundamental", {}) or {}
+    catalyst_cov = coverage.get("catalyst", {}) or {}
+    facts.append(
+        "데이터 커버리지: "
+        f"펀더멘털={fund_cov.get('label', _coverage_label(str(fund_cov.get('status', ''))))}, "
+        f"촉매={catalyst_cov.get('label', _coverage_label(str(catalyst_cov.get('status', ''))))}"
+    )
+    if fund_cov.get("missing_fields"):
+        facts.append(f"펀더멘털 누락 필드: {', '.join(fund_cov.get('missing_fields', [])[:6])}")
+    if catalyst_cov.get("detail"):
+        facts.append(f"촉매 수집 상태: {catalyst_cov.get('detail')}")
 
     # 통과한 사전 감지 신호 (한글 라벨)
     signals = candidate.get("signals", {}) or {}
@@ -187,7 +318,11 @@ def _build_user_prompt(candidate: dict, fundamental: dict, today: str) -> str:
             if headline:
                 facts.append(f"- {headline}")
     else:
-        facts.append("촉매 데이터: 미연결 (뉴스/공시/실적 캘린더 fact 입력 없음)")
+        facts.append(
+            "촉매 데이터: "
+            f"{catalyst_cov.get('label', _coverage_label(catalyst_status))}"
+            + (f" ({catalyst_cov.get('detail')})" if catalyst_cov.get("detail") else "")
+        )
 
     # Insider Buying 신호 통과 시 횟수
     if "insider_buying" in signals:
@@ -270,11 +405,16 @@ def _fallback_buy_questions(candidate: dict, fundamental: dict) -> dict:
 
     score = candidate.get("score", 0)
     star = "★★★" if score >= 4 else "★★" if score >= 3 else "★"
+    coverage = candidate.get("data_coverage") or _build_data_coverage(candidate, fundamental)
+    catalyst_cov = coverage.get("catalyst", {}) or {}
+    catalyst_label = catalyst_cov.get("label") or _coverage_label(str(catalyst_cov.get("status", "")))
+    catalyst_detail = catalyst_cov.get("detail", "")
+    catalyst_text = f"촉매 {catalyst_label}" + (f" ({catalyst_detail})" if catalyst_detail else "")
 
     return {
         "industry": candidate.get("sector", "정보 부족"),
         "thesis": "LLM 미사용 — 신호 통과 기반 후보",
-        "catalyst": "촉매 데이터 미연결",
+        "catalyst": catalyst_text,
         "q1_why": q1,
         "q2_who": q2,
         "q3_space": q3,
@@ -282,6 +422,7 @@ def _fallback_buy_questions(candidate: dict, fundamental: dict) -> dict:
         "star_rating": star,
         "summary": f"신호 {score}/5",
         "_llm_used": False,
+        "_data_coverage": coverage,
     }
 
 
@@ -306,6 +447,7 @@ def answer_buy_questions(
     """
     fund = fundamental or {}
     ticker = candidate.get("ticker", "?")
+    candidate["data_coverage"] = _build_data_coverage(candidate, fund)
 
     user_prompt = _build_user_prompt(candidate, fund, today or "today")
     raw = _call_gpt_json(SYSTEM_PROMPT, user_prompt)
@@ -336,6 +478,7 @@ def answer_buy_questions(
         result["risk_flags"] = [str(result.get("risk_flags", "정보 부족"))]
 
     result["_llm_used"] = True
+    result["_data_coverage"] = candidate.get("data_coverage", {})
     candidate["buy_questions"] = result
     return candidate
 
@@ -357,25 +500,47 @@ def run_m1_5_buy_questions(candidates: list[dict], today: str = "") -> list[dict
 
     # Finviz fundamental 일괄 수집 (미국만)
     fund_cache = {}
+    fund_status_cache = {}
     try:
         from src.collectors.finviz import fetch_fundamental_data
         for c in candidates:
             ticker = c.get("ticker", "")
             country = c.get("country", "")
-            if country == "US" and ticker:
+            if country != "US":
+                fund_status_cache[ticker] = _fundamental_status({}, country=country)
+            elif ticker:
                 try:
-                    fund_cache[ticker] = fetch_fundamental_data(ticker) or {}
+                    fund = fetch_fundamental_data(ticker)
+                    fund_cache[ticker] = fund or {}
+                    fund_status_cache[ticker] = _fundamental_status(fund_cache[ticker], country=country)
                 except Exception as e:
                     logger.debug("[M1.5] Finviz 실패 %s: %s", ticker, e)
                     fund_cache[ticker] = {}
+                    fund_status_cache[ticker] = {
+                        "status": "collection_failed",
+                        "label": "수집 실패",
+                        "missing_fields": ["PE", "Forward PE", "EPS Growth", "RSI", "Insider", "Institutional"],
+                        "error": str(e)[:160],
+                    }
     except ImportError:
         logger.warning("[M1.5] finviz 모듈 import 실패 — fundamental 없이 진행")
+        for c in candidates:
+            ticker = c.get("ticker", "")
+            fund_status_cache[ticker] = {
+                "status": "collector_import_failed",
+                "label": "수집기 로드 실패",
+                "missing_fields": ["PE", "Forward PE", "EPS Growth", "RSI", "Insider", "Institutional"],
+            }
 
     # 후보별 LLM 호출
     n_llm_ok = 0
     for c in candidates:
         ticker = c.get("ticker", "")
         fund = fund_cache.get(ticker, {})
+        c["fundamental_status"] = fund_status_cache.get(
+            ticker,
+            _fundamental_status(fund, country=c.get("country", "")),
+        )
         answer_buy_questions(c, fund, today=today)
         if c.get("buy_questions", {}).get("_llm_used"):
             n_llm_ok += 1

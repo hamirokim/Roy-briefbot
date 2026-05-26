@@ -765,6 +765,13 @@ class DigestAgent(BaseAgent):
                     f"{flag} <b>{c['ticker']}</b> ({c.get('name', '')[:30]}) {cap} | 레이더 {c.get('score', 0)}"
                 )
                 lines.append(f"  신호: {sig_short}")
+                try:
+                    from src.modules.m1_5_buyquestions import summarize_data_coverage
+                    coverage_text = summarize_data_coverage(c)
+                    if coverage_text:
+                        lines.append(f"  데이터: <i>{coverage_text[:180]}</i>")
+                except Exception as e:
+                    self.log.debug("[digest] 데이터 커버리지 포맷 실패: %s", e)
                 if c.get("comment"):
                     lines.append(f"  <i>{c['comment']}</i>")
                 catalyst = c.get("catalyst_context", {}) or {}
@@ -1222,6 +1229,13 @@ class DigestAgent(BaseAgent):
                 lines.append(f"▷ 후보 {idx}: {c['ticker']} ({name}) — {country_ko}")
                 lines.append(f"    섹터    : {c.get('sector', '미분류')} | 시총 : {cap}")
                 lines.append(f"    레이더 점수: {c.get('score', 0)} | 신호 {c.get('signal_count', len(c.get('signals', {}) or {}))}개")
+                try:
+                    from src.modules.m1_5_buyquestions import summarize_data_coverage
+                    coverage_text = summarize_data_coverage(c)
+                    if coverage_text:
+                        lines.append(f"    데이터 상태: {coverage_text}")
+                except Exception as e:
+                    self.log.debug("[digest] 데이터 커버리지 포맷 실패: %s", e)
                 factor = c.get("factor_context", {}) or {}
                 if factor:
                     positives = [_FACTOR_KO.get(k, k) for k in (factor.get("positives", []) or [])[:2]]

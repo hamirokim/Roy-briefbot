@@ -285,6 +285,7 @@ SCOUT_CANDIDATES_HEADERS = [
     "Catalyst Status", # AB: 촉매 상태
     "Catalyst Score",  # AC: 촉매 점수(raw)
     "Catalyst Headline", # AD: 대표 뉴스/리스크 헤드라인
+    "Data Status",    # AE: 정보 부족 사유 구분
 ]
 
 
@@ -295,7 +296,7 @@ SCOUT_CANDIDATES_GUIDE = [
     "수식", "follow-up", "수식", "D+28 후",
     "POSITIONS 매핑", "환경변수", "봇 자동", "shadow",
     "shadow", "shadow", "shadow", "shadow", "shadow",
-    "shadow", "shadow",
+    "shadow", "shadow", "shadow",
 ]
 
 
@@ -567,6 +568,12 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
                 catalyst_headline = str(item.get("headline", "") or "")[:220]
             else:
                 catalyst_headline = str(item)[:220]
+        data_status = ""
+        try:
+            from src.modules.m1_5_buyquestions import summarize_data_coverage
+            data_status = summarize_data_coverage(c)[:300]
+        except Exception:
+            data_status = ""
 
         # 후보 기본 정보 + 실험 검증용 shadow 컬럼
         row = [
@@ -600,6 +607,7 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
             catalyst_context.get("status", ""),        # AB: Catalyst Status
             round(float(catalyst_context.get("score") or 0), 3), # AC: Catalyst Score
             catalyst_headline,                         # AD: Catalyst Headline
+            data_status,                               # AE: Data Status
         ]
         rows_to_append.append(row)
         seen.add((ticker, date_str))
