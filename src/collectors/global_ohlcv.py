@@ -25,6 +25,30 @@ CACHE_DIR = Path(__file__).resolve().parents[2] / "data" / "cache" / "ohlcv"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def _flatten_yf_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """yfinance가 단일/배치 호출에서 섞어 주는 MultiIndex 컬럼을 정리."""
+    if isinstance(df.columns, pd.MultiIndex):
+        df = df.copy()
+        df.columns = [c[0] if isinstance(c, tuple) else c for c in df.columns]
+    return df
+
+
+def _normalise_reset_index_date(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
+    """reset_index 후 날짜 컬럼명이 Date/date/index로 흔들리는 문제 보정."""
+    if date_col in df.columns:
+        return df
+    aliases = ["Date", "Datetime", "date", "datetime", "index", "Index"]
+    for alias in aliases:
+        if alias in df.columns:
+            return df.rename(columns={alias: date_col})
+    if len(df.columns) > 0:
+        first = df.columns[0]
+        price_cols = {"open", "high", "low", "close", "adj close", "volume", "Open", "High", "Low", "Close", "Adj Close", "Volume"}
+        if first not in price_cols:
+            return df.rename(columns={first: date_col})
+    return df
+
+
 # ═══════════════════════════════════════════════════════════
 # yfinance period 매핑 헬퍼 (D89: end exclusive 시간대 버그 근본 해결)
 # ═══════════════════════════════════════════════════════════
@@ -131,21 +155,19 @@ def _fetch_yfinance_batch(tickers: list[str], lookback_days: int = 260) -> dict[
                 continue
 
             if len(batch) == 1:
-                df = raw.reset_index()
+                df = _flatten_yf_columns(raw.reset_index())
                 df.columns = [c.lower() if isinstance(c, str) else (c[0].lower() if isinstance(c, tuple) else c) for c in df.columns]
-                if "date" not in df.columns and "Date" in df.columns:
-                    df = df.rename(columns={"Date": "date"})
-                if not df.empty and all(c in df.columns for c in ["open", "high", "low", "close", "volume"]):
+                df = _normalise_reset_index_date(df, "date")
+                if not df.empty and all(c in df.columns for c in ["date", "open", "high", "low", "close", "volume"]):
                     result[batch[0]] = df[["date", "open", "high", "low", "close", "volume"]].dropna()
             else:
                 for ticker in batch:
                     if ticker not in raw.columns.get_level_values(0):
                         continue
-                    sub = raw[ticker].reset_index()
+                    sub = _flatten_yf_columns(raw[ticker].reset_index())
                     sub.columns = [c.lower() if isinstance(c, str) else c for c in sub.columns]
-                    if "date" not in sub.columns and "Date" in sub.columns:
-                        sub = sub.rename(columns={"Date": "date"})
-                    if all(c in sub.columns for c in ["open", "high", "low", "close", "volume"]):
+                    sub = _normalise_reset_index_date(sub, "date")
+                    if all(c in sub.columns for c in ["date", "open", "high", "low", "close", "volume"]):
                         sub = sub[["date", "open", "high", "low", "close", "volume"]].dropna()
                         if not sub.empty:
                             result[ticker] = sub
@@ -259,10 +281,8 @@ def fetch_daily_closes_yf(stooq_ticker: str, lookback: int = 30) -> Optional[pd.
             logger.warning("[ohlcv yf] %s 빈 결과", yahoo_ticker)
             return None
 
-        df = df.reset_index()
-        # 다중 인덱스 칼럼 정리 (yfinance batch=False여도 가끔 발생)
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = [c[0] if isinstance(c, tuple) else c for c in df.columns]
+        df = _flatten_yf_columns(df.reset_index())
+        df = _normalise_reset_index_date(df, "Date")
 
         if "Close" not in df.columns or "Date" not in df.columns:
             logger.warning("[ohlcv yf] %s 컬럼 이상: %s", yahoo_ticker, list(df.columns))
@@ -307,9 +327,8 @@ def fetch_daily_ohlcv_yf(stooq_ticker: str, lookback: int = 260) -> Optional[pd.
             logger.warning("[ohlcv yf] %s 빈 결과", yahoo_ticker)
             return None
 
-        df = df.reset_index()
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = [c[0] if isinstance(c, tuple) else c for c in df.columns]
+        df = _flatten_yf_columns(df.reset_index())
+        df = _normalise_reset_index_date(df, "Date")
 
         required = {"Date", "Open", "High", "Low", "Close", "Volume"}
         if not required.issubset(set(df.columns)):
