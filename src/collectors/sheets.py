@@ -48,6 +48,59 @@ def get_sheet(sheet_name: str):
     return spreadsheet.worksheet(sheet_name)
 
 
+def _update_cell(ws, cell: str, value, raw: bool = False) -> None:
+    """gspread 버전별 update 인자 순서 차이를 흡수하는 단일 셀 업데이트."""
+    try:
+        ws.update([[value]], cell, raw=raw)
+    except TypeError:
+        ws.update(cell, [[value]], raw=raw)
+
+
+def _briefing_view_rows(date_str: str, mode: str, briefing_text: str) -> list[list]:
+    """긴 브리핑 전문을 사람이 읽기 쉬운 줄 단위 행으로 변환."""
+    rows = [["날짜", date_str], ["모드", mode], ["", ""]]
+    section = ""
+    line_no = 1
+    for raw_line in str(briefing_text or "").splitlines():
+        line = raw_line.strip()
+        if not line:
+            rows.append(["", ""])
+            continue
+        if line.startswith("■ ") or line.startswith("▣ "):
+            section = line
+            rows.append(["섹션", line])
+            continue
+        if set(line) <= {"═", "─", "-", "="}:
+            continue
+        rows.append([line_no, line if not section else f"{line}"])
+        line_no += 1
+    return rows
+
+
+def _save_briefing_readable_view(spreadsheet, date_str: str, mode: str, briefing_text: str) -> None:
+    """로이가 직접 읽는 최신 브리핑 전용 시트. 아카이브는 BRIEFING 브리핑에 유지."""
+    try:
+        try:
+            ws_view = spreadsheet.worksheet("BRIEFING 보기")
+        except gspread.exceptions.WorksheetNotFound:
+            ws_view = spreadsheet.add_worksheet(title="BRIEFING 보기", rows=500, cols=3)
+
+        rows = _briefing_view_rows(date_str, mode, briefing_text)
+        ws_view.clear()
+        ws_view.update("A1:B1", [["항목", "내용"]])
+        if rows:
+            end_row = len(rows) + 1
+            ws_view.update(f"A2:B{end_row}", rows)
+
+        try:
+            ws_view.format("A:B", {"wrapStrategy": "WRAP"})
+            ws_view.columns_auto_resize(0, 2)
+        except Exception as e:
+            logger.debug("BRIEFING 보기 서식 적용 실패: %s", e)
+    except Exception as e:
+        logger.warning("BRIEFING 보기 저장 실패 (아카이브 저장은 유지): %s", e)
+
+
 # ═══════════════════════════════════════════════════════════
 # POSITIONS 읽기 (M4용)
 # ═══════════════════════════════════════════════════════════
@@ -107,6 +160,7 @@ def save_briefing(date_str: str, briefing_text: str, mode: str = "daily"):
         next_row = 2
 
     ws.update(f"A{next_row}:C{next_row}", [[date_str, mode, briefing_text]])
+    _save_briefing_readable_view(spreadsheet, date_str, mode, briefing_text)
     logger.info("브리핑 Sheets 저장: row %d (%d자)", next_row, len(briefing_text))
 
 
@@ -416,7 +470,7 @@ def _ensure_scout_sheets():
         ws_stats = spreadsheet.add_worksheet(title="SCOUT 통계", rows=60, cols=4)
         # 셀별 박제
         for cell, value in _build_scout_stats_layout():
-            ws_stats.update(cell, value, raw=False)
+            _update_cell(ws_stats, cell, value, raw=False)
             time.sleep(0.05)  # API rate limit 회피
         logger.info("[SCOUT] 'SCOUT 통계' 시트 자동 생성 + 수식 박제")
 
@@ -720,7 +774,7 @@ def update_followup_prices(m6_history: list[dict]) -> int:
     total = 0
     for cell, value in updates_o + updates_q + updates_s:
         try:
-            ws_cands.update(cell, value, raw=False)
+            _update_cell(ws_cands, cell, value, raw=False)
             total += 1
             time.sleep(0.05)
         except Exception as e:
@@ -770,7 +824,7 @@ def sync_position_mapping() -> int:
 
     for cell, value in updates:
         try:
-            ws_cands.update(cell, value, raw=False)
+            _update_cell(ws_cands, cell, value, raw=False)
             time.sleep(0.05)
         except Exception as e:
             logger.warning("[SCOUT] T 컬럼 업데이트 실패 %s: %s", cell, e)
