@@ -328,7 +328,7 @@ SCOUT_CANDIDATES_HEADERS = [
     "+28d 가($)",   # Q: yfinance D+28 (follow-up)
     "+28d %",      # R: 자동 (=(Q-N)/N)
     "방향 적중",     # S: O/X/△ (D+28 후 자동 판정)
-    "진입여부",      # T: Position ID 또는 빈 (POSITIONS 매핑 자동)
+    "진입여부",      # T: Position ID 또는 빈 (OPEN/CLOSED 진입 이력)
     "Model",       # U: gpt-5.4-mini 등 모델 버전
     "운영신호",      # V: 실제 후보 선정에 사용된 신호
     "Shadow Signals", # W: 검증 중인 실험 신호
@@ -340,6 +340,7 @@ SCOUT_CANDIDATES_HEADERS = [
     "Catalyst Score",  # AC: 촉매 점수(raw)
     "Catalyst Headline", # AD: 대표 뉴스/리스크 헤드라인
     "Data Status",    # AE: 정보 부족 사유 구분
+    "현재보유",      # AF: OPEN 포지션일 때만 Position ID
 ]
 
 
@@ -350,7 +351,7 @@ SCOUT_CANDIDATES_GUIDE = [
     "수식", "follow-up", "수식", "D+28 후",
     "POSITIONS 매핑", "환경변수", "봇 자동", "shadow",
     "shadow", "shadow", "shadow", "shadow", "shadow",
-    "shadow", "shadow", "shadow",
+    "shadow", "shadow", "shadow", "OPEN 매핑",
 ]
 
 
@@ -477,10 +478,11 @@ def _ensure_scout_sheets():
     return ws_cands, ws_stats
 
 
-def read_positions_for_mapping() -> dict:
+def read_positions_for_mapping(open_only: bool = False) -> dict:
     """POSITIONS → {ticker_upper: position_id} 자동 매핑 dict.
 
-    OPEN/CLOSED 모두 포함 (CLOSED도 진입 이력으로 표기).
+    기본값은 OPEN/CLOSED 모두 포함해 진입 이력으로 표기한다.
+    open_only=True면 현재 보유중인 OPEN 포지션만 표기한다.
     DRAFT는 제외 (실제 진입 X).
 
     Returns:
@@ -507,10 +509,13 @@ def read_positions_for_mapping() -> dict:
             continue
         if status == "DRAFT":
             continue
+        if open_only and status != "OPEN":
+            continue
         # 같은 티커 여러 포지션이면 가장 최근 것만 남김 (덮어쓰기)
         mapping[ticker] = pid
 
-    logger.info("[SCOUT] POSITIONS 매핑: %d개 티커", len(mapping))
+    label = "현재보유 OPEN 매핑" if open_only else "진입이력 매핑"
+    logger.info("[SCOUT] POSITIONS %s: %d개 티커", label, len(mapping))
     return mapping
 
 
@@ -560,8 +565,9 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
         logger.error("[SCOUT] 시트 보장 실패: %s", e)
         return 0
 
-    # 진입 매핑 로드
+    # 진입 이력 / 현재 보유 매핑 로드
     pos_map = read_positions_for_mapping()
+    open_pos_map = read_positions_for_mapping(open_only=True)
 
     # 기존 데이터 (중복 체크)
     try:
@@ -610,8 +616,9 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
         except (ValueError, TypeError):
             price_str = ""
 
-        # 진입여부 매핑
+        # 진입여부 / 현재보유 매핑
         entry_pid = pos_map.get(ticker, "")
+        open_pid = open_pos_map.get(ticker, "")
 
         factor_positives = " / ".join(str(x) for x in (factor_context.get("positives") or [])[:5])
         factor_negatives = " / ".join(str(x) for x in (factor_context.get("negatives") or [])[:5])
@@ -662,6 +669,7 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
             round(float(catalyst_context.get("score") or 0), 3), # AC: Catalyst Score
             catalyst_headline,                         # AD: Catalyst Headline
             data_status,                               # AE: Data Status
+            open_pid,                                  # AF: 현재보유
         ]
         rows_to_append.append(row)
         seen.add((ticker, date_str))
@@ -806,21 +814,27 @@ def sync_position_mapping() -> int:
         return 0
 
     pos_map = read_positions_for_mapping()
+    open_pos_map = read_positions_for_mapping(open_only=True)
     if not pos_map:
         return 0
 
     updates = []
+    current_hold_col = _col_letter(SCOUT_CANDIDATES_HEADERS.index("현재보유") + 1)
     for idx, row in enumerate(all_data[2:], start=3):
         if len(row) < 3:
             continue
         ticker = (row[2] or "").strip().upper()
         current_pid = (row[19] or "").strip() if len(row) > 19 else ""  # T
+        current_open_pid = (row[31] or "").strip() if len(row) > 31 else ""  # AF
         if not ticker:
             continue
 
         new_pid = pos_map.get(ticker, "")
         if new_pid and new_pid != current_pid:
             updates.append((f"T{idx}", new_pid))
+        new_open_pid = open_pos_map.get(ticker, "")
+        if new_open_pid != current_open_pid:
+            updates.append((f"{current_hold_col}{idx}", new_open_pid))
 
     for cell, value in updates:
         try:
