@@ -146,6 +146,10 @@ scout:
     max_picks: 3
     watchlist_size: 5
     risk_catalyst_review_pool: true    # RISK_CATALYST는 Top3 제외, 리뷰풀로만 기록
+    llm_review:
+      enabled: true                    # 규칙 기반 Top3를 LLM이 최종 재심사. 실패 시 규칙 기반 결과 유지
+      candidate_limit: 12              # 규칙 Top3 + WATCHLIST + 레인별 대표만 투입
+      max_tokens: 1200
     tier_order: ["A", "B", "C", "D"]
     hierarchy:
       - "lane_strength"

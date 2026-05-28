@@ -60,6 +60,73 @@ LLM은 다음 순서로 판단한다.
 5. 레인 PASS 자체보다 “지금 관찰 가치가 있는 자리인가”를 우선한다
 6. 최종 Top3와 함께 탈락 후보의 탈락 이유를 반드시 남긴다
 
+## Required JSON Output
+
+LLM 출력은 반드시 JSON object 하나로 강제한다. 마크다운, 설명문, 코드펜스는 금지한다.
+
+Schema:
+
+```json
+{
+  "schema_version": "scout_top3_llm_review_v0_1",
+  "selected_top3": [
+    {
+      "rank": 1,
+      "ticker": "AVGO",
+      "reason": "선택 이유",
+      "risk": "남은 리스크"
+    }
+  ],
+  "rejected": [
+    {
+      "ticker": "IRDM",
+      "reason": "탈락 이유"
+    }
+  ],
+  "overrides": [
+    {
+      "dropped_ticker": "IRDM",
+      "added_ticker": "NET",
+      "reason": "규칙 기반 후보를 뒤집은 이유"
+    }
+  ],
+  "llm_override": true
+}
+```
+
+저장 필드:
+
+- `rule_based_top3`: 규칙 기반 원래 Top3
+- `final_top3`: LLM 재심사 후 최종 Top3
+- `llm_selected`: 후보별 LLM 선택 여부
+- `llm_reason`: 후보별 선택 이유
+- `llm_risk`: 후보별 남은 리스크
+- `llm_dropped`: 규칙 기반 Top3였지만 LLM이 제외했는지 여부
+- `llm_drop_reason`: 제외 이유
+- `llm_override`: 최종 Top3가 규칙 기반 Top3와 달라졌는지 여부
+
+이 정보는 `recommendation_snapshot_YYYY-MM-DD.json`의 후보 객체와 `top3_selection_audit.llm_review`에 저장한다. 사후 성과표는 이 필드를 읽어 “LLM이 얼마나 자주 규칙을 뒤집었는지”, “뒤집은 판단이 실제로 성과를 개선했는지”를 검증한다.
+
+## Safety Fallback
+
+LLM 재심사는 운영 안정성을 깨면 안 된다.
+
+Fallback 조건:
+
+- `GPT_API_KEY` 없음
+- LLM 호출 실패 또는 timeout
+- JSON 파싱 실패
+- `selected_top3`가 비어 있음
+- 선택된 ticker가 LLM 입력 후보군 밖에 있음
+- `RISK_CATALYST` 후보가 Top3에 포함됨
+
+Fallback 동작:
+
+- 최종 후보는 규칙 기반 Top3 그대로 유지한다.
+- `llm_review.status`는 `fallback_*`로 기록한다.
+- `llm_override`는 `false`로 기록한다.
+- 실패 raw 응답은 길이 제한 후 audit에 저장해 디버깅하되, 운영 출력은 계속 진행한다.
+
 ## 93 Candidates: Loose Gate Or Healthy Radar Pool?
 
 93개가 통과됐다는 사실만으로 공통 문지기와 레인 기준이 느슨하다고 보긴 어렵다. 현재 구조에서 93개는 “매수 후보 93개”가 아니라 “감사관 판정이 붙은 관찰 가능 표본 93개”다.
@@ -125,4 +192,3 @@ LLM은 다음 순서로 판단한다.
 - 강세 레인: overextended_20d 감점 강화
 - 눌림 레인: volume dry-up + support near 동시 요구 강화
 - 좌측거래 레인: Stage2 PASS 조건 유지, WAIT 후보는 Top3 금지
-

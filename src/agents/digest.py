@@ -1309,6 +1309,15 @@ class DigestAgent(BaseAgent):
                         f"  • 리뷰풀     : RISK_CATALYST {int(top3.get('review_pool_risk_catalyst', 0) or 0):,}개"
                         " Top3 제외"
                     )
+                llm_review = top3.get("llm_review", {}) or {}
+                if llm_review.get("enabled"):
+                    status = llm_review.get("status", "")
+                    override = "override" if llm_review.get("llm_override") else "keep"
+                    final_top3 = ", ".join(llm_review.get("final_top3", []) or [])
+                    lines.append(
+                        f"  • LLM 재심사 : {status} · {override}"
+                        + (f" · 최종 {final_top3}" if final_top3 else "")
+                    )
             shadow_hits = signal.get("shadow_hit_counts", {}) or {}
             if shadow_hits:
                 parts = []

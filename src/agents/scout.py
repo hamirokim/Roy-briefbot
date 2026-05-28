@@ -2374,6 +2374,7 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "score": item.get("score"),
                 "signal_score": item.get("signal_score"),
                 "selection_rank": item.get("selection_rank"),
+                "rule_selection_rank": top3.get("rule_selection_rank", item.get("rule_selection_rank")),
                 "selection_tier": top3.get("tier", item.get("selection_tier", "")),
                 "selection_lane": top3.get("primary_lane", item.get("selection_lane", "")),
                 "selection_lane_status": top3.get("primary_lane_status", item.get("selection_lane_status", "")),
@@ -2382,6 +2383,9 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "selection_support_count": top3.get("support_count", ""),
                 "selection_opportunity_score": top3.get("opportunity_score", item.get("selection_opportunity_score", "")),
                 "selection_excluded_reason": top3.get("exclude_reason", item.get("review_pool_reason", "")),
+                "llm_selected": top3.get("llm_selected", item.get("llm_selected", False)),
+                "llm_override": top3.get("llm_override", item.get("llm_override", False)),
+                "llm_dropped": top3.get("llm_dropped", item.get("llm_dropped", False)),
                 "theme_score": item.get("theme_score"),
                 "liquidity_score": item.get("liquidity_score"),
                 "factor_score": item.get("factor_score", 0.0),
@@ -2646,6 +2650,358 @@ def _pick_from_tier(tier_items: list[dict], used_lanes: set[str]) -> dict:
     return sorted_items[0]
 
 
+def _ticker_set(items: list[dict]) -> list[str]:
+    out = []
+    seen = set()
+    for item in items:
+        ticker = _theme_lookup_key(str(item.get("ticker", "") or ""))
+        if ticker and ticker not in seen:
+            seen.add(ticker)
+            out.append(ticker)
+    return out
+
+
+def _compact_candidate_for_llm(item: dict) -> dict:
+    selection = item.get("top3_selection") or _annotate_top3_selection(item)
+    catalyst = item.get("catalyst_context") or {}
+    theme = item.get("theme_industry") or {}
+    quality = item.get("quality_auditor") or {}
+    factor = item.get("factor_context") or {}
+    factor_metrics = factor.get("metrics") or {}
+    primary_lane = str(selection.get("primary_lane", "") or "")
+    lane_data = (item.get("price_lanes") or {}).get(primary_lane) or {}
+    lane_metrics = lane_data.get("metrics") or {}
+    news = catalyst.get("news") or []
+    headline = ""
+    if news and isinstance(news, list):
+        headline = str((news[0] or {}).get("headline", "") or "")[:180]
+    return _json_safe_value({
+        "ticker": item.get("ticker", ""),
+        "name": item.get("name", ""),
+        "country": item.get("country", ""),
+        "sector": item.get("sector", ""),
+        "market_cap": item.get("market_cap", 0),
+        "score": item.get("score", 0),
+        "signal_count": item.get("signal_count", 0),
+        "signal_keys": item.get("signal_keys", []),
+        "selection_tier": selection.get("tier", ""),
+        "primary_lane": primary_lane,
+        "primary_lane_status": selection.get("primary_lane_status", ""),
+        "lane_rank": selection.get("lane_rank", 0),
+        "support_count": selection.get("support_count", 0),
+        "support_reasons": selection.get("support_reasons", []),
+        "opportunity_score": selection.get("opportunity_score", 0),
+        "ret_20d": factor_metrics.get("ret_20d", lane_metrics.get("ret_20d")),
+        "drawdown_from_high": factor_metrics.get("drawdown_from_high", lane_metrics.get("drawdown_from_252d_high")),
+        "atr_pct": factor_metrics.get("atr_pct"),
+        "volume_ratio_5d_20d": lane_metrics.get("volume_ratio_5d_20d"),
+        "factor_positives": factor.get("positives", []),
+        "factor_negatives": factor.get("negatives", []),
+        "quality_flags": item.get("quality_flags", []),
+        "catalyst_classification": catalyst.get("classification", ""),
+        "catalyst_freshness": (catalyst.get("freshness") or {}).get("status", ""),
+        "catalyst_reaction": (catalyst.get("price_volume_reaction") or {}).get("status", ""),
+        "catalyst_headline": headline,
+        "theme_industry_status": theme.get("status", ""),
+        "sector_rrg_quadrant": (theme.get("sector") or {}).get("quadrant", ""),
+        "theme_warnings": theme.get("warnings", []),
+        "quality_auditor_status": quality.get("status", ""),
+        "quality_score": quality.get("score", 0),
+        "top3_excluded": selection.get("excluded", False),
+        "exclude_reason": selection.get("exclude_reason", ""),
+    })
+
+
+def _market_context_for_llm(today: str, m2_history: dict, m2_theme_history: dict, filter_audit: dict) -> dict:
+    sector_date, sector_snapshot = _latest_snapshot(m2_history)
+    theme_date, theme_snapshot = _latest_snapshot(m2_theme_history)
+    sector_quadrants = Counter()
+    sector_rows = []
+    for etf, info in (sector_snapshot or {}).items():
+        q = str((info or {}).get("quadrant", "") or "")
+        if q:
+            sector_quadrants[q] += 1
+        sector_rows.append({
+            "etf": etf,
+            "label": (info or {}).get("label", etf),
+            "quadrant": q,
+        })
+    theme_quadrants = Counter()
+    theme_rows = []
+    for etf, info in (theme_snapshot or {}).items():
+        q = str((info or {}).get("quadrant", "") or "")
+        if q:
+            theme_quadrants[q] += 1
+        theme_rows.append({
+            "etf": etf,
+            "label": (info or {}).get("label", etf),
+            "theme_group": (info or {}).get("theme_group", ""),
+            "quadrant": q,
+        })
+    return _json_safe_value({
+        "date": today,
+        "sector_rrg_date": sector_date,
+        "sector_quadrant_counts": dict(sector_quadrants),
+        "sector_rrg": sector_rows[:20],
+        "theme_rrg_date": theme_date,
+        "theme_quadrant_counts": dict(theme_quadrants),
+        "theme_rrg": theme_rows[:30],
+        "top3_selection_audit": filter_audit.get("top3_selection_audit", {}),
+    })
+
+
+def _build_llm_review_pool(
+    radar_pool: list[dict],
+    rule_candidates: list[dict],
+    watchlist_candidates: list[dict],
+    limit: int,
+) -> list[dict]:
+    by_ticker = {
+        _theme_lookup_key(str(item.get("ticker", "") or "")): item
+        for item in radar_pool
+        if _theme_lookup_key(str(item.get("ticker", "") or ""))
+    }
+    pool: list[dict] = []
+    seen: set[str] = set()
+
+    def add_item(item: dict):
+        ticker = _theme_lookup_key(str(item.get("ticker", "") or ""))
+        if not ticker or ticker in seen:
+            return
+        full_item = by_ticker.get(ticker, item)
+        selection = full_item.get("top3_selection") or _annotate_top3_selection(full_item)
+        if selection.get("excluded"):
+            return
+        seen.add(ticker)
+        pool.append(full_item)
+
+    for item in rule_candidates:
+        add_item(item)
+    for item in watchlist_candidates:
+        add_item(item)
+
+    for lane in ["strength", "pullback", "left_side"]:
+        lane_items = [
+            item for item in radar_pool
+            if not (item.get("top3_selection") or _annotate_top3_selection(item)).get("excluded")
+            and str((item.get("top3_selection") or {}).get("primary_lane", "") or "") == lane
+        ]
+        for item in sorted(lane_items, key=_selection_sort_key, reverse=True)[:1]:
+            add_item(item)
+
+    for item in sorted(radar_pool, key=_selection_sort_key, reverse=True):
+        if len(pool) >= limit:
+            break
+        add_item(item)
+
+    return pool[:max(1, int(limit or 12))]
+
+
+def _top3_llm_prompts(
+    today: str,
+    market_context: dict,
+    rule_candidates: list[dict],
+    review_pool: list[dict],
+) -> tuple[str, str]:
+    system = (
+        "You are RONIN SCOUT's final Top3 review auditor. "
+        "This is system selection, not investment advice. "
+        "Use only the provided JSON facts. "
+        "Return exactly one JSON object. No markdown. No code fences."
+    )
+    user_payload = {
+        "schema_version": "scout_top3_llm_prompt_v0_1",
+        "date": today,
+        "task": "Select final Top3 candidates from candidate_pool. You may keep or override the rule_based_top3.",
+        "rules": [
+            "RISK_CATALYST or top3_excluded candidates cannot be selected.",
+            "Select exactly 3 tickers if 3 valid candidates exist.",
+            "Avoid overextended chase candidates unless catalyst and price/volume reaction are both strong.",
+            "Prefer useful lane balance when candidate quality is similar.",
+            "Every selected ticker needs a concise reason and remaining risk.",
+            "If you replace a rule-based pick, list it in overrides with dropped_ticker, added_ticker, reason.",
+        ],
+        "required_output_schema": {
+            "schema_version": "scout_top3_llm_review_v0_1",
+            "selected_top3": [{"rank": 1, "ticker": "TICKER", "reason": "why selected", "risk": "remaining risk"}],
+            "rejected": [{"ticker": "TICKER", "reason": "why not selected"}],
+            "overrides": [{"dropped_ticker": "TICKER", "added_ticker": "TICKER", "reason": "why override"}],
+            "llm_override": False,
+        },
+        "market_context": market_context,
+        "rule_based_top3": [_theme_lookup_key(str(i.get("ticker", "") or "")) for i in rule_candidates],
+        "candidate_pool": [_compact_candidate_for_llm(i) for i in review_pool],
+    }
+    return system, json.dumps(_json_safe_value(user_payload), ensure_ascii=False)
+
+
+def _fallback_llm_review_audit(status: str, rule_candidates: list[dict], review_pool: list[dict], reason: str = "", raw: str = "") -> dict:
+    return {
+        "enabled": True,
+        "status": status,
+        "schema_version": "scout_top3_llm_review_v0_1",
+        "input_count": int(len(review_pool)),
+        "rule_based_top3": _ticker_set(rule_candidates),
+        "final_top3": _ticker_set(rule_candidates),
+        "llm_override": False,
+        "overrides": [],
+        "rejected": [],
+        "fallback_reason": reason,
+        "raw_excerpt": str(raw or "")[:500],
+    }
+
+
+def _apply_llm_top3_review(
+    today: str,
+    radar_pool: list[dict],
+    rule_candidates: list[dict],
+    watchlist_candidates: list[dict],
+    selection_cfg: dict,
+    market_context: dict,
+    llm_call,
+) -> tuple[list[dict], dict]:
+    llm_cfg = (selection_cfg or {}).get("llm_review", {}) or {}
+    if not bool(llm_cfg.get("enabled", False)):
+        return rule_candidates, {
+            "enabled": False,
+            "status": "disabled",
+            "rule_based_top3": _ticker_set(rule_candidates),
+            "final_top3": _ticker_set(rule_candidates),
+            "llm_override": False,
+        }
+    limit = int(llm_cfg.get("candidate_limit", 12) or 12)
+    review_pool = _build_llm_review_pool(radar_pool, rule_candidates, watchlist_candidates, limit=limit)
+    if len(rule_candidates) < 1 or len(review_pool) < 1:
+        return rule_candidates, _fallback_llm_review_audit("fallback_empty_pool", rule_candidates, review_pool, "empty_pool")
+    if llm_call is None or not os.environ.get("GPT_API_KEY"):
+        return rule_candidates, _fallback_llm_review_audit("fallback_no_llm_key", rule_candidates, review_pool, "GPT_API_KEY_missing")
+
+    system, user = _top3_llm_prompts(today, market_context, rule_candidates, review_pool)
+    raw = llm_call(system, user, max_tokens=int(llm_cfg.get("max_tokens", 1200) or 1200))
+    data = _parse_llm_json(raw)
+    if not data:
+        return rule_candidates, _fallback_llm_review_audit("fallback_parse_failed", rule_candidates, review_pool, "json_parse_failed", raw or "")
+
+    by_ticker = {
+        _theme_lookup_key(str(item.get("ticker", "") or "")): item
+        for item in review_pool
+        if _theme_lookup_key(str(item.get("ticker", "") or ""))
+    }
+    selected_rows = data.get("selected_top3") or []
+    if not isinstance(selected_rows, list) or not selected_rows:
+        return rule_candidates, _fallback_llm_review_audit("fallback_schema_failed", rule_candidates, review_pool, "selected_top3_missing", raw or "")
+
+    max_picks = len(rule_candidates) if rule_candidates else int((selection_cfg or {}).get("max_picks", 3) or 3)
+    final: list[dict] = []
+    seen: set[str] = set()
+    reasons: dict[str, dict] = {}
+    invalid_reason = ""
+    for row in selected_rows:
+        if not isinstance(row, dict):
+            invalid_reason = "selected_row_not_object"
+            break
+        ticker = _theme_lookup_key(str(row.get("ticker", "") or ""))
+        if not ticker or ticker in seen:
+            continue
+        item = by_ticker.get(ticker)
+        if item is None:
+            invalid_reason = f"ticker_not_in_input:{ticker}"
+            break
+        selection = item.get("top3_selection") or _annotate_top3_selection(item)
+        if selection.get("excluded"):
+            invalid_reason = f"excluded_ticker_selected:{ticker}"
+            break
+        seen.add(ticker)
+        reasons[ticker] = {
+            "reason": str(row.get("reason", "") or "")[:500],
+            "risk": str(row.get("risk", "") or "")[:500],
+        }
+        final.append(item)
+        if len(final) >= max_picks:
+            break
+
+    if invalid_reason or len(final) < min(max_picks, len(review_pool)):
+        return rule_candidates, _fallback_llm_review_audit(
+            "fallback_validation_failed",
+            rule_candidates,
+            review_pool,
+            invalid_reason or "not_enough_valid_selected",
+            raw or "",
+        )
+
+    rule_tickers = _ticker_set(rule_candidates)
+    final_tickers = _ticker_set(final)
+    override = final_tickers != rule_tickers
+    rejected_rows = data.get("rejected") if isinstance(data.get("rejected"), list) else []
+    overrides = data.get("overrides") if isinstance(data.get("overrides"), list) else []
+
+    dropped = set(rule_tickers) - set(final_tickers)
+    added = set(final_tickers) - set(rule_tickers)
+    drop_reason_by_ticker = {}
+    for row in rejected_rows:
+        if isinstance(row, dict):
+            t = _theme_lookup_key(str(row.get("ticker", "") or ""))
+            if t:
+                drop_reason_by_ticker[t] = str(row.get("reason", "") or "")[:500]
+
+    for item in radar_pool:
+        ticker = _theme_lookup_key(str(item.get("ticker", "") or ""))
+        top3 = item.setdefault("top3_selection", {})
+        rule_rank = top3.get("selection_rank", item.get("selection_rank"))
+        if rule_rank:
+            top3["rule_selection_rank"] = rule_rank
+            item["rule_selection_rank"] = rule_rank
+        top3["selection_rank"] = None
+        item["selection_rank"] = None
+        top3["llm_selected"] = ticker in set(final_tickers)
+        top3["llm_override"] = bool(override)
+        if ticker in reasons:
+            top3["llm_reason"] = reasons[ticker].get("reason", "")
+            top3["llm_risk"] = reasons[ticker].get("risk", "")
+        if ticker in dropped:
+            top3["llm_dropped"] = True
+            top3["llm_drop_reason"] = drop_reason_by_ticker.get(ticker, "LLM excluded from final Top3")
+        else:
+            top3["llm_dropped"] = False
+            top3.setdefault("llm_drop_reason", "")
+        item["llm_selected"] = top3["llm_selected"]
+        item["llm_override"] = bool(override)
+        item["llm_reason"] = top3.get("llm_reason", "")
+        item["llm_risk"] = top3.get("llm_risk", "")
+        item["llm_dropped"] = top3.get("llm_dropped", False)
+        item["llm_drop_reason"] = top3.get("llm_drop_reason", "")
+
+    for idx, item in enumerate(final, 1):
+        item["selection_rank"] = idx
+        item.setdefault("top3_selection", {})["selection_rank"] = idx
+
+    return final, _json_safe_value({
+        "enabled": True,
+        "status": "ok",
+        "schema_version": "scout_top3_llm_review_v0_1",
+        "input_count": int(len(review_pool)),
+        "input_tickers": _ticker_set(review_pool),
+        "rule_based_top3": rule_tickers,
+        "final_top3": final_tickers,
+        "llm_override": bool(override),
+        "selected_top3": [
+            {
+                "rank": idx,
+                "ticker": _theme_lookup_key(str(item.get("ticker", "") or "")),
+                "reason": reasons.get(_theme_lookup_key(str(item.get("ticker", "") or "")), {}).get("reason", ""),
+                "risk": reasons.get(_theme_lookup_key(str(item.get("ticker", "") or "")), {}).get("risk", ""),
+            }
+            for idx, item in enumerate(final, 1)
+        ],
+        "rejected": rejected_rows[:12],
+        "overrides": overrides[:8],
+        "dropped_tickers": sorted(dropped),
+        "added_tickers": sorted(added),
+        "prompt_version": "scout_top3_llm_prompt_v0_1",
+        "raw_excerpt": str(raw or "")[:500],
+    })
+
+
 def _select_top3_candidates(
     radar_pool: list[dict],
     max_picks: int,
@@ -2828,6 +3184,7 @@ def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dic
         "bucket": bucket,
         "rank": rank_no,
         "selection_rank": item.get("selection_rank"),
+        "rule_selection_rank": top3.get("rule_selection_rank", item.get("rule_selection_rank")),
         "selection_tier": top3.get("tier", item.get("selection_tier", "")),
         "selection_lane": top3.get("primary_lane", item.get("selection_lane", "")),
         "selection_lane_status": top3.get("primary_lane_status", item.get("selection_lane_status", "")),
@@ -2836,6 +3193,12 @@ def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dic
         "selection_support_count": top3.get("support_count", ""),
         "selection_opportunity_score": top3.get("opportunity_score", item.get("selection_opportunity_score", "")),
         "selection_excluded_reason": top3.get("exclude_reason", item.get("review_pool_reason", "")),
+        "llm_selected": top3.get("llm_selected", item.get("llm_selected", False)),
+        "llm_override": top3.get("llm_override", item.get("llm_override", False)),
+        "llm_reason": top3.get("llm_reason", item.get("llm_reason", "")),
+        "llm_risk": top3.get("llm_risk", item.get("llm_risk", "")),
+        "llm_dropped": top3.get("llm_dropped", item.get("llm_dropped", False)),
+        "llm_drop_reason": top3.get("llm_drop_reason", item.get("llm_drop_reason", "")),
         "ticker": item.get("ticker", ""),
         "name": item.get("name", ""),
         "country": item.get("country", ""),
@@ -3451,6 +3814,31 @@ class ScoutAgent(BaseAgent):
             quality_gate_fn=_passes_brief_quality_gate,
             selection_cfg=top3_selection_cfg,
         )
+        watchlist_candidates = _build_watchlist_candidates(
+            radar_pool=radar_pool,
+            candidates=candidates,
+            limit=int((top3_selection_cfg or {}).get("watchlist_size", 5) or 5),
+        )
+        llm_market_context = _market_context_for_llm(
+            today=today,
+            m2_history=m2_history,
+            m2_theme_history=m2_theme_history,
+            filter_audit={"top3_selection_audit": top3_selection_audit},
+        )
+        rule_based_candidates = list(candidates)
+        candidates, llm_review_audit = _apply_llm_top3_review(
+            today=today,
+            radar_pool=radar_pool,
+            rule_candidates=rule_based_candidates,
+            watchlist_candidates=watchlist_candidates,
+            selection_cfg=top3_selection_cfg,
+            market_context=llm_market_context,
+            llm_call=self.call_llm,
+        )
+        top3_selection_audit["llm_review"] = llm_review_audit
+        top3_selection_audit["rule_based_top3"] = llm_review_audit.get("rule_based_top3", _ticker_set(rule_based_candidates))
+        top3_selection_audit["final_top3"] = llm_review_audit.get("final_top3", _ticker_set(candidates))
+        top3_selection_audit["llm_override"] = bool(llm_review_audit.get("llm_override", False))
         watchlist_candidates = _build_watchlist_candidates(
             radar_pool=radar_pool,
             candidates=candidates,
