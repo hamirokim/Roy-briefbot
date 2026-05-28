@@ -17,8 +17,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 FMP_API_KEY = os.environ.get("FMP_API_KEY", "")
-FMP_BASE_V3 = "https://financialmodelingprep.com/api/v3"
-FMP_BASE_V4 = "https://financialmodelingprep.com/api/v4"
+FMP_BASE = "https://financialmodelingprep.com/stable"
 
 
 def fmp_enabled() -> bool:
@@ -53,15 +52,14 @@ def _pct(value: Any) -> Optional[float]:
     return val * 100.0 if abs(val) <= 5 else val
 
 
-def _request(path: str, params: Optional[dict] = None, version: str = "v3") -> Any:
+def _request(path: str, params: Optional[dict] = None, version: str = "stable") -> Any:
     if not FMP_API_KEY:
         return None
 
-    base = FMP_BASE_V4 if version == "v4" else FMP_BASE_V3
     params = dict(params or {})
     params["apikey"] = FMP_API_KEY
     try:
-        resp = requests.get(f"{base}/{path.lstrip('/')}", params=params, timeout=12)
+        resp = requests.get(f"{FMP_BASE}/{path.lstrip('/')}", params=params, timeout=12)
         if resp.status_code != 200:
             logger.debug("[FMP] %s HTTP %s", path, resp.status_code)
             return None
@@ -93,19 +91,24 @@ def fetch_fundamental_data(ticker: str, country: str = "US") -> Optional[dict]:
     if not symbol or not FMP_API_KEY:
         return None
 
-    profile = _first(_request(f"profile/{symbol}"))
-    ratios = _first(_request(f"ratios-ttm/{symbol}"))
-    metrics = _first(_request(f"key-metrics-ttm/{symbol}"))
-    income_growth = _first(_request(f"income-statement-growth/{symbol}", {"limit": 1}))
-    cash_growth = _first(_request(f"cash-flow-statement-growth/{symbol}", {"limit": 1}))
-    rating = _first(_request(f"rating/{symbol}"))
+    profile = _first(_request("profile", {"symbol": symbol}))
+    ratios = _first(_request("ratios-ttm", {"symbol": symbol}))
+    metrics = _first(_request("key-metrics-ttm", {"symbol": symbol}))
+    income_growth = _first(_request("income-statement-growth", {"symbol": symbol, "limit": 1}))
+    cash_growth = _first(_request("cash-flow-statement-growth", {"symbol": symbol, "limit": 1}))
+    rating = _first(_request("ratings-snapshot", {"symbol": symbol}))
 
     if not any([profile, ratios, metrics, income_growth, cash_growth, rating]):
         return None
 
-    pe = _safe_float(ratios.get("priceEarningsRatioTTM")) or _safe_float(metrics.get("peRatioTTM"))
+    pe = (
+        _safe_float(ratios.get("priceToEarningsRatioTTM"))
+        or _safe_float(ratios.get("priceEarningsRatioTTM"))
+        or _safe_float(metrics.get("peRatioTTM"))
+    )
     peg = (
-        _safe_float(ratios.get("priceEarningsGrowthRatioTTM"))
+        _safe_float(ratios.get("priceToEarningsGrowthRatioTTM"))
+        or _safe_float(ratios.get("priceEarningsGrowthRatioTTM"))
         or _safe_float(metrics.get("pegRatioTTM"))
     )
     eps_growth = (
@@ -126,7 +129,7 @@ def fetch_fundamental_data(ticker: str, country: str = "US") -> Optional[dict]:
         "rsi14": None,
         "sector": str(profile.get("sector", "") or ""),
         "industry": str(profile.get("industry", "") or ""),
-        "market_cap": _safe_float(profile.get("mktCap")),
+        "market_cap": _safe_float(profile.get("marketCap")) or _safe_float(profile.get("mktCap")),
         "earnings_date": "",
         "source": "fmp",
         "fmp_quality": {
@@ -141,7 +144,7 @@ def fetch_fundamental_data(ticker: str, country: str = "US") -> Optional[dict]:
             "debt_equity_ttm": _safe_float(ratios.get("debtEquityRatioTTM")),
             "current_ratio_ttm": _safe_float(ratios.get("currentRatioTTM")),
             "rating": rating.get("rating"),
-            "rating_score": _safe_float(rating.get("ratingScore")),
+            "rating_score": _safe_float(rating.get("overallScore")) or _safe_float(rating.get("ratingScore")),
         },
     }
 
@@ -182,7 +185,7 @@ def fetch_catalyst_news(
     cutoff = datetime.utcnow() - timedelta(days=max(1, int(lookback_days or 14)))
     items: list[dict] = []
 
-    news = _request("stock_news", {"tickers": symbol, "limit": max(5, max_items * 2)}) or []
+    news = _request("news/stock", {"symbols": symbol, "limit": max(5, max_items * 2)}) or []
     if isinstance(news, list):
         for it in news:
             published = it.get("publishedDate") or it.get("date")
@@ -195,20 +198,20 @@ def fetch_catalyst_news(
             items.append({
                 "headline": headline[:180],
                 "summary": str(it.get("text", "") or "").strip()[:300],
-                "source": f"FMP:{str(it.get('site', '') or 'news')}",
+                "source": f"FMP:{str(it.get('publisher', '') or it.get('site', '') or 'news')}",
                 "datetime": _epoch(published),
                 "url": str(it.get("url", "") or "").strip(),
                 "event_type": "news",
             })
 
-    grades = _request("upgrades-downgrades", {"symbol": symbol}, version="v4") or []
+    grades = _request("grades", {"symbol": symbol}) or []
     if isinstance(grades, list):
         for it in grades[:10]:
             date_val = it.get("date") or it.get("publishedDate")
             dt = _parse_date(date_val)
             if dt and dt < cutoff:
                 continue
-            action = str(it.get("action", "") or "").strip()
+            action = str(it.get("action", "") or it.get("actionGrade", "") or "").strip()
             new_grade = str(it.get("newGrade", "") or it.get("newRating", "") or "").strip()
             old_grade = str(it.get("previousGrade", "") or it.get("previousRating", "") or "").strip()
             firm = str(it.get("gradingCompany", "") or it.get("analyst", "") or "").strip()
@@ -224,15 +227,15 @@ def fetch_catalyst_news(
                 "event_type": "analyst_rating",
             })
 
-    earnings = _request(f"earnings-surprises/{symbol}", {"limit": 4}) or []
+    earnings = _request("earnings", {"symbol": symbol, "limit": 4}) or []
     if isinstance(earnings, list):
         for it in earnings[:4]:
             date_val = it.get("date")
             dt = _parse_date(date_val)
             if dt and dt < cutoff:
                 continue
-            actual = _safe_float(it.get("actualEarningResult"))
-            estimate = _safe_float(it.get("estimatedEarning"))
+            actual = _safe_float(it.get("epsActual") or it.get("actualEarningResult"))
+            estimate = _safe_float(it.get("epsEstimated") or it.get("estimatedEarning"))
             surprise = actual - estimate if actual is not None and estimate is not None else None
             direction = "beat" if surprise is not None and surprise > 0 else "miss" if surprise is not None and surprise < 0 else "reported"
             items.append({
