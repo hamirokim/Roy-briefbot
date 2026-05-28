@@ -1,0 +1,306 @@
+{
+  "date": "2026-05-28",
+  "schema_version": "scout_performance_v0_1",
+  "lookback_days": 45,
+  "followup_days": [
+    1,
+    3,
+    5,
+    10,
+    20
+  ],
+  "summary": {
+    "candidate_count": 3,
+    "evaluated_count": 0,
+    "actually_bought_count": 0,
+    "verdict_counts": {},
+    "avg_d20_return_pct": null,
+    "aggregates": {
+      "by_lane": [],
+      "by_lane_status": [],
+      "by_theme_industry": [],
+      "by_quality_auditor": [],
+      "by_catalyst": []
+    }
+  },
+  "records": [
+    {
+      "snapshot_date": "2026-05-28",
+      "bucket": "candidate",
+      "rank": 1,
+      "ticker": "AMZN",
+      "name": "Amazon.com Inc",
+      "country": "US",
+      "sector": "Consumer Cyclical",
+      "score": 1.8,
+      "selection_tier": "A",
+      "selection_rank": 1,
+      "rule_selection_rank": 2,
+      "selection_lane_rank": 5,
+      "selection_support_count": 4,
+      "selection_support_reasons": [
+        "theme:STRONG_SUPPORT",
+        "quality:STRONG_QUALITY",
+        "catalyst:POSITIVE_REVALUATION",
+        "theme_peer_confirmation"
+      ],
+      "selection_catalyst_freshness_rank": 4,
+      "llm_selected": true,
+      "llm_override": true,
+      "llm_reason": "A-tier strength pick with strong quality and support, fresh positive revaluation catalyst, and it sits in a leading sector. Price action is constructive without being overly extended.",
+      "llm_risk": "Catalyst reaction is still unconfirmed and it is near a 52-week high, so follow-through could stall.",
+      "llm_dropped": false,
+      "llm_drop_reason": "",
+      "opportunity_score": 3.329,
+      "drawdown_from_high": -0.0114,
+      "factor_ret_20d": 0.0468,
+      "factor_atr_pct": 0.0247,
+      "factor_positives": [
+        "volatility_healthy"
+      ],
+      "factor_negatives": [
+        "liquidity_weak"
+      ],
+      "primary_lane": "strength",
+      "primary_lane_status": "STRONG_PASS",
+      "primary_lane_reasons": [
+        "relative_strength",
+        "near_52w_high",
+        "trend_confirmed"
+      ],
+      "primary_lane_review_flags": [],
+      "primary_lane_metrics": {
+        "ret_20d": 0.0468,
+        "ret_63d": 0.2906,
+        "ret_126d": 0.2318,
+        "rs_20d": -0.0077,
+        "rs_63d": 0.2079,
+        "rs_126d": 0.0931,
+        "drawdown_from_252d_high": -0.0114,
+        "volume_ratio_5d_20d": 0.8157
+      },
+      "strength_lane_status": "STRONG_PASS",
+      "strength_lane_metrics": {
+        "ret_20d": 0.0468,
+        "ret_63d": 0.2906,
+        "ret_126d": 0.2318,
+        "rs_20d": -0.0077,
+        "rs_63d": 0.2079,
+        "rs_126d": 0.0931,
+        "drawdown_from_252d_high": -0.0114,
+        "volume_ratio_5d_20d": 0.8157
+      },
+      "pullback_lane_status": "WAIT",
+      "pullback_lane_metrics": {
+        "ma50": 244.2782,
+        "ma200": 231.0112,
+        "drawdown_from_252d_high": -0.0114,
+        "volume_ratio_5d_20d": 0.8157
+      },
+      "left_side_lane_status": "FAIL",
+      "left_side_stage": "FAIL",
+      "left_side_lane_metrics": {
+        "drawdown_from_252d_high": -0.0114,
+        "distance_from_252d_low": 0.3675
+      },
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "theme_industry_status": "STRONG_SUPPORT",
+      "quality_auditor_status": "STRONG_QUALITY",
+      "catalyst_classification": "POSITIVE_REVALUATION",
+      "catalyst_freshness": "FRESH_3D",
+      "actually_bought": false,
+      "currently_open": false,
+      "position_id": "",
+      "lane_key": "strength",
+      "status": "NO_START_BAR",
+      "final_verdict": "PENDING"
+    },
+    {
+      "snapshot_date": "2026-05-28",
+      "bucket": "candidate",
+      "rank": 2,
+      "ticker": "AVGO",
+      "name": "Broadcom Inc",
+      "country": "US",
+      "sector": "Technology",
+      "score": 1.8,
+      "selection_tier": "A",
+      "selection_rank": 2,
+      "rule_selection_rank": 1,
+      "selection_lane_rank": 5,
+      "selection_support_count": 4,
+      "selection_support_reasons": [
+        "theme:STRONG_SUPPORT",
+        "quality:STRONG_QUALITY",
+        "catalyst:POSITIVE_REVALUATION",
+        "theme_peer_confirmation"
+      ],
+      "selection_catalyst_freshness_rank": 4,
+      "llm_selected": true,
+      "llm_override": true,
+      "llm_reason": "A-tier strength pick with strong quality, fresh positive revaluation catalyst, and peer/theme confirmation. It offers a solid setup with healthy volatility and not-chasing characteristics.",
+      "llm_risk": "Sector is weakening, and the catalyst has no confirmation yet, so relative strength may fade if tech stays soft.",
+      "llm_dropped": false,
+      "llm_drop_reason": "",
+      "opportunity_score": 4.118,
+      "drawdown_from_high": -0.0408,
+      "factor_ret_20d": 0.0551,
+      "factor_atr_pct": 0.0353,
+      "factor_positives": [
+        "not_chasing",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [
+        "liquidity_weak"
+      ],
+      "primary_lane": "strength",
+      "primary_lane_status": "STRONG_PASS",
+      "primary_lane_reasons": [
+        "relative_strength",
+        "near_52w_high",
+        "trend_confirmed"
+      ],
+      "primary_lane_review_flags": [],
+      "primary_lane_metrics": {
+        "ret_20d": 0.0551,
+        "ret_63d": 0.2695,
+        "ret_126d": 0.24,
+        "rs_20d": 0.0006,
+        "rs_63d": 0.1868,
+        "rs_126d": 0.1013,
+        "drawdown_from_252d_high": -0.0408,
+        "volume_ratio_5d_20d": 0.9461
+      },
+      "strength_lane_status": "STRONG_PASS",
+      "strength_lane_metrics": {
+        "ret_20d": 0.0551,
+        "ret_63d": 0.2695,
+        "ret_126d": 0.24,
+        "rs_20d": 0.0006,
+        "rs_63d": 0.1868,
+        "rs_126d": 0.1013,
+        "drawdown_from_252d_high": -0.0408,
+        "volume_ratio_5d_20d": 0.9461
+      },
+      "pullback_lane_status": "WAIT",
+      "pullback_lane_metrics": {
+        "ma50": 380.9766,
+        "ma200": 351.0207,
+        "drawdown_from_252d_high": -0.0408,
+        "volume_ratio_5d_20d": 0.9461
+      },
+      "left_side_lane_status": "FAIL",
+      "left_side_stage": "FAIL",
+      "left_side_lane_metrics": {
+        "drawdown_from_252d_high": -0.0408,
+        "distance_from_252d_low": 0.7619
+      },
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "theme_industry_status": "STRONG_SUPPORT",
+      "quality_auditor_status": "STRONG_QUALITY",
+      "catalyst_classification": "POSITIVE_REVALUATION",
+      "catalyst_freshness": "FRESH_3D",
+      "actually_bought": false,
+      "currently_open": false,
+      "position_id": "",
+      "lane_key": "strength",
+      "status": "NO_START_BAR",
+      "final_verdict": "PENDING"
+    },
+    {
+      "snapshot_date": "2026-05-28",
+      "bucket": "candidate",
+      "rank": 3,
+      "ticker": "ELV",
+      "name": "Elevance Health Inc",
+      "country": "US",
+      "sector": "Healthcare",
+      "score": 1.2,
+      "selection_tier": "A",
+      "selection_rank": 3,
+      "rule_selection_rank": null,
+      "selection_lane_rank": 5,
+      "selection_support_count": 2,
+      "selection_support_reasons": [
+        "theme:SUPPORT",
+        "quality:STRONG_QUALITY"
+      ],
+      "selection_catalyst_freshness_rank": 0,
+      "llm_selected": true,
+      "llm_override": true,
+      "llm_reason": "A-tier strength pick in a leading healthcare sector with strong quality support. It provides lane balance versus the tech-heavy names and is less dependent on a fresh catalyst.",
+      "llm_risk": "No catalyst is present, and liquidity buffer is still flagged as weak, which can limit follow-through.",
+      "llm_dropped": false,
+      "llm_drop_reason": "",
+      "opportunity_score": 2.668,
+      "drawdown_from_high": -0.0268,
+      "factor_ret_20d": 0.0792,
+      "factor_atr_pct": 0.0259,
+      "factor_positives": [
+        "volatility_healthy"
+      ],
+      "factor_negatives": [
+        "liquidity_weak"
+      ],
+      "primary_lane": "strength",
+      "primary_lane_status": "STRONG_PASS",
+      "primary_lane_reasons": [
+        "relative_strength",
+        "near_52w_high",
+        "trend_confirmed"
+      ],
+      "primary_lane_review_flags": [],
+      "primary_lane_metrics": {
+        "ret_20d": 0.0792,
+        "ret_63d": 0.1844,
+        "ret_126d": 0.2168,
+        "rs_20d": 0.0247,
+        "rs_63d": 0.1018,
+        "rs_126d": 0.078,
+        "drawdown_from_252d_high": -0.0268,
+        "volume_ratio_5d_20d": 0.8321
+      },
+      "strength_lane_status": "STRONG_PASS",
+      "strength_lane_metrics": {
+        "ret_20d": 0.0792,
+        "ret_63d": 0.1844,
+        "ret_126d": 0.2168,
+        "rs_20d": 0.0247,
+        "rs_63d": 0.1018,
+        "rs_126d": 0.078,
+        "drawdown_from_252d_high": -0.0268,
+        "volume_ratio_5d_20d": 0.8321
+      },
+      "pullback_lane_status": "WAIT",
+      "pullback_lane_metrics": {
+        "ma50": 340.908,
+        "ma200": 333.7018,
+        "drawdown_from_252d_high": -0.0268,
+        "volume_ratio_5d_20d": 0.8321
+      },
+      "left_side_lane_status": "FAIL",
+      "left_side_stage": "FAIL",
+      "left_side_lane_metrics": {
+        "drawdown_from_252d_high": -0.0268,
+        "distance_from_252d_low": 0.4253
+      },
+      "signal_keys": [
+        "bb_squeeze"
+      ],
+      "theme_industry_status": "SUPPORT",
+      "quality_auditor_status": "STRONG_QUALITY",
+      "catalyst_classification": "",
+      "catalyst_freshness": "",
+      "actually_bought": false,
+      "currently_open": false,
+      "position_id": "",
+      "lane_key": "strength",
+      "status": "NO_START_BAR",
+      "final_verdict": "PENDING"
+    }
+  ]
+}
