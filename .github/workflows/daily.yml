@@ -63,6 +63,9 @@ jobs:
           # Finnhub (GUARD 종목별 뉴스)
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
 
+          # FMP Starter (SCOUT 품질/촉매 보강)
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+
           # FRED (REGIME 매크로 — 선택)
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
 
