@@ -87,6 +87,7 @@ def scout_candidates_to_m6_entries(candidates: list[dict]) -> list[dict]:
         catalyst_context = c.get("catalyst_context") or {}
         theme_industry = c.get("theme_industry") or {}
         quality_auditor = c.get("quality_auditor") or {}
+        top3_selection = c.get("top3_selection") or {}
 
         entries.append({
             "ticker": ticker,
@@ -96,6 +97,14 @@ def scout_candidates_to_m6_entries(candidates: list[dict]) -> list[dict]:
             "date_added": today,
             "price_at_add": round(price, 4),
             "score": c.get("score", 0),
+            "selection_rank": c.get("selection_rank"),
+            "selection_tier": top3_selection.get("tier", c.get("selection_tier", "")),
+            "selection_lane": top3_selection.get("primary_lane", c.get("selection_lane", "")),
+            "selection_lane_status": top3_selection.get("primary_lane_status", c.get("selection_lane_status", "")),
+            "selection_lane_rank": top3_selection.get("lane_rank", 0),
+            "selection_catalyst_freshness_rank": top3_selection.get("catalyst_freshness_rank", 0),
+            "selection_support_count": top3_selection.get("support_count", 0),
+            "selection_opportunity_score": top3_selection.get("opportunity_score", c.get("selection_opportunity_score", 0)),
             "signal_keys": sig_keys,
             "shadow_signal_keys": shadow_sig_keys,
             "factor_score": c.get("factor_score", 0),
@@ -242,6 +251,14 @@ def _compute_performance(history: list[dict]) -> list[dict]:
             "pnl_pct": round(pnl_pct, 2),
             "days_held": days_held,
             "score": h.get("score", 0),
+            "selection_rank": h.get("selection_rank"),
+            "selection_tier": h.get("selection_tier", ""),
+            "selection_lane": h.get("selection_lane", ""),
+            "selection_lane_status": h.get("selection_lane_status", ""),
+            "selection_lane_rank": h.get("selection_lane_rank", 0),
+            "selection_catalyst_freshness_rank": h.get("selection_catalyst_freshness_rank", 0),
+            "selection_support_count": h.get("selection_support_count", 0),
+            "selection_opportunity_score": h.get("selection_opportunity_score", 0),
             "track_d": h.get("track_d", ""),
             "signal_keys": h.get("signal_keys", []),
             "shadow_signal_keys": h.get("shadow_signal_keys", []),

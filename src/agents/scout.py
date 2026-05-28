@@ -2362,6 +2362,7 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
     try:
         flat_rows = []
         for item in radar_pool:
+            top3 = item.get("top3_selection") or {}
             flat_rows.append({
                 "date": today,
                 "ticker": item.get("ticker"),
@@ -2372,6 +2373,15 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "avg_volume_value": item.get("avg_volume_value"),
                 "score": item.get("score"),
                 "signal_score": item.get("signal_score"),
+                "selection_rank": item.get("selection_rank"),
+                "selection_tier": top3.get("tier", item.get("selection_tier", "")),
+                "selection_lane": top3.get("primary_lane", item.get("selection_lane", "")),
+                "selection_lane_status": top3.get("primary_lane_status", item.get("selection_lane_status", "")),
+                "selection_lane_rank": top3.get("lane_rank", ""),
+                "selection_catalyst_freshness_rank": top3.get("catalyst_freshness_rank", ""),
+                "selection_support_count": top3.get("support_count", ""),
+                "selection_opportunity_score": top3.get("opportunity_score", item.get("selection_opportunity_score", "")),
+                "selection_excluded_reason": top3.get("exclude_reason", item.get("review_pool_reason", "")),
                 "theme_score": item.get("theme_score"),
                 "liquidity_score": item.get("liquidity_score"),
                 "factor_score": item.get("factor_score", 0.0),
@@ -2442,6 +2452,294 @@ def _primary_lane(price_lanes: dict) -> dict:
     return best
 
 
+def _top3_catalyst_freshness_rank(item: dict) -> int:
+    """Top3 선발용 촉매 신선도 등급. 숫자가 높을수록 우선."""
+    catalyst = item.get("catalyst_context") or {}
+    classification = str(catalyst.get("classification", "") or "")
+    freshness = str((catalyst.get("freshness") or {}).get("status", "") or "")
+    reaction = str((catalyst.get("price_volume_reaction") or {}).get("status", "") or "")
+    if classification == CATALYST_CLASS_RISK:
+        return -1
+    rank = 0
+    if classification == CATALYST_CLASS_POSITIVE:
+        rank = 2
+        if freshness in {"FRESH_3D", "UPCOMING"}:
+            rank = 4
+        elif freshness == "RECENT_14D":
+            rank = 3
+    if reaction == "CONFIRMED_UP":
+        rank += 1
+    elif reaction == "CONFIRMED_DOWN":
+        rank -= 1
+    return int(max(-1, min(5, rank)))
+
+
+def _top3_support_count(item: dict) -> tuple[int, list[str]]:
+    """보조 감사관 통과 수. 탈락 권한은 없고 Top3 우선순위에만 쓴다."""
+    count = 0
+    reasons: list[str] = []
+
+    theme_status = str((item.get("theme_industry") or {}).get("status", "") or "")
+    if theme_status in {"STRONG_SUPPORT", "SUPPORT"}:
+        count += 1
+        reasons.append(f"theme:{theme_status}")
+
+    quality_status = str((item.get("quality_auditor") or {}).get("status", "") or "")
+    if quality_status in {"STRONG_QUALITY", "QUALITY_SUPPORT"}:
+        count += 1
+        reasons.append(f"quality:{quality_status}")
+
+    catalyst = item.get("catalyst_context") or {}
+    if str(catalyst.get("classification", "") or "") == CATALYST_CLASS_POSITIVE:
+        count += 1
+        reasons.append("catalyst:POSITIVE_REVALUATION")
+    if str((catalyst.get("price_volume_reaction") or {}).get("status", "") or "") == "CONFIRMED_UP":
+        count += 1
+        reasons.append("reaction:CONFIRMED_UP")
+
+    peer_count = int(((item.get("theme_industry") or {}).get("peer_confirmation") or {}).get("active_peer_count", 0) or 0)
+    if peer_count > 0:
+        count += 1
+        reasons.append("theme_peer_confirmation")
+
+    return int(count), reasons
+
+
+def _top3_opportunity_score(item: dict, primary_lane: dict) -> float:
+    """레인별 기대 수익기회 점수. 절대 매수추천이 아니라 후보 선발 tie-breaker다."""
+    lane_key = str(primary_lane.get("lane", "") or "")
+    lane_data = (item.get("price_lanes") or {}).get(lane_key, {}) or {}
+    metrics = lane_data.get("metrics", {}) or {}
+    reasons = set(lane_data.get("reasons", []) or [])
+    quality_metrics = item.get("quality_metrics", {}) or {}
+
+    opportunity = 0.0
+    drawdown = _as_float(
+        metrics.get("drawdown_from_252d_high", quality_metrics.get("drawdown_from_high")),
+        np.nan,
+    )
+    ret_20d = _as_float(metrics.get("ret_20d", quality_metrics.get("ret_20d")), np.nan)
+    volume_ratio = _as_float(
+        metrics.get("volume_ratio_5d_20d", quality_metrics.get("volume_ratio_3d_20d")),
+        np.nan,
+    )
+
+    if lane_key == "strength":
+        rs_63 = _as_float(metrics.get("rs_63d"), 0.0)
+        rs_126 = _as_float(metrics.get("rs_126d"), 0.0)
+        opportunity += min(2.5, max(rs_63, rs_126) * 10)
+        if not np.isnan(drawdown) and -0.15 <= drawdown <= -0.02:
+            opportunity += 1.5
+        elif not np.isnan(drawdown) and drawdown > -0.02:
+            opportunity += 0.5
+        if "volume_expansion" in reasons:
+            opportunity += 1.0
+        if not np.isnan(ret_20d) and ret_20d >= 0.25:
+            opportunity -= 1.0
+    elif lane_key == "pullback":
+        if not np.isnan(drawdown) and -0.20 <= drawdown <= -0.10:
+            opportunity += 3.0
+        elif not np.isnan(drawdown) and -0.25 <= drawdown <= -0.08:
+            opportunity += 2.0
+        if "support_near" in reasons:
+            opportunity += 1.0
+        if "volume_dry_up" in reasons:
+            opportunity += 0.8
+    elif lane_key == "left_side":
+        from_low = _as_float(metrics.get("distance_from_252d_low"), np.nan)
+        decel = _as_float(metrics.get("deceleration_count"), 0.0)
+        if not np.isnan(drawdown):
+            opportunity += min(3.0, max(0.0, abs(drawdown)) * 5)
+        if not np.isnan(from_low) and from_low <= 0.20:
+            opportunity += 1.0
+        if decel >= 3:
+            opportunity += 0.8
+        if "higher_low" in reasons:
+            opportunity += 1.0
+
+    catalyst = item.get("catalyst_context") or {}
+    if str(catalyst.get("classification", "") or "") == CATALYST_CLASS_POSITIVE:
+        opportunity += 0.6
+    if not np.isnan(volume_ratio) and volume_ratio >= 1.5:
+        opportunity += 0.4
+    opportunity += min(0.6, float(item.get("signal_count", 0) or 0) * 0.15)
+    return round(float(max(0.0, opportunity)), 3)
+
+
+def _top3_tier(lane_rank: int, freshness_rank: int, support_count: int, excluded: bool) -> tuple[str, int]:
+    """Tier A/B/C/D 분류. RISK_CATALYST는 별도 리뷰풀."""
+    if excluded:
+        return "REVIEW", 0
+    if lane_rank >= 5:
+        return "A", 4
+    if lane_rank >= 4:
+        return "B", 3
+    if lane_rank >= 2 or freshness_rank >= 3 or support_count >= 2:
+        return "C", 2
+    return "D", 1
+
+
+def _annotate_top3_selection(item: dict) -> dict:
+    """Top3 선발에 필요한 근거를 후보 객체에 붙인다."""
+    primary = _primary_lane(item.get("price_lanes") or {})
+    catalyst = item.get("catalyst_context") or {}
+    excluded_reason = str(catalyst.get("top3_excluded_reason", "") or "")
+    excluded = excluded_reason == "RISK_CATALYST"
+    freshness_rank = _top3_catalyst_freshness_rank(item)
+    support_count, support_reasons = _top3_support_count(item)
+    opportunity = _top3_opportunity_score(item, primary)
+    tier, tier_rank = _top3_tier(
+        lane_rank=int(primary.get("rank", 0) or 0),
+        freshness_rank=freshness_rank,
+        support_count=support_count,
+        excluded=excluded,
+    )
+    selection = {
+        "tier": tier,
+        "tier_rank": int(tier_rank),
+        "primary_lane": primary.get("lane", ""),
+        "primary_lane_status": primary.get("status", ""),
+        "lane_rank": int(primary.get("rank", 0) or 0),
+        "catalyst_freshness_rank": int(freshness_rank),
+        "support_count": int(support_count),
+        "support_reasons": support_reasons,
+        "opportunity_score": opportunity,
+        "excluded": bool(excluded),
+        "exclude_reason": excluded_reason,
+        "selection_rank": None,
+    }
+    item["top3_selection"] = selection
+    item["selection_tier"] = tier
+    item["selection_rank"] = None
+    item["selection_lane"] = selection["primary_lane"]
+    item["selection_lane_status"] = selection["primary_lane_status"]
+    item["selection_opportunity_score"] = opportunity
+    item["review_pool_reason"] = excluded_reason
+    return selection
+
+
+def _selection_sort_key(item: dict) -> tuple:
+    selection = item.get("top3_selection") or _annotate_top3_selection(item)
+    return (
+        int(selection.get("tier_rank", 0) or 0),
+        int(selection.get("lane_rank", 0) or 0),
+        int(selection.get("catalyst_freshness_rank", 0) or 0),
+        int(selection.get("support_count", 0) or 0),
+        float(selection.get("opportunity_score", 0.0) or 0.0),
+        float(item.get("score", 0.0) or 0.0),
+        int(item.get("signal_count", 0) or 0),
+        float(item.get("market_cap", 0.0) or 0.0),
+    )
+
+
+def _pick_from_tier(tier_items: list[dict], used_lanes: set[str]) -> dict:
+    """동일 계층 안에서만 레인 균형을 마지막 tie-breaker로 적용한다."""
+    sorted_items = sorted(tier_items, key=_selection_sort_key, reverse=True)
+    if not sorted_items:
+        return {}
+    best_key = _selection_sort_key(sorted_items[0])
+    tied = [item for item in sorted_items if _selection_sort_key(item) == best_key]
+    for item in tied:
+        lane = str((item.get("top3_selection") or {}).get("primary_lane", "") or "")
+        if lane and lane not in used_lanes:
+            return item
+    return sorted_items[0]
+
+
+def _select_top3_candidates(
+    radar_pool: list[dict],
+    max_picks: int,
+    brief_min_score: float,
+    signals_required: int,
+    quality_gate_fn,
+    selection_cfg: dict,
+) -> tuple[list[dict], dict]:
+    """SCOUT Top3 v0.1 선발.
+
+    계층 순서:
+      1. 레인 판정 강도
+      2. 촉매 신선도
+      3. 보조 감사관 통과 수
+      4. 기대 수익기회
+      5. 레인 균형
+    """
+    enabled = bool((selection_cfg or {}).get("enabled", True))
+    max_picks = int((selection_cfg or {}).get("max_picks", max_picks) or max_picks)
+    max_picks = max(1, max_picks)
+    tier_counter = Counter()
+    review_pool = []
+    threshold_pass = []
+
+    for item in radar_pool:
+        selection = _annotate_top3_selection(item)
+        tier_counter[str(selection.get("tier", ""))] += 1
+        if selection.get("excluded"):
+            review_pool.append(item)
+            continue
+        if (
+            float(item.get("score", 0.0) or 0.0) >= float(brief_min_score)
+            or int(item.get("signal_count", 0) or 0) >= int(signals_required)
+        ) and quality_gate_fn(item):
+            threshold_pass.append(item)
+
+    if not enabled:
+        selected = sorted(threshold_pass, key=lambda x: (-float(x.get("score", 0) or 0), -int(x.get("signal_count", 0) or 0)))[:max_picks]
+    else:
+        best_by_ticker: dict[str, dict] = {}
+        for item in sorted(threshold_pass, key=_selection_sort_key, reverse=True):
+            ticker = _theme_lookup_key(str(item.get("ticker", "") or ""))
+            if not ticker:
+                continue
+            if ticker in best_by_ticker:
+                continue
+            best_by_ticker[ticker] = item
+
+        remaining = list(best_by_ticker.values())
+        selected = []
+        used_lanes: set[str] = set()
+        tier_order = list((selection_cfg or {}).get("tier_order", []) or ["A", "B", "C", "D"])
+        tier_order = [str(t) for t in tier_order if str(t) in {"A", "B", "C", "D"}] or ["A", "B", "C", "D"]
+        for tier in tier_order:
+            while len(selected) < max_picks:
+                tier_items = [item for item in remaining if (item.get("top3_selection") or {}).get("tier") == tier]
+                if not tier_items:
+                    break
+                picked = _pick_from_tier(tier_items, used_lanes)
+                if not picked:
+                    break
+                selected.append(picked)
+                remaining.remove(picked)
+                lane = str((picked.get("top3_selection") or {}).get("primary_lane", "") or "")
+                if lane:
+                    used_lanes.add(lane)
+            if len(selected) >= max_picks:
+                break
+
+    for idx, item in enumerate(selected, 1):
+        item["selection_rank"] = idx
+        item.setdefault("top3_selection", {})["selection_rank"] = idx
+
+    audit = {
+        "enabled": bool(enabled),
+        "max_picks": int(max_picks),
+        "threshold_pass_before_dedup": int(len(threshold_pass)),
+        "selected": int(len(selected)),
+        "tier_counts": {str(k): int(v) for k, v in tier_counter.items()},
+        "selected_tiers": [str((item.get("top3_selection") or {}).get("tier", "")) for item in selected],
+        "selected_lanes": [str((item.get("top3_selection") or {}).get("primary_lane", "")) for item in selected],
+        "review_pool_risk_catalyst": int(len(review_pool)),
+        "duplicate_ticker_drops": int(max(0, len(threshold_pass) - len({_theme_lookup_key(str(i.get("ticker", "") or "")) for i in threshold_pass}))),
+        "hierarchy": [
+            "lane_strength",
+            "catalyst_freshness",
+            "support_auditor_count",
+            "opportunity_score",
+            "lane_balance",
+        ],
+    }
+    return selected, audit
+
+
 def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dict:
     lane = _primary_lane(item.get("price_lanes") or {})
     gate = item.get("common_gate") or {}
@@ -2451,10 +2749,20 @@ def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dic
     theme_sector = theme_industry.get("sector") or {}
     theme_peer = theme_industry.get("peer_confirmation") or {}
     quality_auditor = item.get("quality_auditor") or {}
+    top3 = item.get("top3_selection") or {}
     return {
         "date": today,
         "bucket": bucket,
         "rank": rank_no,
+        "selection_rank": item.get("selection_rank"),
+        "selection_tier": top3.get("tier", item.get("selection_tier", "")),
+        "selection_lane": top3.get("primary_lane", item.get("selection_lane", "")),
+        "selection_lane_status": top3.get("primary_lane_status", item.get("selection_lane_status", "")),
+        "selection_lane_rank": top3.get("lane_rank", ""),
+        "selection_catalyst_freshness_rank": top3.get("catalyst_freshness_rank", ""),
+        "selection_support_count": top3.get("support_count", ""),
+        "selection_opportunity_score": top3.get("opportunity_score", item.get("selection_opportunity_score", "")),
+        "selection_excluded_reason": top3.get("exclude_reason", item.get("review_pool_reason", "")),
         "ticker": item.get("ticker", ""),
         "name": item.get("name", ""),
         "country": item.get("country", ""),
@@ -2509,7 +2817,7 @@ def _save_recommendation_snapshot(
     radar_top_n = int((snapshot_cfg or {}).get("include_radar_top", 20) or 20)
     payload = _json_safe_value({
         "date": today,
-        "schema_version": "scout_recommendation_snapshot_v0_1",
+        "schema_version": "scout_recommendation_snapshot_v0_2",
         "summary": {
             "candidate_count": int(len(candidates)),
             "radar_top_count": int(min(len(radar_pool), radar_top_n)),
@@ -2518,6 +2826,7 @@ def _save_recommendation_snapshot(
             "theme_industry_audit": (radar_summary.get("filter_audit") or {}).get("theme_industry_audit", {}),
             "quality_audit": (radar_summary.get("filter_audit") or {}).get("quality_audit", {}),
             "catalyst_audit": (radar_summary.get("filter_audit") or {}).get("catalyst_audit", {}),
+            "top3_selection_audit": (radar_summary.get("filter_audit") or {}).get("top3_selection_audit", {}),
         },
         "candidates": candidates,
         "radar_top": radar_pool[:radar_top_n],
@@ -3049,11 +3358,10 @@ class ScoutAgent(BaseAgent):
 
         # ── Stage 5: 로이에게 보고할 엄선 후보만 추출 ──
         quality_gate = scout_cfg.get("brief_quality_gate", {}) or {}
+        top3_selection_cfg = scout_cfg.get("top3_selection", {}) or {}
 
         def _passes_brief_quality_gate(item: dict) -> bool:
             catalyst_context = item.get("catalyst_context", {}) or {}
-            if catalyst_context.get("top3_excluded_reason") == "RISK_CATALYST":
-                return False
             if not bool(quality_gate.get("enabled", False)):
                 return True
             signal_keys = set(item.get("signal_keys", []) or [])
@@ -3066,11 +3374,14 @@ class ScoutAgent(BaseAgent):
                 return True
             return False
 
-        candidates = [
-            item for item in radar_pool
-            if (item["score"] >= brief_min_score or item["signal_count"] >= signals_required)
-            and _passes_brief_quality_gate(item)
-        ][:max_output]
+        candidates, top3_selection_audit = _select_top3_candidates(
+            radar_pool=radar_pool,
+            max_picks=max_output,
+            brief_min_score=brief_min_score,
+            signals_required=signals_required,
+            quality_gate_fn=_passes_brief_quality_gate,
+            selection_cfg=top3_selection_cfg,
+        )
 
         filter_audit = {
             "hard_filter": {
@@ -3138,6 +3449,7 @@ class ScoutAgent(BaseAgent):
                 "brief_picks": int(len(candidates)),
             },
             "catalyst_audit": catalyst_audit,
+            "top3_selection_audit": top3_selection_audit,
         }
 
         radar_summary = _summarize_radar(

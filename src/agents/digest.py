@@ -1239,6 +1239,7 @@ class DigestAgent(BaseAgent):
             signal = filter_audit.get("signal_audit", {}) or {}
             radar = filter_audit.get("radar_audit", {}) or {}
             catalyst = filter_audit.get("catalyst_audit", {}) or {}
+            top3 = filter_audit.get("top3_selection_audit", {}) or {}
             lines.append(
                 "  • 필터 감사 : "
                 f"수집 {int(hard.get('universe', scanned) or 0):,}"
@@ -1272,6 +1273,24 @@ class DigestAgent(BaseAgent):
                     "  • 최종 게이트 : RONIN Entry v2 / 촉매 확인 / 신호 "
                     f"{int(gate.get('allow_signal_count_at_least', 4) or 4)}개 이상 중 하나 필요"
                 )
+            if top3 and top3.get("enabled"):
+                tier_counts = top3.get("tier_counts", {}) or {}
+                tier_text = " / ".join(
+                    f"{tier} {int(tier_counts.get(tier, 0) or 0)}"
+                    for tier in ["A", "B", "C", "D", "REVIEW"]
+                    if int(tier_counts.get(tier, 0) or 0)
+                )
+                lane_text = ", ".join(x for x in (top3.get("selected_lanes", []) or []) if x)
+                lines.append(
+                    f"  • Top3 선발 : {int(top3.get('selected', 0) or 0)}개"
+                    + (f" ({tier_text})" if tier_text else "")
+                    + (f" · 레인 {lane_text}" if lane_text else "")
+                )
+                if int(top3.get("review_pool_risk_catalyst", 0) or 0):
+                    lines.append(
+                        f"  • 리뷰풀     : RISK_CATALYST {int(top3.get('review_pool_risk_catalyst', 0) or 0):,}개"
+                        " Top3 제외"
+                    )
             shadow_hits = signal.get("shadow_hit_counts", {}) or {}
             if shadow_hits:
                 parts = []
@@ -1359,6 +1378,16 @@ class DigestAgent(BaseAgent):
                 lines.append(f"▷ 후보 {idx}: {c['ticker']} ({name}) — {country_ko}")
                 lines.append(f"    섹터    : {c.get('sector', '미분류')} | 시총 : {cap}")
                 lines.append(f"    레이더 점수: {c.get('score', 0)} | 신호 {c.get('signal_count', len(c.get('signals', {}) or {}))}개")
+                selection = c.get("top3_selection", {}) or {}
+                if selection:
+                    sel_bits = [
+                        f"Tier {selection.get('tier', '')}",
+                        f"{selection.get('primary_lane', '')}:{selection.get('primary_lane_status', '')}",
+                        f"촉매 {selection.get('catalyst_freshness_rank', 0)}",
+                        f"보조 {selection.get('support_count', 0)}",
+                        f"기회 {selection.get('opportunity_score', 0)}",
+                    ]
+                    lines.append(f"    선발 근거 : {' · '.join(str(x) for x in sel_bits if x)}")
                 track_d = c.get("track_d", {}) or {}
                 if track_d.get("is_theme_beneficiary"):
                     matches = track_d.get("matches", []) or []

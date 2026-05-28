@@ -130,7 +130,8 @@ scout:
 
   # 후보 채택 임계치
   signals_required: 3                  # 5개 중 N개 이상 충족 → 후보
-  max_candidates_output: 5             # 최종 출력 종목 수
+  max_candidates_output: 5             # 레거시 fallback
+  brief_pick_size: 3                   # Top3 선발 최종 출력 종목 수
   min_candidates_for_alert: 1          # 0개여도 알림 발송 (다른 섹션 가능)
 
   # SCOUT v2 레이더 모드
@@ -140,6 +141,19 @@ scout:
   brief_min_score: 2.4                 # 최종 브리핑 후보 최소 점수
   ohlcv_top_per_country: 500           # 무신호 종목 중 국가별 OHLCV 평가 상한
   theme_boost_enabled: true            # themes.yaml 가치사슬 종목 보너스
+
+  # SCOUT v3 Top3 선발 — 탈락 감사관이 아니라 브리핑 슬롯 선발 규칙
+  top3_selection:
+    enabled: true
+    max_picks: 3
+    risk_catalyst_review_pool: true    # RISK_CATALYST는 Top3 제외, 리뷰풀로만 기록
+    tier_order: ["A", "B", "C", "D"]
+    hierarchy:
+      - "lane_strength"
+      - "catalyst_freshness"
+      - "support_auditor_count"
+      - "opportunity_score"
+      - "lane_balance"
 
   # SCOUT v3 추천 스냅샷 — 사후 성과표의 원장
   recommendation_snapshot:
