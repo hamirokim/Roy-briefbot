@@ -393,6 +393,13 @@ def _build_records(days: int, include_radar_top: bool) -> list[dict]:
     for snap in snapshots:
         snap_date = str(snap.get("date", "") or "")
         groups = [("candidate", snap.get("candidates", []) or [])]
+        llm_dropped = []
+        for item in snap.get("radar_top", []) or []:
+            top3 = item.get("top3_selection") or {}
+            if bool(top3.get("llm_dropped", item.get("llm_dropped", False))):
+                llm_dropped.append(item)
+        if llm_dropped:
+            groups.append(("llm_dropped", llm_dropped))
         if include_radar_top:
             groups.append(("radar_top", snap.get("radar_top", []) or []))
         for bucket, items in groups:
@@ -501,6 +508,93 @@ def _summary(records: list[dict]) -> dict:
             "by_quality_auditor": _aggregate(records, "quality"),
             "by_catalyst": _aggregate(records, "catalyst"),
         },
+        "llm_override_comparison": _llm_override_comparison(records),
+    }
+
+
+def _record_result_brief(record: dict) -> dict:
+    followup = record.get("followup") or {}
+    mfe_mae = record.get("mfe_mae") or {}
+    return {
+        "snapshot_date": record.get("snapshot_date"),
+        "ticker": record.get("ticker"),
+        "bucket": record.get("bucket"),
+        "status": record.get("status"),
+        "final_verdict": record.get("final_verdict"),
+        "rule_selection_rank": record.get("rule_selection_rank"),
+        "selection_rank": record.get("selection_rank"),
+        "selection_tier": record.get("selection_tier"),
+        "primary_lane": record.get("primary_lane"),
+        "primary_lane_status": record.get("primary_lane_status"),
+        "llm_reason": record.get("llm_reason"),
+        "llm_risk": record.get("llm_risk"),
+        "llm_drop_reason": record.get("llm_drop_reason"),
+        "d1_return_pct": (followup.get("d1") or {}).get("return_pct"),
+        "d3_return_pct": (followup.get("d3") or {}).get("return_pct"),
+        "d5_return_pct": (followup.get("d5") or {}).get("return_pct"),
+        "d10_return_pct": (followup.get("d10") or {}).get("return_pct"),
+        "d20_return_pct": (followup.get("d20") or {}).get("return_pct"),
+        "mfe_pct": mfe_mae.get("mfe_pct"),
+        "mae_pct": mfe_mae.get("mae_pct"),
+    }
+
+
+def _avg_return(records: list[dict], day_key: str) -> Optional[float]:
+    values = [
+        _safe_float((r.get("followup", {}).get(day_key) or {}).get("return_pct"))
+        for r in records
+        if r.get("status") == "OK"
+    ]
+    clean = [v for v in values if v is not None]
+    return round(sum(clean) / len(clean), 2) if clean else None
+
+
+def _llm_override_comparison(records: list[dict]) -> dict:
+    """LLM이 뺀 규칙 후보와 LLM이 새로 넣은 후보의 별도 비교군."""
+    dropped_raw = [
+        r for r in records
+        if r.get("bucket") == "llm_dropped" or bool(r.get("llm_dropped"))
+    ]
+    dropped = []
+    seen_dropped = set()
+    for r in dropped_raw:
+        key = (r.get("snapshot_date"), r.get("ticker"))
+        if key in seen_dropped:
+            continue
+        seen_dropped.add(key)
+        dropped.append(r)
+    added = [
+        r for r in records
+        if r.get("bucket") == "candidate"
+        and bool(r.get("llm_selected"))
+        and not r.get("rule_selection_rank")
+    ]
+    kept = [
+        r for r in records
+        if r.get("bucket") == "candidate"
+        and bool(r.get("llm_selected"))
+        and bool(r.get("rule_selection_rank"))
+    ]
+    return {
+        "dropped_count": len(dropped),
+        "added_count": len(added),
+        "kept_count": len(kept),
+        "dropped_tickers": [r.get("ticker") for r in dropped],
+        "added_tickers": [r.get("ticker") for r in added],
+        "kept_tickers": [r.get("ticker") for r in kept],
+        "avg_d5_return_pct": {
+            "dropped": _avg_return(dropped, "d5"),
+            "added": _avg_return(added, "d5"),
+            "kept": _avg_return(kept, "d5"),
+        },
+        "avg_d20_return_pct": {
+            "dropped": _avg_return(dropped, "d20"),
+            "added": _avg_return(added, "d20"),
+            "kept": _avg_return(kept, "d20"),
+        },
+        "dropped": [_record_result_brief(r) for r in dropped],
+        "added": [_record_result_brief(r) for r in added],
+        "kept": [_record_result_brief(r) for r in kept],
     }
 
 
@@ -527,6 +621,40 @@ def _markdown_report(today: str, summary: dict, records: list[dict]) -> str:
                 f"- {row['key']}: n={row['count']}, avgD20={row['avg_d20_return_pct']}, "
                 f"winner={row['winner_rate']}, failed_fast={row['failed_fast_rate']}, bought={row['actually_bought_count']}"
             )
+    comparison = summary.get("llm_override_comparison") or {}
+    lines.append("")
+    lines.append("## LLM Override Comparison")
+    if not comparison or (not comparison.get("dropped") and not comparison.get("added")):
+        lines.append("- no LLM override comparison rows")
+    else:
+        lines.append(
+            f"- counts: dropped={comparison.get('dropped_count', 0)}, "
+            f"added={comparison.get('added_count', 0)}, kept={comparison.get('kept_count', 0)}"
+        )
+        lines.append(
+            f"- avg D5: dropped={comparison.get('avg_d5_return_pct', {}).get('dropped')}, "
+            f"added={comparison.get('avg_d5_return_pct', {}).get('added')}, "
+            f"kept={comparison.get('avg_d5_return_pct', {}).get('kept')}"
+        )
+        lines.append(
+            f"- avg D20: dropped={comparison.get('avg_d20_return_pct', {}).get('dropped')}, "
+            f"added={comparison.get('avg_d20_return_pct', {}).get('added')}, "
+            f"kept={comparison.get('avg_d20_return_pct', {}).get('kept')}"
+        )
+        for label, key in [("Dropped by LLM", "dropped"), ("Added by LLM", "added")]:
+            rows = comparison.get(key, []) or []
+            lines.append("")
+            lines.append(f"### {label}")
+            if not rows:
+                lines.append("- no data")
+                continue
+            for row in rows:
+                lines.append(
+                    f"- {row.get('snapshot_date')} {row.get('ticker')} {row.get('final_verdict')} "
+                    f"D5={row.get('d5_return_pct')} D20={row.get('d20_return_pct')} "
+                    f"MFE={row.get('mfe_pct')} MAE={row.get('mae_pct')} "
+                    f"lane={row.get('primary_lane')}:{row.get('primary_lane_status')}"
+                )
     lines.append("")
     lines.append("## Recent Candidate Records")
     for r in records:
@@ -572,7 +700,7 @@ def run_scout_performance(days: int = 45, include_radar_top: bool = False) -> di
     summary = _summary(evaluated)
     payload = _json_safe({
         "date": today,
-        "schema_version": "scout_performance_v0_1",
+        "schema_version": "scout_performance_v0_2",
         "lookback_days": int(days),
         "followup_days": FOLLOWUP_DAYS,
         "summary": summary,
@@ -637,12 +765,20 @@ def run_scout_performance(days: int = 45, include_radar_top: bool = False) -> di
         logger.debug("[scout performance] parquet 저장 실패(json/md는 저장됨): %s", e)
 
     verdicts = summary.get("verdict_counts", {}) or {}
+    comparison = summary.get("llm_override_comparison", {}) or {}
+    comparison_suffix = ""
+    if comparison.get("dropped_count") or comparison.get("added_count"):
+        comparison_suffix = (
+            f" · LLM비교 dropped {int(comparison.get('dropped_count', 0) or 0)}"
+            f"/added {int(comparison.get('added_count', 0) or 0)}"
+        )
     summary_text = (
         f"SCOUT 성과표: 후보 {summary.get('evaluated_count', 0)}/{summary.get('candidate_count', 0)}개 평가, "
         f"WINNER {int(verdicts.get('WINNER', 0) or 0)}, "
         f"FAILED_FAST {int(verdicts.get('FAILED_FAST', 0) or 0)}, "
         f"FALSE_POSITIVE {int(verdicts.get('FALSE_POSITIVE', 0) or 0)}, "
         f"실제매수 {summary.get('actually_bought_count', 0)}"
+        f"{comparison_suffix}"
     )
     return {
         "summary_text": summary_text,

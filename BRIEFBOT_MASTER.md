@@ -1,6 +1,6 @@
 # Roy-briefbot Master
 
-Last updated: 2026-05-28
+Last updated: 2026-05-29
 
 This is the single source of truth for Roy-briefbot. Codex and Claude should read this file before changing the bot.
 
@@ -256,6 +256,13 @@ Stored fields:
 - `llm_override`
 - `rule_selection_rank`
 
+Telegram visibility:
+
+- The daily Telegram brief must show one compact LLM review audit line when Top3 selection audit exists.
+- Required content: review status, override/keep result, and final Top3 tickers when available.
+- Fallback must be visible with a short reason; do not silently hide `fallback_*` states.
+- The line must be safe when Top3 is empty or LLM review is disabled/missing.
+
 Fallback conditions:
 
 - `GPT_API_KEY` missing.
@@ -276,6 +283,10 @@ Fallback behavior:
 
 Source: `src/modules/scout_performance.py`
 
+Current schema:
+
+- `scout_performance_v0_2`
+
 Tracks:
 
 - 1/3/5/10/20 trading-day follow-up prices and returns.
@@ -295,6 +306,11 @@ Tracks:
 - actual buy status separately from candidate performance.
 - lane/auditor aggregate results.
 - LLM override fields for later comparison.
+- LLM override comparison cohort:
+  - normal Top3 candidates remain in bucket `candidate`;
+  - rule-based candidates dropped by LLM are included in a separate `llm_dropped` bucket even when full `radar_top` tracking is disabled;
+  - candidate headline counts and aggregates must use only `candidate` rows, so comparison rows do not distort normal SCOUT win/loss statistics;
+  - reports should show dropped vs added candidates side by side so LLM override quality can be checked after D1/D3/D5/D10/D20 data accumulates.
 
 Core purpose:
 
@@ -424,6 +440,7 @@ Priority 2: Validate whether LLM overrides improve results.
   - D5/D10/D20 return,
   - MFE/MAE,
   - FALSE_POSITIVE rate.
+- `llm_dropped` comparison rows must be present in the performance ledger without changing candidate headline counts.
 
 Priority 3: Improve KR data depth.
 

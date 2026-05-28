@@ -260,6 +260,46 @@ def _candidate_judgment_summary(candidates: list) -> dict:
     return {"counts": counts, "judged": judged, "conclusion": conclusion}
 
 
+def _top3_audit_from_scout(scout_out: dict) -> dict:
+    radar_summary = (scout_out or {}).get("radar_summary", {}) or {}
+    filter_audit = radar_summary.get("filter_audit", {}) or {}
+    return filter_audit.get("top3_selection_audit", {}) or {}
+
+
+def _format_llm_review_line(scout_out: dict) -> str:
+    """텔레그램/저널에 쓰는 SCOUT LLM Top3 재심사 한 줄 요약."""
+    top3 = _top3_audit_from_scout(scout_out)
+    llm_review = top3.get("llm_review", {}) or {}
+    if not llm_review:
+        return ""
+
+    status = str(llm_review.get("status", "") or "")
+    enabled = llm_review.get("enabled")
+    if enabled is False and status == "disabled":
+        return "LLM 재심사: 비활성"
+    if not status:
+        return ""
+
+    override = "뒤집음" if llm_review.get("llm_override") else "유지"
+    final_top3 = (
+        llm_review.get("final_top3")
+        or top3.get("final_top3")
+        or []
+    )
+    if isinstance(final_top3, str):
+        final_top3 = [final_top3]
+    final_text = "/".join(str(t).upper() for t in final_top3[:3] if t)
+
+    parts = [f"LLM 재심사: {status}", override]
+    if final_text:
+        parts.append(f"최종 {final_text}")
+    if status.startswith("fallback"):
+        reason = str(llm_review.get("fallback_reason", "") or "").strip()
+        if reason:
+            parts.append(f"사유 {reason[:48]}")
+    return " · ".join(parts)
+
+
 # ═══════════════════════════════════════════════════════════
 # DIGEST 에이전트
 # ═══════════════════════════════════════════════════════════
@@ -854,6 +894,7 @@ class DigestAgent(BaseAgent):
         radar_count = int(radar_summary.get("radar_pool_count", 0) or 0)
         top_signals = radar_summary.get("top_signals", []) or []
         watchlist = scout_out.get("watchlist_candidates", []) or []
+        llm_review_line = _format_llm_review_line(scout_out)
         if candidates:
             judgment_summary = _candidate_judgment_summary(candidates)
             counts = judgment_summary["counts"]
@@ -868,6 +909,8 @@ class DigestAgent(BaseAgent):
             )
             if radar_count:
                 lines.append(f"<i>내부 관찰풀 {radar_count}개 중 엄선</i>")
+            if llm_review_line:
+                lines.append(f"<i>{llm_review_line}</i>")
             for c, judgment in judgment_summary["judged"]:
                 flag = _COUNTRY_FLAG.get(c["country"], "·")
                 cap = _format_market_cap(c.get("market_cap", 0))
@@ -896,6 +939,8 @@ class DigestAgent(BaseAgent):
             lines.append(f"<i>{reason}</i>")
             if radar_count:
                 lines.append(f"내부 관찰풀은 {radar_count}개 쌓임")
+            if llm_review_line:
+                lines.append(f"<i>{llm_review_line}</i>")
             if top_signals:
                 sig_name = top_signals[0][0] if isinstance(top_signals[0], (list, tuple)) else ""
                 count = top_signals[0][1] if isinstance(top_signals[0], (list, tuple)) and len(top_signals[0]) > 1 else 0
