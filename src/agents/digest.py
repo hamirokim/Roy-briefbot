@@ -1383,6 +1383,24 @@ class DigestAgent(BaseAgent):
                     peer_text = f" · 동료 {peer_count}개" if peer_count else ""
                     sector_text = f" ({' / '.join(sector_bits)})" if sector_bits else ""
                     lines.append(f"    테마/산업 : {ti_label}{sector_text}{peer_text}")
+                quality_auditor = c.get("quality_auditor", {}) or {}
+                if quality_auditor:
+                    qa_status = str(quality_auditor.get("status", "") or "")
+                    qa_label = {
+                        "STRONG_QUALITY": "품질 강함",
+                        "QUALITY_SUPPORT": "품질 우호",
+                        "NEUTRAL": "중립",
+                        "DATA_LIGHT": "데이터 부족",
+                        "NEEDS_REVIEW": "검토 필요",
+                        "not_checked": "미확인",
+                    }.get(qa_status, qa_status)
+                    qa_source = str(quality_auditor.get("source", "") or "").upper()
+                    qa_delta = int(quality_auditor.get("confidence_delta", 0) or 0)
+                    qa_bits = [qa_label]
+                    if qa_source:
+                        qa_bits.append(qa_source)
+                    qa_bits.append(f"신뢰도 {qa_delta:+d}")
+                    lines.append(f"    품질 감사 : {' · '.join(qa_bits)}")
                 try:
                     from src.modules.m1_5_buyquestions import summarize_data_coverage
                     coverage_text = summarize_data_coverage(c)

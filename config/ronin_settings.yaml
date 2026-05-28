@@ -156,6 +156,19 @@ scout:
     min_group_support_etfs: 2
     peer_confirm_top_n: 30
 
+  # SCOUT v3 품질 감사관 — 탈락 권한 없음, 신뢰도 보조와 표시 전용
+  quality_auditor:
+    enabled: true
+    eval_limit: 30                     # FMP/Finviz 호출 비용 방지: 레이더 상위 N개만
+    growth_support_pct: 15.0
+    growth_caution_pct: 0.0
+    pe_support_max: 40.0
+    pe_caution_min: 80.0
+    peg_support_max: 2.0
+    peg_caution_min: 3.0
+    short_float_caution_pct: 10.0
+    short_float_risk_pct: 20.0
+
   brief_quality_gate:
     enabled: false                     # 안전모드: 새 레이어 검증 전 최종 후보 차단/통과에 사용 금지
     allow_catalyst_found: true

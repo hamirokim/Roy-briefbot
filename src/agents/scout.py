@@ -408,6 +408,269 @@ def _attach_theme_peer_confirmation(items: list[dict], top_n: int = 30) -> None:
                 auditor["status"] = "STRONG_SUPPORT"
 
 
+def _fetch_quality_fundamental(ticker: str, country: str) -> tuple[str, dict]:
+    """품질 감사관용 펀더멘털. FMP 우선, 실패 시 Finviz fallback."""
+    if country != "US":
+        return "not_supported_non_us", {}
+
+    try:
+        from src.collectors.fmp import fetch_fundamental_data as fetch_fmp_fundamental
+        fund = fetch_fmp_fundamental(ticker, country=country)
+        if fund:
+            return "fmp", fund
+    except Exception as e:
+        logger.debug("[scout quality] %s FMP 품질 수집 실패: %s", ticker, e)
+
+    try:
+        from src.collectors.finviz import fetch_fundamental_data as fetch_finviz_fundamental
+        fund = fetch_finviz_fundamental(ticker)
+        if fund:
+            fund = dict(fund)
+            fund.setdefault("source", "finviz")
+            return "finviz", fund
+    except Exception as e:
+        logger.debug("[scout quality] %s Finviz 품질 수집 실패: %s", ticker, e)
+
+    return "empty", {}
+
+
+def _quality_status_from_score(score: int, unknown_count: int) -> str:
+    if score >= 4:
+        return "STRONG_QUALITY"
+    if unknown_count >= 4:
+        return "DATA_LIGHT"
+    if score >= 2:
+        return "QUALITY_SUPPORT"
+    if score <= -3:
+        return "NEEDS_REVIEW"
+    return "NEUTRAL"
+
+
+def _json_safe_value(value: Any) -> Any:
+    """JSON 저장 전에 NaN/Infinity/numpy scalar를 안전한 값으로 정리한다."""
+    if value is None or value is pd.NA:
+        return None
+    if isinstance(value, dict):
+        return {str(k): _json_safe_value(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_json_safe_value(v) for v in value]
+    if isinstance(value, tuple):
+        return [_json_safe_value(v) for v in value]
+    if isinstance(value, (np.integer,)):
+        return int(value)
+    if isinstance(value, (np.floating,)):
+        value = float(value)
+    if isinstance(value, (np.bool_,)):
+        return bool(value)
+    if isinstance(value, float):
+        if np.isnan(value) or np.isinf(value):
+            return None
+        return value
+    if isinstance(value, (pd.Timestamp, datetime)):
+        return value.isoformat()
+    return value
+
+
+def _category_result(status: str, score: int, reasons: list[str], metrics: dict) -> dict:
+    return {
+        "status": status,
+        "score": int(score),
+        "reasons": reasons,
+        "metrics": _json_safe_value(metrics),
+    }
+
+
+def _assess_quality_auditor(item: dict, fundamental: dict, source: str, cfg: dict) -> dict:
+    """품질 보조 감사관.
+
+    5개 항목을 본다: 성장, 밸류에이션, 수급, 숏리스크, 가격품질.
+    탈락 권한은 없고 Top3/브리핑/사후성과표에서 신뢰도 보조로만 쓴다.
+    """
+    if not bool((cfg or {}).get("enabled", False)):
+        return {}
+
+    categories: dict[str, dict] = {}
+    unknown_count = 0
+
+    fmp_quality = fundamental.get("fmp_quality", {}) or {}
+    growth_metrics = {
+        "eps_growth_next_y": _as_float(fundamental.get("eps_growth_next_y"), np.nan),
+        "revenue_growth_pct": _as_float(fmp_quality.get("revenue_growth_pct"), np.nan),
+        "free_cash_flow_growth_pct": _as_float(fmp_quality.get("free_cash_flow_growth_pct"), np.nan),
+    }
+    growth_values = [v for v in growth_metrics.values() if not np.isnan(v)]
+    growth_reasons = []
+    growth_score = 0
+    if not growth_values:
+        growth_status = "UNKNOWN"
+        unknown_count += 1
+    else:
+        support = float(cfg.get("growth_support_pct", 15.0) or 15.0)
+        caution = float(cfg.get("growth_caution_pct", 0.0) or 0.0)
+        if any(v >= support for v in growth_values):
+            growth_status = "SUPPORT"
+            growth_score = 1
+            growth_reasons.append("growth_positive")
+        elif all(v <= caution for v in growth_values):
+            growth_status = "CAUTION"
+            growth_score = -1
+            growth_reasons.append("growth_weak_or_negative")
+        else:
+            growth_status = "NEUTRAL"
+    categories["growth"] = _category_result(growth_status, growth_score, growth_reasons, growth_metrics)
+
+    pe = _as_float(fundamental.get("pe"), np.nan)
+    fwd_pe = _as_float(fundamental.get("forward_pe"), np.nan)
+    peg = _as_float(fundamental.get("peg"), np.nan)
+    valuation_metrics = {"pe": pe, "forward_pe": fwd_pe, "peg": peg}
+    valuation_reasons = []
+    valuation_score = 0
+    pe_support = float(cfg.get("pe_support_max", 40.0) or 40.0)
+    pe_caution = float(cfg.get("pe_caution_min", 80.0) or 80.0)
+    peg_support = float(cfg.get("peg_support_max", 2.0) or 2.0)
+    peg_caution = float(cfg.get("peg_caution_min", 3.0) or 3.0)
+    if all(np.isnan(v) for v in [pe, fwd_pe, peg]):
+        valuation_status = "UNKNOWN"
+        unknown_count += 1
+    elif (not np.isnan(peg) and 0 < peg <= peg_support) or (not np.isnan(pe) and 0 < pe <= pe_support):
+        valuation_status = "SUPPORT"
+        valuation_score = 1
+        valuation_reasons.append("valuation_reasonable")
+    elif (not np.isnan(peg) and peg >= peg_caution) or (not np.isnan(pe) and pe >= pe_caution):
+        valuation_status = "CAUTION"
+        valuation_score = -1
+        valuation_reasons.append("valuation_expensive")
+    else:
+        valuation_status = "NEUTRAL"
+    categories["valuation"] = _category_result(valuation_status, valuation_score, valuation_reasons, valuation_metrics)
+
+    insider = _as_float(fundamental.get("insider_trans"), np.nan)
+    inst = _as_float(fundamental.get("inst_trans"), np.nan)
+    rating_score = _as_float(fmp_quality.get("rating_score"), np.nan)
+    flow_metrics = {"insider_trans": insider, "inst_trans": inst, "rating_score": rating_score}
+    flow_reasons = []
+    flow_score = 0
+    if all(np.isnan(v) for v in [insider, inst, rating_score]):
+        flow_status = "UNKNOWN"
+        unknown_count += 1
+    elif (not np.isnan(insider) and insider > 0) or (not np.isnan(inst) and inst > 0) or (not np.isnan(rating_score) and rating_score >= 4):
+        flow_status = "SUPPORT"
+        flow_score = 1
+        flow_reasons.append("flow_or_rating_support")
+    elif (not np.isnan(insider) and insider < 0) and (not np.isnan(inst) and inst < 0):
+        flow_status = "CAUTION"
+        flow_score = -1
+        flow_reasons.append("insider_and_institutional_outflow")
+    else:
+        flow_status = "NEUTRAL"
+    categories["flow"] = _category_result(flow_status, flow_score, flow_reasons, flow_metrics)
+
+    short_float = _as_float(fundamental.get("short_float"), np.nan)
+    short_metrics = {"short_float": short_float}
+    short_reasons = []
+    short_score = 0
+    if np.isnan(short_float):
+        short_status = "UNKNOWN"
+        unknown_count += 1
+    elif short_float >= float(cfg.get("short_float_risk_pct", 20.0) or 20.0):
+        short_status = "RISK"
+        short_score = -2
+        short_reasons.append("short_float_high")
+    elif short_float >= float(cfg.get("short_float_caution_pct", 10.0) or 10.0):
+        short_status = "CAUTION"
+        short_score = -1
+        short_reasons.append("short_float_elevated")
+    else:
+        short_status = "SUPPORT"
+        short_score = 1
+        short_reasons.append("short_risk_low")
+    categories["short_risk"] = _category_result(short_status, short_score, short_reasons, short_metrics)
+
+    lane = _primary_lane(item.get("price_lanes") or {})
+    factor = item.get("factor_context", {}) or {}
+    quality_flags = set(item.get("quality_flags", []) or [])
+    negatives = set(factor.get("negatives", []) or [])
+    positives = set(factor.get("positives", []) or [])
+    price_reasons = []
+    price_score = 0
+    if lane.get("status") in {"STRONG_PASS", "PASS", "STAGE2_STRONG_PASS", "STAGE2_PASS"}:
+        price_score += 1
+        price_reasons.append("lane_structure_support")
+    if positives:
+        price_score += 1
+        price_reasons.append("factor_positive")
+    if negatives & {"chasing_hot", "chasing_extreme", "volatility_extreme"}:
+        price_score -= 1
+        price_reasons.append("price_quality_caution")
+    if quality_flags & {"very_low_liquidity", "data_short", "too_hot_20d"}:
+        price_score -= 1
+        price_reasons.append("quality_flag_caution")
+    price_status = "SUPPORT" if price_score > 0 else "CAUTION" if price_score < 0 else "NEUTRAL"
+    categories["price_quality"] = _category_result(
+        price_status,
+        price_score,
+        price_reasons,
+        {
+            "primary_lane": lane.get("lane", ""),
+            "primary_lane_status": lane.get("status", ""),
+            "factor_positives": sorted(positives),
+            "factor_negatives": sorted(negatives),
+            "quality_flags": sorted(quality_flags),
+        },
+    )
+
+    total_score = sum(int(c.get("score", 0) or 0) for c in categories.values())
+    status = _quality_status_from_score(total_score, unknown_count)
+    return {
+        "enabled": True,
+        "status": status,
+        "confidence_delta": int(max(-2, min(3, total_score))),
+        "score": int(total_score),
+        "source": source,
+        "categories": categories,
+        "data_missing_count": int(unknown_count),
+        "reject_authority": False,
+    }
+
+
+def _apply_quality_auditor(radar_items: list[dict], quality_cfg: dict) -> dict:
+    audit = {
+        "enabled": bool((quality_cfg or {}).get("enabled", False)),
+        "eval_limit": int((quality_cfg or {}).get("eval_limit", 0) or 0),
+        "evaluated": 0,
+        "fmp": 0,
+        "finviz": 0,
+        "empty": 0,
+        "non_us": 0,
+        "status_counts": {},
+        "reject_authority": False,
+    }
+    if not audit["enabled"] or audit["eval_limit"] <= 0:
+        return audit
+
+    status_counter = Counter()
+    for item in radar_items[:audit["eval_limit"]]:
+        audit["evaluated"] += 1
+        source, fundamental = _fetch_quality_fundamental(
+            ticker=str(item.get("ticker", "") or ""),
+            country=str(item.get("country", "") or ""),
+        )
+        if source == "fmp":
+            audit["fmp"] += 1
+        elif source == "finviz":
+            audit["finviz"] += 1
+        elif source == "not_supported_non_us":
+            audit["non_us"] += 1
+        else:
+            audit["empty"] += 1
+        item["quality_auditor"] = _assess_quality_auditor(item, fundamental, source, quality_cfg)
+        status_counter[str(item["quality_auditor"].get("status", ""))] += 1
+        time.sleep(0.05)
+
+    audit["status_counts"] = {str(k): int(v) for k, v in status_counter.items()}
+    return audit
+
+
 def _liquidity_boost(row: pd.Series, min_liquidity: float, weight: float) -> float:
     """거래대금이 기준을 넘으면 작은 보너스만 준다."""
     try:
@@ -1055,6 +1318,7 @@ def _build_radar_item(
         "quality_flags": list((info.get("quality") or {}).get("flags", [])),
         "quality_metrics": dict((info.get("quality") or {}).get("metrics", {})),
         "catalyst_context": {"status": "not_checked", "score": 0.0},
+        "quality_auditor": {"status": "not_checked", "reject_authority": False},
         "theme_industry": _assess_theme_industry(
             ticker=ticker,
             row=row,
@@ -1695,6 +1959,7 @@ def _summarize_radar(
     factor_positive_counter = Counter()
     factor_negative_counter = Counter()
     theme_industry_counter = Counter()
+    quality_auditor_counter = Counter()
     theme_count = 0
     for item in radar_pool:
         country_counter[item.get("country", "")] += 1
@@ -1712,6 +1977,9 @@ def _summarize_radar(
         ti_status = str((item.get("theme_industry") or {}).get("status", "") or "")
         if ti_status:
             theme_industry_counter[ti_status] += 1
+        qa_status = str((item.get("quality_auditor") or {}).get("status", "") or "")
+        if qa_status:
+            quality_auditor_counter[qa_status] += 1
 
     coverage_warnings = []
     for country, threshold in (coverage_thresholds or {}).items():
@@ -1742,6 +2010,7 @@ def _summarize_radar(
         "top_factor_positives": factor_positive_counter.most_common(5),
         "top_factor_negatives": factor_negative_counter.most_common(5),
         "theme_industry_status_counts": {str(k): int(v) for k, v in theme_industry_counter.items()},
+        "quality_auditor_status_counts": {str(k): int(v) for k, v in quality_auditor_counter.items()},
         "radar_by_country": dict(country_counter),
         "source_counts": by_source,
         "filter_audit": filter_audit,
@@ -1753,16 +2022,16 @@ def _summarize_radar(
 def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
     """넓은 관찰풀은 로이가 보는 시트가 아니라 내부 파일에 저장한다."""
     RADAR_DIR.mkdir(parents=True, exist_ok=True)
-    payload = {
+    payload = _json_safe_value({
         "date": today,
         "summary": summary,
         "items": radar_pool,
-    }
+    })
     json_path = RADAR_DIR / f"radar_pool_{today}.json"
     parquet_path = RADAR_DIR / f"radar_pool_{today}.parquet"
 
     with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+        json.dump(payload, f, ensure_ascii=False, indent=2, allow_nan=False)
 
     parquet_ok = False
     try:
@@ -1793,6 +2062,9 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "theme_industry_confidence_delta": item.get("theme_industry", {}).get("confidence_delta", 0),
                 "sector_rrg_quadrant": item.get("theme_industry", {}).get("sector", {}).get("quadrant", ""),
                 "theme_peer_active_count": item.get("theme_industry", {}).get("peer_confirmation", {}).get("active_peer_count", 0),
+                "quality_auditor_status": item.get("quality_auditor", {}).get("status", ""),
+                "quality_auditor_source": item.get("quality_auditor", {}).get("source", ""),
+                "quality_auditor_confidence_delta": item.get("quality_auditor", {}).get("confidence_delta", 0),
                 "catalyst_score": item.get("catalyst_score", 0.0),
                 "catalyst_status": item.get("catalyst_context", {}).get("status", ""),
                 "signal_count": item.get("signal_count"),
@@ -1849,6 +2121,7 @@ def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dic
     theme_industry = item.get("theme_industry") or {}
     theme_sector = theme_industry.get("sector") or {}
     theme_peer = theme_industry.get("peer_confirmation") or {}
+    quality_auditor = item.get("quality_auditor") or {}
     return {
         "date": today,
         "bucket": bucket,
@@ -1870,6 +2143,9 @@ def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dic
         "theme_industry_confidence_delta": theme_industry.get("confidence_delta", 0),
         "sector_rrg_quadrant": theme_sector.get("quadrant", ""),
         "theme_peer_active_count": theme_peer.get("active_peer_count", 0),
+        "quality_auditor_status": quality_auditor.get("status", ""),
+        "quality_auditor_source": quality_auditor.get("source", ""),
+        "quality_auditor_confidence_delta": quality_auditor.get("confidence_delta", 0),
         "catalyst_status": catalyst.get("status", ""),
         "catalyst_score": catalyst.get("score", 0),
         "factor_score": item.get("factor_score", 0),
@@ -1898,7 +2174,7 @@ def _save_recommendation_snapshot(
 
     RADAR_DIR.mkdir(parents=True, exist_ok=True)
     radar_top_n = int((snapshot_cfg or {}).get("include_radar_top", 20) or 20)
-    payload = {
+    payload = _json_safe_value({
         "date": today,
         "schema_version": "scout_recommendation_snapshot_v0_1",
         "summary": {
@@ -1907,16 +2183,17 @@ def _save_recommendation_snapshot(
             "common_gate_audit": (radar_summary.get("filter_audit") or {}).get("common_gate_audit", {}),
             "price_lane_audit": (radar_summary.get("filter_audit") or {}).get("price_lane_audit", {}),
             "theme_industry_audit": (radar_summary.get("filter_audit") or {}).get("theme_industry_audit", {}),
+            "quality_audit": (radar_summary.get("filter_audit") or {}).get("quality_audit", {}),
             "catalyst_audit": (radar_summary.get("filter_audit") or {}).get("catalyst_audit", {}),
         },
         "candidates": candidates,
         "radar_top": radar_pool[:radar_top_n],
-    }
+    })
 
     json_path = RADAR_DIR / f"recommendation_snapshot_{today}.json"
     parquet_path = RADAR_DIR / f"recommendation_snapshot_{today}.parquet"
     with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+        json.dump(payload, f, ensure_ascii=False, indent=2, allow_nan=False)
 
     parquet_ok = False
     if bool((snapshot_cfg or {}).get("parquet_enabled", True)):
@@ -2175,6 +2452,7 @@ class ScoutAgent(BaseAgent):
         m2_history = state.get("m2_history", {})
         m2_theme_history = state.get("m2_theme_history", {})
         theme_industry_cfg = scout_cfg.get("theme_industry_auditor", {}) or {}
+        quality_auditor_cfg = scout_cfg.get("quality_auditor", {}) or {}
         themes = _load_themes() if theme_boost_enabled else {}
         ticker_themes = _build_ticker_to_themes_map(themes)
 
@@ -2427,6 +2705,7 @@ class ScoutAgent(BaseAgent):
             radar_eligible,
             top_n=int((theme_industry_cfg or {}).get("peer_confirm_top_n", 30) or 30),
         )
+        quality_audit = _apply_quality_auditor(radar_eligible, quality_auditor_cfg)
         catalyst_audit = _apply_catalyst_layer(radar_eligible, scout_cfg.get("catalyst", {}) or {})
         radar_eligible.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
         radar_pool = radar_eligible[:radar_pool_size]
@@ -2488,6 +2767,7 @@ class ScoutAgent(BaseAgent):
                 "support_quadrants": list(theme_industry_cfg.get("support_quadrants", []) or []),
                 "min_group_support_etfs": int(theme_industry_cfg.get("min_group_support_etfs", 2) or 2),
             },
+            "quality_audit": quality_audit,
             "evaluation_scope": {
                 "ohlcv_selected": int(len(ohlcv_targets)),
                 "ohlcv_not_selected": int(max(0, len(survivors) - len(ohlcv_targets))),
