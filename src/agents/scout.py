@@ -830,8 +830,23 @@ def _news_symbol(ticker: str, country: str) -> str:
 def _fetch_catalyst_news(ticker: str, country: str, lookback_days: int, max_items: int) -> tuple[str, list[dict]]:
     """SCOUT 촉매 확인용 뉴스 수집.
 
-    v1 범위: Finnhub로 미국 후보만 확인한다. 비미국은 별도 소스가 붙을 때까지 점수에 영향을 주지 않는다.
+    v2 범위: FMP가 있으면 미국 후보는 FMP 뉴스/등급/실적을 먼저 보고,
+    실패하거나 비어 있으면 기존 Finnhub 뉴스로 폴백한다. 비미국은 별도 소스가
+    붙을 때까지 점수에 영향을 주지 않는다.
     """
+    try:
+        from src.collectors.fmp import fetch_catalyst_news as fetch_fmp_catalyst_news
+        fmp_status, fmp_news = fetch_fmp_catalyst_news(
+            ticker=ticker,
+            country=country,
+            lookback_days=lookback_days,
+            max_items=max_items,
+        )
+        if fmp_status == "ok" and fmp_news:
+            return "ok", fmp_news
+    except Exception as e:
+        logger.debug("[scout catalyst] %s FMP 촉매 수집 실패: %s", ticker, e)
+
     if not bool(FINNHUB_KEY):
         return "no_key", []
 

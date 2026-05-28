@@ -498,11 +498,24 @@ def run_m1_5_buy_questions(candidates: list[dict], today: str = "") -> list[dict
 
     logger.info("[M1.5] 买入三问 LLM 시작: %d개 후보", len(candidates))
 
-    # Finviz fundamental 일괄 수집 (미국만)
+    # Fundamental 일괄 수집 (미국만)
+    # FMP Starter가 있으면 FMP를 먼저 쓰고, 없거나 비면 기존 Finviz로 폴백한다.
     fund_cache = {}
     fund_status_cache = {}
+    fmp_fetch = None
     try:
-        from src.collectors.finviz import fetch_fundamental_data
+        from src.collectors.fmp import fetch_fundamental_data as fmp_fetch
+    except ImportError:
+        fmp_fetch = None
+
+    finviz_fetch = None
+    try:
+        from src.collectors.finviz import fetch_fundamental_data as finviz_fetch
+    except ImportError:
+        finviz_fetch = None
+        logger.warning("[M1.5] finviz 모듈 import 실패 — Finviz fallback 비활성화")
+
+    if fmp_fetch or finviz_fetch:
         for c in candidates:
             ticker = c.get("ticker", "")
             country = c.get("country", "")
@@ -510,11 +523,13 @@ def run_m1_5_buy_questions(candidates: list[dict], today: str = "") -> list[dict
                 fund_status_cache[ticker] = _fundamental_status({}, country=country)
             elif ticker:
                 try:
-                    fund = fetch_fundamental_data(ticker)
+                    fund = fmp_fetch(ticker, country=country) if fmp_fetch else None
+                    if not fund and finviz_fetch:
+                        fund = finviz_fetch(ticker)
                     fund_cache[ticker] = fund or {}
                     fund_status_cache[ticker] = _fundamental_status(fund_cache[ticker], country=country)
                 except Exception as e:
-                    logger.debug("[M1.5] Finviz 실패 %s: %s", ticker, e)
+                    logger.debug("[M1.5] fundamental 수집 실패 %s: %s", ticker, e)
                     fund_cache[ticker] = {}
                     fund_status_cache[ticker] = {
                         "status": "collection_failed",
@@ -522,8 +537,8 @@ def run_m1_5_buy_questions(candidates: list[dict], today: str = "") -> list[dict
                         "missing_fields": ["PE", "Forward PE", "EPS Growth", "RSI", "Insider", "Institutional"],
                         "error": str(e)[:160],
                     }
-    except ImportError:
-        logger.warning("[M1.5] finviz 모듈 import 실패 — fundamental 없이 진행")
+    else:
+        logger.warning("[M1.5] fundamental 수집기 로드 실패 — fundamental 없이 진행")
         for c in candidates:
             ticker = c.get("ticker", "")
             fund_status_cache[ticker] = {

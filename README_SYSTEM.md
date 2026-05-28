@@ -31,6 +31,9 @@ SCOUT + GUARD + REGIME -> M6 -> DIGEST
   - `진입여부`: historical entry mapping, including OPEN/CLOSED non-draft positions.
   - `현재보유`: current holding mapping, OPEN positions only.
 - A successful run must distinguish Sheets save success, Telegram send success, and partial data-source errors.
+- `FMP_API_KEY` is optional but preferred for US SCOUT quality/catalyst enrichment.
+  - If present: FMP is checked before Finnhub/Finviz for US catalyst and quality facts.
+  - If absent or empty: existing Finnhub/Finviz/yfinance/Naver/pykrx fallbacks keep the run alive.
 
 ## Schedule
 
