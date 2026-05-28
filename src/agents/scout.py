@@ -86,6 +86,26 @@ SIGNAL_LABELS = {
     },
 }
 
+SECTOR_ETF_MAP = {
+    "Technology": "XLK",
+    "Healthcare": "XLV",
+    "Health Care": "XLV",
+    "Financials": "XLF",
+    "Financial": "XLF",
+    "Financial Services": "XLF",
+    "Consumer Cyclical": "XLY",
+    "Consumer Discretionary": "XLY",
+    "Consumer Defensive": "XLP",
+    "Consumer Staples": "XLP",
+    "Energy": "XLE",
+    "Industrials": "XLI",
+    "Materials": "XLB",
+    "Basic Materials": "XLB",
+    "Communication Services": "XLC",
+    "Utilities": "XLU",
+    "Real Estate": "XLRE",
+}
+
 
 # ═══════════════════════════════════════════════════════════
 # Z1 신규 — themes.yaml 로드 (Track D 提前布局용)
@@ -111,6 +131,11 @@ def _build_ticker_to_themes_map(themes: dict) -> dict:
     """ticker → list of (theme_key, role, priority, layer) 역인덱스 구축."""
     result = {}
     for theme_key, theme_data in themes.items():
+        peer_tickers = []
+        for peer_layer in ["upstream", "midstream", "downstream", "enabling_layer"]:
+            for peer in theme_data.get(peer_layer, []) or []:
+                if isinstance(peer, dict) and peer.get("ticker"):
+                    peer_tickers.append(_theme_lookup_key(peer.get("ticker", "")))
         for layer in ["upstream", "midstream", "downstream", "enabling_layer"]:
             tickers = theme_data.get(layer, [])
             for t in tickers:
@@ -123,6 +148,9 @@ def _build_ticker_to_themes_map(themes: dict) -> dict:
                             "role": t.get("role", ""),
                             "priority": t.get("priority", "B"),
                             "layer": layer,
+                            "parent_sector": theme_data.get("parent_sector", ""),
+                            "parent_theme_etf": theme_data.get("parent_theme_etf", ""),
+                            "peer_tickers": sorted(set(peer_tickers)),
                         })
     return result
 
@@ -149,6 +177,235 @@ def _theme_bonus(matches: list[dict], weights: dict) -> float:
         "B": "theme_B",
     }.get(priority, "theme_B")
     return float(weights.get(key, 0.0))
+
+
+def _latest_snapshot(history: dict) -> tuple[str, dict]:
+    if not history:
+        return "", {}
+    try:
+        latest = sorted(history.keys(), reverse=True)[0]
+        return latest, dict(history.get(latest) or {})
+    except Exception:
+        return "", {}
+
+
+def _sector_etf_for_name(sector: str) -> str:
+    return SECTOR_ETF_MAP.get(str(sector or "").strip(), "")
+
+
+def _quadrant_support(quadrant: str, cfg: dict) -> str:
+    q = str(quadrant or "")
+    if q in set(cfg.get("support_quadrants", []) or ["LEADING", "IMPROVING"]):
+        return "SUPPORT"
+    if q in set(cfg.get("caution_quadrants", []) or ["WEAKENING"]):
+        return "CAUTION"
+    if q in set(cfg.get("fail_quadrants", []) or ["LAGGING"]):
+        return "UNSUPPORTED"
+    return "UNKNOWN"
+
+
+def _theme_group_context(parent_theme_etf: str, theme_snapshot: dict, cfg: dict) -> dict:
+    if not parent_theme_etf or not theme_snapshot:
+        return {
+            "parent_theme_etf": parent_theme_etf,
+            "parent_quadrant": "",
+            "theme_group": "",
+            "group_label": "",
+            "supporting_etfs": [],
+            "caution_etfs": [],
+            "unsupported_etfs": [],
+            "status": "NO_RRG_DATA",
+        }
+
+    parent = dict(theme_snapshot.get(parent_theme_etf) or {})
+    group_key = parent.get("theme_group") or parent.get("category") or ""
+    group_label = parent.get("group_label") or parent.get("label") or parent_theme_etf
+    supporting = []
+    caution = []
+    unsupported = []
+    for etf, info in (theme_snapshot or {}).items():
+        info = dict(info or {})
+        if (info.get("theme_group") or info.get("category") or "") != group_key:
+            continue
+        q = str(info.get("quadrant", "") or "")
+        row = {
+            "etf": etf,
+            "label": info.get("label", etf),
+            "quadrant": q,
+            "ratio": info.get("ratio"),
+            "momentum": info.get("momentum"),
+        }
+        support = _quadrant_support(q, cfg)
+        if support == "SUPPORT":
+            supporting.append(row)
+        elif support == "CAUTION":
+            caution.append(row)
+        elif support == "UNSUPPORTED":
+            unsupported.append(row)
+
+    min_support = int(cfg.get("min_group_support_etfs", 2) or 2)
+    parent_support = _quadrant_support(str(parent.get("quadrant", "") or ""), cfg)
+    if len(supporting) >= min_support:
+        status = "GROUP_SUPPORT"
+    elif parent_support == "SUPPORT":
+        status = "PARENT_SUPPORT"
+    elif parent_support == "CAUTION":
+        status = "GROUP_CAUTION"
+    elif parent_support == "UNSUPPORTED":
+        status = "GROUP_UNSUPPORTED"
+    else:
+        status = "NO_RRG_DATA"
+
+    return {
+        "parent_theme_etf": parent_theme_etf,
+        "parent_quadrant": parent.get("quadrant", ""),
+        "theme_group": group_key,
+        "group_label": group_label,
+        "supporting_etfs": supporting[:6],
+        "caution_etfs": caution[:6],
+        "unsupported_etfs": unsupported[:6],
+        "status": status,
+    }
+
+
+def _assess_theme_industry(
+    ticker: str,
+    row: pd.Series,
+    matches: list[dict],
+    m2_history: dict,
+    m2_theme_history: dict,
+    cfg: dict,
+) -> dict:
+    """테마/산업 보조 감사관.
+
+    탈락 권한은 없다. 섹터/테마가 종목을 밀어주는지, 아니면 혼자 튀는지
+    브리핑과 사후 성과표에 남기는 용도다.
+    """
+    if not bool((cfg or {}).get("enabled", False)):
+        return {}
+
+    sector_date, sector_snapshot = _latest_snapshot(m2_history)
+    theme_date, theme_snapshot = _latest_snapshot(m2_theme_history)
+    sector = str(row.get("sector", "") or "")
+    sector_etf = _sector_etf_for_name(sector)
+    sector_info = dict(sector_snapshot.get(sector_etf) or {}) if sector_etf else {}
+    sector_quadrant = str(sector_info.get("quadrant", "") or "")
+    sector_support = _quadrant_support(sector_quadrant, cfg)
+
+    theme_contexts = []
+    lookup_ticker = _theme_lookup_key(ticker)
+    for match in matches[:5]:
+        parent_theme_etf = str(match.get("parent_theme_etf", "") or "")
+        ctx = _theme_group_context(parent_theme_etf, theme_snapshot, cfg)
+        theme_contexts.append({
+            "theme_key": match.get("theme_key", ""),
+            "theme_label": match.get("theme_label", ""),
+            "role": match.get("role", ""),
+            "priority": match.get("priority", ""),
+            "layer": match.get("layer", ""),
+            "parent_sector": match.get("parent_sector", ""),
+            "peer_tickers": [t for t in (match.get("peer_tickers") or []) if t != lookup_ticker][:12],
+            **ctx,
+        })
+
+    group_statuses = {str(t.get("status", "")) for t in theme_contexts}
+    has_theme_support = bool(group_statuses & {"GROUP_SUPPORT", "PARENT_SUPPORT"})
+    has_theme_caution = "GROUP_CAUTION" in group_statuses
+    has_theme_unsupported = "GROUP_UNSUPPORTED" in group_statuses
+    has_sector_support = sector_support == "SUPPORT"
+    has_sector_caution = sector_support == "CAUTION"
+    has_sector_unsupported = sector_support == "UNSUPPORTED"
+
+    confidence_delta = 0
+    reasons = []
+    warnings = []
+    if has_theme_support:
+        confidence_delta += 2
+        reasons.append("theme_group_support")
+    if has_sector_support:
+        confidence_delta += 1
+        reasons.append("sector_rrg_support")
+    if has_theme_caution or has_sector_caution:
+        warnings.append("theme_or_sector_weakening")
+    if has_theme_unsupported or has_sector_unsupported:
+        confidence_delta -= 1
+        warnings.append("theme_or_sector_lagging")
+
+    if has_theme_support and has_sector_support:
+        status = "STRONG_SUPPORT"
+    elif has_theme_support or has_sector_support:
+        status = "SUPPORT"
+    elif matches:
+        status = "THEME_UNSUPPORTED" if has_theme_unsupported or has_sector_unsupported else "THEME_NEUTRAL"
+    elif sector_etf:
+        status = "SECTOR_UNSUPPORTED" if has_sector_unsupported else "SECTOR_NEUTRAL"
+    else:
+        status = "NO_MAPPING"
+
+    return {
+        "enabled": True,
+        "status": status,
+        "confidence_delta": int(confidence_delta),
+        "reasons": reasons,
+        "warnings": warnings,
+        "sector": {
+            "name": sector,
+            "etf": sector_etf,
+            "snapshot_date": sector_date,
+            "quadrant": sector_quadrant,
+            "support": sector_support,
+            "ratio": sector_info.get("ratio"),
+            "momentum": sector_info.get("momentum"),
+        },
+        "themes": theme_contexts,
+        "theme_snapshot_date": theme_date,
+        "peer_confirmation": {
+            "static_peer_count": len(sorted({p for t in theme_contexts for p in (t.get("peer_tickers") or [])})),
+            "active_peer_count": 0,
+            "active_peers": [],
+        },
+        "reject_authority": False,
+    }
+
+
+def _attach_theme_peer_confirmation(items: list[dict], top_n: int = 30) -> None:
+    """같은 테마 가치사슬 동료가 관찰풀 상위권에 같이 올라왔는지 표시한다."""
+    if not items:
+        return
+    ticker_to_item = {_theme_lookup_key(str(item.get("ticker", "") or "")): item for item in items[:top_n]}
+    for item in items:
+        auditor = item.get("theme_industry") or {}
+        if not auditor:
+            continue
+        peer_hits = []
+        for theme in auditor.get("themes", []) or []:
+            peers = set(theme.get("peer_tickers") or [])
+            for peer in sorted(peers & set(ticker_to_item.keys())):
+                if peer == _theme_lookup_key(str(item.get("ticker", "") or "")):
+                    continue
+                peer_item = ticker_to_item.get(peer) or {}
+                peer_hits.append({
+                    "ticker": peer,
+                    "score": peer_item.get("score", 0),
+                    "theme_key": theme.get("theme_key", ""),
+                    "theme_label": theme.get("theme_label", ""),
+                })
+        dedup = []
+        seen = set()
+        for hit in peer_hits:
+            key = (hit.get("ticker"), hit.get("theme_key"))
+            if key in seen:
+                continue
+            seen.add(key)
+            dedup.append(hit)
+        auditor.setdefault("peer_confirmation", {})
+        auditor["peer_confirmation"]["active_peer_count"] = len(dedup)
+        auditor["peer_confirmation"]["active_peers"] = dedup[:8]
+        if dedup:
+            auditor["confidence_delta"] = int(auditor.get("confidence_delta", 0) or 0) + 1
+            auditor.setdefault("reasons", []).append("active_theme_peers")
+            if auditor.get("status") == "SUPPORT":
+                auditor["status"] = "STRONG_SUPPORT"
 
 
 def _liquidity_boost(row: pd.Series, min_liquidity: float, weight: float) -> float:
@@ -751,7 +1008,16 @@ def _assess_factor_profile(df: pd.DataFrame, row: pd.Series, factor_cfg: dict, m
     }
 
 
-def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dict, min_liquidity: float) -> dict:
+def _build_radar_item(
+    ticker: str,
+    info: dict,
+    ticker_themes: dict,
+    weights: dict,
+    min_liquidity: float,
+    m2_history: dict,
+    m2_theme_history: dict,
+    theme_industry_cfg: dict,
+) -> dict:
     """SCOUT 내부 관찰풀/브리핑 공용 후보 객체."""
     row = info["row"]
     matches = ticker_themes.get(_theme_lookup_key(ticker), [])
@@ -789,6 +1055,14 @@ def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dic
         "quality_flags": list((info.get("quality") or {}).get("flags", [])),
         "quality_metrics": dict((info.get("quality") or {}).get("metrics", {})),
         "catalyst_context": {"status": "not_checked", "score": 0.0},
+        "theme_industry": _assess_theme_industry(
+            ticker=ticker,
+            row=row,
+            matches=matches,
+            m2_history=m2_history,
+            m2_theme_history=m2_theme_history,
+            cfg=theme_industry_cfg,
+        ),
     }
 
     if matches:
@@ -1420,6 +1694,7 @@ def _summarize_radar(
     quality_counter = Counter()
     factor_positive_counter = Counter()
     factor_negative_counter = Counter()
+    theme_industry_counter = Counter()
     theme_count = 0
     for item in radar_pool:
         country_counter[item.get("country", "")] += 1
@@ -1434,6 +1709,9 @@ def _summarize_radar(
             factor_positive_counter[key] += 1
         for key in factor.get("negatives", []) or []:
             factor_negative_counter[key] += 1
+        ti_status = str((item.get("theme_industry") or {}).get("status", "") or "")
+        if ti_status:
+            theme_industry_counter[ti_status] += 1
 
     coverage_warnings = []
     for country, threshold in (coverage_thresholds or {}).items():
@@ -1463,6 +1741,7 @@ def _summarize_radar(
         "top_quality_flags": quality_counter.most_common(5),
         "top_factor_positives": factor_positive_counter.most_common(5),
         "top_factor_negatives": factor_negative_counter.most_common(5),
+        "theme_industry_status_counts": {str(k): int(v) for k, v in theme_industry_counter.items()},
         "radar_by_country": dict(country_counter),
         "source_counts": by_source,
         "filter_audit": filter_audit,
@@ -1510,6 +1789,10 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "strength_lane_status": item.get("price_lanes", {}).get("strength", {}).get("status", ""),
                 "pullback_lane_status": item.get("price_lanes", {}).get("pullback", {}).get("status", ""),
                 "left_side_lane_status": item.get("price_lanes", {}).get("left_side", {}).get("status", ""),
+                "theme_industry_status": item.get("theme_industry", {}).get("status", ""),
+                "theme_industry_confidence_delta": item.get("theme_industry", {}).get("confidence_delta", 0),
+                "sector_rrg_quadrant": item.get("theme_industry", {}).get("sector", {}).get("quadrant", ""),
+                "theme_peer_active_count": item.get("theme_industry", {}).get("peer_confirmation", {}).get("active_peer_count", 0),
                 "catalyst_score": item.get("catalyst_score", 0.0),
                 "catalyst_status": item.get("catalyst_context", {}).get("status", ""),
                 "signal_count": item.get("signal_count"),
@@ -1563,6 +1846,9 @@ def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dic
     gate = item.get("common_gate") or {}
     catalyst = item.get("catalyst_context") or {}
     factor = item.get("factor_context") or {}
+    theme_industry = item.get("theme_industry") or {}
+    theme_sector = theme_industry.get("sector") or {}
+    theme_peer = theme_industry.get("peer_confirmation") or {}
     return {
         "date": today,
         "bucket": bucket,
@@ -1580,6 +1866,10 @@ def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dic
         "primary_lane_review_flags": ",".join(lane["review_flags"]),
         "common_gate_status": gate.get("status", ""),
         "common_gate_review_flags": ",".join(gate.get("review_flags", []) or []),
+        "theme_industry_status": theme_industry.get("status", ""),
+        "theme_industry_confidence_delta": theme_industry.get("confidence_delta", 0),
+        "sector_rrg_quadrant": theme_sector.get("quadrant", ""),
+        "theme_peer_active_count": theme_peer.get("active_peer_count", 0),
         "catalyst_status": catalyst.get("status", ""),
         "catalyst_score": catalyst.get("score", 0),
         "factor_score": item.get("factor_score", 0),
@@ -1616,6 +1906,7 @@ def _save_recommendation_snapshot(
             "radar_top_count": int(min(len(radar_pool), radar_top_n)),
             "common_gate_audit": (radar_summary.get("filter_audit") or {}).get("common_gate_audit", {}),
             "price_lane_audit": (radar_summary.get("filter_audit") or {}).get("price_lane_audit", {}),
+            "theme_industry_audit": (radar_summary.get("filter_audit") or {}).get("theme_industry_audit", {}),
             "catalyst_audit": (radar_summary.get("filter_audit") or {}).get("catalyst_audit", {}),
         },
         "candidates": candidates,
@@ -1788,27 +2079,7 @@ def _signal_rrg_improving(ticker: str, sector: str, m2_history: dict, params: di
 
     lookback = params["transition_lookback_days"]
 
-    # 섹터명 → ETF 매핑 (주요 미국 섹터)
-    sector_etf_map = {
-        "Technology": "XLK",
-        "Healthcare": "XLV",
-        "Health Care": "XLV",
-        "Financials": "XLF",
-        "Financial": "XLF",
-        "Financial Services": "XLF",
-        "Consumer Cyclical": "XLY",
-        "Consumer Discretionary": "XLY",
-        "Consumer Defensive": "XLP",
-        "Consumer Staples": "XLP",
-        "Energy": "XLE",
-        "Industrials": "XLI",
-        "Materials": "XLB",
-        "Basic Materials": "XLB",
-        "Communication Services": "XLC",
-        "Utilities": "XLU",
-        "Real Estate": "XLRE",
-    }
-    etf_ticker = sector_etf_map.get(sector)
+    etf_ticker = _sector_etf_for_name(sector)
     if not etf_ticker:
         return False, {"reason": f"sector '{sector}' not mapped"}
 
@@ -1902,6 +2173,8 @@ class ScoutAgent(BaseAgent):
         today = state.get("date", today_kst_str())
         cooldown_map = dict(state.get("scout_cooldown", {}))
         m2_history = state.get("m2_history", {})
+        m2_theme_history = state.get("m2_theme_history", {})
+        theme_industry_cfg = scout_cfg.get("theme_industry_auditor", {}) or {}
         themes = _load_themes() if theme_boost_enabled else {}
         ticker_themes = _build_ticker_to_themes_map(themes)
 
@@ -2132,7 +2405,16 @@ class ScoutAgent(BaseAgent):
             if bool(common_gate_cfg.get("enabled", False)) and gate_status in {"FAIL", "NOT_EVALUATED"}:
                 continue
 
-            item = _build_radar_item(ticker, info, ticker_themes, weights, min_liquidity)
+            item = _build_radar_item(
+                ticker,
+                info,
+                ticker_themes,
+                weights,
+                min_liquidity,
+                m2_history,
+                m2_theme_history,
+                theme_industry_cfg,
+            )
             for lane_key in ["strength", "pullback", "left_side"]:
                 lane_status = item.get("price_lanes", {}).get(lane_key, {}).get("status", "")
                 if lane_status:
@@ -2141,6 +2423,10 @@ class ScoutAgent(BaseAgent):
                 radar_eligible.append(item)
 
         radar_eligible.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
+        _attach_theme_peer_confirmation(
+            radar_eligible,
+            top_n=int((theme_industry_cfg or {}).get("peer_confirm_top_n", 30) or 30),
+        )
         catalyst_audit = _apply_catalyst_layer(radar_eligible, scout_cfg.get("catalyst", {}) or {})
         radar_eligible.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
         radar_pool = radar_eligible[:radar_pool_size]
@@ -2193,6 +2479,14 @@ class ScoutAgent(BaseAgent):
             "price_lane_audit": {
                 "enabled": bool(price_lanes_cfg.get("enabled", False)),
                 "status_counts": {str(k): int(v) for k, v in lane_status_counter.items()},
+            },
+            "theme_industry_audit": {
+                "enabled": bool(theme_industry_cfg.get("enabled", False)),
+                "reject_authority": False,
+                "uses_m2_history": bool(m2_history),
+                "uses_m2_theme_history": bool(m2_theme_history),
+                "support_quadrants": list(theme_industry_cfg.get("support_quadrants", []) or []),
+                "min_group_support_etfs": int(theme_industry_cfg.get("min_group_support_etfs", 2) or 2),
             },
             "evaluation_scope": {
                 "ohlcv_selected": int(len(ohlcv_targets)),

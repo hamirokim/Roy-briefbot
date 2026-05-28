@@ -1361,6 +1361,28 @@ class DigestAgent(BaseAgent):
                             match_text.append(str(m))
                     if match_text:
                         lines.append(f"    테마 연결 : {', '.join(match_text)}")
+                theme_industry = c.get("theme_industry", {}) or {}
+                if theme_industry:
+                    ti_status = str(theme_industry.get("status", "") or "")
+                    ti_label = {
+                        "STRONG_SUPPORT": "강한 지원",
+                        "SUPPORT": "지원",
+                        "THEME_NEUTRAL": "중립",
+                        "SECTOR_NEUTRAL": "중립",
+                        "THEME_UNSUPPORTED": "테마 비지원",
+                        "SECTOR_UNSUPPORTED": "섹터 비지원",
+                        "NO_MAPPING": "매핑 없음",
+                    }.get(ti_status, ti_status)
+                    sector_ctx = theme_industry.get("sector", {}) or {}
+                    sector_bits = []
+                    if sector_ctx.get("etf"):
+                        sector_bits.append(str(sector_ctx.get("etf")))
+                    if sector_ctx.get("quadrant"):
+                        sector_bits.append(str(sector_ctx.get("quadrant")))
+                    peer_count = int((theme_industry.get("peer_confirmation", {}) or {}).get("active_peer_count", 0) or 0)
+                    peer_text = f" · 동료 {peer_count}개" if peer_count else ""
+                    sector_text = f" ({' / '.join(sector_bits)})" if sector_bits else ""
+                    lines.append(f"    테마/산업 : {ti_label}{sector_text}{peer_text}")
                 try:
                     from src.modules.m1_5_buyquestions import summarize_data_coverage
                     coverage_text = summarize_data_coverage(c)

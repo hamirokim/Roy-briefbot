@@ -85,6 +85,7 @@ def scout_candidates_to_m6_entries(candidates: list[dict]) -> list[dict]:
 
         factor_context = c.get("factor_context") or {}
         catalyst_context = c.get("catalyst_context") or {}
+        theme_industry = c.get("theme_industry") or {}
 
         entries.append({
             "ticker": ticker,
@@ -102,6 +103,8 @@ def scout_candidates_to_m6_entries(candidates: list[dict]) -> list[dict]:
             "quality_flags": list(c.get("quality_flags") or []),
             "catalyst_status": catalyst_context.get("status", ""),
             "catalyst_score": catalyst_context.get("score", 0),
+            "theme_industry_status": theme_industry.get("status", ""),
+            "theme_industry_confidence_delta": theme_industry.get("confidence_delta", 0),
             "data_coverage": dict(c.get("data_coverage") or {}),
             "track_d": track_d_match,
             "source": "SCOUT",
@@ -240,6 +243,8 @@ def _compute_performance(history: list[dict]) -> list[dict]:
             "quality_flags": h.get("quality_flags", []),
             "catalyst_status": h.get("catalyst_status", ""),
             "catalyst_score": h.get("catalyst_score", 0),
+            "theme_industry_status": h.get("theme_industry_status", ""),
+            "theme_industry_confidence_delta": h.get("theme_industry_confidence_delta", 0),
             "data_coverage": h.get("data_coverage", {}),
         })
 

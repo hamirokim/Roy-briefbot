@@ -147,6 +147,15 @@ scout:
     include_radar_top: 20              # 최종 후보 외 비교용 레이더 상위 N개 저장
     parquet_enabled: true              # pyarrow 없으면 JSON만 저장하고 경고
 
+  # SCOUT v3 테마/산업 감사관 — 탈락 권한 없음, 신뢰도 보조와 표시 전용
+  theme_industry_auditor:
+    enabled: true
+    support_quadrants: ["LEADING", "IMPROVING"]
+    caution_quadrants: ["WEAKENING"]
+    fail_quadrants: ["LAGGING"]
+    min_group_support_etfs: 2
+    peer_confirm_top_n: 30
+
   brief_quality_gate:
     enabled: false                     # 안전모드: 새 레이어 검증 전 최종 후보 차단/통과에 사용 금지
     allow_catalyst_found: true
