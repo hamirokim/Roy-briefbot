@@ -354,6 +354,35 @@ SCOUT_CANDIDATES_GUIDE = [
     "shadow", "shadow", "shadow", "OPEN 매핑",
 ]
 
+SCOUT_WATCHLIST_HEADERS = [
+    "발생일",
+    "순위",
+    "티커",
+    "국가",
+    "섹터",
+    "Score",
+    "Tier",
+    "레인",
+    "레인상태",
+    "신호수",
+    "신호",
+    "보조통과",
+    "기회점수",
+    "촉매",
+    "촉매신선도",
+    "테마/산업",
+    "품질",
+    "대기 이유",
+]
+
+
+SCOUT_WATCHLIST_GUIDE = [
+    "봇 자동", "봇 자동", "봇 자동", "봇 자동", "봇 자동",
+    "봇 자동", "Top3", "Top3", "Top3", "봇 자동",
+    "봇 자동", "Top3", "Top3", "촉매 감사", "촉매 감사",
+    "테마 감사", "품질 감사", "사람 확인용",
+]
+
 
 def _col_letter(n: int) -> str:
     """1-based column index → Google Sheets column letter."""
@@ -476,6 +505,34 @@ def _ensure_scout_sheets():
         logger.info("[SCOUT] 'SCOUT 통계' 시트 자동 생성 + 수식 박제")
 
     return ws_cands, ws_stats
+
+
+def _ensure_scout_watchlist_sheet():
+    """SCOUT WATCHLIST 시트 존재 보장."""
+    client = _get_client()
+    spreadsheet = client.open_by_key(SPREADSHEET_ID)
+    try:
+        ws_watch = spreadsheet.worksheet("SCOUT WATCHLIST")
+    except gspread.exceptions.WorksheetNotFound:
+        ws_watch = spreadsheet.add_worksheet(
+            title="SCOUT WATCHLIST", rows=2000, cols=len(SCOUT_WATCHLIST_HEADERS)
+        )
+        end_col = _col_letter(len(SCOUT_WATCHLIST_HEADERS))
+        ws_watch.update(f"A1:{end_col}1", [SCOUT_WATCHLIST_HEADERS])
+        ws_watch.update(f"A2:{end_col}2", [SCOUT_WATCHLIST_GUIDE])
+        logger.info("[SCOUT] 'SCOUT WATCHLIST' 시트 자동 생성 (%d 컬럼)", len(SCOUT_WATCHLIST_HEADERS))
+    else:
+        try:
+            header = ws_watch.row_values(1)
+            if len(header) < len(SCOUT_WATCHLIST_HEADERS):
+                if getattr(ws_watch, "col_count", 0) < len(SCOUT_WATCHLIST_HEADERS):
+                    ws_watch.add_cols(len(SCOUT_WATCHLIST_HEADERS) - int(ws_watch.col_count))
+                end_col = _col_letter(len(SCOUT_WATCHLIST_HEADERS))
+                ws_watch.update(f"A1:{end_col}1", [SCOUT_WATCHLIST_HEADERS])
+                ws_watch.update(f"A2:{end_col}2", [SCOUT_WATCHLIST_GUIDE])
+        except Exception as e:
+            logger.warning("[SCOUT] WATCHLIST 컬럼 확장 실패: %s", e)
+    return ws_watch
 
 
 def read_positions_for_mapping(open_only: bool = False) -> dict:
@@ -687,6 +744,78 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
         logger.info("[SCOUT] 시트 적재 완료: %d행 (range=%s)", len(rows_to_append), range_str)
     except Exception as e:
         logger.error("[SCOUT] 시트 적재 실패: %s", e)
+        return 0
+
+    return len(rows_to_append)
+
+
+def save_watchlist_eval(watchlist: list[dict], date_str: str) -> int:
+    """SCOUT 관찰풀 상위 대기 후보를 'SCOUT WATCHLIST'에 적재한다."""
+    if not watchlist:
+        return 0
+
+    try:
+        ws_watch = _ensure_scout_watchlist_sheet()
+    except Exception as e:
+        logger.error("[SCOUT] WATCHLIST 시트 보장 실패: %s", e)
+        return 0
+
+    try:
+        existing = ws_watch.get_all_values()
+    except Exception as e:
+        logger.error("[SCOUT] WATCHLIST 기존 데이터 read 실패: %s", e)
+        return 0
+
+    seen = set()
+    for row in existing[2:]:
+        if len(row) >= 3:
+            seen.add((row[2].strip().upper(), row[0].strip()))
+
+    next_row = max(3, len(existing) + 1)
+    rows_to_append = []
+    for idx, item in enumerate(watchlist, 1):
+        ticker = (item.get("ticker") or "").strip().upper()
+        if not ticker or (ticker, date_str) in seen:
+            continue
+        signal_keys = item.get("signal_keys") or []
+        if isinstance(signal_keys, list):
+            signal_text = ", ".join(str(x) for x in signal_keys[:5])
+        else:
+            signal_text = str(signal_keys)[:120]
+        rows_to_append.append([
+            date_str,
+            idx,
+            ticker,
+            (item.get("country") or "").upper(),
+            item.get("sector", ""),
+            round(float(item.get("score") or 0), 2),
+            item.get("selection_tier", ""),
+            item.get("selection_lane", ""),
+            item.get("selection_lane_status", ""),
+            int(item.get("signal_count") or 0),
+            signal_text,
+            int(item.get("selection_support_count") or 0),
+            round(float(item.get("selection_opportunity_score") or 0), 3),
+            item.get("catalyst_classification", ""),
+            item.get("catalyst_freshness", ""),
+            item.get("theme_industry_status", ""),
+            item.get("quality_auditor_status", ""),
+            (item.get("watch_reason") or "")[:240],
+        ])
+        seen.add((ticker, date_str))
+
+    if not rows_to_append:
+        logger.info("[SCOUT] WATCHLIST 적재 skip (모두 중복)")
+        return 0
+
+    end_row = next_row + len(rows_to_append) - 1
+    end_col = _col_letter(len(SCOUT_WATCHLIST_HEADERS))
+    range_str = f"A{next_row}:{end_col}{end_row}"
+    try:
+        ws_watch.update(range_str, rows_to_append, raw=False)
+        logger.info("[SCOUT] WATCHLIST 적재 완료: %d행 (range=%s)", len(rows_to_append), range_str)
+    except Exception as e:
+        logger.error("[SCOUT] WATCHLIST 적재 실패: %s", e)
         return 0
 
     return len(rows_to_append)

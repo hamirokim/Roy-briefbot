@@ -475,12 +475,22 @@ def run_scout_performance(days: int = 45, include_radar_top: bool = False) -> di
     """추천 스냅샷 기반 사후 성과표를 생성하고 파일로 저장한다."""
     today = today_kst_str()
     SCOUT_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    snapshots = _load_snapshots(days)
     base_records = _build_records(days=days, include_radar_top=include_radar_top)
     if not base_records:
+        summary_text = (
+            "SCOUT 성과표: 추천 후보 없음"
+            if snapshots
+            else "SCOUT 성과표: 추천 스냅샷 없음"
+        )
         return {
-            "summary_text": "SCOUT 성과표: 추천 스냅샷 없음",
+            "summary_text": summary_text,
             "records": [],
-            "summary": {"candidate_count": 0, "evaluated_count": 0},
+            "summary": {
+                "snapshot_count": int(len(snapshots)),
+                "candidate_count": 0,
+                "evaluated_count": 0,
+            },
             "paths": {},
         }
 

@@ -853,6 +853,7 @@ class DigestAgent(BaseAgent):
         radar_summary = scout_out.get("radar_summary", {}) or {}
         radar_count = int(radar_summary.get("radar_pool_count", 0) or 0)
         top_signals = radar_summary.get("top_signals", []) or []
+        watchlist = scout_out.get("watchlist_candidates", []) or []
         if candidates:
             judgment_summary = _candidate_judgment_summary(candidates)
             counts = judgment_summary["counts"]
@@ -899,6 +900,22 @@ class DigestAgent(BaseAgent):
                 sig_name = top_signals[0][0] if isinstance(top_signals[0], (list, tuple)) else ""
                 count = top_signals[0][1] if isinstance(top_signals[0], (list, tuple)) and len(top_signals[0]) > 1 else 0
                 lines.append(f"가장 많이 나온 조짐: {_SIGNAL_KO.get(sig_name, sig_name)} {count}개")
+            if watchlist:
+                lines.append("")
+                lines.append("<b>👀 대기 후보</b>")
+                for w in watchlist[:3]:
+                    flag = _COUNTRY_FLAG.get(w.get("country", ""), "·")
+                    sig_text = _format_signals_short(w.get("signals", {}) or {})
+                    lane = f"{w.get('selection_lane', '')}:{w.get('selection_lane_status', '')}".strip(":")
+                    lines.append(
+                        f"{flag} <b>{w.get('ticker')}</b> [{w.get('selection_tier')}] "
+                        f"{lane} | 레이더 {w.get('score', 0)}"
+                    )
+                    reason = w.get("watch_reason") or sig_text
+                    if reason:
+                        lines.append(f"  대기 이유: <i>{reason}</i>")
+                    if sig_text:
+                        lines.append(f"  신호: {sig_text}")
             lines.append("")
 
         # ── 2-A. M6 SCOUT 추적 (D86 신규) ──
@@ -1215,6 +1232,7 @@ class DigestAgent(BaseAgent):
         source_counts = radar_summary.get("source_counts", {}) or {}
         filter_audit = radar_summary.get("filter_audit", {}) or {}
         no_candidate_reason = radar_summary.get("no_candidate_reason", "")
+        watchlist = scout_out.get("watchlist_candidates", []) or []
         passed = len(candidates)
 
         lines.append(f"  • 스캔 종목   : {scanned:,}개 (재선정대기 제외 {cooldown}개)")
@@ -1535,6 +1553,21 @@ class DigestAgent(BaseAgent):
             lines.append(f"  (오늘 엄선 후보 없음 — {reason})")
             if radar_count > 0:
                 lines.append("  관찰풀은 쌓였으니 억지로 종목을 찾기보다 다음 신호 확인을 기다리는 구간입니다.")
+            if watchlist:
+                lines.append("")
+                lines.append("▷ 대기 후보 (WATCHLIST)")
+                for idx, w in enumerate(watchlist[:5], 1):
+                    sigs = w.get("signal_keys") or []
+                    sig_text = ", ".join(str(x) for x in sigs[:4]) if isinstance(sigs, list) else str(sigs)
+                    lines.append(
+                        f"  {idx}. {w.get('ticker')} [{w.get('selection_tier')}] "
+                        f"{w.get('selection_lane')}:{w.get('selection_lane_status')} "
+                        f"score={w.get('score')} opp={w.get('selection_opportunity_score')}"
+                    )
+                    if w.get("watch_reason"):
+                        lines.append(f"     이유: {w.get('watch_reason')}")
+                    if sig_text:
+                        lines.append(f"     신호: {sig_text}")
             lines.append("")
 
         # ── M6 SCOUT 추적 (D86 신규: 시트는 풀버전, 종목별 상세) ──

@@ -146,6 +146,7 @@ scout:
   top3_selection:
     enabled: true
     max_picks: 3
+    watchlist_size: 5
     risk_catalyst_review_pool: true    # RISK_CATALYST는 Top3 제외, 리뷰풀로만 기록
     tier_order: ["A", "B", "C", "D"]
     hierarchy:

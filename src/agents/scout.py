@@ -2669,6 +2669,8 @@ def _select_top3_candidates(
     tier_counter = Counter()
     review_pool = []
     threshold_pass = []
+    legacy_threshold_count = 0
+    tier_threshold_count = 0
 
     for item in radar_pool:
         selection = _annotate_top3_selection(item)
@@ -2676,10 +2678,16 @@ def _select_top3_candidates(
         if selection.get("excluded"):
             review_pool.append(item)
             continue
-        if (
+        legacy_threshold_pass = (
             float(item.get("score", 0.0) or 0.0) >= float(brief_min_score)
             or int(item.get("signal_count", 0) or 0) >= int(signals_required)
-        ) and quality_gate_fn(item):
+        )
+        tier_threshold_pass = enabled and str(selection.get("tier", "")) in {"A", "B", "C", "D"}
+        if legacy_threshold_pass:
+            legacy_threshold_count += 1
+        if tier_threshold_pass:
+            tier_threshold_count += 1
+        if (tier_threshold_pass if enabled else legacy_threshold_pass) and quality_gate_fn(item):
             threshold_pass.append(item)
 
     if not enabled:
@@ -2722,7 +2730,11 @@ def _select_top3_candidates(
     audit = {
         "enabled": bool(enabled),
         "max_picks": int(max_picks),
+        "selection_mode": "tier" if enabled else "legacy_score_signal",
+        "legacy_threshold_pass": int(legacy_threshold_count),
+        "tier_threshold_pass": int(tier_threshold_count),
         "threshold_pass_before_dedup": int(len(threshold_pass)),
+        "selection_pool_before_dedup": int(len(threshold_pass)),
         "selected": int(len(selected)),
         "tier_counts": {str(k): int(v) for k, v in tier_counter.items()},
         "selected_tiers": [str((item.get("top3_selection") or {}).get("tier", "")) for item in selected],
@@ -2738,6 +2750,74 @@ def _select_top3_candidates(
         ],
     }
     return selected, audit
+
+
+def _watchlist_reason(item: dict) -> str:
+    selection = item.get("top3_selection") or _annotate_top3_selection(item)
+    bits = []
+    tier = selection.get("tier", "")
+    lane = selection.get("primary_lane", "")
+    lane_status = selection.get("primary_lane_status", "")
+    if tier:
+        bits.append(f"Tier {tier}")
+    if lane or lane_status:
+        bits.append(f"{lane}:{lane_status}")
+    catalyst = item.get("catalyst_context") or {}
+    catalyst_class = str(catalyst.get("classification", "") or "")
+    if catalyst_class and catalyst_class != "NO_DATA":
+        bits.append(catalyst_class)
+    support = int(selection.get("support_count", 0) or 0)
+    if support:
+        bits.append(f"보조 {support}")
+    return " · ".join(bits)
+
+
+def _build_watchlist_candidates(radar_pool: list[dict], candidates: list[dict], limit: int = 5) -> list[dict]:
+    """Top3 밖 관찰풀 상위권을 대기 후보로 노출한다."""
+    selected = {_theme_lookup_key(str(item.get("ticker", "") or "")) for item in candidates}
+    pool = []
+    for item in radar_pool:
+        selection = item.get("top3_selection") or _annotate_top3_selection(item)
+        ticker_key = _theme_lookup_key(str(item.get("ticker", "") or ""))
+        if not ticker_key or ticker_key in selected:
+            continue
+        if selection.get("excluded"):
+            continue
+        pool.append(item)
+    pool = sorted(pool, key=_selection_sort_key, reverse=True)
+
+    out = []
+    seen = set()
+    for item in pool:
+        ticker_key = _theme_lookup_key(str(item.get("ticker", "") or ""))
+        if ticker_key in seen:
+            continue
+        seen.add(ticker_key)
+        selection = item.get("top3_selection") or {}
+        out.append({
+            "ticker": item.get("ticker", ""),
+            "name": item.get("name", ""),
+            "country": item.get("country", ""),
+            "sector": item.get("sector", ""),
+            "score": item.get("score", 0),
+            "signal_count": item.get("signal_count", 0),
+            "signal_keys": item.get("signal_keys", []),
+            "signals": item.get("signals", {}),
+            "market_cap": item.get("market_cap", 0),
+            "selection_tier": selection.get("tier", ""),
+            "selection_lane": selection.get("primary_lane", ""),
+            "selection_lane_status": selection.get("primary_lane_status", ""),
+            "selection_support_count": selection.get("support_count", 0),
+            "selection_opportunity_score": selection.get("opportunity_score", 0),
+            "catalyst_classification": (item.get("catalyst_context") or {}).get("classification", ""),
+            "catalyst_freshness": ((item.get("catalyst_context") or {}).get("freshness") or {}).get("status", ""),
+            "theme_industry_status": (item.get("theme_industry") or {}).get("status", ""),
+            "quality_auditor_status": (item.get("quality_auditor") or {}).get("status", ""),
+            "watch_reason": _watchlist_reason(item),
+        })
+        if len(out) >= int(limit):
+            break
+    return out
 
 
 def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dict:
@@ -3382,6 +3462,11 @@ class ScoutAgent(BaseAgent):
             quality_gate_fn=_passes_brief_quality_gate,
             selection_cfg=top3_selection_cfg,
         )
+        watchlist_candidates = _build_watchlist_candidates(
+            radar_pool=radar_pool,
+            candidates=candidates,
+            limit=int((top3_selection_cfg or {}).get("watchlist_size", 5) or 5),
+        )
 
         filter_audit = {
             "hard_filter": {
@@ -3447,6 +3532,7 @@ class ScoutAgent(BaseAgent):
                     if (item.get("catalyst_context") or {}).get("top3_excluded_reason") == "RISK_CATALYST"
                 )),
                 "brief_picks": int(len(candidates)),
+                "watchlist_picks": int(len(watchlist_candidates)),
             },
             "catalyst_audit": catalyst_audit,
             "top3_selection_audit": top3_selection_audit,
@@ -3507,6 +3593,7 @@ class ScoutAgent(BaseAgent):
             "new_cooldown": new_cooldown,
             "ohlcv_evaluated": len(ohlcv_targets),
             "radar_pool": radar_pool[:10],
+            "watchlist_candidates": watchlist_candidates,
             "radar_summary": radar_summary,
             "radar_paths": radar_paths,
             "recommendation_snapshot_paths": snapshot_paths,

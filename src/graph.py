@@ -164,6 +164,7 @@ def m6_node(state: BriefBotState) -> dict:
     try:
         from src.collectors.sheets import (
             save_candidates_eval,
+            save_watchlist_eval,
             update_followup_prices,
             sync_position_mapping,
         )
@@ -177,6 +178,15 @@ def m6_node(state: BriefBotState) -> dict:
                     logger.info("[m6_node] SCOUT 시트 신규 적재: %d행", added)
             except Exception as e:
                 logger.warning("[m6_node] save_candidates_eval 실패: %s", e)
+
+        watchlist = (state.get("scout_out") or {}).get("watchlist_candidates") or []
+        if watchlist and date_str:
+            try:
+                added = save_watchlist_eval(watchlist, date_str)
+                if added > 0:
+                    logger.info("[m6_node] SCOUT WATCHLIST 신규 적재: %d행", added)
+            except Exception as e:
+                logger.warning("[m6_node] save_watchlist_eval 실패: %s", e)
 
         # 2. 매일 follow-up: +5d/+28d 가격 자동 채움
         try:
