@@ -1290,6 +1290,16 @@ class DigestAgent(BaseAgent):
                     f" / 미연결 {int(catalyst.get('non_us', 0) or 0) + int(catalyst.get('no_key', 0) or 0):,}"
                     f" / {catalyst_mode}"
                 )
+                if int(catalyst.get("top3_excluded_risk", 0) or 0):
+                    lines.append(
+                        f"  • 촉매 리뷰풀 : 위험촉매 {int(catalyst.get('top3_excluded_risk', 0) or 0):,}개 Top3 제외"
+                        " (감사관 탈락 아님)"
+                    )
+                if catalyst.get("llm_enabled"):
+                    lines.append(
+                        f"  • 촉매 LLM    : JSON 분류 {int(catalyst.get('llm_evaluated', 0) or 0):,}개"
+                        f" / 성공 {int(catalyst.get('llm_ok', 0) or 0):,}"
+                    )
             if factor_audit and factor_audit.get("enabled"):
                 factor_mode = "shadow" if float(factor_audit.get("score_weight", 0) or 0) == 0 else "score"
                 lines.append(
@@ -1422,6 +1432,23 @@ class DigestAgent(BaseAgent):
                 catalyst = c.get("catalyst_context", {}) or {}
                 if catalyst.get("score"):
                     lines.append(f"    촉매 점수 : {catalyst.get('score'):+.1f}")
+                if catalyst.get("classification"):
+                    class_label = {
+                        "POSITIVE_REVALUATION": "긍정 재평가",
+                        "RISK_CATALYST": "위험 촉매",
+                        "NOISE": "노이즈",
+                        "NO_DATA": "데이터 없음",
+                    }.get(str(catalyst.get("classification", "")), str(catalyst.get("classification", "")))
+                    fresh = (catalyst.get("freshness") or {}).get("status", "")
+                    reaction = (catalyst.get("price_volume_reaction") or {}).get("status", "")
+                    bits = [class_label]
+                    if fresh:
+                        bits.append(str(fresh))
+                    if reaction:
+                        bits.append(str(reaction))
+                    if catalyst.get("llm_status"):
+                        bits.append(f"LLM {catalyst.get('llm_status')}")
+                    lines.append(f"    촉매 감사 : {' · '.join(bits)}")
                 if catalyst.get("status") == "found" and catalyst.get("news"):
                     lines.append("    촉매 확인 :")
                     for n in catalyst.get("news", [])[:2]:

@@ -180,6 +180,14 @@ scout:
     eval_limit: 20                     # 레이더 상위 N개만 촉매 확인
     lookback_days: 14
     max_news_per_ticker: 3
+    fresh_days: 3
+    stale_days: 14
+    reaction_ret_3d_pct: 0.03          # 촉매 후 가격 반응 확인 기준
+    reaction_drop_3d_pct: -0.05
+    reaction_volume_ratio: 1.2
+    llm_classification:
+      enabled: true
+      eval_limit: 8                    # 비용 제어: 뉴스 있는 상위 N개만 LLM JSON 분류
     score_boost: 0.0                   # 안전모드: 뉴스 촉매는 표시만 하고 점수에는 미반영
     risk_penalty: 0.0                  # 안전모드: 키워드 오탐 검증 전 감점 금지
 

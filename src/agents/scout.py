@@ -722,6 +722,11 @@ def _assess_quality_context(df: pd.DataFrame, row: pd.Series, min_liquidity: flo
                 metrics["ret_20d"] = round(ret_20d, 4)
                 if ret_20d >= 0.20:
                     flags.append("overextended_20d")
+        for days in [1, 3, 5]:
+            if len(close) >= days + 1:
+                prev = float(close.iloc[-(days + 1)])
+                if prev > 0:
+                    metrics[f"ret_{days}d"] = round(current / prev - 1, 4)
 
         if len(close) >= 200:
             ma50 = float(close.iloc[-50:].mean())
@@ -745,6 +750,16 @@ def _assess_quality_context(df: pd.DataFrame, row: pd.Series, min_liquidity: flo
     metrics["avg_volume_value"] = round(avg_value, 2)
     if min_liquidity > 0 and avg_value < min_liquidity * 5:
         flags.append("low_liquidity_buffer")
+
+    try:
+        volume = df["volume"].astype(float).dropna()
+    except Exception:
+        volume = pd.Series(dtype=float)
+    if len(volume) >= 20:
+        vol_3d = float(volume.iloc[-3:].mean()) if len(volume) >= 3 else float(volume.iloc[-1])
+        vol_20d = float(volume.iloc[-20:].mean())
+        if vol_20d > 0:
+            metrics["volume_ratio_3d_20d"] = round(vol_3d / vol_20d, 3)
 
     return {
         "flags": sorted(set(flags)),
@@ -1354,6 +1369,10 @@ CATALYST_RISK_KEYWORDS = {
     "plunge", "decline", "halts", "sanction", "fine", "layoff",
 }
 
+CATALYST_CLASS_POSITIVE = "POSITIVE_REVALUATION"
+CATALYST_CLASS_RISK = "RISK_CATALYST"
+CATALYST_CLASS_NOISE = "NOISE"
+
 
 def _news_symbol(ticker: str, country: str) -> str:
     """Finnhub 뉴스 조회용 심볼. v1은 미국 심볼만 적극 연결한다."""
@@ -1427,40 +1446,291 @@ def _fetch_catalyst_news(ticker: str, country: str, lookback_days: int, max_item
         return "error", []
 
 
-def _score_catalyst_news(news: list[dict], score_boost: float, risk_penalty: float) -> dict:
-    """뉴스 헤드라인/요약에서 촉매 후보와 리스크 단어를 가볍게 판정한다."""
-    positive_hits = []
-    risk_hits = []
+def _news_datetime(item: dict) -> Optional[datetime]:
+    value = item.get("datetime")
+    try:
+        if isinstance(value, (int, float)) and value > 0:
+            return datetime.utcfromtimestamp(float(value))
+    except Exception:
+        pass
+    for key in ["publishedDate", "date"]:
+        text = str(item.get(key, "") or "").strip()
+        if not text:
+            continue
+        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+            try:
+                return datetime.strptime(text[:19] if "%H" in fmt else text[:10], fmt)
+            except ValueError:
+                continue
+    return None
 
+
+def _news_freshness(news: list[dict], fresh_days: int, stale_days: int) -> dict:
+    now = datetime.utcnow()
+    ages = []
+    has_upcoming = False
     for item in news:
-        text = f"{item.get('headline', '')} {item.get('summary', '')}".lower()
-        pos = sorted({kw for kw in CATALYST_POSITIVE_KEYWORDS if kw in text})
-        risk = sorted({kw for kw in CATALYST_RISK_KEYWORDS if kw in text})
-        if pos:
-            positive_hits.append({"headline": item.get("headline", ""), "keywords": pos[:4]})
-        if risk:
-            risk_hits.append({"headline": item.get("headline", ""), "keywords": risk[:4]})
+        dt = _news_datetime(item)
+        if dt is None:
+            continue
+        age = (now.date() - dt.date()).days
+        if age < 0:
+            has_upcoming = True
+        else:
+            ages.append(age)
 
-    if positive_hits and not risk_hits:
-        score = float(score_boost or 0)
-    elif risk_hits and not positive_hits:
-        score = -float(risk_penalty or 0)
-    elif positive_hits and risk_hits:
-        score = 0.0
+    if ages:
+        min_age = min(ages)
+        if min_age <= int(fresh_days):
+            status = "FRESH_3D"
+        elif min_age <= int(stale_days):
+            status = "RECENT_14D"
+        else:
+            status = "STALE"
+    elif has_upcoming:
+        min_age = None
+        status = "UPCOMING"
     else:
-        score = 0.0
+        min_age = None
+        status = "UNKNOWN"
 
-    status = "found" if positive_hits else "risk" if risk_hits else "none"
     return {
         "status": status,
-        "score": round(score, 3),
-        "positive_hits": positive_hits[:3],
-        "risk_hits": risk_hits[:3],
-        "news": news[:3],
+        "min_age_days": min_age,
+        "has_upcoming": bool(has_upcoming),
+        "fresh_days": int(fresh_days),
+        "stale_days": int(stale_days),
     }
 
 
-def _apply_catalyst_layer(radar_items: list[dict], catalyst_cfg: dict) -> dict:
+def _price_volume_reaction(item: dict, catalyst_cfg: dict) -> dict:
+    metrics = item.get("quality_metrics", {}) or {}
+    ret_3d = _as_float(metrics.get("ret_3d"), np.nan)
+    ret_5d = _as_float(metrics.get("ret_5d"), np.nan)
+    volume_ratio = _as_float(metrics.get("volume_ratio_3d_20d"), np.nan)
+    up_thr = float(catalyst_cfg.get("reaction_ret_3d_pct", 0.03) or 0.03)
+    down_thr = float(catalyst_cfg.get("reaction_drop_3d_pct", -0.05) or -0.05)
+    vol_thr = float(catalyst_cfg.get("reaction_volume_ratio", 1.2) or 1.2)
+
+    if np.isnan(ret_3d) or np.isnan(volume_ratio):
+        status = "DATA_LIGHT"
+    elif ret_3d >= up_thr and volume_ratio >= vol_thr:
+        status = "CONFIRMED_UP"
+    elif ret_3d <= down_thr and volume_ratio >= vol_thr:
+        status = "CONFIRMED_DOWN"
+    elif volume_ratio >= vol_thr:
+        status = "VOLUME_ONLY"
+    else:
+        status = "NO_CONFIRM"
+
+    return _json_safe_value({
+        "status": status,
+        "ret_3d": ret_3d,
+        "ret_5d": ret_5d,
+        "volume_ratio_3d_20d": volume_ratio,
+        "thresholds": {
+            "ret_3d_up": up_thr,
+            "ret_3d_down": down_thr,
+            "volume_ratio": vol_thr,
+        },
+    })
+
+
+def _keyword_classify_news_item(item: dict) -> dict:
+    text = f"{item.get('headline', '')} {item.get('summary', '')}".lower()
+    pos = sorted({kw for kw in CATALYST_POSITIVE_KEYWORDS if kw in text})
+    risk = sorted({kw for kw in CATALYST_RISK_KEYWORDS if kw in text})
+    event_type = str(item.get("event_type", "") or "").lower()
+
+    if risk:
+        cls = CATALYST_CLASS_RISK
+    elif (pos and event_type != "earnings") or (pos and "beat" in pos):
+        cls = CATALYST_CLASS_POSITIVE
+    elif event_type in {"analyst_rating"} and not risk:
+        cls = CATALYST_CLASS_POSITIVE
+    else:
+        cls = CATALYST_CLASS_NOISE
+
+    return {
+        "classification": cls,
+        "keywords_positive": pos[:4],
+        "keywords_risk": risk[:4],
+        "reason": "keyword",
+        "confidence": 0.55 if cls != CATALYST_CLASS_NOISE else 0.4,
+    }
+
+
+def _parse_llm_json(raw: Optional[str]) -> dict:
+    if not raw:
+        return {}
+    cleaned = raw.replace("```json", "").replace("```", "").strip()
+    try:
+        data = json.loads(cleaned)
+        return data if isinstance(data, dict) else {}
+    except json.JSONDecodeError:
+        return {}
+
+
+def _classify_catalyst_news_llm(
+    ticker: str,
+    news: list[dict],
+    llm_call,
+) -> tuple[str, dict[int, dict]]:
+    """LLM으로 뉴스 유형을 JSON 분류한다. 실패해도 키워드 판정으로 계속 간다."""
+    if not news:
+        return "skipped_no_news", {}
+    if not os.environ.get("GPT_API_KEY"):
+        return "no_key", {}
+    if llm_call is None:
+        return "no_llm_call", {}
+
+    system = (
+        "You classify stock news for a trading scout system. "
+        "Return only valid JSON. Do not invent facts."
+    )
+    payload = [
+        {
+            "idx": i,
+            "headline": n.get("headline", ""),
+            "summary": n.get("summary", ""),
+            "source": n.get("source", ""),
+            "event_type": n.get("event_type", "news"),
+        }
+        for i, n in enumerate(news)
+    ]
+    user = (
+        "Classify each item into exactly one class: "
+        "POSITIVE_REVALUATION, RISK_CATALYST, or NOISE.\n"
+        "POSITIVE_REVALUATION means it can plausibly re-rate price: earnings beat, guidance raise, major upgrade, "
+        "large contract, approval, buyback, strategic deal, demand/supply shock.\n"
+        "RISK_CATALYST means it can damage valuation: miss, guidance cut, accounting issue, fraud, lawsuit, "
+        "regulatory probe, recall, bankruptcy, downgrade, sanction.\n"
+        "NOISE means routine commentary, generic market color, old/weak news, or upcoming scheduled events without result.\n"
+        "Return schema: {\"items\":[{\"idx\":0,\"class\":\"...\",\"reason\":\"short\",\"confidence\":0.0}]}\n"
+        f"Ticker: {ticker}\nNews:\n{json.dumps(payload, ensure_ascii=False)}"
+    )
+    raw = llm_call(system, user, max_tokens=500)
+    data = _parse_llm_json(raw)
+    items = data.get("items") if isinstance(data, dict) else []
+    if not isinstance(items, list):
+        return "parse_failed", {}
+
+    result: dict[int, dict] = {}
+    allowed = {CATALYST_CLASS_POSITIVE, CATALYST_CLASS_RISK, CATALYST_CLASS_NOISE}
+    for row in items:
+        if not isinstance(row, dict):
+            continue
+        try:
+            idx = int(row.get("idx"))
+        except Exception:
+            continue
+        cls = str(row.get("class", "") or "").strip().upper()
+        if cls not in allowed:
+            continue
+        result[idx] = {
+            "classification": cls,
+            "reason": str(row.get("reason", "") or "")[:160],
+            "confidence": _as_float(row.get("confidence"), 0.0),
+            "source": "llm",
+        }
+    return ("ok" if result else "empty"), result
+
+
+def _score_catalyst_news(
+    news: list[dict],
+    item: dict,
+    catalyst_cfg: dict,
+    llm_classes: Optional[dict[int, dict]] = None,
+    llm_status: str = "not_used",
+) -> dict:
+    """뉴스를 촉매 감사관 스키마로 분류한다."""
+    positive_hits = []
+    risk_hits = []
+    noise_hits = []
+    classified_news = []
+
+    llm_classes = llm_classes or {}
+    for idx, news_item in enumerate(news):
+        keyword_cls = _keyword_classify_news_item(news_item)
+        final_cls = dict(keyword_cls)
+        if idx in llm_classes:
+            final_cls = {**final_cls, **llm_classes[idx]}
+        if keyword_cls.get("classification") == CATALYST_CLASS_RISK and final_cls.get("classification") != CATALYST_CLASS_RISK:
+            final_cls = {
+                **final_cls,
+                "classification": CATALYST_CLASS_RISK,
+                "reason": "keyword_risk_guard",
+                "source": "keyword",
+            }
+
+        row = {
+            **news_item,
+            "classification": final_cls.get("classification", CATALYST_CLASS_NOISE),
+            "classification_reason": final_cls.get("reason", ""),
+            "classification_confidence": final_cls.get("confidence", 0.0),
+            "classifier": final_cls.get("source", "keyword"),
+            "keywords_positive": keyword_cls.get("keywords_positive", []),
+            "keywords_risk": keyword_cls.get("keywords_risk", []),
+        }
+        classified_news.append(row)
+        hit = {
+            "headline": news_item.get("headline", ""),
+            "reason": row.get("classification_reason", ""),
+            "confidence": row.get("classification_confidence", 0.0),
+            "classifier": row.get("classifier", "keyword"),
+        }
+        if row["classification"] == CATALYST_CLASS_RISK:
+            hit["keywords"] = row.get("keywords_risk", [])
+            risk_hits.append(hit)
+        elif row["classification"] == CATALYST_CLASS_POSITIVE:
+            hit["keywords"] = row.get("keywords_positive", [])
+            positive_hits.append(hit)
+        else:
+            noise_hits.append(hit)
+
+    score_boost = float(catalyst_cfg.get("score_boost", 0.0) or 0.0)
+    risk_penalty = float(catalyst_cfg.get("risk_penalty", 0.0) or 0.0)
+
+    if positive_hits and not risk_hits:
+        classification = CATALYST_CLASS_POSITIVE
+        score = score_boost
+    elif risk_hits and not positive_hits:
+        classification = CATALYST_CLASS_RISK
+        score = -risk_penalty
+    elif positive_hits and risk_hits:
+        classification = CATALYST_CLASS_RISK
+        score = 0.0
+    else:
+        classification = CATALYST_CLASS_NOISE
+        score = 0.0
+
+    status = "found" if classification == CATALYST_CLASS_POSITIVE else "risk" if classification == CATALYST_CLASS_RISK else "none"
+    freshness = _news_freshness(
+        news,
+        fresh_days=int(catalyst_cfg.get("fresh_days", 3) or 3),
+        stale_days=int(catalyst_cfg.get("stale_days", 14) or 14),
+    )
+    reaction = _price_volume_reaction(item, catalyst_cfg)
+    top3_eligible = classification != CATALYST_CLASS_RISK
+    return {
+        "status": status,
+        "classification": classification,
+        "score": round(score, 3),
+        "positive_hits": positive_hits[:3],
+        "risk_hits": risk_hits[:3],
+        "noise_hits": noise_hits[:3],
+        "freshness": freshness,
+        "price_volume_reaction": reaction,
+        "llm_status": llm_status,
+        "news": _json_safe_value(classified_news[:3]),
+        "top3_eligible": bool(top3_eligible),
+        "review_pool": bool(not top3_eligible),
+        "top3_excluded_reason": "RISK_CATALYST" if not top3_eligible else "",
+        "reject_authority": False,
+    }
+
+
+def _apply_catalyst_layer(radar_items: list[dict], catalyst_cfg: dict, llm_call=None) -> dict:
     """레이더 상위 일부에만 촉매 레이어를 적용한다."""
     audit = {
         "enabled": bool((catalyst_cfg or {}).get("enabled", False)),
@@ -1472,16 +1742,28 @@ def _apply_catalyst_layer(radar_items: list[dict], catalyst_cfg: dict) -> dict:
         "non_us": 0,
         "no_key": 0,
         "error": 0,
+        "positive_revaluation": 0,
+        "risk_catalyst": 0,
+        "noise": 0,
+        "fresh_3d": 0,
+        "recent_14d": 0,
+        "price_volume_confirmed": 0,
+        "top3_excluded_risk": 0,
+        "llm_enabled": bool(((catalyst_cfg or {}).get("llm_classification") or {}).get("enabled", False)),
+        "llm_evaluated": 0,
+        "llm_ok": 0,
+        "llm_failed_or_skipped": 0,
         "score_boost": float((catalyst_cfg or {}).get("score_boost", 0.0) or 0.0),
         "risk_penalty": float((catalyst_cfg or {}).get("risk_penalty", 0.0) or 0.0),
+        "reject_authority": False,
     }
     if not audit["enabled"] or audit["eval_limit"] <= 0:
         return audit
 
     lookback_days = int(catalyst_cfg.get("lookback_days", 14) or 14)
     max_news = int(catalyst_cfg.get("max_news_per_ticker", 3) or 3)
-    score_boost = float(catalyst_cfg.get("score_boost", 0.3) or 0.0)
-    risk_penalty = float(catalyst_cfg.get("risk_penalty", 0.3) or 0.0)
+    llm_cfg = catalyst_cfg.get("llm_classification", {}) or {}
+    llm_eval_limit = int(llm_cfg.get("eval_limit", 0) or 0)
 
     targets = radar_items[:audit["eval_limit"]]
     for item in targets:
@@ -1493,9 +1775,34 @@ def _apply_catalyst_layer(radar_items: list[dict], catalyst_cfg: dict) -> dict:
             max_items=max_news,
         )
         if status == "ok":
-            context = _score_catalyst_news(news, score_boost, risk_penalty)
+            llm_status = "disabled"
+            llm_classes: dict[int, dict] = {}
+            if audit["llm_enabled"] and audit["llm_evaluated"] < llm_eval_limit:
+                audit["llm_evaluated"] += 1
+                llm_status, llm_classes = _classify_catalyst_news_llm(
+                    ticker=str(item.get("ticker", "") or ""),
+                    news=news,
+                    llm_call=llm_call,
+                )
+                if llm_status == "ok":
+                    audit["llm_ok"] += 1
+                else:
+                    audit["llm_failed_or_skipped"] += 1
+            context = _score_catalyst_news(news, item, catalyst_cfg, llm_classes, llm_status)
         else:
-            context = {"status": status, "score": 0.0, "positive_hits": [], "risk_hits": [], "news": []}
+            context = {
+                "status": status,
+                "classification": "NO_DATA",
+                "score": 0.0,
+                "positive_hits": [],
+                "risk_hits": [],
+                "noise_hits": [],
+                "news": [],
+                "top3_eligible": True,
+                "review_pool": False,
+                "top3_excluded_reason": "",
+                "reject_authority": False,
+            }
 
         item["catalyst_context"] = context
         item["catalyst_score"] = round(float(context.get("score", 0.0) or 0.0), 3)
@@ -1514,6 +1821,24 @@ def _apply_catalyst_layer(radar_items: list[dict], catalyst_cfg: dict) -> dict:
             audit["no_key"] += 1
         else:
             audit["error"] += 1
+
+        classification = str(context.get("classification", "") or "")
+        if classification == CATALYST_CLASS_POSITIVE:
+            audit["positive_revaluation"] += 1
+        elif classification == CATALYST_CLASS_RISK:
+            audit["risk_catalyst"] += 1
+        elif classification == CATALYST_CLASS_NOISE:
+            audit["noise"] += 1
+        freshness_status = str((context.get("freshness") or {}).get("status", "") or "")
+        if freshness_status == "FRESH_3D":
+            audit["fresh_3d"] += 1
+        elif freshness_status == "RECENT_14D":
+            audit["recent_14d"] += 1
+        reaction_status = str((context.get("price_volume_reaction") or {}).get("status", "") or "")
+        if reaction_status in {"CONFIRMED_UP", "CONFIRMED_DOWN"}:
+            audit["price_volume_confirmed"] += 1
+        if context.get("top3_excluded_reason") == "RISK_CATALYST":
+            audit["top3_excluded_risk"] += 1
 
         time.sleep(0.05)
 
@@ -2067,6 +2392,10 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "quality_auditor_confidence_delta": item.get("quality_auditor", {}).get("confidence_delta", 0),
                 "catalyst_score": item.get("catalyst_score", 0.0),
                 "catalyst_status": item.get("catalyst_context", {}).get("status", ""),
+                "catalyst_classification": item.get("catalyst_context", {}).get("classification", ""),
+                "catalyst_freshness": item.get("catalyst_context", {}).get("freshness", {}).get("status", ""),
+                "catalyst_reaction": item.get("catalyst_context", {}).get("price_volume_reaction", {}).get("status", ""),
+                "catalyst_top3_excluded_reason": item.get("catalyst_context", {}).get("top3_excluded_reason", ""),
                 "signal_count": item.get("signal_count"),
                 "signal_keys": ",".join(item.get("signal_keys", [])),
                 "shadow_signal_count": item.get("shadow_signal_count", 0),
@@ -2147,6 +2476,10 @@ def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dic
         "quality_auditor_source": quality_auditor.get("source", ""),
         "quality_auditor_confidence_delta": quality_auditor.get("confidence_delta", 0),
         "catalyst_status": catalyst.get("status", ""),
+        "catalyst_classification": catalyst.get("classification", ""),
+        "catalyst_freshness": (catalyst.get("freshness") or {}).get("status", ""),
+        "catalyst_reaction": (catalyst.get("price_volume_reaction") or {}).get("status", ""),
+        "catalyst_top3_excluded_reason": catalyst.get("top3_excluded_reason", ""),
         "catalyst_score": catalyst.get("score", 0),
         "factor_score": item.get("factor_score", 0),
         "factor_positives": ",".join(factor.get("positives", []) or []),
@@ -2706,7 +3039,11 @@ class ScoutAgent(BaseAgent):
             top_n=int((theme_industry_cfg or {}).get("peer_confirm_top_n", 30) or 30),
         )
         quality_audit = _apply_quality_auditor(radar_eligible, quality_auditor_cfg)
-        catalyst_audit = _apply_catalyst_layer(radar_eligible, scout_cfg.get("catalyst", {}) or {})
+        catalyst_audit = _apply_catalyst_layer(
+            radar_eligible,
+            scout_cfg.get("catalyst", {}) or {},
+            llm_call=self.call_llm,
+        )
         radar_eligible.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
         radar_pool = radar_eligible[:radar_pool_size]
 
@@ -2714,12 +3051,15 @@ class ScoutAgent(BaseAgent):
         quality_gate = scout_cfg.get("brief_quality_gate", {}) or {}
 
         def _passes_brief_quality_gate(item: dict) -> bool:
+            catalyst_context = item.get("catalyst_context", {}) or {}
+            if catalyst_context.get("top3_excluded_reason") == "RISK_CATALYST":
+                return False
             if not bool(quality_gate.get("enabled", False)):
                 return True
             signal_keys = set(item.get("signal_keys", []) or [])
             if bool(quality_gate.get("allow_ronin_entry_v2", True)) and "ronin_entry_v2" in signal_keys:
                 return True
-            if bool(quality_gate.get("allow_catalyst_found", True)) and item.get("catalyst_context", {}).get("status") == "found":
+            if bool(quality_gate.get("allow_catalyst_found", True)) and catalyst_context.get("status") == "found":
                 return True
             min_signal_count = int(quality_gate.get("allow_signal_count_at_least", 4) or 0)
             if min_signal_count > 0 and int(item.get("signal_count", 0) or 0) >= min_signal_count:
@@ -2791,6 +3131,10 @@ class ScoutAgent(BaseAgent):
                 "signals_required": int(signals_required),
                 "brief_quality_gate": dict(quality_gate),
                 "brief_rejected_after_radar": int(max(0, len(radar_pool) - len(candidates))),
+                "brief_excluded_risk_catalyst": int(sum(
+                    1 for item in radar_pool
+                    if (item.get("catalyst_context") or {}).get("top3_excluded_reason") == "RISK_CATALYST"
+                )),
                 "brief_picks": int(len(candidates)),
             },
             "catalyst_audit": catalyst_audit,
