@@ -129,8 +129,7 @@ scout:
       max_zones: 6
 
   # 후보 채택 임계치
-  signals_required: 3                  # 5개 중 N개 이상 충족 → 후보
-  max_candidates_output: 5             # 레거시 fallback
+  max_candidates_output: 5             # 안전 기본값. 실제 브리핑 출력은 brief_pick_size/top3_selection이 결정
   brief_pick_size: 3                   # Top3 선발 최종 출력 종목 수
   min_candidates_for_alert: 1          # 0개여도 알림 발송 (다른 섹션 가능)
 
@@ -138,7 +137,6 @@ scout:
   # 내부에는 넓게 저장하고, 로이에게는 엄선 후보만 보고한다.
   radar_pool_size: 100                 # 내부 관찰풀 최대 저장 수
   radar_min_score: 1.0                 # 관찰풀 편입 최소 점수
-  brief_min_score: 2.4                 # 최종 브리핑 후보 최소 점수
   ohlcv_top_per_country: 500           # 무신호 종목 중 국가별 OHLCV 평가 상한
   theme_boost_enabled: true            # themes.yaml 가치사슬 종목 보너스
 

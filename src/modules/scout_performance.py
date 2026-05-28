@@ -151,6 +151,26 @@ def _signal_keys(item: dict) -> list[str]:
     return [str(k) for k in (keys or []) if k]
 
 
+def _safe_list(value: Any) -> list[Any]:
+    if isinstance(value, list):
+        return value
+    if isinstance(value, tuple):
+        return list(value)
+    if value in ("", None):
+        return []
+    return [value]
+
+
+def _metric_from(*sources: dict, key: str, default: Optional[float] = None) -> Optional[float]:
+    for source in sources:
+        if not isinstance(source, dict):
+            continue
+        val = _safe_float(source.get(key), None)
+        if val is not None:
+            return val
+    return default
+
+
 def _normalise_ohlcv(df: Any) -> Optional[pd.DataFrame]:
     if df is None or not isinstance(df, pd.DataFrame) or df.empty:
         return None
@@ -291,6 +311,27 @@ def _extract_record(snapshot_date: str, bucket: str, rank: int, item: dict, hist
     ticker = _ticker_key(item.get("ticker", ""))
     primary_lane, primary_lane_status = _primary_lane_from_item(item)
     catalyst = item.get("catalyst_context") or {}
+    top3 = item.get("top3_selection") or {}
+    price_lanes = item.get("price_lanes") or {}
+    primary_lane_data = price_lanes.get(primary_lane) or {}
+    primary_lane_metrics = primary_lane_data.get("metrics") or {}
+    factor_context = item.get("factor_context") or {}
+    factor_metrics = factor_context.get("metrics") or {}
+    strength_lane = price_lanes.get("strength") or {}
+    pullback_lane = price_lanes.get("pullback") or {}
+    left_side_lane = price_lanes.get("left_side") or {}
+    drawdown_from_high = _metric_from(
+        factor_metrics,
+        primary_lane_metrics,
+        key="drawdown_from_high",
+        default=None,
+    )
+    if drawdown_from_high is None:
+        drawdown_from_high = _metric_from(primary_lane_metrics, key="drawdown_from_252d_high", default=None)
+    opportunity_score = _safe_float(
+        top3.get("opportunity_score", item.get("selection_opportunity_score", None)),
+        None,
+    )
     lane = str(primary_lane or primary_lane_status or "")
     return {
         "snapshot_date": snapshot_date,
@@ -301,8 +342,30 @@ def _extract_record(snapshot_date: str, bucket: str, rank: int, item: dict, hist
         "country": item.get("country", ""),
         "sector": item.get("sector", ""),
         "score": item.get("score", 0),
+        "selection_tier": str(top3.get("tier", item.get("selection_tier", "")) or ""),
+        "selection_rank": item.get("selection_rank"),
+        "selection_lane_rank": int(top3.get("lane_rank", 0) or 0),
+        "selection_support_count": int(top3.get("support_count", 0) or 0),
+        "selection_support_reasons": _safe_list(top3.get("support_reasons", [])),
+        "selection_catalyst_freshness_rank": int(top3.get("catalyst_freshness_rank", 0) or 0),
+        "opportunity_score": opportunity_score,
+        "drawdown_from_high": drawdown_from_high,
+        "factor_ret_20d": _metric_from(factor_metrics, key="ret_20d", default=None),
+        "factor_atr_pct": _metric_from(factor_metrics, key="atr_pct", default=None),
+        "factor_positives": _safe_list(factor_context.get("positives", [])),
+        "factor_negatives": _safe_list(factor_context.get("negatives", [])),
         "primary_lane": primary_lane,
         "primary_lane_status": primary_lane_status,
+        "primary_lane_reasons": _safe_list(primary_lane_data.get("reasons", [])),
+        "primary_lane_review_flags": _safe_list(primary_lane_data.get("review_flags", [])),
+        "primary_lane_metrics": primary_lane_metrics,
+        "strength_lane_status": str(strength_lane.get("status", "") or ""),
+        "strength_lane_metrics": strength_lane.get("metrics", {}) or {},
+        "pullback_lane_status": str(pullback_lane.get("status", "") or ""),
+        "pullback_lane_metrics": pullback_lane.get("metrics", {}) or {},
+        "left_side_lane_status": str(left_side_lane.get("status", "") or ""),
+        "left_side_stage": str(left_side_lane.get("stage", "") or ""),
+        "left_side_lane_metrics": left_side_lane.get("metrics", {}) or {},
         "signal_keys": _signal_keys(item),
         "theme_industry_status": _nested_status(item, "theme_industry_status", "theme_industry"),
         "quality_auditor_status": _nested_status(item, "quality_auditor_status", "quality_auditor"),
@@ -528,6 +591,14 @@ def run_scout_performance(days: int = 45, include_radar_top: bool = False) -> di
                 "status": r.get("status"),
                 "final_verdict": r.get("final_verdict"),
                 "entry_price_used": r.get("entry_price_used"),
+                "selection_tier": r.get("selection_tier"),
+                "selection_rank": r.get("selection_rank"),
+                "selection_lane_rank": r.get("selection_lane_rank"),
+                "selection_support_count": r.get("selection_support_count"),
+                "opportunity_score": r.get("opportunity_score"),
+                "drawdown_from_high": r.get("drawdown_from_high"),
+                "factor_ret_20d": r.get("factor_ret_20d"),
+                "factor_atr_pct": r.get("factor_atr_pct"),
                 "d1_return_pct": (r.get("followup", {}).get("d1") or {}).get("return_pct"),
                 "d3_return_pct": (r.get("followup", {}).get("d3") or {}).get("return_pct"),
                 "d5_return_pct": (r.get("followup", {}).get("d5") or {}).get("return_pct"),

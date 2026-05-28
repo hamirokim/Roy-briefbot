@@ -2649,8 +2649,6 @@ def _pick_from_tier(tier_items: list[dict], used_lanes: set[str]) -> dict:
 def _select_top3_candidates(
     radar_pool: list[dict],
     max_picks: int,
-    brief_min_score: float,
-    signals_required: int,
     quality_gate_fn,
     selection_cfg: dict,
 ) -> tuple[list[dict], dict]:
@@ -2668,9 +2666,8 @@ def _select_top3_candidates(
     max_picks = max(1, max_picks)
     tier_counter = Counter()
     review_pool = []
-    threshold_pass = []
-    legacy_threshold_count = 0
-    tier_threshold_count = 0
+    selection_pool = []
+    quality_gate_rejected = 0
 
     for item in radar_pool:
         selection = _annotate_top3_selection(item)
@@ -2678,23 +2675,20 @@ def _select_top3_candidates(
         if selection.get("excluded"):
             review_pool.append(item)
             continue
-        legacy_threshold_pass = (
-            float(item.get("score", 0.0) or 0.0) >= float(brief_min_score)
-            or int(item.get("signal_count", 0) or 0) >= int(signals_required)
-        )
-        tier_threshold_pass = enabled and str(selection.get("tier", "")) in {"A", "B", "C", "D"}
-        if legacy_threshold_pass:
-            legacy_threshold_count += 1
-        if tier_threshold_pass:
-            tier_threshold_count += 1
-        if (tier_threshold_pass if enabled else legacy_threshold_pass) and quality_gate_fn(item):
-            threshold_pass.append(item)
+        if not enabled:
+            continue
+        if str(selection.get("tier", "")) not in {"A", "B", "C", "D"}:
+            continue
+        if not quality_gate_fn(item):
+            quality_gate_rejected += 1
+            continue
+        selection_pool.append(item)
 
     if not enabled:
-        selected = sorted(threshold_pass, key=lambda x: (-float(x.get("score", 0) or 0), -int(x.get("signal_count", 0) or 0)))[:max_picks]
+        selected = []
     else:
         best_by_ticker: dict[str, dict] = {}
-        for item in sorted(threshold_pass, key=_selection_sort_key, reverse=True):
+        for item in sorted(selection_pool, key=_selection_sort_key, reverse=True):
             ticker = _theme_lookup_key(str(item.get("ticker", "") or ""))
             if not ticker:
                 continue
@@ -2730,17 +2724,16 @@ def _select_top3_candidates(
     audit = {
         "enabled": bool(enabled),
         "max_picks": int(max_picks),
-        "selection_mode": "tier" if enabled else "legacy_score_signal",
-        "legacy_threshold_pass": int(legacy_threshold_count),
-        "tier_threshold_pass": int(tier_threshold_count),
-        "threshold_pass_before_dedup": int(len(threshold_pass)),
-        "selection_pool_before_dedup": int(len(threshold_pass)),
+        "selection_mode": "tier" if enabled else "disabled",
+        "eligible_before_dedup": int(len(selection_pool)),
+        "selection_pool_before_dedup": int(len(selection_pool)),
+        "quality_gate_rejected": int(quality_gate_rejected),
         "selected": int(len(selected)),
         "tier_counts": {str(k): int(v) for k, v in tier_counter.items()},
         "selected_tiers": [str((item.get("top3_selection") or {}).get("tier", "")) for item in selected],
         "selected_lanes": [str((item.get("top3_selection") or {}).get("primary_lane", "")) for item in selected],
         "review_pool_risk_catalyst": int(len(review_pool)),
-        "duplicate_ticker_drops": int(max(0, len(threshold_pass) - len({_theme_lookup_key(str(i.get("ticker", "") or "")) for i in threshold_pass}))),
+        "duplicate_ticker_drops": int(max(0, len(selection_pool) - len({_theme_lookup_key(str(i.get("ticker", "") or "")) for i in selection_pool}))),
         "hierarchy": [
             "lane_strength",
             "catalyst_freshness",
@@ -3159,12 +3152,10 @@ class ScoutAgent(BaseAgent):
           - new_cooldown: dict (state에 다시 저장됨)
         """
         scout_cfg = self.settings["scout"]
-        signals_required = int(scout_cfg["signals_required"])
         max_output = int(scout_cfg.get("brief_pick_size", scout_cfg["max_candidates_output"]))
         cooldown_days = int(scout_cfg["cooldown_days"])
         radar_pool_size = int(scout_cfg.get("radar_pool_size", 100))
         radar_min_score = float(scout_cfg.get("radar_min_score", 1.0))
-        brief_min_score = float(scout_cfg.get("brief_min_score", 2.0))
         weights = scout_cfg.get("scoring_weights", {}) or {}
         min_liquidity = float(scout_cfg.get("avg_volume_value_min_usd", 0) or 0)
         theme_boost_enabled = bool(scout_cfg.get("theme_boost_enabled", True))
@@ -3259,7 +3250,7 @@ class ScoutAgent(BaseAgent):
 
         # OHLCV 평가는 — 효율 위해 prelim_scores 점수 0이 아니거나, 무작위 샘플링 통과한 것만
         # 실제 운용: 모든 종목에 OHLCV 평가하면 너무 무거움. 우선 prelim score >= 1 인 것 + 시총 상위 30%
-        ohlcv_targets = self._select_ohlcv_targets(prelim_scores, signals_required)
+        ohlcv_targets = self._select_ohlcv_targets(prelim_scores)
         self.log.info("[scout] OHLCV 평가 대상: %d종목", len(ohlcv_targets))
 
         # ── Stage 3b: OHLCV 신호 평가 ──
@@ -3457,8 +3448,6 @@ class ScoutAgent(BaseAgent):
         candidates, top3_selection_audit = _select_top3_candidates(
             radar_pool=radar_pool,
             max_picks=max_output,
-            brief_min_score=brief_min_score,
-            signals_required=signals_required,
             quality_gate_fn=_passes_brief_quality_gate,
             selection_cfg=top3_selection_cfg,
         )
@@ -3523,8 +3512,6 @@ class ScoutAgent(BaseAgent):
                 "radar_eligible_before_cap": int(len(radar_eligible)),
                 "radar_pool_cap": int(radar_pool_size),
                 "radar_cap_dropped": int(max(0, len(radar_eligible) - radar_pool_size)),
-                "brief_min_score": float(brief_min_score),
-                "signals_required": int(signals_required),
                 "brief_quality_gate": dict(quality_gate),
                 "brief_rejected_after_radar": int(max(0, len(radar_pool) - len(candidates))),
                 "brief_excluded_risk_catalyst": int(sum(
@@ -3600,7 +3587,7 @@ class ScoutAgent(BaseAgent):
             "today": today,
         }
 
-    def _select_ohlcv_targets(self, prelim_scores: dict, signals_required: int) -> dict:
+    def _select_ohlcv_targets(self, prelim_scores: dict) -> dict:
         """OHLCV 평가 대상 선별 (효율).
 
         조건:
