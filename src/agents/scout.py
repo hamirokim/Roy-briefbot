@@ -232,6 +232,431 @@ def _assess_quality_context(df: pd.DataFrame, row: pd.Series, min_liquidity: flo
     }
 
 
+def _as_float(value: Any, default: float = 0.0) -> float:
+    """숫자 변환 실패를 공통 필터 실패로 번지지 않게 막는다."""
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _trading_day_gap(last_date: Any, today: str) -> Optional[int]:
+    """휴장일 캘린더 없이 대략적인 영업일 gap을 계산한다."""
+    try:
+        last = pd.to_datetime(last_date).date()
+        current = pd.to_datetime(today).date()
+    except Exception:
+        return None
+    if last > current:
+        return 0
+    # pandas bdate_range는 양 끝을 포함하므로 같은 날이면 0으로 보정한다.
+    return max(0, len(pd.bdate_range(last, current)) - 1)
+
+
+def _assess_common_gate(df: pd.DataFrame, row: pd.Series, gate_cfg: dict, today: str) -> dict:
+    """SCOUT v3 공통 문지기.
+
+    v0.1 hard reject:
+      - 지원 시장 아님
+      - 시총/가격/20일 거래대금 미달
+      - OHLCV 길이/신선도/거래량 결측 문제
+
+    needs_review:
+      - 최근 5거래일 -25% 급락. 뉴스 자동 확인 전까지 탈락시키지 않는다.
+    """
+    if not bool((gate_cfg or {}).get("enabled", False)):
+        return {"status": "PASS", "hard_fail_reasons": [], "review_flags": [], "metrics": {}}
+
+    country = str(row.get("country", "") or "")
+    allowed = set(gate_cfg.get("allowed_countries", []) or [])
+    hard_fail_reasons: list[str] = []
+    review_flags: list[str] = []
+    metrics: dict[str, Any] = {"country": country}
+
+    if allowed and country not in allowed:
+        hard_fail_reasons.append("unsupported_country")
+
+    close = pd.Series(dtype=float)
+    volume = pd.Series(dtype=float)
+    if df is not None and not df.empty:
+        try:
+            close = df["close"].astype(float).dropna()
+            volume = df["volume"].astype(float).reindex(close.index).fillna(0)
+        except Exception:
+            close = pd.Series(dtype=float)
+            volume = pd.Series(dtype=float)
+
+    close_days = int(len(close))
+    metrics["close_days"] = close_days
+    min_close_days = int(gate_cfg.get("min_close_days", 120) or 120)
+    if close_days < min_close_days:
+        hard_fail_reasons.append("data_short")
+
+    latest_close = float(close.iloc[-1]) if close_days else 0.0
+    metrics["latest_close"] = round(latest_close, 4)
+    min_price_map = gate_cfg.get("min_price", {}) or {}
+    min_price = _as_float(min_price_map.get(country), 0.0)
+    if min_price > 0 and latest_close < min_price:
+        hard_fail_reasons.append("price_below_min")
+
+    market_cap = _as_float(row.get("market_cap"), 0.0)
+    metrics["market_cap_usd"] = round(market_cap, 2)
+    min_cap_map = gate_cfg.get("min_market_cap_usd", {}) or {}
+    min_cap = _as_float(min_cap_map.get(country), 0.0)
+    if min_cap > 0 and market_cap < min_cap:
+        hard_fail_reasons.append("market_cap_below_min")
+
+    if close_days and "date" in df.columns:
+        latest_date = df["date"].dropna().iloc[-1] if not df["date"].dropna().empty else None
+        stale_days = _trading_day_gap(latest_date, today)
+        metrics["latest_date"] = str(pd.to_datetime(latest_date).date()) if latest_date is not None else ""
+        metrics["stale_trading_days"] = stale_days
+        max_stale = int(gate_cfg.get("max_stale_trading_days", 3) or 3)
+        if stale_days is None or stale_days > max_stale:
+            hard_fail_reasons.append("data_stale")
+    else:
+        hard_fail_reasons.append("date_missing")
+
+    if close_days >= 20 and not volume.empty:
+        traded_value = close.tail(20) * volume.tail(20)
+        avg_traded_value_20d = float(traded_value.mean())
+        zero_volume_days_20d = int((volume.tail(20) <= 0).sum())
+    else:
+        avg_traded_value_20d = 0.0
+        zero_volume_days_20d = 20
+    metrics["avg_traded_value_20d"] = round(avg_traded_value_20d, 2)
+    metrics["zero_volume_days_20d"] = zero_volume_days_20d
+
+    min_value_map = gate_cfg.get("min_avg_traded_value_20d", {}) or {}
+    min_value = _as_float(min_value_map.get(country), 0.0)
+    if min_value > 0 and avg_traded_value_20d < min_value:
+        hard_fail_reasons.append("traded_value_below_min")
+
+    max_zero = int(gate_cfg.get("max_zero_volume_days_20d", 2) or 2)
+    if zero_volume_days_20d > max_zero:
+        hard_fail_reasons.append("zero_volume_too_many")
+
+    if close_days >= 6:
+        ret_5d = latest_close / float(close.iloc[-6]) - 1 if float(close.iloc[-6]) > 0 else 0.0
+        metrics["ret_5d"] = round(ret_5d, 4)
+        drop_review = float(gate_cfg.get("drop_5d_needs_review_pct", -0.25) or -0.25)
+        if ret_5d <= drop_review:
+            review_flags.append("sharp_drop_needs_news_review")
+
+    status = "FAIL" if hard_fail_reasons else "NEEDS_REVIEW" if review_flags else "PASS"
+    return {
+        "status": status,
+        "hard_fail_reasons": sorted(set(hard_fail_reasons)),
+        "review_flags": sorted(set(review_flags)),
+        "metrics": metrics,
+    }
+
+
+def _bench_key_for_row(row: pd.Series) -> str:
+    """US/KR 벤치마크 티커. KR 시장 구분이 부족하면 KOSPI를 기본값으로 둔다."""
+    country = str(row.get("country", "") or "")
+    ticker = str(row.get("ticker", "") or "").upper()
+    if country == "US":
+        return "SPY"
+    if country == "KR" and ticker.endswith(".KQ"):
+        return "^KQ11"
+    if country == "KR":
+        return "^KS11"
+    return ""
+
+
+def _close_series(df: Optional[pd.DataFrame]) -> pd.Series:
+    if df is None or df.empty or "close" not in df.columns:
+        return pd.Series(dtype=float)
+    return df["close"].astype(float).dropna()
+
+
+def _volume_series(df: Optional[pd.DataFrame], idx: pd.Index) -> pd.Series:
+    if df is None or df.empty or "volume" not in df.columns:
+        return pd.Series(dtype=float)
+    return df["volume"].astype(float).reindex(idx).fillna(0)
+
+
+def _high_low_series(df: Optional[pd.DataFrame], idx: pd.Index) -> tuple[pd.Series, pd.Series]:
+    if df is None or df.empty or "high" not in df.columns or "low" not in df.columns:
+        return pd.Series(dtype=float), pd.Series(dtype=float)
+    return (
+        df["high"].astype(float).reindex(idx),
+        df["low"].astype(float).reindex(idx),
+    )
+
+
+def _period_return(close: pd.Series, days: int) -> Optional[float]:
+    if len(close) <= days:
+        return None
+    prev = float(close.iloc[-days - 1])
+    if prev <= 0:
+        return None
+    return float(close.iloc[-1]) / prev - 1
+
+
+def _atr_pct_series(df: pd.DataFrame, close: pd.Series, length: int) -> pd.Series:
+    high, low = _high_low_series(df, close.index)
+    if close.empty or high.empty or low.empty:
+        return pd.Series(dtype=float)
+    prev_close = close.shift(1).fillna(close)
+    tr = pd.concat([
+        high - low,
+        (high - prev_close).abs(),
+        (low - prev_close).abs(),
+    ], axis=1).max(axis=1)
+    atr = _rma(tr, length)
+    return atr / close.replace(0, np.nan)
+
+
+def _volume_ratio(volume: pd.Series, short_days: int = 5, long_days: int = 20) -> Optional[float]:
+    if len(volume) < long_days or float(volume.tail(long_days).mean()) <= 0:
+        return None
+    return float(volume.tail(short_days).mean()) / float(volume.tail(long_days).mean())
+
+
+def _recent_upper_close_count(df: pd.DataFrame, close: pd.Series, days: int = 5) -> int:
+    high, low = _high_low_series(df, close.index)
+    if len(close) < days or high.empty or low.empty:
+        return 0
+    recent = pd.DataFrame({"close": close, "high": high, "low": low}).tail(days)
+    rng = (recent["high"] - recent["low"]).replace(0, np.nan)
+    pos = (recent["close"] - recent["low"]) / rng
+    return int((pos >= 0.60).sum())
+
+
+def _assess_strength_lane(df: pd.DataFrame, bench_df: Optional[pd.DataFrame], cfg: dict) -> dict:
+    close = _close_series(df)
+    bench = _close_series(bench_df)
+    volume = _volume_series(df, close.index)
+    metrics: dict[str, Any] = {}
+    reasons: list[str] = []
+    review_flags: list[str] = []
+    if len(close) < 126 or len(bench) < 126:
+        return {"status": "FAIL", "reasons": [], "review_flags": ["benchmark_or_price_data_short"], "metrics": metrics}
+
+    ret_20 = _period_return(close, 20)
+    ret_63 = _period_return(close, 63)
+    ret_126 = _period_return(close, 126)
+    b_ret_20 = _period_return(bench, 20)
+    b_ret_63 = _period_return(bench, 63)
+    b_ret_126 = _period_return(bench, 126)
+    rs_20 = (ret_20 - b_ret_20) if ret_20 is not None and b_ret_20 is not None else None
+    rs_63 = (ret_63 - b_ret_63) if ret_63 is not None and b_ret_63 is not None else None
+    rs_126 = (ret_126 - b_ret_126) if ret_126 is not None and b_ret_126 is not None else None
+    metrics.update({
+        "ret_20d": round(ret_20 or 0, 4),
+        "ret_63d": round(ret_63 or 0, 4),
+        "ret_126d": round(ret_126 or 0, 4),
+        "rs_20d": round(rs_20 or 0, 4),
+        "rs_63d": round(rs_63 or 0, 4),
+        "rs_126d": round(rs_126 or 0, 4),
+    })
+
+    rs_pass = (
+        (rs_63 is not None and rs_63 >= float(cfg.get("rs_63d_min_pctp", 0.05))) or
+        (rs_126 is not None and rs_126 >= float(cfg.get("rs_126d_min_pctp", 0.10)))
+    )
+    if not rs_pass:
+        return {"status": "FAIL", "reasons": [], "review_flags": ["relative_strength_fail"], "metrics": metrics}
+    reasons.append("relative_strength")
+
+    current = float(close.iloc[-1])
+    high_252 = float(close.tail(min(len(close), 252)).max())
+    drawdown = current / high_252 - 1 if high_252 > 0 else 0.0
+    vol_ratio = _volume_ratio(volume)
+    metrics["drawdown_from_252d_high"] = round(drawdown, 4)
+    metrics["volume_ratio_5d_20d"] = round(vol_ratio or 0, 4)
+
+    aux_pass = 0
+    if drawdown >= float(cfg.get("near_high_pass_drawdown", -0.15)):
+        aux_pass += 1
+        reasons.append("near_52w_high")
+    if vol_ratio is not None and vol_ratio >= float(cfg.get("volume_ratio_5d_20d_min", 1.3)):
+        aux_pass += 1
+        reasons.append("volume_expansion")
+    ma50 = float(close.tail(50).mean()) if len(close) >= 50 else current
+    ma200 = float(close.tail(200).mean()) if len(close) >= 200 else ma50
+    if current > ma50 and ma50 >= ma200:
+        aux_pass += 1
+        reasons.append("trend_confirmed")
+    if ret_20 is not None and ret_20 >= float(cfg.get("hot_ret_20d_needs_review", 0.25)):
+        review_flags.append("hot_needs_pullback")
+
+    status = "STRONG_PASS" if aux_pass >= 3 or drawdown >= float(cfg.get("near_high_strong_drawdown", -0.07)) else "PASS" if aux_pass >= 2 else "FAIL"
+    return {"status": status, "reasons": reasons, "review_flags": review_flags, "metrics": metrics}
+
+
+def _assess_pullback_lane(df: pd.DataFrame, cfg: dict) -> dict:
+    close = _close_series(df)
+    volume = _volume_series(df, close.index)
+    metrics: dict[str, Any] = {}
+    reasons: list[str] = []
+    review_flags: list[str] = []
+    if len(close) < 200:
+        return {"status": "FAIL", "reasons": [], "review_flags": ["price_data_short"], "metrics": metrics}
+
+    current = float(close.iloc[-1])
+    ma50 = float(close.tail(50).mean())
+    ma200 = float(close.tail(200).mean())
+    ma50_prev = float(close.iloc[-70:-20].mean()) if len(close) >= 70 else ma50
+    high_252 = float(close.tail(min(len(close), 252)).max())
+    drawdown = current / high_252 - 1 if high_252 > 0 else 0.0
+    vol_ratio = _volume_ratio(volume)
+    metrics.update({
+        "ma50": round(ma50, 4),
+        "ma200": round(ma200, 4),
+        "drawdown_from_252d_high": round(drawdown, 4),
+        "volume_ratio_5d_20d": round(vol_ratio or 0, 4),
+    })
+
+    trend_pass = current >= ma200 and current >= ma50 * (1 + float(cfg.get("ma50_fail_pct", -0.08))) and ma50 >= ma50_prev * 0.98
+    if not trend_pass:
+        return {"status": "FAIL", "reasons": [], "review_flags": ["trend_not_intact"], "metrics": metrics}
+    reasons.append("uptrend_intact")
+
+    aux_pass = 0
+    dd_min = float(cfg.get("drawdown_min", -0.25))
+    dd_max = float(cfg.get("drawdown_max", -0.08))
+    if dd_min <= drawdown <= dd_max:
+        aux_pass += 1
+        reasons.append("pullback_depth")
+        if float(cfg.get("ideal_drawdown_min", -0.20)) <= drawdown <= float(cfg.get("ideal_drawdown_max", -0.10)):
+            reasons.append("ideal_pullback_depth")
+    if vol_ratio is not None and vol_ratio <= float(cfg.get("volume_ratio_5d_20d_max", 0.75)):
+        aux_pass += 1
+        reasons.append("volume_dry_up")
+    support_near = False
+    if abs(current / ma50 - 1) <= float(cfg.get("ma50_near_pct", 0.03)):
+        support_near = True
+    recent_low = float(close.tail(60).min())
+    if recent_low > 0 and abs(current / recent_low - 1) <= float(cfg.get("support_near_pct", 0.04)):
+        support_near = True
+    if support_near:
+        aux_pass += 1
+        reasons.append("support_near")
+
+    if vol_ratio is not None and vol_ratio >= float(cfg.get("sell_volume_ratio_review", 1.5)) and drawdown < 0:
+        review_flags.append("sell_volume_needs_review")
+
+    status = "STRONG_PASS" if aux_pass >= 3 else "PASS" if aux_pass >= 2 else "WAIT"
+    return {"status": status, "reasons": reasons, "review_flags": review_flags, "metrics": metrics}
+
+
+def _assess_left_side_lane(df: pd.DataFrame, bench_df: Optional[pd.DataFrame], cfg: dict) -> dict:
+    close = _close_series(df)
+    volume = _volume_series(df, close.index)
+    metrics: dict[str, Any] = {}
+    reasons: list[str] = []
+    review_flags: list[str] = []
+    if len(close) < 120:
+        return {"status": "FAIL", "stage": "FAIL", "reasons": [], "review_flags": ["price_data_short"], "metrics": metrics}
+
+    current = float(close.iloc[-1])
+    lookback = close.tail(min(len(close), 252))
+    high_252 = float(lookback.max())
+    low_252 = float(lookback.min())
+    drawdown = current / high_252 - 1 if high_252 > 0 else 0.0
+    from_low = current / low_252 - 1 if low_252 > 0 else 0.0
+    metrics.update({
+        "drawdown_from_252d_high": round(drawdown, 4),
+        "distance_from_252d_low": round(from_low, 4),
+    })
+    low_zone = from_low <= float(cfg.get("low_252_near_pct", 0.20)) or drawdown <= float(cfg.get("high_252_drawdown_max", -0.30))
+    if not low_zone:
+        return {"status": "FAIL", "stage": "FAIL", "reasons": [], "review_flags": ["not_low_zone"], "metrics": metrics}
+    reasons.append("low_zone")
+    if drawdown <= float(cfg.get("extreme_drawdown_review", -0.50)):
+        review_flags.append("extreme_drawdown_needs_review")
+
+    decel = 0
+    ret_10 = _period_return(close, 10)
+    ret_20 = _period_return(close, 20)
+    ret_prev20 = None
+    if len(close) >= 41 and float(close.iloc[-41]) > 0:
+        ret_prev20 = float(close.iloc[-21]) / float(close.iloc[-41]) - 1
+    if ret_20 is not None and ret_prev20 is not None and ret_20 < 0 and abs(ret_20) <= abs(ret_prev20) * 0.5:
+        decel += 1
+        reasons.append("downside_speed_slowing")
+    if ret_10 is not None and ret_20 is not None and ret_10 > ret_20:
+        decel += 1
+        reasons.append("short_return_improving")
+    atr_pct = _atr_pct_series(df, close, 14)
+    if len(atr_pct.dropna()) >= 20:
+        atr10 = float(atr_pct.dropna().tail(10).mean())
+        atr20 = float(atr_pct.dropna().tail(20).mean())
+        metrics["atr_ratio_10d_20d"] = round(atr10 / atr20, 4) if atr20 > 0 else 0
+        if atr20 > 0 and atr10 / atr20 <= float(cfg.get("atr_ratio_10d_20d_max", 0.85)):
+            decel += 1
+            reasons.append("atr_contracting")
+    returns = close.pct_change().dropna()
+    if len(returns) >= 30:
+        recent_down = float((returns.tail(10) < 0).mean())
+        prev_down = float((returns.iloc[-30:-10] < 0).mean())
+        metrics["down_day_ratio_10d"] = round(recent_down, 4)
+        metrics["down_day_ratio_prev20d"] = round(prev_down, 4)
+        if recent_down < prev_down:
+            decel += 1
+            reasons.append("down_days_decreasing")
+    upper_count = _recent_upper_close_count(df, close)
+    metrics["upper_close_days_5d"] = upper_count
+    if upper_count >= int(cfg.get("upper_close_days_min", 3) or 3):
+        decel += 1
+        reasons.append("upper_range_closes")
+    metrics["deceleration_count"] = decel
+    if decel < 2:
+        return {"status": "STAGE1_WAIT", "stage": "STAGE1", "reasons": reasons, "review_flags": review_flags, "metrics": metrics}
+
+    higher_low = False
+    if len(close) >= 20:
+        recent_low = float(close.tail(10).min())
+        prev_low = float(close.iloc[-20:-10].min())
+        metrics["recent_10d_low"] = round(recent_low, 4)
+        metrics["prev_10d_low"] = round(prev_low, 4)
+        higher_low = recent_low > prev_low and current >= prev_low
+    market_weak = False
+    bench = _close_series(bench_df)
+    if len(bench) >= 200:
+        b_current = float(bench.iloc[-1])
+        b_ma200 = float(bench.tail(200).mean())
+        b_ret20 = _period_return(bench, 20) or 0.0
+        market_weak = b_current < b_ma200 or b_ret20 <= float(cfg.get("sharp_market_ret20_wait", -0.08))
+        metrics["benchmark_above_ma200"] = bool(b_current >= b_ma200)
+        metrics["benchmark_ret_20d"] = round(b_ret20, 4)
+
+    if not higher_low:
+        return {"status": "WAIT_CONFIRM", "stage": "STAGE1", "reasons": reasons, "review_flags": review_flags, "metrics": metrics}
+    reasons.append("higher_low")
+    if market_weak:
+        review_flags.append("market_weak_wait_confirm")
+        return {"status": "WAIT_CONFIRM", "stage": "STAGE2", "reasons": reasons, "review_flags": review_flags, "metrics": metrics}
+
+    strong_bonus = False
+    if len(close) >= 21 and current > float(close.iloc[-21:-1].max()):
+        strong_bonus = True
+        reasons.append("higher_high_bonus")
+    if len(volume) >= 20 and _volume_ratio(volume) and _volume_ratio(volume) >= 1.5:
+        strong_bonus = True
+        reasons.append("volume_reversal_bonus")
+    status = "STAGE2_STRONG_PASS" if strong_bonus else "STAGE2_PASS"
+    return {"status": status, "stage": "STAGE2", "reasons": reasons, "review_flags": review_flags, "metrics": metrics}
+
+
+def _assess_price_lanes(df: pd.DataFrame, row: pd.Series, benchmark_data: dict[str, pd.DataFrame], lane_cfg: dict) -> dict:
+    if not bool((lane_cfg or {}).get("enabled", False)):
+        return {}
+    bench_key = _bench_key_for_row(row)
+    bench_df = benchmark_data.get(bench_key)
+    return {
+        "benchmark": bench_key,
+        "strength": _assess_strength_lane(df, bench_df, lane_cfg.get("strength", {}) or {}),
+        "pullback": _assess_pullback_lane(df, lane_cfg.get("pullback", {}) or {}),
+        "left_side": _assess_left_side_lane(df, bench_df, lane_cfg.get("left_side", {}) or {}),
+    }
+
+
 def _assess_factor_profile(df: pd.DataFrame, row: pd.Series, factor_cfg: dict, min_liquidity: float) -> dict:
     """가격/거래량 기반 저비용 因子 점수.
 
@@ -353,6 +778,8 @@ def _build_radar_item(ticker: str, info: dict, ticker_themes: dict, weights: dic
         "liquidity_score": round(liquidity_score, 3),
         "factor_score": round(factor_score, 3),
         "factor_context": dict(info.get("factor") or {}),
+        "common_gate": dict(info.get("common_gate") or {}),
+        "price_lanes": dict(info.get("price_lanes") or {}),
         "signal_count": len(signal_keys),
         "signal_keys": signal_keys,
         "signals": signals,
@@ -1062,6 +1489,12 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "factor_score": item.get("factor_score", 0.0),
                 "factor_positives": ",".join(item.get("factor_context", {}).get("positives", [])),
                 "factor_negatives": ",".join(item.get("factor_context", {}).get("negatives", [])),
+                "common_gate_status": item.get("common_gate", {}).get("status", ""),
+                "common_gate_fail_reasons": ",".join(item.get("common_gate", {}).get("hard_fail_reasons", [])),
+                "common_gate_review_flags": ",".join(item.get("common_gate", {}).get("review_flags", [])),
+                "strength_lane_status": item.get("price_lanes", {}).get("strength", {}).get("status", ""),
+                "pullback_lane_status": item.get("price_lanes", {}).get("pullback", {}).get("status", ""),
+                "left_side_lane_status": item.get("price_lanes", {}).get("left_side", {}).get("status", ""),
                 "catalyst_score": item.get("catalyst_score", 0.0),
                 "catalyst_status": item.get("catalyst_context", {}).get("status", ""),
                 "signal_count": item.get("signal_count"),
@@ -1080,6 +1513,119 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
         "json": str(json_path),
         "parquet": str(parquet_path) if parquet_ok else "",
     }
+
+
+def _primary_lane(price_lanes: dict) -> dict:
+    """후보의 대표 레인을 하나 고른다. Top3 정식 선발 전까지 스냅샷 표기용."""
+    rank = {
+        "STAGE2_STRONG_PASS": 5,
+        "STRONG_PASS": 5,
+        "STAGE2_PASS": 4,
+        "PASS": 4,
+        "WAIT_CONFIRM": 2,
+        "STAGE1_WAIT": 1,
+        "WAIT": 1,
+        "FAIL": 0,
+    }
+    best = {"lane": "", "status": "", "rank": -1, "reasons": [], "review_flags": []}
+    for lane in ["strength", "pullback", "left_side"]:
+        data = dict((price_lanes or {}).get(lane) or {})
+        status = str(data.get("status", "") or "")
+        score = rank.get(status, -1)
+        if score > best["rank"]:
+            best = {
+                "lane": lane,
+                "status": status,
+                "rank": score,
+                "reasons": list(data.get("reasons") or []),
+                "review_flags": list(data.get("review_flags") or []),
+            }
+    return best
+
+
+def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dict:
+    lane = _primary_lane(item.get("price_lanes") or {})
+    gate = item.get("common_gate") or {}
+    catalyst = item.get("catalyst_context") or {}
+    factor = item.get("factor_context") or {}
+    return {
+        "date": today,
+        "bucket": bucket,
+        "rank": rank_no,
+        "ticker": item.get("ticker", ""),
+        "name": item.get("name", ""),
+        "country": item.get("country", ""),
+        "sector": item.get("sector", ""),
+        "score": item.get("score", 0),
+        "signal_score": item.get("signal_score", 0),
+        "signal_keys": ",".join(item.get("signal_keys", []) or []),
+        "primary_lane": lane["lane"],
+        "primary_lane_status": lane["status"],
+        "primary_lane_reasons": ",".join(lane["reasons"]),
+        "primary_lane_review_flags": ",".join(lane["review_flags"]),
+        "common_gate_status": gate.get("status", ""),
+        "common_gate_review_flags": ",".join(gate.get("review_flags", []) or []),
+        "catalyst_status": catalyst.get("status", ""),
+        "catalyst_score": catalyst.get("score", 0),
+        "factor_score": item.get("factor_score", 0),
+        "factor_positives": ",".join(factor.get("positives", []) or []),
+        "factor_negatives": ",".join(factor.get("negatives", []) or []),
+        "quality_flags": ",".join(item.get("quality_flags", []) or []),
+        "market_cap": item.get("market_cap", 0),
+        "avg_volume_value": item.get("avg_volume_value", 0),
+    }
+
+
+def _save_recommendation_snapshot(
+    today: str,
+    candidates: list[dict],
+    radar_pool: list[dict],
+    radar_summary: dict,
+    snapshot_cfg: dict,
+) -> dict:
+    """최종 추천 당시의 판정 근거를 저장한다.
+
+    이 파일은 사후 성과표의 출발점이다. 나중에 가격 반응/구조 이벤트/실제 진입 여부를
+    붙일 때, '그날 왜 추천됐는지'가 사라지지 않게 한다.
+    """
+    if not bool((snapshot_cfg or {}).get("enabled", False)):
+        return {}
+
+    RADAR_DIR.mkdir(parents=True, exist_ok=True)
+    radar_top_n = int((snapshot_cfg or {}).get("include_radar_top", 20) or 20)
+    payload = {
+        "date": today,
+        "schema_version": "scout_recommendation_snapshot_v0_1",
+        "summary": {
+            "candidate_count": int(len(candidates)),
+            "radar_top_count": int(min(len(radar_pool), radar_top_n)),
+            "common_gate_audit": (radar_summary.get("filter_audit") or {}).get("common_gate_audit", {}),
+            "price_lane_audit": (radar_summary.get("filter_audit") or {}).get("price_lane_audit", {}),
+            "catalyst_audit": (radar_summary.get("filter_audit") or {}).get("catalyst_audit", {}),
+        },
+        "candidates": candidates,
+        "radar_top": radar_pool[:radar_top_n],
+    }
+
+    json_path = RADAR_DIR / f"recommendation_snapshot_{today}.json"
+    parquet_path = RADAR_DIR / f"recommendation_snapshot_{today}.parquet"
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+    parquet_ok = False
+    if bool((snapshot_cfg or {}).get("parquet_enabled", True)):
+        try:
+            flat_rows = []
+            for i, item in enumerate(candidates, 1):
+                flat_rows.append(_snapshot_flat_row(today, item, i, "candidate"))
+            for i, item in enumerate(radar_pool[:radar_top_n], 1):
+                flat_rows.append(_snapshot_flat_row(today, item, i, "radar_top"))
+            pd.DataFrame(flat_rows).to_parquet(parquet_path, index=False)
+            parquet_ok = True
+        except Exception as e:
+            logger.warning("[scout] recommendation snapshot parquet 저장 실패(json은 저장됨): %s", e)
+
+    return {"json": str(json_path), "parquet": str(parquet_path) if parquet_ok else ""}
 
 
 def _load_settings() -> dict:
@@ -1430,22 +1976,53 @@ class ScoutAgent(BaseAgent):
 
         # ── Stage 3b: OHLCV 신호 평가 ──
         factor_cfg = scout_cfg.get("factor_layer", {}) or {}
+        common_gate_cfg = scout_cfg.get("common_gate", {}) or {}
+        price_lanes_cfg = scout_cfg.get("price_lanes", {}) or {}
         if ohlcv_targets:
             from src.collectors.global_ohlcv import fetch_ohlcv
             tickers_by_country: dict[str, list[str]] = {}
             for t, info in ohlcv_targets.items():
                 country = info["row"]["country"]
                 tickers_by_country.setdefault(country, []).append(t)
+            if bool(price_lanes_cfg.get("enabled", False)):
+                countries = {str(info["row"].get("country", "")) for info in ohlcv_targets.values()}
+                if "US" in countries:
+                    tickers_by_country.setdefault("US", []).append("SPY")
+                if "KR" in countries:
+                    tickers_by_country.setdefault("KR", []).extend(["^KS11", "^KQ11"])
 
             ohlcv_data = fetch_ohlcv(tickers_by_country, lookback_days=260, use_cache=True)
+            benchmark_data = {
+                key: ohlcv_data.get(key)
+                for key in ["SPY", "^KS11", "^KQ11"]
+                if ohlcv_data.get(key) is not None
+            }
 
             for ticker, info in ohlcv_targets.items():
                 df = ohlcv_data.get(ticker)
                 if df is None or df.empty:
+                    info["common_gate"] = {
+                        "status": "FAIL",
+                        "hard_fail_reasons": ["ohlcv_missing"],
+                        "review_flags": [],
+                        "metrics": {"country": str(info["row"].get("country", ""))},
+                    }
+                    info["score"] = 0.0
+                    info["signals"] = {}
+                    info["shadow_signals"] = {}
+                    continue
+
+                common_gate = _assess_common_gate(df, info["row"], common_gate_cfg, today)
+                info["common_gate"] = common_gate
+                if common_gate.get("status") == "FAIL":
+                    info["score"] = 0.0
+                    info["signals"] = {}
+                    info["shadow_signals"] = {}
                     continue
 
                 info["quality"] = _assess_quality_context(df, info["row"], min_liquidity)
                 info["factor"] = _assess_factor_profile(df, info["row"], factor_cfg, min_liquidity)
+                info["price_lanes"] = _assess_price_lanes(df, info["row"], benchmark_data, price_lanes_cfg)
 
                 # bb_squeeze
                 if scout_cfg["signals"]["bb_squeeze"]["enabled"]:
@@ -1524,8 +2101,27 @@ class ScoutAgent(BaseAgent):
                 missing_by_country[country] += 1
 
         radar_eligible = []
+        common_gate_counter = Counter()
+        common_gate_fail_counter = Counter()
+        common_gate_review_counter = Counter()
+        lane_status_counter = Counter()
         for ticker, info in prelim_scores.items():
+            gate = info.get("common_gate") or {}
+            gate_status = str(gate.get("status", "NOT_EVALUATED"))
+            common_gate_counter[gate_status] += 1
+            for reason in gate.get("hard_fail_reasons", []) or []:
+                common_gate_fail_counter[str(reason)] += 1
+            for flag in gate.get("review_flags", []) or []:
+                common_gate_review_counter[str(flag)] += 1
+
+            if bool(common_gate_cfg.get("enabled", False)) and gate_status in {"FAIL", "NOT_EVALUATED"}:
+                continue
+
             item = _build_radar_item(ticker, info, ticker_themes, weights, min_liquidity)
+            for lane_key in ["strength", "pullback", "left_side"]:
+                lane_status = item.get("price_lanes", {}).get(lane_key, {}).get("status", "")
+                if lane_status:
+                    lane_status_counter[f"{lane_key}:{lane_status}"] += 1
             if item["score"] >= radar_min_score and (item["signal_count"] > 0 or item["theme_score"] > 0):
                 radar_eligible.append(item)
 
@@ -1571,6 +2167,17 @@ class ScoutAgent(BaseAgent):
                 "enabled": bool(factor_cfg.get("enabled", False)),
                 "score_cap": float(factor_cfg.get("score_cap", 0.0) or 0.0),
                 "score_weight": float(weights.get("factor_quality", 0.0) or 0.0),
+            },
+            "common_gate_audit": {
+                "enabled": bool(common_gate_cfg.get("enabled", False)),
+                "status_counts": {str(k): int(v) for k, v in common_gate_counter.items()},
+                "fail_reasons": {str(k): int(v) for k, v in common_gate_fail_counter.items()},
+                "review_flags": {str(k): int(v) for k, v in common_gate_review_counter.items()},
+                "allowed_countries": list(common_gate_cfg.get("allowed_countries", []) or []),
+            },
+            "price_lane_audit": {
+                "enabled": bool(price_lanes_cfg.get("enabled", False)),
+                "status_counts": {str(k): int(v) for k, v in lane_status_counter.items()},
             },
             "evaluation_scope": {
                 "ohlcv_selected": int(len(ohlcv_targets)),
@@ -1632,6 +2239,18 @@ class ScoutAgent(BaseAgent):
             except Exception as e:
                 self.log.warning("[scout] M1.5 LLM 보강 실패 (계속 진행): %s", e)
 
+        try:
+            snapshot_paths = _save_recommendation_snapshot(
+                today=today,
+                candidates=candidates,
+                radar_pool=radar_pool,
+                radar_summary=radar_summary,
+                snapshot_cfg=scout_cfg.get("recommendation_snapshot", {}) or {},
+            )
+        except Exception as e:
+            snapshot_paths = {}
+            self.log.warning("[scout] recommendation snapshot 저장 실패: %s", e)
+
         # ── cooldown 갱신 ──
         new_cooldown = _update_cooldown(cooldown_map, candidates, today)
 
@@ -1645,6 +2264,7 @@ class ScoutAgent(BaseAgent):
             "radar_pool": radar_pool[:10],
             "radar_summary": radar_summary,
             "radar_paths": radar_paths,
+            "recommendation_snapshot_paths": snapshot_paths,
             "today": today,
         }
 
