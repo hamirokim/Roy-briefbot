@@ -57,6 +57,7 @@ class BriefBotState(TypedDict, total=False):
     guard_out: dict                    # GUARD: positions_status, news_events
     regime_out: dict                   # REGIME: vix, sectors, macro_events, fx
     m6_out: dict                       # M6: summary_text, detailed_lines, track_count
+    scout_performance_out: dict        # SCOUT 성과표: 1/3/5/10/20d, MFE/MAE, 구조 이벤트
     digest_out: dict                   # DIGEST: telegram_text, sheets_text
 
     # ── 메타 ──
@@ -198,6 +199,27 @@ def m6_node(state: BriefBotState) -> dict:
         logger.warning("[m6_node] SCOUT 시트 모듈 import 실패: %s", e)
     except Exception as e:
         logger.warning("[m6_node] SCOUT 시트 작업 전체 실패: %s", e)
+
+    # ═══════════════════════════════════════════════════════════
+    # SCOUT 사후 성과표 — 추천 스냅샷 기반 1/3/5/10/20 거래일 평가
+    # ═══════════════════════════════════════════════════════════
+    try:
+        from src.modules.scout_performance import run_scout_performance
+
+        perf_out = run_scout_performance(days=45, include_radar_top=False)
+        update["scout_performance_out"] = perf_out
+        if update.get("m6_out") is not None:
+            update["m6_out"]["performance"] = perf_out
+        logger.info("[m6_node] SCOUT 성과표 갱신: %s", (perf_out or {}).get("summary_text", ""))
+    except Exception as e:
+        logger.warning("[m6_node] SCOUT 성과표 갱신 실패: %s", e)
+        update["scout_performance_out"] = {
+            "summary_text": "",
+            "records": [],
+            "summary": {},
+            "paths": {},
+            "error": str(e),
+        }
 
     return update
 

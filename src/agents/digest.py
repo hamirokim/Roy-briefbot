@@ -903,9 +903,12 @@ class DigestAgent(BaseAgent):
 
         # ── 2-A. M6 SCOUT 추적 (D86 신규) ──
         m6_summary = m6_out.get("summary_text", "")
+        performance_summary = ((m6_out.get("performance") or {}).get("summary_text", "") or "")
         if m6_summary:
             lines.append(f"<b>🔄 SCOUT 추적</b>")
             lines.append(f"<i>{m6_summary}</i>")
+            if performance_summary:
+                lines.append(f"<i>{performance_summary}</i>")
             lines.append("")
 
         if briefing_mode == "monthly" and improvement_report.get("summary_text"):
@@ -1509,12 +1512,18 @@ class DigestAgent(BaseAgent):
         m6_out = m6_out or {}
         m6_summary = m6_out.get("summary_text", "")
         m6_detailed = m6_out.get("detailed_lines", []) or []
+        performance_summary = ((m6_out.get("performance") or {}).get("summary_text", "") or "")
+        performance_paths = ((m6_out.get("performance") or {}).get("paths", {}) or {})
         m6_count = m6_out.get("track_count", 0)
-        if m6_summary or m6_detailed:
+        if m6_summary or m6_detailed or performance_summary:
             lines.append("─" * 60)
             lines.append(f"▷ SCOUT 후보 추적 (M6, {m6_count}개)")
             if m6_summary:
                 lines.append(f"  요약: {m6_summary}")
+            if performance_summary:
+                lines.append(f"  성과표: {performance_summary}")
+            if performance_paths.get("markdown"):
+                lines.append(f"  리포트: {performance_paths.get('markdown')}")
             if m6_detailed:
                 lines.append("")
                 lines.extend(m6_detailed)
