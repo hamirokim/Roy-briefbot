@@ -66,6 +66,9 @@ jobs:
           # FMP Starter (SCOUT 품질/촉매 보강)
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
 
+          # DART OpenAPI (KR 품질/촉매 보강)
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+
           # FRED (REGIME 매크로 — 선택)
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
 

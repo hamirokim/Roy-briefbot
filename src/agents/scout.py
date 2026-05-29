@@ -408,8 +408,16 @@ def _attach_theme_peer_confirmation(items: list[dict], top_n: int = 30) -> None:
                 auditor["status"] = "STRONG_SUPPORT"
 
 
-def _fetch_quality_fundamental(ticker: str, country: str) -> tuple[str, dict]:
-    """품질 감사관용 펀더멘털. FMP 우선, 실패 시 Finviz fallback."""
+def _fetch_quality_fundamental(ticker: str, country: str, market_cap_usd: Optional[float] = None) -> tuple[str, dict]:
+    """품질 감사관용 펀더멘털. US는 FMP/Finviz, KR은 DART 공식 API."""
+    if country == "KR":
+        try:
+            from src.collectors.kr_dart import fetch_kr_fundamental_data
+            return fetch_kr_fundamental_data(ticker, market_cap_usd=market_cap_usd)
+        except Exception as e:
+            logger.debug("[scout quality] %s DART 품질 수집 실패: %s", ticker, e)
+            return "dart_error", {}
+
     if country != "US":
         return "not_supported_non_us", {}
 
@@ -640,6 +648,8 @@ def _apply_quality_auditor(radar_items: list[dict], quality_cfg: dict) -> dict:
         "evaluated": 0,
         "fmp": 0,
         "finviz": 0,
+        "dart": 0,
+        "kr_missing": 0,
         "empty": 0,
         "non_us": 0,
         "status_counts": {},
@@ -654,11 +664,16 @@ def _apply_quality_auditor(radar_items: list[dict], quality_cfg: dict) -> dict:
         source, fundamental = _fetch_quality_fundamental(
             ticker=str(item.get("ticker", "") or ""),
             country=str(item.get("country", "") or ""),
+            market_cap_usd=_as_float(item.get("market_cap"), np.nan),
         )
         if source == "fmp":
             audit["fmp"] += 1
         elif source == "finviz":
             audit["finviz"] += 1
+        elif source == "dart":
+            audit["dart"] += 1
+        elif source.startswith("dart_"):
+            audit["kr_missing"] += 1
         elif source == "not_supported_non_us":
             audit["non_us"] += 1
         else:
@@ -1361,12 +1376,17 @@ CATALYST_POSITIVE_KEYWORDS = {
     "earnings", "guidance", "launch", "merger", "partnership", "raises",
     "raised", "upgrade", "upgraded", "buyback", "repurchase", "record",
     "expands", "expansion", "acquisition", "order", "profit",
+    "수주", "공급계약", "계약체결", "실적개선", "매출액증가", "영업이익증가",
+    "배당", "자사주", "합병", "인수", "무상증자", "최대실적",
 }
 
 CATALYST_RISK_KEYWORDS = {
     "bankruptcy", "cuts", "cut", "downgrade", "downgraded", "fraud", "lawsuit",
     "miss", "misses", "probe", "recall", "investigation", "warning", "slump",
     "plunge", "decline", "halts", "sanction", "fine", "layoff",
+    "소송", "횡령", "배임", "상장폐지", "관리종목", "감사의견", "영업정지",
+    "투자주의", "불성실공시", "실적악화", "적자전환", "감자", "유상증자",
+    "전환사채", "신주인수권부사채", "cb", "bw",
 }
 
 CATALYST_CLASS_POSITIVE = "POSITIVE_REVALUATION"
@@ -1388,9 +1408,21 @@ def _fetch_catalyst_news(ticker: str, country: str, lookback_days: int, max_item
     """SCOUT 촉매 확인용 뉴스 수집.
 
     v2 범위: FMP가 있으면 미국 후보는 FMP 뉴스/등급/실적을 먼저 보고,
-    실패하거나 비어 있으면 기존 Finnhub 뉴스로 폴백한다. 비미국은 별도 소스가
-    붙을 때까지 점수에 영향을 주지 않는다.
+    실패하거나 비어 있으면 기존 Finnhub 뉴스로 폴백한다. KR 후보는 DART
+    공식 공시검색을 촉매 backbone으로 쓴다.
     """
+    if country == "KR":
+        try:
+            from src.collectors.kr_dart import fetch_kr_catalyst_news
+            return fetch_kr_catalyst_news(
+                ticker=ticker,
+                lookback_days=lookback_days,
+                max_items=max_items,
+            )
+        except Exception as e:
+            logger.debug("[scout catalyst] %s DART 촉매 수집 실패: %s", ticker, e)
+            return "dart_error", []
+
     try:
         from src.collectors.fmp import fetch_catalyst_news as fetch_fmp_catalyst_news
         fmp_status, fmp_news = fetch_fmp_catalyst_news(

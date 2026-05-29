@@ -360,13 +360,17 @@ OHLCV:
 
 Quality / Catalyst:
 
-- not as complete as US.
-- KR-specific DART / Naver deeper catalyst quality is not fully connected yet.
+- DART OpenAPI is the KR quality/catalyst backbone.
+- Quality uses DART periodic financial statements when `DART_API_KEY` is available.
+- Catalyst uses DART disclosure search when `DART_API_KEY` is available.
+- KR valuation/growth fields are annual and derived approximations, not one-to-one equivalents of US FMP forward metrics.
+- KR PE is derived from universe market cap in USD converted back to KRW with the same Yahoo USD/KRW source used by REGIME, then divided by positive DART net income. If FX or net income is missing/non-positive, PE remains unknown.
+- pykrx / KRX / Naver scraping sources are not the KR backbone because GitHub Actions data-center IPs can be blocked. They may remain best-effort universe fallbacks only.
 
 Status:
 
 - Operational for price/OHLCV gate and lanes.
-- Quality/catalyst confidence is weaker than US.
+- Quality/catalyst can be populated from DART, but confidence is still lower than US until performance ledger evidence proves comparability.
 
 ### JP
 
@@ -417,6 +421,7 @@ Important variables:
 - `GPT_TEMPERATURE`: LLM temperature.
 - `FMP_API_KEY`: preferred US quality/catalyst data.
 - `FINNHUB_API_KEY`: fallback news source.
+- `DART_API_KEY`: preferred KR quality/catalyst data.
 - Google service account / Sheets credentials as configured in workflow secrets.
 
 Rule:
