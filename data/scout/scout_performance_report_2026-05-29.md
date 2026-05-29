@@ -32,16 +32,16 @@
 
 ### Dropped by LLM
 - 2026-05-28 IRDM PENDING D5=None D20=None MFE=1.93 MAE=-1.58 lane=strength:STRONG_PASS
-- 2026-05-29 INTC PENDING D5=None D20=None MFE=None MAE=None lane=strength:STRONG_PASS
+- 2026-05-29 MYRG PENDING D5=None D20=None MFE=None MAE=None lane=strength:STRONG_PASS
 
 ### Added by LLM
 - 2026-05-28 ELV PENDING D5=None D20=None MFE=0.15 MAE=-1.4 lane=strength:STRONG_PASS
-- 2026-05-29 MPC PENDING D5=None D20=None MFE=None MAE=None lane=strength:STRONG_PASS
+- 2026-05-29 VMI PENDING D5=None D20=None MFE=None MAE=None lane=strength:STRONG_PASS
 
 ## Recent Candidate Records
-- 2026-05-28 AMZN PENDING D20=None MFE=0.16 MAE=-2.39 bought=False lane=strength catalyst=POSITIVE_REVALUATION
+- 2026-05-28 AMZN PENDING D20=None MFE=0.18 MAE=-2.39 bought=False lane=strength catalyst=POSITIVE_REVALUATION
 - 2026-05-28 AVGO PENDING D20=None MFE=0.73 MAE=-2.95 bought=False lane=strength catalyst=POSITIVE_REVALUATION
 - 2026-05-28 ELV PENDING D20=None MFE=0.15 MAE=-1.4 bought=False lane=strength catalyst=
-- 2026-05-29 GOOG PENDING D20=None MFE=None MAE=None bought=False lane=strength catalyst=POSITIVE_REVALUATION
-- 2026-05-29 BATRK PENDING D20=None MFE=None MAE=None bought=False lane=strength catalyst=NOISE
-- 2026-05-29 MPC PENDING D20=None MFE=None MAE=None bought=False lane=strength catalyst=
+- 2026-05-29 DTM PENDING D20=None MFE=None MAE=None bought=False lane=strength catalyst=POSITIVE_REVALUATION
+- 2026-05-29 WCC PENDING D20=None MFE=None MAE=None bought=False lane=strength catalyst=POSITIVE_REVALUATION
+- 2026-05-29 VMI PENDING D20=None MFE=None MAE=None bought=False lane=strength catalyst=POSITIVE_REVALUATION
