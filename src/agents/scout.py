@@ -2349,10 +2349,13 @@ def _summarize_radar(
                 "threshold": int(threshold),
             })
 
+    production_gate = (((filter_audit or {}).get("top3_selection_audit") or {}).get("production_gate") or {})
     if candidates:
         no_candidate_reason = ""
     elif not radar_pool:
         no_candidate_reason = "관찰풀 기준을 넘은 종목이 없음"
+    elif production_gate.get("enabled"):
+        no_candidate_reason = "확실 후보(Tier A + 품질 확인)가 없어 추천하지 않음"
     else:
         no_candidate_reason = "관찰풀은 있으나 최종 보고 기준 미달"
 
@@ -2939,6 +2942,7 @@ def _top3_llm_prompts(
     market_context: dict,
     rule_candidates: list[dict],
     review_pool: list[dict],
+    additions_allowed: bool = False,
 ) -> tuple[str, str]:
     system = (
         "You are RONIN SCOUT's final Top3 review auditor. "
@@ -2946,18 +2950,33 @@ def _top3_llm_prompts(
         "Use only the provided JSON facts. "
         "Return exactly one JSON object. No markdown. No code fences."
     )
+    rules = [
+        "RISK_CATALYST or top3_excluded candidates cannot be selected.",
+        "Avoid overextended chase candidates unless catalyst and price/volume reaction are both strong.",
+        "Prefer useful lane balance when candidate quality is similar.",
+        "Every selected ticker needs a concise reason and remaining risk.",
+    ]
+    if additions_allowed:
+        rules.extend([
+            "Select exactly 3 tickers if 3 valid candidates exist.",
+            "If you replace a rule-based pick, list it in overrides with dropped_ticker, added_ticker, reason.",
+        ])
+        task = "Select final Top3 candidates from candidate_pool. You may keep or override the rule_based_top3."
+    else:
+        rules.extend([
+            "Select only from rule_based_top3. Never add or replace a ticker from candidate_pool.",
+            "You may reorder or drop a rule-based ticker when its remaining risk is unacceptable.",
+            "Do not fill an empty slot. Zero rule-based candidates means no LLM selection.",
+            "The overrides array must remain empty because additions are disabled.",
+        ])
+        task = "Review only rule_based_top3. Reorder or reduce it without adding any ticker."
+
     user_payload = {
         "schema_version": "scout_top3_llm_prompt_v0_1",
         "date": today,
-        "task": "Select final Top3 candidates from candidate_pool. You may keep or override the rule_based_top3.",
-        "rules": [
-            "RISK_CATALYST or top3_excluded candidates cannot be selected.",
-            "Select exactly 3 tickers if 3 valid candidates exist.",
-            "Avoid overextended chase candidates unless catalyst and price/volume reaction are both strong.",
-            "Prefer useful lane balance when candidate quality is similar.",
-            "Every selected ticker needs a concise reason and remaining risk.",
-            "If you replace a rule-based pick, list it in overrides with dropped_ticker, added_ticker, reason.",
-        ],
+        "task": task,
+        "llm_additions_allowed": bool(additions_allowed),
+        "rules": rules,
         "required_output_schema": {
             "schema_version": "scout_top3_llm_review_v0_1",
             "selected_top3": [{"rank": 1, "ticker": "TICKER", "reason": "why selected", "risk": "remaining risk"}],
@@ -2972,7 +2991,14 @@ def _top3_llm_prompts(
     return system, json.dumps(_json_safe_value(user_payload), ensure_ascii=False)
 
 
-def _fallback_llm_review_audit(status: str, rule_candidates: list[dict], review_pool: list[dict], reason: str = "", raw: str = "") -> dict:
+def _fallback_llm_review_audit(
+    status: str,
+    rule_candidates: list[dict],
+    review_pool: list[dict],
+    reason: str = "",
+    raw: str = "",
+    additions_allowed: bool = False,
+) -> dict:
     return {
         "enabled": True,
         "status": status,
@@ -2981,6 +3007,7 @@ def _fallback_llm_review_audit(status: str, rule_candidates: list[dict], review_
         "rule_based_top3": _ticker_set(rule_candidates),
         "final_top3": _ticker_set(rule_candidates),
         "llm_override": False,
+        "llm_additions_allowed": bool(additions_allowed),
         "overrides": [],
         "rejected": [],
         "fallback_reason": reason,
@@ -3005,19 +3032,32 @@ def _apply_llm_top3_review(
             "rule_based_top3": _ticker_set(rule_candidates),
             "final_top3": _ticker_set(rule_candidates),
             "llm_override": False,
+            "llm_additions_allowed": False,
         }
+    additions_allowed = bool(llm_cfg.get("additions_allowed", False))
     limit = int(llm_cfg.get("candidate_limit", 12) or 12)
-    review_pool = _build_llm_review_pool(radar_pool, rule_candidates, watchlist_candidates, limit=limit)
+    if additions_allowed:
+        review_pool = _build_llm_review_pool(radar_pool, rule_candidates, watchlist_candidates, limit=limit)
+    else:
+        review_pool = list(rule_candidates)[:max(0, limit)]
     if len(rule_candidates) < 1 or len(review_pool) < 1:
-        return rule_candidates, _fallback_llm_review_audit("fallback_empty_pool", rule_candidates, review_pool, "empty_pool")
+        return rule_candidates, _fallback_llm_review_audit(
+            "fallback_empty_pool", rule_candidates, review_pool, "empty_pool", additions_allowed=additions_allowed
+        )
     if llm_call is None or not os.environ.get("GPT_API_KEY"):
-        return rule_candidates, _fallback_llm_review_audit("fallback_no_llm_key", rule_candidates, review_pool, "GPT_API_KEY_missing")
+        return rule_candidates, _fallback_llm_review_audit(
+            "fallback_no_llm_key", rule_candidates, review_pool, "GPT_API_KEY_missing", additions_allowed=additions_allowed
+        )
 
-    system, user = _top3_llm_prompts(today, market_context, rule_candidates, review_pool)
+    system, user = _top3_llm_prompts(
+        today, market_context, rule_candidates, review_pool, additions_allowed=additions_allowed
+    )
     raw = llm_call(system, user, max_tokens=int(llm_cfg.get("max_tokens", 1200) or 1200))
     data = _parse_llm_json(raw)
     if not data:
-        return rule_candidates, _fallback_llm_review_audit("fallback_parse_failed", rule_candidates, review_pool, "json_parse_failed", raw or "")
+        return rule_candidates, _fallback_llm_review_audit(
+            "fallback_parse_failed", rule_candidates, review_pool, "json_parse_failed", raw or "", additions_allowed
+        )
 
     by_ticker = {
         _theme_lookup_key(str(item.get("ticker", "") or "")): item
@@ -3026,7 +3066,9 @@ def _apply_llm_top3_review(
     }
     selected_rows = data.get("selected_top3") or []
     if not isinstance(selected_rows, list) or not selected_rows:
-        return rule_candidates, _fallback_llm_review_audit("fallback_schema_failed", rule_candidates, review_pool, "selected_top3_missing", raw or "")
+        return rule_candidates, _fallback_llm_review_audit(
+            "fallback_schema_failed", rule_candidates, review_pool, "selected_top3_missing", raw or "", additions_allowed
+        )
 
     max_picks = len(rule_candidates) if rule_candidates else int((selection_cfg or {}).get("max_picks", 3) or 3)
     final: list[dict] = []
@@ -3057,20 +3099,22 @@ def _apply_llm_top3_review(
         if len(final) >= max_picks:
             break
 
-    if invalid_reason or len(final) < min(max_picks, len(review_pool)):
+    not_enough_selected = not final if not additions_allowed else len(final) < min(max_picks, len(review_pool))
+    if invalid_reason or not_enough_selected:
         return rule_candidates, _fallback_llm_review_audit(
             "fallback_validation_failed",
             rule_candidates,
             review_pool,
             invalid_reason or "not_enough_valid_selected",
             raw or "",
+            additions_allowed,
         )
 
     rule_tickers = _ticker_set(rule_candidates)
     final_tickers = _ticker_set(final)
     override = final_tickers != rule_tickers
     rejected_rows = data.get("rejected") if isinstance(data.get("rejected"), list) else []
-    overrides = data.get("overrides") if isinstance(data.get("overrides"), list) else []
+    overrides = data.get("overrides") if additions_allowed and isinstance(data.get("overrides"), list) else []
 
     dropped = set(rule_tickers) - set(final_tickers)
     added = set(final_tickers) - set(rule_tickers)
@@ -3121,6 +3165,7 @@ def _apply_llm_top3_review(
         "rule_based_top3": rule_tickers,
         "final_top3": final_tickers,
         "llm_override": bool(override),
+        "llm_additions_allowed": bool(additions_allowed),
         "selected_top3": [
             {
                 "rank": idx,
@@ -3137,6 +3182,37 @@ def _apply_llm_top3_review(
         "prompt_version": "scout_top3_llm_prompt_v0_1",
         "raw_excerpt": str(raw or "")[:500],
     })
+
+
+def _production_gate_rejection_reason(item: dict, selection: dict, selection_cfg: dict) -> str:
+    cfg = ((selection_cfg or {}).get("production_gate") or {})
+    if not bool(cfg.get("enabled", False)):
+        return ""
+
+    tier = str(selection.get("tier", "") or "").upper()
+    allowed_tiers = {str(value).upper() for value in (cfg.get("allowed_tiers") or ["A"])}
+    if tier not in allowed_tiers:
+        return "tier_not_allowed"
+
+    allowed_quality = {str(value).upper() for value in (cfg.get("quality_statuses") or [])}
+    quality_status = str((item.get("quality_auditor") or {}).get("status", "") or "").upper()
+    if allowed_quality and quality_status not in allowed_quality:
+        return "quality_not_confirmed"
+
+    excluded_quality_flags = {str(value).lower() for value in (cfg.get("excluded_quality_flags") or [])}
+    quality_flags = {str(value).lower() for value in (item.get("quality_flags") or [])}
+    if quality_flags & excluded_quality_flags:
+        return "quality_risk"
+
+    excluded_factor_negatives = {
+        str(value).lower() for value in (cfg.get("excluded_factor_negatives") or [])
+    }
+    factor_negatives = {
+        str(value).lower() for value in ((item.get("factor_context") or {}).get("negatives") or [])
+    }
+    if factor_negatives & excluded_factor_negatives:
+        return "factor_risk"
+    return ""
 
 
 def _select_top3_candidates(
@@ -3156,8 +3232,9 @@ def _select_top3_candidates(
     """
     enabled = bool((selection_cfg or {}).get("enabled", True))
     max_picks = int((selection_cfg or {}).get("max_picks", max_picks) or max_picks)
-    max_picks = max(1, max_picks)
+    max_picks = max(0, max_picks)
     tier_counter = Counter()
+    production_gate_rejections = Counter()
     review_pool = []
     selection_pool = []
     quality_gate_rejected = 0
@@ -3171,6 +3248,18 @@ def _select_top3_candidates(
         if not enabled:
             continue
         if str(selection.get("tier", "")) not in {"A", "B", "C", "D"}:
+            continue
+        production_gate_enabled = bool(
+            (((selection_cfg or {}).get("production_gate") or {}).get("enabled", False))
+        )
+        production_rejection = _production_gate_rejection_reason(item, selection, selection_cfg)
+        production_gate_passed = production_gate_enabled and not bool(production_rejection)
+        selection["production_gate_passed"] = production_gate_passed
+        selection["production_gate_rejection_reason"] = production_rejection
+        item["production_gate_passed"] = production_gate_passed
+        item["production_gate_rejection_reason"] = production_rejection
+        if production_rejection:
+            production_gate_rejections[production_rejection] += 1
             continue
         if not quality_gate_fn(item):
             quality_gate_rejected += 1
@@ -3194,6 +3283,10 @@ def _select_top3_candidates(
         used_lanes: set[str] = set()
         tier_order = list((selection_cfg or {}).get("tier_order", []) or ["A", "B", "C", "D"])
         tier_order = [str(t) for t in tier_order if str(t) in {"A", "B", "C", "D"}] or ["A", "B", "C", "D"]
+        production_cfg = ((selection_cfg or {}).get("production_gate") or {})
+        if bool(production_cfg.get("enabled", False)):
+            allowed_tiers = {str(value).upper() for value in (production_cfg.get("allowed_tiers") or ["A"])}
+            tier_order = [tier for tier in tier_order if tier in allowed_tiers]
         for tier in tier_order:
             while len(selected) < max_picks:
                 tier_items = [item for item in remaining if (item.get("top3_selection") or {}).get("tier") == tier]
@@ -3221,6 +3314,14 @@ def _select_top3_candidates(
         "eligible_before_dedup": int(len(selection_pool)),
         "selection_pool_before_dedup": int(len(selection_pool)),
         "quality_gate_rejected": int(quality_gate_rejected),
+        "production_gate": {
+            "enabled": bool(((selection_cfg or {}).get("production_gate") or {}).get("enabled", False)),
+            "allowed_tiers": list(((selection_cfg or {}).get("production_gate") or {}).get("allowed_tiers", []) or []),
+            "backfill": bool(((selection_cfg or {}).get("production_gate") or {}).get("backfill", False)),
+            "eligible": int(len(selection_pool)),
+            "rejection_counts": {str(k): int(v) for k, v in production_gate_rejections.items()},
+            "no_signal": not bool(selected),
+        },
         "selected": int(len(selected)),
         "tier_counts": {str(k): int(v) for k, v in tier_counter.items()},
         "selected_tiers": [str((item.get("top3_selection") or {}).get("tier", "")) for item in selected],

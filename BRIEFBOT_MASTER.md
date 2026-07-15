@@ -89,6 +89,7 @@ Status as of 2026-07-15:
 - Optional LLM Top3 review is implemented with structured JSON, validation, and rule-based fallback.
 - Broad Radar Pool remains intentionally wide for learning. Tightness is applied at Top3/WATCHLIST first.
 - Step4 precision shadow is implemented as a non-user-visible comparison lane. It does not replace Telegram, Sheets, cooldown, or final Top3.
+- Step6 production recommendation gate allows 0 to 3 live recommendations. Tier B/C/D candidates remain WATCHLIST-only and are never used as slot backfill.
 
 ## SCOUT Candidate Pipeline
 
@@ -178,7 +179,10 @@ Current settings:
 - max picks: `3`
 - watchlist size: `5`
 - RISK_CATALYST review pool: `true`
-- tier order: `A`, `B`, `C`, `D`
+- production gate allowed tier: `A`
+- production gate requires quality support and excludes overextension, weak liquidity, extreme volatility, and chasing flags
+- zero recommendations are valid; backfill is disabled
+- tier order remains descriptive for Radar/WATCHLIST ordering: `A`, `B`, `C`, `D`
 
 Ranking hierarchy:
 
@@ -205,15 +209,14 @@ Purpose:
 
 Input scope:
 
-1. Rule-based Top3.
-2. Rule-based next WATCHLIST candidates.
-3. Best representative from each lane if not already included.
-4. RISK_CATALYST summary only; RISK_CATALYST candidates are not selectable.
+1. Rule-based production-gate candidates only.
+2. WATCHLIST, lane representatives, and RISK_CATALYST candidates are not selectable by LLM.
 
 Current input limit:
 
 - `candidate_limit: 12`
 - `max_tokens: 1200`
+- `additions_allowed: false`
 
 Required LLM output:
 
@@ -280,6 +283,13 @@ Fallback behavior:
 - `llm_override` is `false`.
 - raw response excerpt is saved for debugging with length limit.
 
+Live LLM boundary:
+
+- LLM may reorder or reduce the rule-based production candidates.
+- LLM cannot add or replace a ticker from WATCHLIST or Radar Pool.
+- Empty production-gate output bypasses LLM selection and remains an empty recommendation day.
+- Telegram labels WATCHLIST output as `관찰 레이더 (추천 아님)`.
+
 ## SCOUT Precision Shadow
 
 Purpose:
@@ -340,6 +350,7 @@ Tracks:
   - `WATCH`
   - `NEUTRAL`
   - `PENDING`
+- Telegram combines `FAILED_FAST` and `FALSE_POSITIVE` into a human-readable failure total while preserving both raw ledger categories.
 - actual buy status separately from candidate performance.
 - lane/auditor aggregate results.
 - LLM override fields for later comparison.

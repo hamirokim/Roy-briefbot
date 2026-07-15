@@ -40,7 +40,26 @@ def _has_real_catalyst(text: str) -> bool:
         return False
     if "촉매 데이터 미연결" in cleaned:
         return False
+    lowered = cleaned.lower()
+    if any(token in lowered for token in ["actual none", "actual null", "actual n/a", "estimate none", "estimate null"]):
+        return False
     return True
+
+
+def _candidate_catalyst_headline(candidate: dict) -> str:
+    catalyst = candidate.get("catalyst_context", {}) or {}
+    if catalyst.get("status") != "found":
+        return ""
+    news = catalyst.get("news", []) or []
+    preferred = [
+        item for item in news
+        if str(item.get("classification", "") or "") == "POSITIVE_REVALUATION"
+    ]
+    for item in preferred + news:
+        headline = str(item.get("headline", "") or "").strip()
+        if _has_real_catalyst(headline):
+            return headline[:90]
+    return ""
 
 
 # ═══════════════════════════════════════════════════════════
@@ -227,8 +246,12 @@ def _candidate_judgment(candidate: dict) -> dict:
         "empty_result",
     } or cat_status in {"no_key", "non_us", "error", "bad_response", "http_400", "http_401", "http_429", "http_500"}
     hard_risk = bool(quality_flags & {"overextended_20d", "low_liquidity_buffer"})
+    production_passed = bool((candidate.get("top3_selection") or {}).get("production_gate_passed"))
 
-    if score >= 3.0 and signal_count >= 3 and not data_problem and not hard_risk and star in {"★★", "★★★"}:
+    if production_passed and not data_problem and not hard_risk:
+        label = "강함"
+        reason = "실전 추천 게이트를 통과한 강한 가격 구조와 품질 확인 후보"
+    elif score >= 3.0 and signal_count >= 3 and not data_problem and not hard_risk and star in {"★★", "★★★"}:
         label = "강함"
         reason = "신호가 여러 개 겹치고, 확인 데이터도 크게 비지 않음"
     elif hard_risk:
@@ -280,7 +303,14 @@ def _format_llm_review_line(scout_out: dict) -> str:
     if not status:
         return ""
 
-    override = "뒤집음" if llm_review.get("llm_override") else "유지"
+    rule_based = llm_review.get("rule_based_top3") or top3.get("rule_based_top3") or []
+    if not rule_based and status == "fallback_empty_pool":
+        return "LLM 재심사: 추천 기준 통과 후보 없음"
+
+    additions_allowed = bool(llm_review.get("llm_additions_allowed", False))
+    override = "조정" if llm_review.get("llm_override") else "유지"
+    if not additions_allowed:
+        override = "축소/재정렬" if llm_review.get("llm_override") else "유지"
     final_top3 = (
         llm_review.get("final_top3")
         or top3.get("final_top3")
@@ -867,6 +897,14 @@ class DigestAgent(BaseAgent):
             lines.append(f"<b>📅 어제 발표</b>")
             for evt in yesterday[:2]:
                 lines.append(f"• {evt.get('name')}")
+            source_coverage = macro.get("source_coverage", {}) or {}
+            if source_coverage.get("status") == "DEGRADED":
+                lines.append(
+                    "<i>데이터 주의: "
+                    f"FRED {source_coverage.get('fred_collected', 0)}/{source_coverage.get('fred_requested', 0)}, "
+                    f"시장반응 {source_coverage.get('market_collected', 0)}/{source_coverage.get('market_requested', 0)} 수집 · "
+                    "해석 신뢰도 하향</i>"
+                )
             if interp:
                 lines.append(f"<i>{interp[:400]}</i>")
             lines.append("")
@@ -898,7 +936,7 @@ class DigestAgent(BaseAgent):
         if candidates:
             judgment_summary = _candidate_judgment_summary(candidates)
             counts = judgment_summary["counts"]
-            lines.append(f"<b>🎯 신규 후보 판단</b>")
+            lines.append(f"<b>🎯 신규 추천 판단</b>")
             lines.append(
                 f"{judgment_summary['conclusion']} — "
                 f"강함 {counts.get('강함', 0)} / 관찰 {counts.get('관찰', 0)} / 보류 {counts.get('보류', 0)}"
@@ -927,15 +965,13 @@ class DigestAgent(BaseAgent):
                         lines.append(f"  데이터: <i>{coverage_text[:160]}</i>")
                 except Exception as e:
                     self.log.debug("[digest] 데이터 커버리지 포맷 실패: %s", e)
-                catalyst = c.get("catalyst_context", {}) or {}
-                if catalyst.get("status") == "found" and catalyst.get("news"):
-                    headline = (catalyst.get("news", [{}])[0].get("headline", "") or "")[:90]
-                    if headline:
-                        lines.append(f"  촉매: <i>{headline}</i>")
+                headline = _candidate_catalyst_headline(c)
+                if headline:
+                    lines.append(f"  촉매: <i>{headline}</i>")
             lines.append("")
         else:
             reason = radar_summary.get("no_candidate_reason") or "최종 보고 기준 미달"
-            lines.append(f"<b>🎯 신규 후보</b> 오늘 없음")
+            lines.append(f"<b>🎯 신규 추천</b> 오늘 없음")
             lines.append(f"<i>{reason}</i>")
             if radar_count:
                 lines.append(f"내부 관찰풀은 {radar_count}개 쌓임")
@@ -947,7 +983,7 @@ class DigestAgent(BaseAgent):
                 lines.append(f"가장 많이 나온 조짐: {_SIGNAL_KO.get(sig_name, sig_name)} {count}개")
             if watchlist:
                 lines.append("")
-                lines.append("<b>👀 대기 후보</b>")
+                lines.append("<b>👀 관찰 레이더 (추천 아님)</b>")
                 for w in watchlist[:3]:
                     flag = _COUNTRY_FLAG.get(w.get("country", ""), "·")
                     sig_text = _format_signals_short(w.get("signals", {}) or {})
