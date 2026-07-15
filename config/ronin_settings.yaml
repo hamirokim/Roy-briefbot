@@ -150,6 +150,15 @@ scout:
       enabled: true                    # 규칙 기반 Top3를 LLM이 최종 재심사. 실패 시 규칙 기반 결과 유지
       candidate_limit: 12              # 규칙 Top3 + WATCHLIST + 레인별 대표만 투입
       max_tokens: 1200
+    precision_shadow:
+      enabled: true                    # Step3 가설의 미래 검증 전용. Telegram/Sheets/final Top3에는 영향 없음
+      policy_id: "us_precision_v1"
+      max_picks: 3                     # 0~3개 허용, 기준 미달 시 빈자리를 채우지 않음
+      allowed_countries: ["US"]
+      allowed_tiers: ["A"]
+      theme_statuses: ["SUPPORT", "STRONG_SUPPORT"]
+      quality_statuses: ["QUALITY_SUPPORT", "STRONG_QUALITY"]
+      excluded_factor_negatives: ["volatility_extreme", "chasing_extreme", "chasing_hot"]
     tier_order: ["A", "B", "C", "D"]
     hierarchy:
       - "lane_strength"

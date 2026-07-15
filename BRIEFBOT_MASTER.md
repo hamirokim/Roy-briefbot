@@ -1,6 +1,6 @@
 # Roy-briefbot Master
 
-Last updated: 2026-05-29
+Last updated: 2026-07-15
 
 This is the single source of truth for Roy-briefbot. Codex and Claude should read this file before changing the bot.
 
@@ -74,7 +74,7 @@ Telegram + Journal Sheets + state.json
 
 ## Current Implementation Status
 
-Status as of 2026-05-28:
+Status as of 2026-07-15:
 
 - GitHub Actions scheduled daily run is active.
 - SCOUT, GUARD, REGIME, M6, DIGEST workflow is implemented.
@@ -88,6 +88,7 @@ Status as of 2026-05-28:
 - Top3 selection is tier-based. Legacy `brief_min_score` / `signals_required` final-candidate gates are removed.
 - Optional LLM Top3 review is implemented with structured JSON, validation, and rule-based fallback.
 - Broad Radar Pool remains intentionally wide for learning. Tightness is applied at Top3/WATCHLIST first.
+- Step4 precision shadow is implemented as a non-user-visible comparison lane. It does not replace Telegram, Sheets, cooldown, or final Top3.
 
 ## SCOUT Candidate Pipeline
 
@@ -279,13 +280,49 @@ Fallback behavior:
 - `llm_override` is `false`.
 - raw response excerpt is saved for debugging with length limit.
 
+## SCOUT Precision Shadow
+
+Purpose:
+
+- Test the Step3 US precision hypothesis on future unseen data before changing live recommendations.
+- Treat zero candidates as a valid result. The shadow lane never fills an empty slot with a weaker candidate.
+- Keep the live Top3, Telegram, Sheets, cooldown, and LLM review behavior unchanged during shadow validation.
+
+Current policy id:
+
+- `us_precision_v1`
+
+Frozen shadow criteria:
+
+- country is `US`;
+- Top3 tier is `A`;
+- theme/industry status is `SUPPORT` or `STRONG_SUPPORT`;
+- quality status is `QUALITY_SUPPORT` or `STRONG_QUALITY`;
+- factor negatives do not include `volatility_extreme`, `chasing_extreme`, or `chasing_hot`;
+- `RISK_CATALYST` and all normal Top3 exclusions remain excluded;
+- maximum 3 picks, with no minimum count and no backfill.
+
+LLM boundary:
+
+- LLM cannot add, replace, or reorder precision shadow candidates.
+- Shadow candidates are selected only from frozen rule fields already present in the Radar Pool.
+- `llm_additions_allowed` must be stored as `false` in the shadow audit and snapshot payload.
+
+Persistence:
+
+- Recommendation snapshots use schema `scout_recommendation_snapshot_v0_3`.
+- Top-level `generated_at`, `timezone`, and `data_as_of` preserve the decision-time context.
+- Top-level `shadow_policies.us_precision_v1` stores the full frozen candidate objects and audit.
+- `top3_selection_audit.precision_shadow` stores compact counts and selected tickers.
+- Shadow output is file-only. It must not appear in Telegram or Journal Sheets until Roy explicitly approves a production switch.
+
 ## Performance Ledger
 
 Source: `src/modules/scout_performance.py`
 
 Current schema:
 
-- `scout_performance_v0_2`
+- `scout_performance_v0_3`
 
 Tracks:
 
@@ -311,6 +348,9 @@ Tracks:
   - rule-based candidates dropped by LLM are included in a separate `llm_dropped` bucket even when full `radar_top` tracking is disabled;
   - candidate headline counts and aggregates must use only `candidate` rows, so comparison rows do not distort normal SCOUT win/loss statistics;
   - reports should show dropped vs added candidates side by side so LLM override quality can be checked after D1/D3/D5/D10/D20 data accumulates.
+- Precision shadow candidates are loaded from `shadow_policies` into separate `shadow:<policy_id>` buckets.
+- Shadow rows are reported separately and never change normal candidate headline counts or aggregates.
+- The runtime performance ledger still uses its legacy recommendation-date close convention. Live-switch decisions must use the Step3 corrected first-executable-session replay until that label contract is migrated separately.
 
 Core purpose:
 
@@ -430,29 +470,26 @@ Rule:
 
 ## Current Next Work Order
 
-Priority 1: Run the next daily brief and inspect the LLM Top3 audit.
+Priority 1: Run future daily briefs and inspect the US precision shadow ledger.
 
-- Confirm `top3_selection_audit.llm_review.status`.
-- Confirm `rule_based_top3` and `final_top3`.
-- Confirm Telegram audit line shows LLM review status.
-- Confirm recommendation snapshot stores LLM fields.
+- Confirm snapshots contain `generated_at`, `timezone`, `data_as_of`, and `shadow_policies.us_precision_v1`.
+- Confirm the shadow count can be 0, 1, 2, or 3 and no backfill occurs.
+- Confirm Telegram, Sheets, cooldown, and final Top3 remain unchanged.
+- Compare future D5/D10 net return and benchmark-relative alpha using the Step3 corrected replay method.
 
-Priority 2: Validate whether LLM overrides improve results.
+Priority 2: Validate whether precision shadow survives unseen data.
 
-- After enough samples, compare:
-  - rule-based dropped names,
-  - LLM added names,
-  - D5/D10/D20 return,
-  - MFE/MAE,
-  - FALSE_POSITIVE rate.
-- `llm_dropped` comparison rows must be present in the performance ledger without changing candidate headline counts.
+- Use at least 20 independent future briefing dates as a temporary governance checkpoint, not as a final threshold.
+- Require positive cost-adjusted D5/D10 mean and benchmark-relative alpha with date-clustered uncertainty checks before proposing a live switch.
+- Continue storing LLM override comparison rows, but do not use LLM to alter precision shadow.
 
-Priority 3: Improve KR data depth.
+Priority 3: Keep KR outside precision shadow and redesign it separately.
 
 - Add or harden KR quality/catalyst support using DART / Naver free sources.
+- Build a KR-specific regime, mapping, and benchmark policy before replaying KR recommendations.
 - Do not widen JP/CN operational gate until source quality is validated.
 
-Priority 4: Tune Top3 criteria only after data accumulates.
+Priority 4: Tune or replace live Top3 only after shadow evidence accumulates.
 
 - Do not tighten common gate immediately.
 - First adjust lane-level penalties if repeated false positives appear.
