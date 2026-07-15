@@ -1,6 +1,6 @@
 {
   "date": "2026-07-15",
-  "schema_version": "scout_performance_v0_2",
+  "schema_version": "scout_performance_v0_3",
   "lookback_days": 45,
   "followup_days": [
     1,
@@ -11,22 +11,22 @@
   ],
   "summary": {
     "candidate_count": 117,
-    "evaluated_count": 114,
+    "evaluated_count": 113,
     "actually_bought_count": 0,
     "verdict_counts": {
-      "WINNER": 24,
+      "WINNER": 23,
       "FAILED_FAST": 56,
       "NEUTRAL": 2,
-      "WATCH": 14,
-      "PENDING": 18
+      "WATCH": 15,
+      "PENDING": 17
     },
-    "avg_d20_return_pct": -3.46,
+    "avg_d20_return_pct": -4.7,
     "aggregates": {
       "by_lane": [
         {
           "key": "strength",
           "count": 51,
-          "avg_d20_return_pct": 1.79,
+          "avg_d20_return_pct": 0.94,
           "winner_rate": 0.275,
           "failed_fast_rate": 0.588,
           "actually_bought_count": 0
@@ -34,35 +34,35 @@
         {
           "key": "pullback",
           "count": 37,
-          "avg_d20_return_pct": -8.99,
-          "winner_rate": 0.135,
-          "failed_fast_rate": 0.568,
+          "avg_d20_return_pct": -10.99,
+          "winner_rate": 0.108,
+          "failed_fast_rate": 0.541,
           "actually_bought_count": 0
         },
         {
           "key": "left_side",
-          "count": 26,
+          "count": 25,
           "avg_d20_return_pct": -10.85,
-          "winner_rate": 0.192,
-          "failed_fast_rate": 0.192,
+          "winner_rate": 0.2,
+          "failed_fast_rate": 0.24,
           "actually_bought_count": 0
         }
       ],
       "by_lane_status": [
         {
           "key": "STRONG_PASS",
-          "count": 67,
-          "avg_d20_return_pct": -0.93,
-          "winner_rate": 0.269,
-          "failed_fast_rate": 0.582,
+          "count": 66,
+          "avg_d20_return_pct": -2.57,
+          "winner_rate": 0.258,
+          "failed_fast_rate": 0.591,
           "actually_bought_count": 0
         },
         {
           "key": "PASS",
-          "count": 20,
+          "count": 21,
           "avg_d20_return_pct": -21.3,
-          "winner_rate": 0.05,
-          "failed_fast_rate": 0.55,
+          "winner_rate": 0.048,
+          "failed_fast_rate": 0.524,
           "actually_bought_count": 0
         },
         {
@@ -70,15 +70,15 @@
           "count": 19,
           "avg_d20_return_pct": 1.15,
           "winner_rate": 0.158,
-          "failed_fast_rate": 0.211,
+          "failed_fast_rate": 0.263,
           "actually_bought_count": 0
         },
         {
           "key": "STAGE2_STRONG_PASS",
-          "count": 6,
+          "count": 5,
           "avg_d20_return_pct": -16.86,
-          "winner_rate": 0.333,
-          "failed_fast_rate": 0.167,
+          "winner_rate": 0.4,
+          "failed_fast_rate": 0.2,
           "actually_bought_count": 0
         },
         {
@@ -86,7 +86,7 @@
           "count": 1,
           "avg_d20_return_pct": null,
           "winner_rate": 0.0,
-          "failed_fast_rate": 1.0,
+          "failed_fast_rate": 0.0,
           "actually_bought_count": 0
         },
         {
@@ -102,17 +102,17 @@
         {
           "key": "SUPPORT",
           "count": 51,
-          "avg_d20_return_pct": 0.62,
+          "avg_d20_return_pct": 0.39,
           "winner_rate": 0.333,
-          "failed_fast_rate": 0.353,
+          "failed_fast_rate": 0.333,
           "actually_bought_count": 0
         },
         {
           "key": "NO_MAPPING",
-          "count": 36,
-          "avg_d20_return_pct": -11.46,
-          "winner_rate": 0.056,
-          "failed_fast_rate": 0.806,
+          "count": 37,
+          "avg_d20_return_pct": -12.42,
+          "winner_rate": 0.054,
+          "failed_fast_rate": 0.811,
           "actually_bought_count": 0
         },
         {
@@ -125,15 +125,15 @@
         },
         {
           "key": "SECTOR_UNSUPPORTED",
-          "count": 9,
+          "count": 8,
           "avg_d20_return_pct": null,
-          "winner_rate": 0.222,
-          "failed_fast_rate": 0.111,
+          "winner_rate": 0.125,
+          "failed_fast_rate": 0.125,
           "actually_bought_count": 0
         },
         {
           "key": "SECTOR_NEUTRAL",
-          "count": 2,
+          "count": 1,
           "avg_d20_return_pct": null,
           "winner_rate": 0.0,
           "failed_fast_rate": 0.0,
@@ -159,42 +159,42 @@
         },
         {
           "key": "not_checked",
-          "count": 25,
-          "avg_d20_return_pct": -5.54,
-          "winner_rate": 0.24,
-          "failed_fast_rate": 0.4,
+          "count": 23,
+          "avg_d20_return_pct": -7.09,
+          "winner_rate": 0.217,
+          "failed_fast_rate": 0.435,
           "actually_bought_count": 0
         },
         {
           "key": "NEUTRAL",
           "count": 13,
-          "avg_d20_return_pct": -1.96,
+          "avg_d20_return_pct": -7.9,
           "winner_rate": 0.077,
           "failed_fast_rate": 0.923,
           "actually_bought_count": 0
         },
         {
           "key": "DATA_LIGHT",
-          "count": 2,
-          "avg_d20_return_pct": -21.03,
+          "count": 3,
+          "avg_d20_return_pct": -18.13,
           "winner_rate": 0.0,
-          "failed_fast_rate": 1.0,
+          "failed_fast_rate": 0.667,
           "actually_bought_count": 0
         }
       ],
       "by_catalyst": [
         {
           "key": "unknown",
-          "count": 48,
-          "avg_d20_return_pct": -2.43,
-          "winner_rate": 0.292,
-          "failed_fast_rate": 0.458,
+          "count": 47,
+          "avg_d20_return_pct": -3.46,
+          "winner_rate": 0.277,
+          "failed_fast_rate": 0.468,
           "actually_bought_count": 0
         },
         {
           "key": "NOISE",
           "count": 32,
-          "avg_d20_return_pct": 1.5,
+          "avg_d20_return_pct": -0.41,
           "winner_rate": 0.156,
           "failed_fast_rate": 0.5,
           "actually_bought_count": 0
@@ -210,7 +210,7 @@
         {
           "key": "NO_DATA",
           "count": 5,
-          "avg_d20_return_pct": 15.16,
+          "avg_d20_return_pct": -0.04,
           "winner_rate": 0.0,
           "failed_fast_rate": 1.0,
           "actually_bought_count": 0
@@ -219,8 +219,8 @@
     },
     "llm_override_comparison": {
       "dropped_count": 5,
-      "added_count": 16,
-      "kept_count": 101,
+      "added_count": 17,
+      "kept_count": 100,
       "dropped_tickers": [
         "AKAM",
         "MNST",
@@ -244,7 +244,8 @@
         "KT",
         "003230.KS",
         "IBM",
-        "088350.KS"
+        "088350.KS",
+        "426030.KS"
       ],
       "kept_tickers": [
         "IESC",
@@ -345,19 +346,18 @@
         "XPO",
         "AON",
         "FOXA",
-        "GM",
-        "BUD",
-        "APLE"
+        "GOOG",
+        "HWM"
       ],
       "avg_d5_return_pct": {
         "dropped": -2.36,
         "added": -2.29,
-        "kept": -1.18
+        "kept": -1.31
       },
       "avg_d20_return_pct": {
         "dropped": -29.09,
-        "added": -11.19,
-        "kept": -2.21
+        "added": -11.68,
+        "kept": -3.39
       },
       "dropped": [
         {
@@ -467,7 +467,7 @@
           "d5_return_pct": 0.64,
           "d10_return_pct": 10.35,
           "d20_return_pct": null,
-          "mfe_pct": 11.76,
+          "mfe_pct": 11.79,
           "mae_pct": -8.67
         }
       ],
@@ -644,7 +644,7 @@
           "d3_return_pct": -4.85,
           "d5_return_pct": -8.08,
           "d10_return_pct": -10.51,
-          "d20_return_pct": null,
+          "d20_return_pct": -14.14,
           "mfe_pct": 1.01,
           "mae_pct": -16.97
         },
@@ -785,7 +785,7 @@
           "ticker": "IBM",
           "bucket": "candidate",
           "status": "OK",
-          "final_verdict": "FAILED_FAST",
+          "final_verdict": "WATCH",
           "rule_selection_rank": null,
           "selection_rank": 2,
           "selection_tier": "C",
@@ -800,7 +800,7 @@
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 7.7,
-          "mae_pct": -26.35
+          "mae_pct": -2.5
         },
         {
           "snapshot_date": "2026-07-10",
@@ -817,12 +817,34 @@
           "llm_risk": "Left-side confirmation is still pending and the catalyst is only noise, so it can fail without a decisive breakout.",
           "llm_drop_reason": "",
           "d1_return_pct": -6.34,
-          "d3_return_pct": null,
+          "d3_return_pct": -2.8,
           "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 2.8,
           "mae_pct": -8.49
+        },
+        {
+          "snapshot_date": "2026-07-15",
+          "ticker": "426030.KS",
+          "bucket": "candidate",
+          "status": "OK",
+          "final_verdict": "PENDING",
+          "rule_selection_rank": null,
+          "selection_rank": 3,
+          "selection_tier": "B",
+          "primary_lane": "pullback",
+          "primary_lane_status": "PASS",
+          "llm_reason": "Clean pullback candidate with liquidity-good profile, not-chasing characteristics, and acceptable volatility; useful as a diversified non-US sleeve when higher-conviction names are limited.",
+          "llm_risk": "Data-light with no catalyst or theme mapping, so conviction is lower and upside may be more dependent on general market flow.",
+          "llm_drop_reason": "",
+          "d1_return_pct": null,
+          "d3_return_pct": null,
+          "d5_return_pct": null,
+          "d10_return_pct": null,
+          "d20_return_pct": null,
+          "mfe_pct": 0.59,
+          "mae_pct": -1.98
         }
       ],
       "kept": [
@@ -1460,8 +1482,8 @@
           "d3_return_pct": -5.34,
           "d5_return_pct": -4.8,
           "d10_return_pct": -7.85,
-          "d20_return_pct": 5.34,
-          "mfe_pct": 5.49,
+          "d20_return_pct": null,
+          "mfe_pct": 4.41,
           "mae_pct": -10.24
         },
         {
@@ -1614,7 +1636,7 @@
           "d3_return_pct": -7.33,
           "d5_return_pct": -12.14,
           "d10_return_pct": -16.35,
-          "d20_return_pct": null,
+          "d20_return_pct": -19.47,
           "mfe_pct": 1.44,
           "mae_pct": -25.6
         },
@@ -1636,7 +1658,7 @@
           "d3_return_pct": -1.1,
           "d5_return_pct": -5.74,
           "d10_return_pct": -9.71,
-          "d20_return_pct": null,
+          "d20_return_pct": -15.23,
           "mfe_pct": 6.18,
           "mae_pct": -24.5
         },
@@ -1725,7 +1747,7 @@
           "d5_return_pct": 2.59,
           "d10_return_pct": 3.52,
           "d20_return_pct": null,
-          "mfe_pct": 6.83,
+          "mfe_pct": 6.29,
           "mae_pct": -3.21
         },
         {
@@ -1902,7 +1924,7 @@
           "d10_return_pct": -3.4,
           "d20_return_pct": null,
           "mfe_pct": 6.6,
-          "mae_pct": -16.35
+          "mae_pct": -17.3
         },
         {
           "snapshot_date": "2026-06-24",
@@ -1923,7 +1945,7 @@
           "d5_return_pct": 0.06,
           "d10_return_pct": 0.16,
           "d20_return_pct": null,
-          "mfe_pct": 0.27,
+          "mfe_pct": 0.25,
           "mae_pct": -0.1
         },
         {
@@ -1989,7 +2011,7 @@
           "d5_return_pct": -5.33,
           "d10_return_pct": -0.04,
           "d20_return_pct": null,
-          "mfe_pct": 3.33,
+          "mfe_pct": 2.81,
           "mae_pct": -6.37
         },
         {
@@ -2097,7 +2119,7 @@
           "d1_return_pct": 8.04,
           "d3_return_pct": 15.79,
           "d5_return_pct": 12.42,
-          "d10_return_pct": 10.34,
+          "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 16.04,
           "mae_pct": -0.46
@@ -2119,7 +2141,7 @@
           "d1_return_pct": 7.68,
           "d3_return_pct": -4.02,
           "d5_return_pct": -4.33,
-          "d10_return_pct": 1.6,
+          "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 8.39,
           "mae_pct": -8.18
@@ -2141,7 +2163,7 @@
           "d1_return_pct": 5.65,
           "d3_return_pct": -6.04,
           "d5_return_pct": -7.21,
-          "d10_return_pct": -5.71,
+          "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 6.21,
           "mae_pct": -8.8
@@ -2163,9 +2185,9 @@
           "d1_return_pct": -1.16,
           "d3_return_pct": 0.53,
           "d5_return_pct": 2.09,
-          "d10_return_pct": 7.34,
+          "d10_return_pct": null,
           "d20_return_pct": null,
-          "mfe_pct": 7.62,
+          "mfe_pct": 6.34,
           "mae_pct": -3.02
         },
         {
@@ -2188,7 +2210,7 @@
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 0.3,
-          "mae_pct": -12.29
+          "mae_pct": -11.99
         },
         {
           "snapshot_date": "2026-06-30",
@@ -2209,7 +2231,7 @@
           "d5_return_pct": 0.18,
           "d10_return_pct": null,
           "d20_return_pct": null,
-          "mfe_pct": 10.57,
+          "mfe_pct": 10.6,
           "mae_pct": -5.13
         },
         {
@@ -2251,7 +2273,7 @@
           "d1_return_pct": -12.65,
           "d3_return_pct": -17.1,
           "d5_return_pct": -32.93,
-          "d10_return_pct": null,
+          "d10_return_pct": -35.92,
           "d20_return_pct": null,
           "mfe_pct": 3.95,
           "mae_pct": -47.26
@@ -2517,7 +2539,7 @@
           "d5_return_pct": 0.96,
           "d10_return_pct": null,
           "d20_return_pct": null,
-          "mfe_pct": 2.52,
+          "mfe_pct": 1.17,
           "mae_pct": -3.59
         },
         {
@@ -2540,7 +2562,7 @@
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 6.05,
-          "mae_pct": -2.87
+          "mae_pct": -3.18
         },
         {
           "snapshot_date": "2026-07-07",
@@ -2569,7 +2591,7 @@
           "ticker": "F",
           "bucket": "candidate",
           "status": "OK",
-          "final_verdict": "WATCH",
+          "final_verdict": "PENDING",
           "rule_selection_rank": 3,
           "selection_rank": 2,
           "selection_tier": "B",
@@ -2580,7 +2602,7 @@
           "llm_drop_reason": "",
           "d1_return_pct": -0.44,
           "d3_return_pct": 3.24,
-          "d5_return_pct": 2.8,
+          "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 4.87,
@@ -2591,7 +2613,7 @@
           "ticker": "FLEX",
           "bucket": "candidate",
           "status": "OK",
-          "final_verdict": "WINNER",
+          "final_verdict": "PENDING",
           "rule_selection_rank": 2,
           "selection_rank": 3,
           "selection_tier": "A",
@@ -2602,7 +2624,7 @@
           "llm_drop_reason": "",
           "d1_return_pct": 1.41,
           "d3_return_pct": 3.25,
-          "d5_return_pct": 0.55,
+          "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 10.56,
@@ -2635,7 +2657,7 @@
           "ticker": "326030.KS",
           "bucket": "candidate",
           "status": "OK",
-          "final_verdict": "PENDING",
+          "final_verdict": "FAILED_FAST",
           "rule_selection_rank": 2,
           "selection_rank": 2,
           "selection_tier": "B",
@@ -2646,7 +2668,7 @@
           "llm_drop_reason": "",
           "d1_return_pct": -2.31,
           "d3_return_pct": -3.41,
-          "d5_return_pct": null,
+          "d5_return_pct": -4.75,
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 4.14,
@@ -2657,7 +2679,7 @@
           "ticker": "000240.KS",
           "bucket": "candidate",
           "status": "OK",
-          "final_verdict": "PENDING",
+          "final_verdict": "WATCH",
           "rule_selection_rank": 3,
           "selection_rank": 3,
           "selection_tier": "B",
@@ -2668,7 +2690,7 @@
           "llm_drop_reason": "",
           "d1_return_pct": -0.59,
           "d3_return_pct": -3.71,
-          "d5_return_pct": null,
+          "d5_return_pct": -2.73,
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 3.12,
@@ -2689,11 +2711,11 @@
           "llm_risk": "Sector/theme is lagging and liquidity buffer is weak, so follow-through may be limited.",
           "llm_drop_reason": "",
           "d1_return_pct": -0.07,
-          "d3_return_pct": 0.93,
+          "d3_return_pct": null,
           "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
-          "mfe_pct": 2.68,
+          "mfe_pct": 2.07,
           "mae_pct": -2.71
         },
         {
@@ -2711,7 +2733,7 @@
           "llm_risk": "Earnings reaction is not yet confirmed and liquidity buffer is weak.",
           "llm_drop_reason": "",
           "d1_return_pct": 0.52,
-          "d3_return_pct": 1.21,
+          "d3_return_pct": null,
           "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
@@ -2798,13 +2820,13 @@
           "llm_reason": "Best blend of fresh positive revaluation catalyst, strong quality support, and left-side setup without chasing; support count and opportunity score are strongest in the pool.",
           "llm_risk": "Sector/theme is lagging and the earnings reaction has no confirmation yet; liquidity buffer is weak.",
           "llm_drop_reason": "",
-          "d1_return_pct": -2.53,
+          "d1_return_pct": null,
           "d3_return_pct": null,
           "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 2.15,
-          "mae_pct": -6.23
+          "mae_pct": -3.82
         },
         {
           "snapshot_date": "2026-07-11",
@@ -2820,13 +2842,13 @@
           "llm_reason": "High-quality pullback candidate with strong theme support and peer confirmation; not chasing and has the cleanest broad-market relevance among the pool.",
           "llm_risk": "Sector is still lagging and the catalyst is noise, so follow-through depends on price/volume confirmation.",
           "llm_drop_reason": "",
-          "d1_return_pct": 0.07,
+          "d1_return_pct": null,
           "d3_return_pct": null,
           "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
           "mfe_pct": 0.95,
-          "mae_pct": -1.42
+          "mae_pct": -1.27
         },
         {
           "snapshot_date": "2026-07-11",
@@ -2864,12 +2886,12 @@
           "llm_reason": "Best tier-A pullback setup with strong pass on lane strength, healthy volatility, and not-chasing profile; cleanest risk/reward among the pool despite weak liquidity buffer.",
           "llm_risk": "Sector/theme is lagging and liquidity is weak, so follow-through may be limited.",
           "llm_drop_reason": "",
-          "d1_return_pct": 2.12,
+          "d1_return_pct": null,
           "d3_return_pct": null,
           "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
-          "mfe_pct": 4.76,
+          "mfe_pct": 4.08,
           "mae_pct": -0.99
         },
         {
@@ -2886,12 +2908,12 @@
           "llm_reason": "Tier-B pullback with two support signals, fresh catalyst timing, and quality support; offers a more constructive setup than other B names even though the sector is still lagging.",
           "llm_risk": "Catalyst reaction is unconfirmed and volatility/liquidity remain weak, so it can still fail to hold support.",
           "llm_drop_reason": "",
-          "d1_return_pct": 2.26,
+          "d1_return_pct": null,
           "d3_return_pct": null,
           "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
-          "mfe_pct": 6.65,
+          "mfe_pct": 5.18,
           "mae_pct": -1.03
         },
         {
@@ -2920,7 +2942,7 @@
           "snapshot_date": "2026-07-14",
           "ticker": "XPO",
           "bucket": "candidate",
-          "status": "OK",
+          "status": "NO_START_BAR",
           "final_verdict": "PENDING",
           "rule_selection_rank": 1,
           "selection_rank": 1,
@@ -2935,14 +2957,14 @@
           "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
-          "mfe_pct": 1.73,
-          "mae_pct": -1.02
+          "mfe_pct": null,
+          "mae_pct": null
         },
         {
           "snapshot_date": "2026-07-14",
           "ticker": "AON",
           "bucket": "candidate",
-          "status": "OK",
+          "status": "NO_START_BAR",
           "final_verdict": "PENDING",
           "rule_selection_rank": 2,
           "selection_rank": 2,
@@ -2957,8 +2979,8 @@
           "d5_return_pct": null,
           "d10_return_pct": null,
           "d20_return_pct": null,
-          "mfe_pct": 1.92,
-          "mae_pct": -0.14
+          "mfe_pct": null,
+          "mae_pct": null
         },
         {
           "snapshot_date": "2026-07-14",
@@ -2984,39 +3006,17 @@
         },
         {
           "snapshot_date": "2026-07-15",
-          "ticker": "GM",
-          "bucket": "candidate",
-          "status": "NO_START_BAR",
-          "final_verdict": "PENDING",
-          "rule_selection_rank": 1,
-          "selection_rank": 1,
-          "selection_tier": "A",
-          "primary_lane": "pullback",
-          "primary_lane_status": "STRONG_PASS",
-          "llm_reason": "Best pullback setup in the pool: A-tier, strong pass, fresh positive revaluation catalyst, improving RRG, and volume compression after a modest drawdown keeps it from being a chase.",
-          "llm_risk": "Liquidity is weak and catalyst reaction is still unconfirmed.",
-          "llm_drop_reason": "",
-          "d1_return_pct": null,
-          "d3_return_pct": null,
-          "d5_return_pct": null,
-          "d10_return_pct": null,
-          "d20_return_pct": null,
-          "mfe_pct": null,
-          "mae_pct": null
-        },
-        {
-          "snapshot_date": "2026-07-15",
-          "ticker": "BUD",
+          "ticker": "GOOG",
           "bucket": "candidate",
           "status": "NO_START_BAR",
           "final_verdict": "PENDING",
           "rule_selection_rank": 2,
-          "selection_rank": 2,
-          "selection_tier": "A",
-          "primary_lane": "strength",
-          "primary_lane_status": "STRONG_PASS",
-          "llm_reason": "High-quality strength candidate with fresh positive revaluation, improving RRG, and healthy volatility; offers a steadier lane than the more extended names.",
-          "llm_risk": "Low liquidity buffer and no confirmed post-catalyst price/volume follow-through yet.",
+          "selection_rank": 1,
+          "selection_tier": "B",
+          "primary_lane": "pullback",
+          "primary_lane_status": "PASS",
+          "llm_reason": "Best balance of quality and setup: strong quality support, leading communication-services backdrop, and a pullback/volume-compression profile without chasing.",
+          "llm_risk": "No fresh catalyst and the stock is still ~10% below highs, so it may need broader market follow-through to resolve higher.",
           "llm_drop_reason": "",
           "d1_return_pct": null,
           "d3_return_pct": null,
@@ -3028,17 +3028,17 @@
         },
         {
           "snapshot_date": "2026-07-15",
-          "ticker": "APLE",
+          "ticker": "HWM",
           "bucket": "candidate",
           "status": "NO_START_BAR",
           "final_verdict": "PENDING",
-          "rule_selection_rank": 3,
-          "selection_rank": 3,
-          "selection_tier": "A",
-          "primary_lane": "strength",
-          "primary_lane_status": "STRONG_PASS",
-          "llm_reason": "Balanced strength pick with improving RRG, recent positive revaluation, and a tighter setup near highs; adds real estate exposure to diversify the final trio.",
-          "llm_risk": "Near 52-week high with low liquidity buffer, so upside may be limited if momentum stalls.",
+          "rule_selection_rank": 1,
+          "selection_rank": 2,
+          "selection_tier": "B",
+          "primary_lane": "pullback",
+          "primary_lane_status": "PASS",
+          "llm_reason": "Fresh positive revaluation catalyst with strong quality support and a constructive pullback setup; among the candidates it has the clearest catalyst-plus-setup combination.",
+          "llm_risk": "Sector is lagging and the catalyst reaction is not yet confirmed, so follow-through may be limited if the tape stays weak.",
           "llm_drop_reason": "",
           "d1_return_pct": null,
           "d3_return_pct": null,
@@ -3049,7 +3049,8 @@
           "mae_pct": null
         }
       ]
-    }
+    },
+    "shadow_policy_comparison": {}
   },
   "records": [
     {
@@ -7603,7 +7604,7 @@
       "status": "OK",
       "entry_date_used": "2026-06-12",
       "entry_price_used": 70.79,
-      "available_trading_days": 20,
+      "available_trading_days": 10,
       "followup": {
         "d1": {
           "price": 68.51,
@@ -7626,17 +7627,17 @@
           "date": "2026-06-29"
         },
         "d20": {
-          "price": 74.57,
-          "return_pct": 5.34,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         }
       },
       "mfe_mae": {
-        "mfe_pct": 5.49,
+        "mfe_pct": 4.41,
         "mae_pct": -10.24,
-        "mfe_price": 74.675,
+        "mfe_price": 73.91,
         "mae_price": 63.54,
-        "window_days": 20
+        "window_days": 19
       },
       "structure_events": {
         "higher_low": true,
@@ -7921,7 +7922,7 @@
         "mae_pct": -9.08,
         "mfe_price": 18.98,
         "mae_price": 17.13,
-        "window_days": 19
+        "window_days": 18
       },
       "structure_events": {
         "higher_low": false,
@@ -8063,7 +8064,7 @@
         "mae_pct": -10.55,
         "mfe_price": 57.18,
         "mae_price": 40.6,
-        "window_days": 19
+        "window_days": 18
       },
       "structure_events": {
         "higher_low": false,
@@ -8203,18 +8204,18 @@
         "mae_pct": -7.36,
         "mfe_price": 122.89,
         "mae_price": 111.33,
-        "window_days": 19
+        "window_days": 18
       },
       "structure_events": {
         "higher_low": false,
-        "higher_high": true,
+        "higher_high": false,
         "ma50_recover": true,
         "volume_breakout": true,
         "higher_low_date": "",
-        "higher_high_date": "2026-07-10",
+        "higher_high_date": "",
         "ma50_recover_date": "2026-07-08",
         "volume_breakout_date": "2026-06-18",
-        "event_count": 3
+        "event_count": 2
       },
       "final_verdict": "FAILED_FAST"
     },
@@ -8342,7 +8343,7 @@
         "mae_pct": -2.43,
         "mfe_price": 99.15,
         "mae_price": 90.96,
-        "window_days": 19
+        "window_days": 18
       },
       "structure_events": {
         "higher_low": false,
@@ -8482,7 +8483,7 @@
         "mae_pct": -2.43,
         "mfe_price": 99.15,
         "mae_price": 90.96,
-        "window_days": 19
+        "window_days": 18
       },
       "structure_events": {
         "higher_low": false,
@@ -8623,7 +8624,7 @@
         "mae_pct": -1.59,
         "mfe_price": 40.63,
         "mae_price": 37.8,
-        "window_days": 19
+        "window_days": 18
       },
       "structure_events": {
         "higher_low": true,
@@ -8911,14 +8912,14 @@
       },
       "structure_events": {
         "higher_low": false,
-        "higher_high": false,
+        "higher_high": true,
         "ma50_recover": true,
         "volume_breakout": true,
         "higher_low_date": "",
-        "higher_high_date": "",
+        "higher_high_date": "2026-07-13",
         "ma50_recover_date": "2026-07-06",
         "volume_breakout_date": "2026-07-07",
-        "event_count": 2
+        "event_count": 3
       },
       "final_verdict": "FAILED_FAST"
     },
@@ -9270,7 +9271,7 @@
       "status": "OK",
       "entry_date_used": "2026-06-17",
       "entry_price_used": 416000.0,
-      "available_trading_days": 10,
+      "available_trading_days": 20,
       "followup": {
         "d1": {
           "price": 400000.0,
@@ -9293,9 +9294,9 @@
           "date": "2026-07-01"
         },
         "d20": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
+          "price": 335000.0,
+          "return_pct": -19.47,
+          "date": "2026-07-15"
         }
       },
       "mfe_mae": {
@@ -9303,7 +9304,7 @@
         "mae_pct": -25.6,
         "mfe_price": 422000.0,
         "mae_price": 309500.0,
-        "window_days": 19
+        "window_days": 20
       },
       "structure_events": {
         "higher_low": false,
@@ -9407,7 +9408,7 @@
       "status": "OK",
       "entry_date_used": "2026-06-17",
       "entry_price_used": 226500.0,
-      "available_trading_days": 10,
+      "available_trading_days": 20,
       "followup": {
         "d1": {
           "price": 228500.0,
@@ -9430,9 +9431,9 @@
           "date": "2026-07-01"
         },
         "d20": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
+          "price": 192000.0,
+          "return_pct": -15.23,
+          "date": "2026-07-15"
         }
       },
       "mfe_mae": {
@@ -9440,7 +9441,7 @@
         "mae_pct": -24.5,
         "mfe_price": 240500.0,
         "mae_price": 171000.0,
-        "window_days": 19
+        "window_days": 20
       },
       "structure_events": {
         "higher_low": false,
@@ -9538,7 +9539,7 @@
       "status": "OK",
       "entry_date_used": "2026-06-17",
       "entry_price_used": 99000.0,
-      "available_trading_days": 10,
+      "available_trading_days": 20,
       "followup": {
         "d1": {
           "price": 95900.0,
@@ -9561,9 +9562,9 @@
           "date": "2026-07-01"
         },
         "d20": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
+          "price": 85000.0,
+          "return_pct": -14.14,
+          "date": "2026-07-15"
         }
       },
       "mfe_mae": {
@@ -9571,7 +9572,7 @@
         "mae_pct": -16.97,
         "mfe_price": 100000.0,
         "mae_price": 82200.0,
-        "window_days": 19
+        "window_days": 20
       },
       "structure_events": {
         "higher_low": false,
@@ -9710,7 +9711,7 @@
         "mae_pct": -40.87,
         "mfe_price": 138000.0,
         "mae_price": 69600.0,
-        "window_days": 18
+        "window_days": 19
       },
       "structure_events": {
         "higher_low": false,
@@ -9843,7 +9844,7 @@
         "mae_pct": -25.28,
         "mfe_price": 14180.0,
         "mae_price": 10110.0,
-        "window_days": 18
+        "window_days": 19
       },
       "structure_events": {
         "higher_low": false,
@@ -9985,18 +9986,18 @@
         "mae_pct": -2.47,
         "mfe_price": 677.92,
         "mae_price": 594.9,
-        "window_days": 16
+        "window_days": 15
       },
       "structure_events": {
         "higher_low": false,
-        "higher_high": false,
+        "higher_high": true,
         "ma50_recover": true,
         "volume_breakout": false,
         "higher_low_date": "",
-        "higher_high_date": "",
+        "higher_high_date": "2026-07-07",
         "ma50_recover_date": "2026-07-07",
         "volume_breakout_date": "",
-        "event_count": 1
+        "event_count": 2
       },
       "final_verdict": "WINNER"
     },
@@ -10121,7 +10122,7 @@
         "mae_pct": -8.47,
         "mfe_price": 120.4,
         "mae_price": 107.25,
-        "window_days": 15
+        "window_days": 14
       },
       "structure_events": {
         "higher_low": true,
@@ -10260,18 +10261,18 @@
         "mae_pct": -2.45,
         "mfe_price": 432.74,
         "mae_price": 381.67,
-        "window_days": 15
+        "window_days": 14
       },
       "structure_events": {
         "higher_low": true,
-        "higher_high": true,
+        "higher_high": false,
         "ma50_recover": false,
         "volume_breakout": true,
         "higher_low_date": "2026-07-02",
-        "higher_high_date": "2026-07-10",
+        "higher_high_date": "",
         "ma50_recover_date": "",
         "volume_breakout_date": "2026-06-30",
-        "event_count": 3
+        "event_count": 2
       },
       "final_verdict": "WINNER"
     },
@@ -10395,22 +10396,22 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 6.83,
+        "mfe_pct": 6.29,
         "mae_pct": -3.21,
-        "mfe_price": 282.5669,
+        "mfe_price": 281.14,
         "mae_price": 256.02,
-        "window_days": 15
+        "window_days": 14
       },
       "structure_events": {
-        "higher_low": true,
+        "higher_low": false,
         "higher_high": true,
         "ma50_recover": true,
         "volume_breakout": false,
-        "higher_low_date": "2026-07-10",
+        "higher_low_date": "",
         "higher_high_date": "2026-07-08",
         "ma50_recover_date": "2026-07-06",
         "volume_breakout_date": "",
-        "event_count": 3
+        "event_count": 2
       },
       "final_verdict": "WINNER"
     },
@@ -10680,7 +10681,7 @@
         "mae_pct": -18.59,
         "mfe_price": 206000.0,
         "mae_price": 129600.0,
-        "window_days": 16
+        "window_days": 17
       },
       "structure_events": {
         "higher_low": false,
@@ -10819,7 +10820,7 @@
         "mae_pct": -38.44,
         "mfe_price": 17700.0,
         "mae_price": 9850.0,
-        "window_days": 16
+        "window_days": 17
       },
       "structure_events": {
         "higher_low": false,
@@ -10952,18 +10953,18 @@
         "mae_pct": -20.56,
         "mfe_price": 600000.0,
         "mae_price": 452000.0,
-        "window_days": 16
+        "window_days": 17
       },
       "structure_events": {
         "higher_low": false,
-        "higher_high": true,
+        "higher_high": false,
         "ma50_recover": false,
         "volume_breakout": false,
         "higher_low_date": "",
-        "higher_high_date": "2026-07-06",
+        "higher_high_date": "",
         "ma50_recover_date": "",
         "volume_breakout_date": "",
-        "event_count": 1
+        "event_count": 0
       },
       "final_verdict": "FAILED_FAST"
     },
@@ -11091,7 +11092,7 @@
         "mae_pct": -30.46,
         "mfe_price": 197305.0,
         "mae_price": 134715.0,
-        "window_days": 16
+        "window_days": 17
       },
       "structure_events": {
         "higher_low": false,
@@ -11226,7 +11227,7 @@
         "mae_pct": -44.87,
         "mfe_price": 118800.0,
         "mae_price": 63900.0,
-        "window_days": 16
+        "window_days": 17
       },
       "structure_events": {
         "higher_low": false,
@@ -11364,18 +11365,18 @@
         "mae_pct": -15.2,
         "mfe_price": 114500.0,
         "mae_price": 93200.0,
-        "window_days": 16
+        "window_days": 17
       },
       "structure_events": {
         "higher_low": true,
-        "higher_high": true,
+        "higher_high": false,
         "ma50_recover": false,
         "volume_breakout": false,
         "higher_low_date": "2026-07-09",
-        "higher_high_date": "2026-07-08",
+        "higher_high_date": "",
         "ma50_recover_date": "",
         "volume_breakout_date": "",
-        "event_count": 2
+        "event_count": 1
       },
       "final_verdict": "FAILED_FAST"
     },
@@ -11501,7 +11502,7 @@
         "mae_pct": -37.18,
         "mfe_price": 133300.0,
         "mae_price": 69600.0,
-        "window_days": 15
+        "window_days": 16
       },
       "structure_events": {
         "higher_low": false,
@@ -11790,10 +11791,10 @@
       },
       "mfe_mae": {
         "mfe_pct": 6.6,
-        "mae_pct": -16.35,
+        "mae_pct": -17.3,
         "mfe_price": 169500.0,
-        "mae_price": 133000.0,
-        "window_days": 15
+        "mae_price": 131500.0,
+        "window_days": 16
       },
       "structure_events": {
         "higher_low": false,
@@ -11928,11 +11929,11 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 0.27,
+        "mfe_pct": 0.25,
         "mae_pct": -0.1,
-        "mfe_price": 31.505,
+        "mfe_price": 31.5,
         "mae_price": 31.39,
-        "window_days": 13
+        "window_days": 12
       },
       "structure_events": {
         "higher_low": false,
@@ -12210,7 +12211,7 @@
         "mae_pct": -1.55,
         "mfe_price": 375.25,
         "mae_price": 346.0,
-        "window_days": 13
+        "window_days": 12
       },
       "structure_events": {
         "higher_low": false,
@@ -12504,7 +12505,7 @@
         "mae_pct": -3.82,
         "mfe_price": 18.68,
         "mae_price": 17.13,
-        "window_days": 12
+        "window_days": 11
       },
       "structure_events": {
         "higher_low": false,
@@ -12644,7 +12645,7 @@
         "mae_pct": -6.99,
         "mfe_price": 79.0,
         "mae_price": 72.11,
-        "window_days": 12
+        "window_days": 11
       },
       "structure_events": {
         "higher_low": false,
@@ -12779,22 +12780,22 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 3.33,
+        "mfe_pct": 2.81,
         "mae_pct": -6.37,
-        "mfe_price": 282.5669,
+        "mfe_price": 281.14,
         "mae_price": 256.02,
-        "window_days": 12
+        "window_days": 11
       },
       "structure_events": {
-        "higher_low": true,
+        "higher_low": false,
         "higher_high": true,
         "ma50_recover": true,
         "volume_breakout": false,
-        "higher_low_date": "2026-07-10",
+        "higher_low_date": "",
         "higher_high_date": "2026-07-08",
         "ma50_recover_date": "2026-07-06",
         "volume_breakout_date": "",
-        "event_count": 3
+        "event_count": 2
       },
       "final_verdict": "FAILED_FAST"
     },
@@ -12922,7 +12923,7 @@
         "mae_pct": -2.61,
         "mfe_price": 369.48,
         "mae_price": 336.21,
-        "window_days": 11
+        "window_days": 10
       },
       "structure_events": {
         "higher_low": false,
@@ -13436,7 +13437,7 @@
       "status": "OK",
       "entry_date_used": "2026-06-29",
       "entry_price_used": 271.35,
-      "available_trading_days": 10,
+      "available_trading_days": 5,
       "followup": {
         "d1": {
           "price": 293.18,
@@ -13454,9 +13455,9 @@
           "date": "2026-07-07"
         },
         "d10": {
-          "price": 299.4,
-          "return_pct": 10.34,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d20": {
           "price": null,
@@ -13469,7 +13470,7 @@
         "mae_pct": -0.46,
         "mfe_price": 314.87,
         "mae_price": 270.11,
-        "window_days": 10
+        "window_days": 9
       },
       "structure_events": {
         "higher_low": false,
@@ -13618,7 +13619,7 @@
         "mae_pct": -10.69,
         "mfe_price": 1246000.0,
         "mae_price": 1036000.0,
-        "window_days": 11
+        "window_days": 12
       },
       "structure_events": {
         "higher_low": false,
@@ -13742,9 +13743,9 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 11.76,
+        "mfe_pct": 11.79,
         "mae_pct": -8.67,
-        "mfe_price": 463.35,
+        "mfe_price": 463.48,
         "mae_price": 378.66,
         "window_days": 10
       },
@@ -13854,7 +13855,7 @@
       "status": "OK",
       "entry_date_used": "2026-06-29",
       "entry_price_used": 539.49,
-      "available_trading_days": 10,
+      "available_trading_days": 5,
       "followup": {
         "d1": {
           "price": 580.91,
@@ -13872,9 +13873,9 @@
           "date": "2026-07-07"
         },
         "d10": {
-          "price": 548.13,
-          "return_pct": 1.6,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d20": {
           "price": null,
@@ -13887,7 +13888,7 @@
         "mae_pct": -8.18,
         "mfe_price": 584.73,
         "mae_price": 495.35,
-        "window_days": 10
+        "window_days": 9
       },
       "structure_events": {
         "higher_low": false,
@@ -13995,7 +13996,7 @@
       "status": "OK",
       "entry_date_used": "2026-06-29",
       "entry_price_used": 1883.11,
-      "available_trading_days": 10,
+      "available_trading_days": 5,
       "followup": {
         "d1": {
           "price": 1989.4399,
@@ -14013,9 +14014,9 @@
           "date": "2026-07-07"
         },
         "d10": {
-          "price": 1775.64,
-          "return_pct": -5.71,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d20": {
           "price": null,
@@ -14028,7 +14029,7 @@
         "mae_pct": -8.8,
         "mfe_price": 1999.96,
         "mae_price": 1717.3101,
-        "window_days": 10
+        "window_days": 9
       },
       "structure_events": {
         "higher_low": false,
@@ -14136,7 +14137,7 @@
       "status": "OK",
       "entry_date_used": "2026-06-29",
       "entry_price_used": 155.42,
-      "available_trading_days": 10,
+      "available_trading_days": 5,
       "followup": {
         "d1": {
           "price": 153.62,
@@ -14154,9 +14155,9 @@
           "date": "2026-07-07"
         },
         "d10": {
-          "price": 166.83,
-          "return_pct": 7.34,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d20": {
           "price": null,
@@ -14165,11 +14166,11 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 7.62,
+        "mfe_pct": 6.34,
         "mae_pct": -3.02,
-        "mfe_price": 167.27,
+        "mfe_price": 165.28,
         "mae_price": 150.73,
-        "window_days": 10
+        "window_days": 9
       },
       "structure_events": {
         "higher_low": false,
@@ -14306,10 +14307,10 @@
       },
       "mfe_mae": {
         "mfe_pct": 0.3,
-        "mae_pct": -12.29,
+        "mae_pct": -11.99,
         "mfe_price": 479.0,
-        "mae_price": 418.86,
-        "window_days": 9
+        "mae_price": 420.29,
+        "window_days": 8
       },
       "structure_events": {
         "higher_low": false,
@@ -14447,9 +14448,9 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 10.57,
+        "mfe_pct": 10.6,
         "mae_pct": -5.13,
-        "mfe_price": 210.95,
+        "mfe_price": 211.0,
         "mae_price": 181.0,
         "window_days": 9
       },
@@ -14697,7 +14698,7 @@
       "status": "OK",
       "entry_date_used": "2026-07-01",
       "entry_price_used": 2205000.0,
-      "available_trading_days": 5,
+      "available_trading_days": 10,
       "followup": {
         "d1": {
           "price": 1926000.0,
@@ -14715,9 +14716,9 @@
           "date": "2026-07-08"
         },
         "d10": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
+          "price": 1413000.0,
+          "return_pct": -35.92,
+          "date": "2026-07-15"
         },
         "d20": {
           "price": null,
@@ -14730,7 +14731,7 @@
         "mae_pct": -47.26,
         "mfe_price": 2292000.0,
         "mae_price": 1163000.0,
-        "window_days": 9
+        "window_days": 10
       },
       "structure_events": {
         "higher_low": false,
@@ -15013,7 +15014,7 @@
         "mae_pct": -20.87,
         "mfe_price": 292.5,
         "mae_price": 215.28,
-        "window_days": 8
+        "window_days": 7
       },
       "structure_events": {
         "higher_low": false,
@@ -15140,7 +15141,7 @@
         "mae_pct": -1.05,
         "mfe_price": 14.22,
         "mae_price": 13.22,
-        "window_days": 7
+        "window_days": 6
       },
       "structure_events": {
         "higher_low": false,
@@ -15264,10 +15265,10 @@
       },
       "mfe_mae": {
         "mfe_pct": 7.7,
-        "mae_pct": -26.35,
+        "mae_pct": -2.5,
         "mfe_price": 311.8,
-        "mae_price": 213.22,
-        "window_days": 7
+        "mae_price": 282.28,
+        "window_days": 6
       },
       "structure_events": {
         "higher_low": false,
@@ -15280,7 +15281,7 @@
         "volume_breakout_date": "",
         "event_count": 0
       },
-      "final_verdict": "FAILED_FAST"
+      "final_verdict": "WATCH"
     },
     {
       "snapshot_date": "2026-07-02",
@@ -15400,7 +15401,7 @@
         "mae_pct": -19.9,
         "mfe_price": 32700.0,
         "mae_price": 23750.0,
-        "window_days": 8
+        "window_days": 9
       },
       "structure_events": {
         "higher_low": false,
@@ -15955,7 +15956,7 @@
         "mae_pct": -3.9,
         "mfe_price": 28050.0,
         "mae_price": 24650.0,
-        "window_days": 6
+        "window_days": 7
       },
       "structure_events": {
         "higher_low": false,
@@ -16097,7 +16098,7 @@
         "mae_pct": -2.4,
         "mfe_price": 136.34,
         "mae_price": 127.46,
-        "window_days": 6
+        "window_days": 5
       },
       "structure_events": {
         "higher_low": false,
@@ -16234,7 +16235,7 @@
         "mae_pct": -15.64,
         "mfe_price": 183500.0,
         "mae_price": 148900.0,
-        "window_days": 6
+        "window_days": 7
       },
       "structure_events": {
         "higher_low": false,
@@ -16384,7 +16385,7 @@
         "mae_pct": -5.65,
         "mfe_price": 1246000.0,
         "mae_price": 1036000.0,
-        "window_days": 6
+        "window_days": 7
       },
       "structure_events": {
         "higher_low": false,
@@ -16520,22 +16521,22 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 2.52,
+        "mfe_pct": 1.17,
         "mae_pct": -3.59,
-        "mfe_price": 28.84,
+        "mfe_price": 28.46,
         "mae_price": 27.12,
-        "window_days": 6
+        "window_days": 5
       },
       "structure_events": {
         "higher_low": false,
         "higher_high": false,
-        "ma50_recover": true,
+        "ma50_recover": false,
         "volume_breakout": false,
         "higher_low_date": "",
         "higher_high_date": "",
-        "ma50_recover_date": "2026-07-14",
+        "ma50_recover_date": "",
         "volume_breakout_date": "",
-        "event_count": 1
+        "event_count": 0
       },
       "final_verdict": "WATCH"
     },
@@ -16669,10 +16670,10 @@
       },
       "mfe_mae": {
         "mfe_pct": 6.05,
-        "mae_pct": -2.87,
+        "mae_pct": -3.18,
         "mfe_price": 51700.0,
-        "mae_price": 47350.0,
-        "window_days": 6
+        "mae_price": 47200.0,
+        "window_days": 7
       },
       "structure_events": {
         "higher_low": false,
@@ -16907,7 +16908,7 @@
       "status": "OK",
       "entry_date_used": "2026-07-07",
       "entry_price_used": 13.56,
-      "available_trading_days": 5,
+      "available_trading_days": 3,
       "followup": {
         "d1": {
           "price": 13.5,
@@ -16920,9 +16921,9 @@
           "date": "2026-07-10"
         },
         "d5": {
-          "price": 13.94,
-          "return_pct": 2.8,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d10": {
           "price": null,
@@ -16940,7 +16941,7 @@
         "mae_pct": -2.36,
         "mfe_price": 14.22,
         "mae_price": 13.24,
-        "window_days": 5
+        "window_days": 4
       },
       "structure_events": {
         "higher_low": false,
@@ -16953,7 +16954,7 @@
         "volume_breakout_date": "",
         "event_count": 1
       },
-      "final_verdict": "WATCH"
+      "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-07-07",
@@ -17033,7 +17034,7 @@
       "status": "OK",
       "entry_date_used": "2026-07-07",
       "entry_price_used": 131.52,
-      "available_trading_days": 5,
+      "available_trading_days": 3,
       "followup": {
         "d1": {
           "price": 133.37,
@@ -17046,9 +17047,9 @@
           "date": "2026-07-10"
         },
         "d5": {
-          "price": 132.24,
-          "return_pct": 0.55,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d10": {
           "price": null,
@@ -17066,7 +17067,7 @@
         "mae_pct": -4.71,
         "mfe_price": 145.41,
         "mae_price": 125.32,
-        "window_days": 5
+        "window_days": 4
       },
       "structure_events": {
         "higher_low": false,
@@ -17079,7 +17080,7 @@
         "volume_breakout_date": "",
         "event_count": 1
       },
-      "final_verdict": "WINNER"
+      "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-07-08",
@@ -17206,7 +17207,7 @@
         "mae_pct": -6.29,
         "mfe_price": 52.04,
         "mae_price": 47.94,
-        "window_days": 4
+        "window_days": 3
       },
       "structure_events": {
         "higher_low": false,
@@ -17322,7 +17323,7 @@
       "status": "OK",
       "entry_date_used": "2026-07-08",
       "entry_price_used": 82100.0,
-      "available_trading_days": 3,
+      "available_trading_days": 5,
       "followup": {
         "d1": {
           "price": 80200.0,
@@ -17335,9 +17336,9 @@
           "date": "2026-07-13"
         },
         "d5": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
+          "price": 78200.0,
+          "return_pct": -4.75,
+          "date": "2026-07-15"
         },
         "d10": {
           "price": null,
@@ -17355,7 +17356,7 @@
         "mae_pct": -9.87,
         "mfe_price": 85500.0,
         "mae_price": 74000.0,
-        "window_days": 4
+        "window_days": 5
       },
       "structure_events": {
         "higher_low": false,
@@ -17368,7 +17369,7 @@
         "volume_breakout_date": "",
         "event_count": 0
       },
-      "final_verdict": "PENDING"
+      "final_verdict": "FAILED_FAST"
     },
     {
       "snapshot_date": "2026-07-08",
@@ -17455,7 +17456,7 @@
       "status": "OK",
       "entry_date_used": "2026-07-08",
       "entry_price_used": 25600.0,
-      "available_trading_days": 3,
+      "available_trading_days": 5,
       "followup": {
         "d1": {
           "price": 25450.0,
@@ -17468,9 +17469,9 @@
           "date": "2026-07-13"
         },
         "d5": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
+          "price": 24900.0,
+          "return_pct": -2.73,
+          "date": "2026-07-15"
         },
         "d10": {
           "price": null,
@@ -17488,20 +17489,20 @@
         "mae_pct": -6.84,
         "mfe_price": 26400.0,
         "mae_price": 23850.0,
-        "window_days": 4
+        "window_days": 5
       },
       "structure_events": {
         "higher_low": false,
         "higher_high": false,
-        "ma50_recover": false,
+        "ma50_recover": true,
         "volume_breakout": false,
         "higher_low_date": "",
         "higher_high_date": "",
-        "ma50_recover_date": "",
+        "ma50_recover_date": "2026-07-15",
         "volume_breakout_date": "",
-        "event_count": 0
+        "event_count": 1
       },
-      "final_verdict": "PENDING"
+      "final_verdict": "WATCH"
     },
     {
       "snapshot_date": "2026-07-09",
@@ -17581,7 +17582,7 @@
       "status": "OK",
       "entry_date_used": "2026-07-09",
       "entry_price_used": 208.03,
-      "available_trading_days": 3,
+      "available_trading_days": 1,
       "followup": {
         "d1": {
           "price": 207.88,
@@ -17589,9 +17590,9 @@
           "date": "2026-07-10"
         },
         "d3": {
-          "price": 209.97,
-          "return_pct": 0.93,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d5": {
           "price": null,
@@ -17610,11 +17611,11 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 2.68,
+        "mfe_pct": 2.07,
         "mae_pct": -2.71,
-        "mfe_price": 213.6129,
+        "mfe_price": 212.34,
         "mae_price": 202.4,
-        "window_days": 3
+        "window_days": 2
       },
       "structure_events": {
         "higher_low": false,
@@ -17722,7 +17723,7 @@
       "status": "OK",
       "entry_date_used": "2026-07-09",
       "entry_price_used": 133.59,
-      "available_trading_days": 3,
+      "available_trading_days": 1,
       "followup": {
         "d1": {
           "price": 134.29,
@@ -17730,9 +17731,9 @@
           "date": "2026-07-10"
         },
         "d3": {
-          "price": 135.2,
-          "return_pct": 1.21,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d5": {
           "price": null,
@@ -17755,7 +17756,7 @@
         "mae_pct": -4.28,
         "mfe_price": 136.34,
         "mae_price": 127.87,
-        "window_days": 3
+        "window_days": 2
       },
       "structure_events": {
         "higher_low": false,
@@ -18012,7 +18013,7 @@
         "mae_pct": -4.14,
         "mfe_price": 402.44,
         "mae_price": 383.42,
-        "window_days": 2
+        "window_days": 1
       },
       "structure_events": {
         "higher_low": false,
@@ -18268,7 +18269,7 @@
       "status": "OK",
       "entry_date_used": "2026-07-10",
       "entry_price_used": 4650.0,
-      "available_trading_days": 1,
+      "available_trading_days": 3,
       "followup": {
         "d1": {
           "price": 4355.0,
@@ -18276,9 +18277,9 @@
           "date": "2026-07-13"
         },
         "d3": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
+          "price": 4520.0,
+          "return_pct": -2.8,
+          "date": "2026-07-15"
         },
         "d5": {
           "price": null,
@@ -18301,7 +18302,7 @@
         "mae_pct": -8.49,
         "mfe_price": 4780.0,
         "mae_price": 4255.0,
-        "window_days": 2
+        "window_days": 3
       },
       "structure_events": {
         "higher_low": false,
@@ -18412,12 +18413,12 @@
       "status": "OK",
       "entry_date_used": "2026-07-13",
       "entry_price_used": 289.76,
-      "available_trading_days": 1,
+      "available_trading_days": 0,
       "followup": {
         "d1": {
-          "price": 282.43,
-          "return_pct": -2.53,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d3": {
           "price": null,
@@ -18442,10 +18443,10 @@
       },
       "mfe_mae": {
         "mfe_pct": 2.15,
-        "mae_pct": -6.23,
+        "mae_pct": -3.82,
         "mfe_price": 296.0,
-        "mae_price": 271.72,
-        "window_days": 1
+        "mae_price": 278.7,
+        "window_days": 0
       },
       "structure_events": {
         "higher_low": false,
@@ -18541,12 +18542,12 @@
       "status": "OK",
       "entry_date_used": "2026-07-13",
       "entry_price_used": 247.31,
-      "available_trading_days": 1,
+      "available_trading_days": 0,
       "followup": {
         "d1": {
-          "price": 247.49,
-          "return_pct": 0.07,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d3": {
           "price": null,
@@ -18571,10 +18572,10 @@
       },
       "mfe_mae": {
         "mfe_pct": 0.95,
-        "mae_pct": -1.42,
+        "mae_pct": -1.27,
         "mfe_price": 249.65,
-        "mae_price": 243.8,
-        "window_days": 1
+        "mae_price": 244.18,
+        "window_days": 0
       },
       "structure_events": {
         "higher_low": false,
@@ -18806,12 +18807,12 @@
       "status": "OK",
       "entry_date_used": "2026-07-13",
       "entry_price_used": 129.5,
-      "available_trading_days": 1,
+      "available_trading_days": 0,
       "followup": {
         "d1": {
-          "price": 132.24,
-          "return_pct": 2.12,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d3": {
           "price": null,
@@ -18835,11 +18836,11 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 4.76,
+        "mfe_pct": 4.08,
         "mae_pct": -0.99,
-        "mfe_price": 135.67,
+        "mfe_price": 134.79,
         "mae_price": 128.22,
-        "window_days": 1
+        "window_days": 0
       },
       "structure_events": {
         "higher_low": false,
@@ -18933,12 +18934,12 @@
       "status": "OK",
       "entry_date_used": "2026-07-13",
       "entry_price_used": 217.53,
-      "available_trading_days": 1,
+      "available_trading_days": 0,
       "followup": {
         "d1": {
-          "price": 222.44,
-          "return_pct": 2.26,
-          "date": "2026-07-14"
+          "price": null,
+          "return_pct": null,
+          "date": ""
         },
         "d3": {
           "price": null,
@@ -18962,11 +18963,11 @@
         }
       },
       "mfe_mae": {
-        "mfe_pct": 6.65,
+        "mfe_pct": 5.18,
         "mae_pct": -1.03,
-        "mfe_price": 232.0,
+        "mfe_price": 228.8,
         "mae_price": 215.28,
-        "window_days": 1
+        "window_days": 0
       },
       "structure_events": {
         "higher_low": false,
@@ -19116,7 +19117,7 @@
         "mae_pct": -7.98,
         "mfe_price": 52300.0,
         "mae_price": 43800.0,
-        "window_days": 1
+        "window_days": 2
       },
       "structure_events": {
         "higher_low": false,
@@ -19205,55 +19206,7 @@
       "currently_open": false,
       "position_id": "",
       "lane_key": "pullback",
-      "status": "OK",
-      "entry_date_used": "2026-07-14",
-      "entry_price_used": 209.97,
-      "available_trading_days": 0,
-      "followup": {
-        "d1": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        },
-        "d3": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        },
-        "d5": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        },
-        "d10": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        },
-        "d20": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        }
-      },
-      "mfe_mae": {
-        "mfe_pct": 1.73,
-        "mae_pct": -1.02,
-        "mfe_price": 213.6129,
-        "mae_price": 207.825,
-        "window_days": 0
-      },
-      "structure_events": {
-        "higher_low": false,
-        "higher_high": false,
-        "ma50_recover": false,
-        "volume_breakout": false,
-        "higher_low_date": "",
-        "higher_high_date": "",
-        "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
-      },
+      "status": "NO_START_BAR",
       "final_verdict": "PENDING"
     },
     {
@@ -19342,55 +19295,7 @@
       "currently_open": false,
       "position_id": "",
       "lane_key": "left_side",
-      "status": "OK",
-      "entry_date_used": "2026-07-14",
-      "entry_price_used": 358.89,
-      "available_trading_days": 0,
-      "followup": {
-        "d1": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        },
-        "d3": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        },
-        "d5": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        },
-        "d10": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        },
-        "d20": {
-          "price": null,
-          "return_pct": null,
-          "date": ""
-        }
-      },
-      "mfe_mae": {
-        "mfe_pct": 1.92,
-        "mae_pct": -0.14,
-        "mfe_price": 365.78,
-        "mae_price": 358.4,
-        "window_days": 0
-      },
-      "structure_events": {
-        "higher_low": false,
-        "higher_high": false,
-        "ma50_recover": false,
-        "volume_breakout": false,
-        "higher_low_date": "",
-        "higher_high_date": "",
-        "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
-      },
+      "status": "NO_START_BAR",
       "final_verdict": "PENDING"
     },
     {
@@ -19536,32 +19441,31 @@
       "snapshot_date": "2026-07-15",
       "bucket": "candidate",
       "rank": 1,
-      "ticker": "GM",
-      "name": "General Motors Company",
+      "ticker": "GOOG",
+      "name": "Alphabet Inc",
       "country": "US",
-      "sector": "Consumer Cyclical",
-      "score": 2.0,
-      "selection_tier": "A",
+      "sector": "Communication Services",
+      "score": 1.0,
+      "selection_tier": "B",
       "selection_rank": 1,
-      "rule_selection_rank": 1,
-      "selection_lane_rank": 5,
-      "selection_support_count": 3,
+      "rule_selection_rank": 2,
+      "selection_lane_rank": 4,
+      "selection_support_count": 2,
       "selection_support_reasons": [
         "theme:SUPPORT",
-        "quality:STRONG_QUALITY",
-        "catalyst:POSITIVE_REVALUATION"
+        "quality:STRONG_QUALITY"
       ],
-      "selection_catalyst_freshness_rank": 4,
+      "selection_catalyst_freshness_rank": 0,
       "llm_selected": true,
-      "llm_override": false,
-      "llm_reason": "Best pullback setup in the pool: A-tier, strong pass, fresh positive revaluation catalyst, improving RRG, and volume compression after a modest drawdown keeps it from being a chase.",
-      "llm_risk": "Liquidity is weak and catalyst reaction is still unconfirmed.",
+      "llm_override": true,
+      "llm_reason": "Best balance of quality and setup: strong quality support, leading communication-services backdrop, and a pullback/volume-compression profile without chasing.",
+      "llm_risk": "No fresh catalyst and the stock is still ~10% below highs, so it may need broader market follow-through to resolve higher.",
       "llm_dropped": false,
       "llm_drop_reason": "",
-      "opportunity_score": 5.7,
-      "drawdown_from_high": -0.1101,
-      "factor_ret_20d": -0.0568,
-      "factor_atr_pct": 0.03,
+      "opportunity_score": 3.95,
+      "drawdown_from_high": -0.1045,
+      "factor_ret_20d": -0.0023,
+      "factor_atr_pct": 0.0285,
       "factor_positives": [
         "not_chasing",
         "volatility_healthy"
@@ -19570,48 +19474,119 @@
         "liquidity_weak"
       ],
       "primary_lane": "pullback",
-      "primary_lane_status": "STRONG_PASS",
+      "primary_lane_status": "PASS",
       "primary_lane_reasons": [
         "uptrend_intact",
         "pullback_depth",
         "ideal_pullback_depth",
+        "volume_dry_up"
+      ],
+      "primary_lane_review_flags": [],
+      "primary_lane_metrics": {
+        "ma50": 369.5126,
+        "ma200": 319.2901,
+        "drawdown_from_252d_high": -0.1045,
+        "volume_ratio_5d_20d": 0.5764
+      },
+      "strength_lane_status": "FAIL",
+      "strength_lane_metrics": {},
+      "pullback_lane_status": "PASS",
+      "pullback_lane_metrics": {
+        "ma50": 369.5126,
+        "ma200": 319.2901,
+        "drawdown_from_252d_high": -0.1045,
+        "volume_ratio_5d_20d": 0.5764
+      },
+      "left_side_lane_status": "FAIL",
+      "left_side_stage": "FAIL",
+      "left_side_lane_metrics": {
+        "drawdown_from_252d_high": -0.1045,
+        "distance_from_252d_low": 0.9516
+      },
+      "signal_keys": [
+        "volume_compression"
+      ],
+      "theme_industry_status": "SUPPORT",
+      "quality_auditor_status": "STRONG_QUALITY",
+      "catalyst_classification": "",
+      "catalyst_freshness": "",
+      "actually_bought": false,
+      "currently_open": false,
+      "position_id": "",
+      "lane_key": "pullback",
+      "status": "NO_START_BAR",
+      "final_verdict": "PENDING"
+    },
+    {
+      "snapshot_date": "2026-07-15",
+      "bucket": "candidate",
+      "rank": 2,
+      "ticker": "HWM",
+      "name": "Howmet Aerospace Inc",
+      "country": "US",
+      "sector": "Industrials",
+      "score": 2.2,
+      "selection_tier": "B",
+      "selection_rank": 2,
+      "rule_selection_rank": 1,
+      "selection_lane_rank": 4,
+      "selection_support_count": 2,
+      "selection_support_reasons": [
+        "quality:STRONG_QUALITY",
+        "catalyst:POSITIVE_REVALUATION"
+      ],
+      "selection_catalyst_freshness_rank": 4,
+      "llm_selected": true,
+      "llm_override": true,
+      "llm_reason": "Fresh positive revaluation catalyst with strong quality support and a constructive pullback setup; among the candidates it has the clearest catalyst-plus-setup combination.",
+      "llm_risk": "Sector is lagging and the catalyst reaction is not yet confirmed, so follow-through may be limited if the tape stays weak.",
+      "llm_dropped": false,
+      "llm_drop_reason": "",
+      "opportunity_score": 2.7,
+      "drawdown_from_high": -0.0422,
+      "factor_ret_20d": 0.0252,
+      "factor_atr_pct": 0.0327,
+      "factor_positives": [
+        "not_chasing",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [
+        "liquidity_weak"
+      ],
+      "primary_lane": "pullback",
+      "primary_lane_status": "PASS",
+      "primary_lane_reasons": [
+        "uptrend_intact",
         "volume_dry_up",
         "support_near"
       ],
       "primary_lane_review_flags": [],
       "primary_lane_metrics": {
-        "ma50": 78.7666,
-        "ma200": 75.83,
-        "drawdown_from_252d_high": -0.1101,
-        "volume_ratio_5d_20d": 0.4985
+        "ma50": 263.5278,
+        "ma200": 230.0881,
+        "drawdown_from_252d_high": -0.0422,
+        "volume_ratio_5d_20d": 0.4804
       },
       "strength_lane_status": "FAIL",
-      "strength_lane_metrics": {
-        "ret_20d": -0.0568,
-        "ret_63d": 0.0005,
-        "ret_126d": -0.0724,
-        "rs_20d": -0.0704,
-        "rs_63d": -0.0953,
-        "rs_126d": -0.1556
-      },
-      "pullback_lane_status": "STRONG_PASS",
+      "strength_lane_metrics": {},
+      "pullback_lane_status": "PASS",
       "pullback_lane_metrics": {
-        "ma50": 78.7666,
-        "ma200": 75.83,
-        "drawdown_from_252d_high": -0.1101,
-        "volume_ratio_5d_20d": 0.4985
+        "ma50": 263.5278,
+        "ma200": 230.0881,
+        "drawdown_from_252d_high": -0.0422,
+        "volume_ratio_5d_20d": 0.4804
       },
       "left_side_lane_status": "FAIL",
       "left_side_stage": "FAIL",
       "left_side_lane_metrics": {
-        "drawdown_from_252d_high": -0.1101,
-        "distance_from_252d_low": 0.5723
+        "drawdown_from_252d_high": -0.0422,
+        "distance_from_252d_low": 0.5864
       },
       "signal_keys": [
-        "rrg_improving",
+        "bb_squeeze",
         "volume_compression"
       ],
-      "theme_industry_status": "SUPPORT",
+      "theme_industry_status": "SECTOR_UNSUPPORTED",
       "quality_auditor_status": "STRONG_QUALITY",
       "catalyst_classification": "POSITIVE_REVALUATION",
       "catalyst_freshness": "FRESH_3D",
@@ -19625,187 +19600,132 @@
     {
       "snapshot_date": "2026-07-15",
       "bucket": "candidate",
-      "rank": 2,
-      "ticker": "BUD",
-      "name": "Anheuser-Busch InBev SA/NV ADR",
-      "country": "US",
-      "sector": "Consumer Defensive",
-      "score": 2.0,
-      "selection_tier": "A",
-      "selection_rank": 2,
-      "rule_selection_rank": 2,
-      "selection_lane_rank": 5,
-      "selection_support_count": 3,
-      "selection_support_reasons": [
-        "theme:SUPPORT",
-        "quality:STRONG_QUALITY",
-        "catalyst:POSITIVE_REVALUATION"
-      ],
-      "selection_catalyst_freshness_rank": 4,
+      "rank": 3,
+      "ticker": "426030.KS",
+      "name": "TIME 미국나스닥100액티브",
+      "country": "KR",
+      "sector": "",
+      "score": 1.2,
+      "selection_tier": "B",
+      "selection_rank": 3,
+      "rule_selection_rank": null,
+      "selection_lane_rank": 4,
+      "selection_support_count": 0,
+      "selection_support_reasons": [],
+      "selection_catalyst_freshness_rank": 0,
       "llm_selected": true,
-      "llm_override": false,
-      "llm_reason": "High-quality strength candidate with fresh positive revaluation, improving RRG, and healthy volatility; offers a steadier lane than the more extended names.",
-      "llm_risk": "Low liquidity buffer and no confirmed post-catalyst price/volume follow-through yet.",
+      "llm_override": true,
+      "llm_reason": "Clean pullback candidate with liquidity-good profile, not-chasing characteristics, and acceptable volatility; useful as a diversified non-US sleeve when higher-conviction names are limited.",
+      "llm_risk": "Data-light with no catalyst or theme mapping, so conviction is lower and upside may be more dependent on general market flow.",
       "llm_dropped": false,
       "llm_drop_reason": "",
-      "opportunity_score": 3.615,
-      "drawdown_from_high": -0.0672,
-      "factor_ret_20d": -0.0427,
-      "factor_atr_pct": 0.02,
+      "opportunity_score": 3.95,
+      "drawdown_from_high": -0.1426,
+      "factor_ret_20d": -0.0939,
+      "factor_atr_pct": 0.0392,
       "factor_positives": [
+        "liquidity_good",
         "not_chasing",
         "volatility_healthy"
       ],
-      "factor_negatives": [
-        "liquidity_weak"
-      ],
-      "primary_lane": "strength",
-      "primary_lane_status": "STRONG_PASS",
+      "factor_negatives": [],
+      "primary_lane": "pullback",
+      "primary_lane_status": "PASS",
       "primary_lane_reasons": [
-        "relative_strength",
-        "near_52w_high"
+        "uptrend_intact",
+        "pullback_depth",
+        "ideal_pullback_depth",
+        "volume_dry_up"
       ],
       "primary_lane_review_flags": [],
       "primary_lane_metrics": {
-        "ret_20d": -0.0427,
-        "ret_63d": 0.0492,
-        "ret_126d": 0.2048,
-        "rs_20d": -0.0563,
-        "rs_63d": -0.0466,
-        "rs_126d": 0.1215,
-        "drawdown_from_252d_high": -0.0672,
-        "volume_ratio_5d_20d": 0.5976
+        "ma50": 55759.6,
+        "ma200": 41945.6,
+        "drawdown_from_252d_high": -0.1426,
+        "volume_ratio_5d_20d": 0.5638
       },
-      "strength_lane_status": "STRONG_PASS",
+      "strength_lane_status": "FAIL",
       "strength_lane_metrics": {
-        "ret_20d": -0.0427,
-        "ret_63d": 0.0492,
-        "ret_126d": 0.2048,
-        "rs_20d": -0.0563,
-        "rs_63d": -0.0466,
-        "rs_126d": 0.1215,
-        "drawdown_from_252d_high": -0.0672,
-        "volume_ratio_5d_20d": 0.5976
+        "ret_20d": -0.0939,
+        "ret_63d": 0.2893,
+        "ret_126d": 0.4994,
+        "rs_20d": 0.0714,
+        "rs_63d": 0.046,
+        "rs_126d": -0.1012
       },
       "pullback_lane_status": "PASS",
       "pullback_lane_metrics": {
-        "ma50": 80.8612,
-        "ma200": 71.0369,
-        "drawdown_from_252d_high": -0.0672,
-        "volume_ratio_5d_20d": 0.5976
+        "ma50": 55759.6,
+        "ma200": 41945.6,
+        "drawdown_from_252d_high": -0.1426,
+        "volume_ratio_5d_20d": 0.5638
       },
       "left_side_lane_status": "FAIL",
       "left_side_stage": "FAIL",
       "left_side_lane_metrics": {
-        "drawdown_from_252d_high": -0.0672,
-        "distance_from_252d_low": 0.39
+        "drawdown_from_252d_high": -0.1426,
+        "distance_from_252d_low": 0.7497
       },
       "signal_keys": [
-        "rrg_improving",
         "volume_compression"
       ],
-      "theme_industry_status": "SUPPORT",
-      "quality_auditor_status": "STRONG_QUALITY",
-      "catalyst_classification": "POSITIVE_REVALUATION",
-      "catalyst_freshness": "FRESH_3D",
+      "theme_industry_status": "NO_MAPPING",
+      "quality_auditor_status": "DATA_LIGHT",
+      "catalyst_classification": "",
+      "catalyst_freshness": "",
       "actually_bought": false,
       "currently_open": false,
       "position_id": "",
-      "lane_key": "strength",
-      "status": "NO_START_BAR",
-      "final_verdict": "PENDING"
-    },
-    {
-      "snapshot_date": "2026-07-15",
-      "bucket": "candidate",
-      "rank": 3,
-      "ticker": "APLE",
-      "name": "Apple Hospitality REIT Inc",
-      "country": "US",
-      "sector": "Real Estate",
-      "score": 2.2,
-      "selection_tier": "A",
-      "selection_rank": 3,
-      "rule_selection_rank": 3,
-      "selection_lane_rank": 5,
-      "selection_support_count": 3,
-      "selection_support_reasons": [
-        "theme:SUPPORT",
-        "quality:QUALITY_SUPPORT",
-        "catalyst:POSITIVE_REVALUATION"
-      ],
-      "selection_catalyst_freshness_rank": 3,
-      "llm_selected": true,
-      "llm_override": false,
-      "llm_reason": "Balanced strength pick with improving RRG, recent positive revaluation, and a tighter setup near highs; adds real estate exposure to diversify the final trio.",
-      "llm_risk": "Near 52-week high with low liquidity buffer, so upside may be limited if momentum stalls.",
-      "llm_dropped": false,
-      "llm_drop_reason": "",
-      "opportunity_score": 4.9,
-      "drawdown_from_high": -0.0211,
-      "factor_ret_20d": 0.0284,
-      "factor_atr_pct": 0.0205,
-      "factor_positives": [
-        "volatility_healthy"
-      ],
-      "factor_negatives": [
-        "liquidity_weak"
-      ],
-      "primary_lane": "strength",
-      "primary_lane_status": "STRONG_PASS",
-      "primary_lane_reasons": [
-        "relative_strength",
-        "near_52w_high",
-        "trend_confirmed"
-      ],
-      "primary_lane_review_flags": [],
-      "primary_lane_metrics": {
-        "ret_20d": 0.0284,
-        "ret_63d": 0.3333,
-        "ret_126d": 0.3365,
-        "rs_20d": 0.0148,
-        "rs_63d": 0.2375,
-        "rs_126d": 0.2533,
-        "drawdown_from_252d_high": -0.0211,
-        "volume_ratio_5d_20d": 0.8818
+      "lane_key": "pullback",
+      "status": "OK",
+      "entry_date_used": "2026-07-15",
+      "entry_price_used": 53680.0,
+      "available_trading_days": 0,
+      "followup": {
+        "d1": {
+          "price": null,
+          "return_pct": null,
+          "date": ""
+        },
+        "d3": {
+          "price": null,
+          "return_pct": null,
+          "date": ""
+        },
+        "d5": {
+          "price": null,
+          "return_pct": null,
+          "date": ""
+        },
+        "d10": {
+          "price": null,
+          "return_pct": null,
+          "date": ""
+        },
+        "d20": {
+          "price": null,
+          "return_pct": null,
+          "date": ""
+        }
       },
-      "strength_lane_status": "STRONG_PASS",
-      "strength_lane_metrics": {
-        "ret_20d": 0.0284,
-        "ret_63d": 0.3333,
-        "ret_126d": 0.3365,
-        "rs_20d": 0.0148,
-        "rs_63d": 0.2375,
-        "rs_126d": 0.2533,
-        "drawdown_from_252d_high": -0.0211,
-        "volume_ratio_5d_20d": 0.8818
+      "mfe_mae": {
+        "mfe_pct": 0.59,
+        "mae_pct": -1.98,
+        "mfe_price": 53995.0,
+        "mae_price": 52615.0,
+        "window_days": 0
       },
-      "pullback_lane_status": "WAIT",
-      "pullback_lane_metrics": {
-        "ma50": 15.383,
-        "ma200": 12.8559,
-        "drawdown_from_252d_high": -0.0211,
-        "volume_ratio_5d_20d": 0.8818
+      "structure_events": {
+        "higher_low": false,
+        "higher_high": false,
+        "ma50_recover": false,
+        "volume_breakout": false,
+        "higher_low_date": "",
+        "higher_high_date": "",
+        "ma50_recover_date": "",
+        "volume_breakout_date": "",
+        "event_count": 0
       },
-      "left_side_lane_status": "FAIL",
-      "left_side_stage": "FAIL",
-      "left_side_lane_metrics": {
-        "drawdown_from_252d_high": -0.0211,
-        "distance_from_252d_low": 0.4933
-      },
-      "signal_keys": [
-        "rrg_improving",
-        "bb_squeeze"
-      ],
-      "theme_industry_status": "SUPPORT",
-      "quality_auditor_status": "QUALITY_SUPPORT",
-      "catalyst_classification": "POSITIVE_REVALUATION",
-      "catalyst_freshness": "RECENT_14D",
-      "actually_bought": false,
-      "currently_open": false,
-      "position_id": "",
-      "lane_key": "strength",
-      "status": "NO_START_BAR",
       "final_verdict": "PENDING"
     }
   ]
