@@ -714,6 +714,27 @@ def _markdown_report(today: str, summary: dict, records: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _performance_summary_text(summary: dict) -> str:
+    verdicts = summary.get("verdict_counts", {}) or {}
+    failed_fast = int(verdicts.get("FAILED_FAST", 0) or 0)
+    false_positive = int(verdicts.get("FALSE_POSITIVE", 0) or 0)
+    failed_total = failed_fast + false_positive
+    comparison = summary.get("llm_override_comparison", {}) or {}
+    comparison_suffix = ""
+    if comparison.get("dropped_count") or comparison.get("added_count"):
+        comparison_suffix = (
+            f" · LLM비교 dropped {int(comparison.get('dropped_count', 0) or 0)}"
+            f"/added {int(comparison.get('added_count', 0) or 0)}"
+        )
+    return (
+        f"SCOUT 성과표: 후보 {summary.get('evaluated_count', 0)}/{summary.get('candidate_count', 0)}개 평가, "
+        f"WINNER {int(verdicts.get('WINNER', 0) or 0)}, "
+        f"실패 {failed_total} (조기 {failed_fast} / 20일 무진전 {false_positive}), "
+        f"실제매수 {summary.get('actually_bought_count', 0)}"
+        f"{comparison_suffix}"
+    )
+
+
 def run_scout_performance(days: int = 45, include_radar_top: bool = False) -> dict[str, Any]:
     """추천 스냅샷 기반 사후 성과표를 생성하고 파일로 저장한다."""
     today = today_kst_str()
@@ -809,22 +830,7 @@ def run_scout_performance(days: int = 45, include_radar_top: bool = False) -> di
     except Exception as e:
         logger.debug("[scout performance] parquet 저장 실패(json/md는 저장됨): %s", e)
 
-    verdicts = summary.get("verdict_counts", {}) or {}
-    comparison = summary.get("llm_override_comparison", {}) or {}
-    comparison_suffix = ""
-    if comparison.get("dropped_count") or comparison.get("added_count"):
-        comparison_suffix = (
-            f" · LLM비교 dropped {int(comparison.get('dropped_count', 0) or 0)}"
-            f"/added {int(comparison.get('added_count', 0) or 0)}"
-        )
-    summary_text = (
-        f"SCOUT 성과표: 후보 {summary.get('evaluated_count', 0)}/{summary.get('candidate_count', 0)}개 평가, "
-        f"WINNER {int(verdicts.get('WINNER', 0) or 0)}, "
-        f"FAILED_FAST {int(verdicts.get('FAILED_FAST', 0) or 0)}, "
-        f"FALSE_POSITIVE {int(verdicts.get('FALSE_POSITIVE', 0) or 0)}, "
-        f"실제매수 {summary.get('actually_bought_count', 0)}"
-        f"{comparison_suffix}"
-    )
+    summary_text = _performance_summary_text(summary)
     return {
         "summary_text": summary_text,
         "records": evaluated,

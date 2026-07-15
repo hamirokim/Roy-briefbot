@@ -146,9 +146,17 @@ scout:
     max_picks: 3
     watchlist_size: 5
     risk_catalyst_review_pool: true    # RISK_CATALYST는 Top3 제외, 리뷰풀로만 기록
+    production_gate:
+      enabled: true                    # 실전 추천은 확실 후보만 허용. 0개가 정상 결과일 수 있음
+      allowed_tiers: ["A"]             # B/C/D는 추천하지 않고 WATCHLIST로만 기록
+      quality_statuses: ["QUALITY_SUPPORT", "STRONG_QUALITY"]
+      excluded_quality_flags: ["overextended_20d", "low_liquidity_buffer"]
+      excluded_factor_negatives: ["liquidity_weak", "volatility_extreme", "chasing_extreme", "chasing_hot"]
+      backfill: false
     llm_review:
       enabled: true                    # 규칙 기반 Top3를 LLM이 최종 재심사. 실패 시 규칙 기반 결과 유지
-      candidate_limit: 12              # 규칙 Top3 + WATCHLIST + 레인별 대표만 투입
+      additions_allowed: false         # LLM은 규칙 후보를 줄이거나 재정렬만 가능. WATCHLIST 승격 금지
+      candidate_limit: 12              # additions_allowed=false이면 규칙 통과 후보만 투입
       max_tokens: 1200
     precision_shadow:
       enabled: true                    # Step3 가설의 미래 검증 전용. Telegram/Sheets/final Top3에는 영향 없음

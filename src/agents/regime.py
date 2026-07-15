@@ -369,9 +369,11 @@ class RegimeAgent(BaseAgent):
             )
             yesterday = get_yesterday_announced_events()
             upcoming = get_upcoming_events(lookahead_days=cfg["lookahead_days"])
+            source_coverage = (yesterday[0].get("source_coverage", {}) or {}) if yesterday else {}
             return {
                 "yesterday_announced": yesterday,
                 "upcoming": upcoming,
+                "source_coverage": source_coverage,
             }
         except Exception as e:
             logger.warning("[regime macro] 실패: %s", e)
