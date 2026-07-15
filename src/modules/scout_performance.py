@@ -385,6 +385,25 @@ def _extract_record(snapshot_date: str, bucket: str, rank: int, item: dict, hist
     }
 
 
+def _snapshot_record_groups(snap: dict, include_radar_top: bool) -> list[tuple[str, list[dict]]]:
+    groups = [("candidate", snap.get("candidates", []) or [])]
+    llm_dropped = []
+    for item in snap.get("radar_top", []) or []:
+        top3 = item.get("top3_selection") or {}
+        if bool(top3.get("llm_dropped", item.get("llm_dropped", False))):
+            llm_dropped.append(item)
+    if llm_dropped:
+        groups.append(("llm_dropped", llm_dropped))
+    if include_radar_top:
+        groups.append(("radar_top", snap.get("radar_top", []) or []))
+    for policy_key, policy in sorted((snap.get("shadow_policies") or {}).items()):
+        if not isinstance(policy, dict):
+            continue
+        policy_id = str(policy.get("policy_id", policy_key) or policy_key)
+        groups.append((f"shadow:{policy_id}", policy.get("candidates", []) or []))
+    return groups
+
+
 def _build_records(days: int, include_radar_top: bool) -> list[dict]:
     snapshots = _load_snapshots(days)
     historical_pos, open_pos = _position_mapping()
@@ -392,16 +411,7 @@ def _build_records(days: int, include_radar_top: bool) -> list[dict]:
     seen = set()
     for snap in snapshots:
         snap_date = str(snap.get("date", "") or "")
-        groups = [("candidate", snap.get("candidates", []) or [])]
-        llm_dropped = []
-        for item in snap.get("radar_top", []) or []:
-            top3 = item.get("top3_selection") or {}
-            if bool(top3.get("llm_dropped", item.get("llm_dropped", False))):
-                llm_dropped.append(item)
-        if llm_dropped:
-            groups.append(("llm_dropped", llm_dropped))
-        if include_radar_top:
-            groups.append(("radar_top", snap.get("radar_top", []) or []))
+        groups = _snapshot_record_groups(snap, include_radar_top)
         for bucket, items in groups:
             for rank, item in enumerate(items, 1):
                 ticker = _ticker_key(item.get("ticker", ""))
@@ -509,6 +519,7 @@ def _summary(records: list[dict]) -> dict:
             "by_catalyst": _aggregate(records, "catalyst"),
         },
         "llm_override_comparison": _llm_override_comparison(records),
+        "shadow_policy_comparison": _shadow_policy_comparison(records),
     }
 
 
@@ -598,6 +609,28 @@ def _llm_override_comparison(records: list[dict]) -> dict:
     }
 
 
+def _shadow_policy_comparison(records: list[dict]) -> dict:
+    buckets: dict[str, list[dict]] = defaultdict(list)
+    for record in records:
+        bucket = str(record.get("bucket", "") or "")
+        if bucket.startswith("shadow:"):
+            buckets[bucket.split(":", 1)[1]].append(record)
+
+    comparison = {}
+    for policy_id, items in sorted(buckets.items()):
+        ok = [record for record in items if record.get("status") == "OK"]
+        comparison[policy_id] = {
+            "count": len(items),
+            "evaluated_count": len(ok),
+            "avg_d5_return_pct": _avg_return(ok, "d5"),
+            "avg_d10_return_pct": _avg_return(ok, "d10"),
+            "avg_d20_return_pct": _avg_return(ok, "d20"),
+            "tickers": [record.get("ticker") for record in items],
+            "records": [_record_result_brief(record) for record in items],
+        }
+    return comparison
+
+
 def _markdown_report(today: str, summary: dict, records: list[dict]) -> str:
     lines = [
         "# SCOUT Performance Report",
@@ -656,6 +689,18 @@ def _markdown_report(today: str, summary: dict, records: list[dict]) -> str:
                     f"lane={row.get('primary_lane')}:{row.get('primary_lane_status')}"
                 )
     lines.append("")
+    lines.append("## Precision Shadow Comparison")
+    shadow_comparison = summary.get("shadow_policy_comparison") or {}
+    if not shadow_comparison:
+        lines.append("- no precision shadow rows")
+    else:
+        for policy_id, policy in shadow_comparison.items():
+            lines.append(
+                f"- {policy_id}: n={policy.get('evaluated_count', 0)}/{policy.get('count', 0)}, "
+                f"avgD5={policy.get('avg_d5_return_pct')}, avgD10={policy.get('avg_d10_return_pct')}, "
+                f"avgD20={policy.get('avg_d20_return_pct')}"
+            )
+    lines.append("")
     lines.append("## Recent Candidate Records")
     for r in records:
         if r.get("bucket") != "candidate":
@@ -700,7 +745,7 @@ def run_scout_performance(days: int = 45, include_radar_top: bool = False) -> di
     summary = _summary(evaluated)
     payload = _json_safe({
         "date": today,
-        "schema_version": "scout_performance_v0_2",
+        "schema_version": "scout_performance_v0_3",
         "lookback_days": int(days),
         "followup_days": FOLLOWUP_DAYS,
         "summary": summary,

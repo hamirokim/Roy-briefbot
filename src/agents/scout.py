@@ -22,6 +22,7 @@ import logging
 import os
 import time
 from collections import Counter
+from copy import deepcopy
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Optional
@@ -31,7 +32,7 @@ import pandas as pd
 import requests
 
 from src.agents.base import BaseAgent
-from src.utils import today_kst_str
+from src.utils import now_kst, today_kst_str
 
 logger = logging.getLogger(__name__)
 
@@ -2668,6 +2669,110 @@ def _selection_sort_key(item: dict) -> tuple:
     )
 
 
+def _select_precision_shadow_candidates(
+    radar_pool: list[dict],
+    selection_cfg: dict,
+) -> tuple[list[dict], dict]:
+    """Select the frozen US precision hypothesis without affecting live Top3."""
+    cfg = ((selection_cfg or {}).get("precision_shadow") or {})
+    enabled = bool(cfg.get("enabled", False))
+    policy_id = str(cfg.get("policy_id", "us_precision_v1") or "us_precision_v1")
+    max_picks = min(3, max(0, int(cfg.get("max_picks", 3) or 0)))
+    allowed_countries = {str(value).upper() for value in (cfg.get("allowed_countries") or ["US"])}
+    allowed_tiers = {str(value).upper() for value in (cfg.get("allowed_tiers") or ["A"])}
+    theme_statuses = {str(value).upper() for value in (cfg.get("theme_statuses") or ["SUPPORT", "STRONG_SUPPORT"])}
+    quality_statuses = {str(value).upper() for value in (cfg.get("quality_statuses") or ["QUALITY_SUPPORT", "STRONG_QUALITY"])}
+    excluded_factor_negatives = {
+        str(value).lower()
+        for value in (cfg.get("excluded_factor_negatives") or ["volatility_extreme", "chasing_extreme", "chasing_hot"])
+    }
+    audit = {
+        "enabled": enabled,
+        "shadow_only": True,
+        "policy_id": policy_id,
+        "max_picks": max_picks,
+        "llm_additions_allowed": False,
+        "evaluated": int(len(radar_pool)),
+        "eligible_before_cap": 0,
+        "selected": 0,
+        "selected_tickers": [],
+        "no_signal": True,
+        "rejection_counts": {},
+        "criteria": {
+            "allowed_countries": sorted(allowed_countries),
+            "allowed_tiers": sorted(allowed_tiers),
+            "theme_statuses": sorted(theme_statuses),
+            "quality_statuses": sorted(quality_statuses),
+            "excluded_factor_negatives": sorted(excluded_factor_negatives),
+            "risk_catalyst_excluded": True,
+            "backfill": False,
+        },
+    }
+    if not enabled:
+        return [], audit
+
+    rejection_counts = Counter()
+    eligible = []
+    for item in radar_pool:
+        top3 = item.get("top3_selection") or _annotate_top3_selection(item)
+        catalyst = item.get("catalyst_context") or {}
+        country = str(item.get("country", "") or "").upper()
+        tier = str(top3.get("tier", "") or "").upper()
+        theme_status = str((item.get("theme_industry") or {}).get("status", "") or "").upper()
+        quality_status = str((item.get("quality_auditor") or {}).get("status", "") or "").upper()
+        factor_negatives = {
+            str(value).lower()
+            for value in ((item.get("factor_context") or {}).get("negatives") or [])
+        }
+
+        if country not in allowed_countries:
+            rejection_counts["country"] += 1
+            continue
+        if tier not in allowed_tiers:
+            rejection_counts["tier"] += 1
+            continue
+        if bool(top3.get("excluded")) or str(top3.get("exclude_reason", "") or "") == "RISK_CATALYST":
+            rejection_counts["risk_catalyst"] += 1
+            continue
+        if str(catalyst.get("top3_excluded_reason", "") or "") == "RISK_CATALYST":
+            rejection_counts["risk_catalyst"] += 1
+            continue
+        if theme_status not in theme_statuses:
+            rejection_counts["theme"] += 1
+            continue
+        if quality_status not in quality_statuses:
+            rejection_counts["quality"] += 1
+            continue
+        if factor_negatives & excluded_factor_negatives:
+            rejection_counts["factor_extreme"] += 1
+            continue
+        eligible.append(item)
+
+    best_by_ticker: dict[str, dict] = {}
+    for item in sorted(eligible, key=_selection_sort_key, reverse=True):
+        ticker = _theme_lookup_key(str(item.get("ticker", "") or ""))
+        if ticker and ticker not in best_by_ticker:
+            best_by_ticker[ticker] = item
+    selected_source = sorted(best_by_ticker.values(), key=_selection_sort_key, reverse=True)[:max_picks]
+    selected = []
+    for rank, item in enumerate(selected_source, 1):
+        frozen = deepcopy(item)
+        frozen["shadow_selection"] = {
+            "policy_id": policy_id,
+            "rank": rank,
+            "shadow_only": True,
+            "llm_additions_allowed": False,
+        }
+        selected.append(frozen)
+
+    audit["eligible_before_cap"] = int(len(best_by_ticker))
+    audit["selected"] = int(len(selected))
+    audit["selected_tickers"] = [str(item.get("ticker", "") or "") for item in selected]
+    audit["no_signal"] = not bool(selected)
+    audit["rejection_counts"] = {str(key): int(value) for key, value in rejection_counts.items()}
+    return selected, audit
+
+
 def _pick_from_tier(tier_items: list[dict], used_lanes: set[str]) -> dict:
     """동일 계층 안에서만 레인 균형을 마지막 tie-breaker로 적용한다."""
     sorted_items = sorted(tier_items, key=_selection_sort_key, reverse=True)
@@ -3272,6 +3377,8 @@ def _save_recommendation_snapshot(
     radar_pool: list[dict],
     radar_summary: dict,
     snapshot_cfg: dict,
+    shadow_policies: Optional[dict] = None,
+    generated_at: str = "",
 ) -> dict:
     """최종 추천 당시의 판정 근거를 저장한다.
 
@@ -3283,12 +3390,42 @@ def _save_recommendation_snapshot(
 
     RADAR_DIR.mkdir(parents=True, exist_ok=True)
     radar_top_n = int((snapshot_cfg or {}).get("include_radar_top", 20) or 20)
+    generated_at = generated_at or now_kst().isoformat(timespec="seconds")
+    ohlcv_dates = set()
+    theme_dates = set()
+    ohlcv_latest_by_country: dict[str, str] = {}
+    for item in radar_pool:
+        country = str(item.get("country", "") or "UNKNOWN")
+        latest_date = str((((item.get("common_gate") or {}).get("metrics") or {}).get("latest_date", "")) or "")
+        if latest_date:
+            ohlcv_dates.add(latest_date)
+            previous = ohlcv_latest_by_country.get(country, "")
+            if latest_date > previous:
+                ohlcv_latest_by_country[country] = latest_date
+        theme = item.get("theme_industry") or {}
+        for value in [theme.get("theme_snapshot_date"), (theme.get("sector") or {}).get("snapshot_date")]:
+            if value:
+                theme_dates.add(str(value))
+    shadow_policies = shadow_policies or {}
     payload = _json_safe_value({
         "date": today,
-        "schema_version": "scout_recommendation_snapshot_v0_2",
+        "generated_at": generated_at,
+        "timezone": "Asia/Seoul",
+        "data_as_of": {
+            "decision_date": today,
+            "ohlcv_latest_dates": sorted(ohlcv_dates),
+            "ohlcv_latest_by_country": ohlcv_latest_by_country,
+            "theme_snapshot_dates": sorted(theme_dates),
+            "source_policy": "latest_available_at_generation",
+        },
+        "schema_version": "scout_recommendation_snapshot_v0_3",
         "summary": {
             "candidate_count": int(len(candidates)),
             "radar_top_count": int(min(len(radar_pool), radar_top_n)),
+            "shadow_policy_counts": {
+                str(key): int(len((value or {}).get("candidates", []) or []))
+                for key, value in shadow_policies.items()
+            },
             "common_gate_audit": (radar_summary.get("filter_audit") or {}).get("common_gate_audit", {}),
             "price_lane_audit": (radar_summary.get("filter_audit") or {}).get("price_lane_audit", {}),
             "theme_industry_audit": (radar_summary.get("filter_audit") or {}).get("theme_industry_audit", {}),
@@ -3298,6 +3435,7 @@ def _save_recommendation_snapshot(
         },
         "candidates": candidates,
         "radar_top": radar_pool[:radar_top_n],
+        "shadow_policies": shadow_policies,
     })
 
     json_path = RADAR_DIR / f"recommendation_snapshot_{today}.json"
@@ -3313,6 +3451,9 @@ def _save_recommendation_snapshot(
                 flat_rows.append(_snapshot_flat_row(today, item, i, "candidate"))
             for i, item in enumerate(radar_pool[:radar_top_n], 1):
                 flat_rows.append(_snapshot_flat_row(today, item, i, "radar_top"))
+            for policy_key, policy in shadow_policies.items():
+                for i, item in enumerate((policy or {}).get("candidates", []) or [], 1):
+                    flat_rows.append(_snapshot_flat_row(today, item, i, f"shadow:{policy_key}"))
             pd.DataFrame(flat_rows).to_parquet(parquet_path, index=False)
             parquet_ok = True
         except Exception as e:
@@ -3556,6 +3697,7 @@ class ScoutAgent(BaseAgent):
         theme_boost_enabled = bool(scout_cfg.get("theme_boost_enabled", True))
         coverage_thresholds = scout_cfg.get("coverage_warning_threshold", {}) or {}
         today = state.get("date", today_kst_str())
+        generated_at = now_kst().isoformat(timespec="seconds")
         cooldown_map = dict(state.get("scout_cooldown", {}))
         m2_history = state.get("m2_history", {})
         m2_theme_history = state.get("m2_theme_history", {})
@@ -3858,6 +4000,10 @@ class ScoutAgent(BaseAgent):
             filter_audit={"top3_selection_audit": top3_selection_audit},
         )
         rule_based_candidates = list(candidates)
+        precision_shadow_candidates, precision_shadow_audit = _select_precision_shadow_candidates(
+            radar_pool=radar_pool,
+            selection_cfg=top3_selection_cfg,
+        )
         candidates, llm_review_audit = _apply_llm_top3_review(
             today=today,
             radar_pool=radar_pool,
@@ -3871,6 +4017,7 @@ class ScoutAgent(BaseAgent):
         top3_selection_audit["rule_based_top3"] = llm_review_audit.get("rule_based_top3", _ticker_set(rule_based_candidates))
         top3_selection_audit["final_top3"] = llm_review_audit.get("final_top3", _ticker_set(candidates))
         top3_selection_audit["llm_override"] = bool(llm_review_audit.get("llm_override", False))
+        top3_selection_audit["precision_shadow"] = precision_shadow_audit
         watchlist_candidates = _build_watchlist_candidates(
             radar_pool=radar_pool,
             candidates=candidates,
@@ -3978,12 +4125,24 @@ class ScoutAgent(BaseAgent):
                 self.log.warning("[scout] M1.5 LLM 보강 실패 (계속 진행): %s", e)
 
         try:
+            shadow_policies = {}
+            if precision_shadow_audit.get("enabled"):
+                policy_id = str(precision_shadow_audit.get("policy_id", "us_precision_v1") or "us_precision_v1")
+                shadow_policies[policy_id] = {
+                    "policy_id": policy_id,
+                    "shadow_only": True,
+                    "llm_additions_allowed": False,
+                    "audit": precision_shadow_audit,
+                    "candidates": precision_shadow_candidates,
+                }
             snapshot_paths = _save_recommendation_snapshot(
                 today=today,
                 candidates=candidates,
                 radar_pool=radar_pool,
                 radar_summary=radar_summary,
                 snapshot_cfg=scout_cfg.get("recommendation_snapshot", {}) or {},
+                shadow_policies=shadow_policies,
+                generated_at=generated_at,
             )
         except Exception as e:
             snapshot_paths = {}
