@@ -1,14 +1,93 @@
 {
-  "last_run_date": "2026-07-18",
-  "last_run_at": "2026-07-18T08:31:01.908481+09:00",
+  "last_run_date": "2026-07-20",
+  "last_run_at": "2026-07-20T08:30:41.159263+09:00",
   "last_run_status": "OK",
   "last_error_count": 0,
   "last_errors": [],
   "last_telegram_sent": true,
   "last_sheets_saved": true,
   "last_monthly_run": "2026-07-01",
-  "last_weekly_run": "2026-W29",
+  "last_weekly_run": "2026-W30",
   "m2_history": {
+    "2026-07-20": {
+      "XLK": {
+        "quadrant": "LAGGING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 96.81,
+        "momentum": 97.52
+      },
+      "XLV": {
+        "quadrant": "WEAKENING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 100.7,
+        "momentum": 94.94
+      },
+      "XLF": {
+        "quadrant": "LEADING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 101.96,
+        "momentum": 100.09
+      },
+      "XLY": {
+        "quadrant": "LAGGING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 99.47,
+        "momentum": 99.18
+      },
+      "XLP": {
+        "quadrant": "LEADING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 101.88,
+        "momentum": 100.05
+      },
+      "XLE": {
+        "quadrant": "LEADING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 105.49,
+        "momentum": 107.4
+      },
+      "XLI": {
+        "quadrant": "LAGGING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 99.3,
+        "momentum": 96.31
+      },
+      "XLB": {
+        "quadrant": "LAGGING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 99.99,
+        "momentum": 98.26
+      },
+      "XLC": {
+        "quadrant": "LEADING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 100.85,
+        "momentum": 102.56
+      },
+      "XLU": {
+        "quadrant": "WEAKENING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 100.12,
+        "momentum": 95.65
+      },
+      "XLRE": {
+        "quadrant": "WEAKENING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 102.54,
+        "momentum": 99.84
+      }
+    },
     "2026-07-18": {
       "XLK": {
         "quadrant": "LAGGING",
@@ -2299,88 +2378,173 @@
         "ratio": 100.3,
         "momentum": 100.74
       }
-    },
-    "2026-06-15": {
-      "XLK": {
-        "quadrant": "LAGGING",
-        "label": "기술",
-        "group": "growth",
-        "ratio": 99.47,
-        "momentum": 97.46
-      },
-      "XLV": {
-        "quadrant": "LEADING",
-        "label": "헬스케어",
-        "group": "defensive",
-        "ratio": 102.64,
-        "momentum": 101.0
-      },
-      "XLF": {
-        "quadrant": "LEADING",
-        "label": "금융",
-        "group": "cyclical",
-        "ratio": 103.44,
-        "momentum": 103.53
-      },
-      "XLY": {
-        "quadrant": "IMPROVING",
-        "label": "임의소비재",
-        "group": "cyclical",
-        "ratio": 99.89,
-        "momentum": 100.18
-      },
-      "XLP": {
-        "quadrant": "LEADING",
-        "label": "필수소비재",
-        "group": "defensive",
-        "ratio": 103.34,
-        "momentum": 104.23
-      },
-      "XLE": {
-        "quadrant": "WEAKENING",
-        "label": "에너지",
-        "group": "cyclical",
-        "ratio": 100.53,
-        "momentum": 99.76
-      },
-      "XLI": {
-        "quadrant": "LEADING",
-        "label": "산업재",
-        "group": "cyclical",
-        "ratio": 101.95,
-        "momentum": 103.53
-      },
-      "XLB": {
-        "quadrant": "LEADING",
-        "label": "소재",
-        "group": "cyclical",
-        "ratio": 102.95,
-        "momentum": 105.55
-      },
-      "XLC": {
-        "quadrant": "IMPROVING",
-        "label": "통신",
-        "group": "growth",
-        "ratio": 99.18,
-        "momentum": 100.96
-      },
-      "XLU": {
-        "quadrant": "LEADING",
-        "label": "유틸리티",
-        "group": "defensive",
-        "ratio": 101.5,
-        "momentum": 101.54
-      },
-      "XLRE": {
-        "quadrant": "LEADING",
-        "label": "리츠",
-        "group": "defensive",
-        "ratio": 102.91,
-        "momentum": 103.21
-      }
     }
   },
   "m2_theme_history": {
+    "2026-07-20": {
+      "SMH": {
+        "quadrant": "LAGGING",
+        "label": "반도체 (VanEck)",
+        "category": "semiconductor",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 95.84,
+        "momentum": 92.51
+      },
+      "SOXX": {
+        "quadrant": "LAGGING",
+        "label": "반도체 (iShares)",
+        "category": "semiconductor",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 95.48,
+        "momentum": 91.17
+      },
+      "AIQ": {
+        "quadrant": "LAGGING",
+        "label": "AI & 빅데이터",
+        "category": "ai",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 94.18,
+        "momentum": 93.98
+      },
+      "ARTY": {
+        "quadrant": "LAGGING",
+        "label": "Future AI & Tech",
+        "category": "ai",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 93.32,
+        "momentum": 91.66
+      },
+      "SKYY": {
+        "quadrant": "WEAKENING",
+        "label": "클라우드 컴퓨팅",
+        "category": "cloud",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 102.3,
+        "momentum": 98.9
+      },
+      "IGV": {
+        "quadrant": "LEADING",
+        "label": "소프트웨어",
+        "category": "software",
+        "theme_group": "ai_semis_cloud",
+        "group_label": "AI·반도체·클라우드",
+        "ratio": 100.84,
+        "momentum": 102.0
+      },
+      "BOTZ": {
+        "quadrant": "LAGGING",
+        "label": "로봇 & AI",
+        "category": "robotics",
+        "theme_group": "robotics_automation",
+        "group_label": "로봇·자동화",
+        "ratio": 89.26,
+        "momentum": 94.66
+      },
+      "ROBO": {
+        "quadrant": "LAGGING",
+        "label": "로봇 & 자동화",
+        "category": "robotics",
+        "theme_group": "robotics_automation",
+        "group_label": "로봇·자동화",
+        "ratio": 92.44,
+        "momentum": 95.36
+      },
+      "HACK": {
+        "quadrant": "LEADING",
+        "label": "사이버보안 (ETFMG)",
+        "category": "cybersecurity",
+        "theme_group": "cybersecurity",
+        "group_label": "사이버보안",
+        "ratio": 116.61,
+        "momentum": 103.49
+      },
+      "CIBR": {
+        "quadrant": "LEADING",
+        "label": "사이버보안 (First Trust)",
+        "category": "cybersecurity",
+        "theme_group": "cybersecurity",
+        "group_label": "사이버보안",
+        "ratio": 111.76,
+        "momentum": 102.1
+      },
+      "FINX": {
+        "quadrant": "IMPROVING",
+        "label": "핀테크",
+        "category": "fintech",
+        "theme_group": "fintech",
+        "group_label": "핀테크",
+        "ratio": 99.49,
+        "momentum": 100.16
+      },
+      "ARKF": {
+        "quadrant": "LAGGING",
+        "label": "핀테크 혁신 (ARK)",
+        "category": "fintech",
+        "theme_group": "fintech",
+        "group_label": "핀테크",
+        "ratio": 98.44,
+        "momentum": 99.2
+      },
+      "ICLN": {
+        "quadrant": "LAGGING",
+        "label": "클린에너지",
+        "category": "clean_energy",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 87.65,
+        "momentum": 96.93
+      },
+      "LIT": {
+        "quadrant": "LAGGING",
+        "label": "리튬 & 배터리",
+        "category": "battery",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 83.03,
+        "momentum": 96.04
+      },
+      "TAN": {
+        "quadrant": "LAGGING",
+        "label": "태양광",
+        "category": "solar",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 88.12,
+        "momentum": 99.61
+      },
+      "ITA": {
+        "quadrant": "LAGGING",
+        "label": "항공우주 & 방산",
+        "category": "space_defense",
+        "theme_group": "space_defense",
+        "group_label": "우주·방산",
+        "ratio": 99.8,
+        "momentum": 98.03
+      },
+      "XBI": {
+        "quadrant": "WEAKENING",
+        "label": "바이오테크 (S&P)",
+        "category": "biotech",
+        "theme_group": "biotech",
+        "group_label": "바이오테크",
+        "ratio": 109.27,
+        "momentum": 98.52
+      },
+      "IBB": {
+        "quadrant": "LEADING",
+        "label": "바이오테크 (NASDAQ)",
+        "category": "biotech",
+        "theme_group": "biotech",
+        "group_label": "바이오테크",
+        "ratio": 107.19,
+        "momentum": 100.35
+      }
+    },
     "2026-07-18": {
       "SMH": {
         "quadrant": "LAGGING",
@@ -7136,556 +7300,9 @@
         "ratio": 95.44,
         "momentum": 101.01
       }
-    },
-    "2026-06-15": {
-      "SMH": {
-        "quadrant": "LEADING",
-        "label": "반도체 (VanEck)",
-        "category": "semiconductor",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 119.49,
-        "momentum": 108.21
-      },
-      "SOXX": {
-        "quadrant": "LEADING",
-        "label": "반도체 (iShares)",
-        "category": "semiconductor",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 126.43,
-        "momentum": 109.84
-      },
-      "AIQ": {
-        "quadrant": "LEADING",
-        "label": "AI & 빅데이터",
-        "category": "ai",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 108.79,
-        "momentum": 101.79
-      },
-      "ARTY": {
-        "quadrant": "LEADING",
-        "label": "Future AI & Tech",
-        "category": "ai",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 115.29,
-        "momentum": 103.15
-      },
-      "SKYY": {
-        "quadrant": "WEAKENING",
-        "label": "클라우드 컴퓨팅",
-        "category": "cloud",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 104.14,
-        "momentum": 94.67
-      },
-      "IGV": {
-        "quadrant": "LAGGING",
-        "label": "소프트웨어",
-        "category": "software",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 98.93,
-        "momentum": 94.09
-      },
-      "BOTZ": {
-        "quadrant": "LAGGING",
-        "label": "로봇 & AI",
-        "category": "robotics",
-        "theme_group": "robotics_automation",
-        "group_label": "로봇·자동화",
-        "ratio": 94.89,
-        "momentum": 97.18
-      },
-      "ROBO": {
-        "quadrant": "WEAKENING",
-        "label": "로봇 & 자동화",
-        "category": "robotics",
-        "theme_group": "robotics_automation",
-        "group_label": "로봇·자동화",
-        "ratio": 100.17,
-        "momentum": 98.98
-      },
-      "HACK": {
-        "quadrant": "WEAKENING",
-        "label": "사이버보안 (ETFMG)",
-        "category": "cybersecurity",
-        "theme_group": "cybersecurity",
-        "group_label": "사이버보안",
-        "ratio": 109.12,
-        "momentum": 98.16
-      },
-      "CIBR": {
-        "quadrant": "WEAKENING",
-        "label": "사이버보안 (First Trust)",
-        "category": "cybersecurity",
-        "theme_group": "cybersecurity",
-        "group_label": "사이버보안",
-        "ratio": 112.49,
-        "momentum": 97.86
-      },
-      "FINX": {
-        "quadrant": "IMPROVING",
-        "label": "핀테크",
-        "category": "fintech",
-        "theme_group": "fintech",
-        "group_label": "핀테크",
-        "ratio": 93.33,
-        "momentum": 101.82
-      },
-      "ARKF": {
-        "quadrant": "IMPROVING",
-        "label": "핀테크 혁신 (ARK)",
-        "category": "fintech",
-        "theme_group": "fintech",
-        "group_label": "핀테크",
-        "ratio": 91.3,
-        "momentum": 101.33
-      },
-      "ICLN": {
-        "quadrant": "LAGGING",
-        "label": "클린에너지",
-        "category": "clean_energy",
-        "theme_group": "energy_battery",
-        "group_label": "에너지전환·배터리",
-        "ratio": 98.63,
-        "momentum": 97.57
-      },
-      "LIT": {
-        "quadrant": "IMPROVING",
-        "label": "리튬 & 배터리",
-        "category": "battery",
-        "theme_group": "energy_battery",
-        "group_label": "에너지전환·배터리",
-        "ratio": 97.42,
-        "momentum": 104.6
-      },
-      "TAN": {
-        "quadrant": "WEAKENING",
-        "label": "태양광",
-        "category": "solar",
-        "theme_group": "energy_battery",
-        "group_label": "에너지전환·배터리",
-        "ratio": 100.39,
-        "momentum": 97.85
-      },
-      "ITA": {
-        "quadrant": "IMPROVING",
-        "label": "항공우주 & 방산",
-        "category": "space_defense",
-        "theme_group": "space_defense",
-        "group_label": "우주·방산",
-        "ratio": 98.81,
-        "momentum": 101.31
-      },
-      "XBI": {
-        "quadrant": "IMPROVING",
-        "label": "바이오테크 (S&P)",
-        "category": "biotech",
-        "theme_group": "biotech",
-        "group_label": "바이오테크",
-        "ratio": 97.68,
-        "momentum": 103.39
-      },
-      "IBB": {
-        "quadrant": "IMPROVING",
-        "label": "바이오테크 (NASDAQ)",
-        "category": "biotech",
-        "theme_group": "biotech",
-        "group_label": "바이오테크",
-        "ratio": 96.13,
-        "momentum": 100.74
-      }
     }
   },
   "m6_history": [
-    {
-      "ticker": "402340.KS",
-      "name": "SK스퀘어",
-      "country": "KR",
-      "sector": "",
-      "date_added": "2026-06-03",
-      "price_at_add": 1346000.0,
-      "score": 1.4,
-      "selection_rank": 1,
-      "selection_tier": "A",
-      "selection_lane": "strength",
-      "selection_lane_status": "STRONG_PASS",
-      "selection_lane_rank": 5,
-      "selection_catalyst_freshness_rank": 0,
-      "selection_support_count": 0,
-      "selection_opportunity_score": 2.15,
-      "signal_keys": [
-        "bb_squeeze"
-      ],
-      "shadow_signal_keys": [],
-      "factor_score": 0.0,
-      "factor_positives": [
-        "liquidity_good",
-        "volatility_healthy"
-      ],
-      "factor_negatives": [
-        "chasing_extreme"
-      ],
-      "quality_flags": [
-        "near_52w_high",
-        "overextended_20d"
-      ],
-      "catalyst_status": "none",
-      "catalyst_classification": "NOISE",
-      "catalyst_freshness": "RECENT_14D",
-      "catalyst_reaction": "NO_CONFIRM",
-      "catalyst_top3_excluded_reason": "",
-      "catalyst_score": 0.0,
-      "theme_industry_status": "NO_MAPPING",
-      "theme_industry_confidence_delta": 0,
-      "quality_auditor_status": "NEUTRAL",
-      "quality_auditor_source": "dart",
-      "quality_auditor_confidence_delta": 1,
-      "data_coverage": {
-        "fundamental": {
-          "status": "not_supported_non_us",
-          "label": "수집 미지원(비미국)",
-          "missing_fields": [
-            "PE",
-            "Forward PE",
-            "EPS Growth",
-            "RSI",
-            "Insider",
-            "Institutional"
-          ]
-        },
-        "catalyst": {
-          "status": "none",
-          "label": "조회 결과 없음",
-          "detail": "뉴스 조회는 됐지만 촉매 키워드 없음"
-        }
-      },
-      "track_d": "",
-      "source": "SCOUT"
-    },
-    {
-      "ticker": "336260.KS",
-      "name": "두산퓨얼셀",
-      "country": "KR",
-      "sector": "",
-      "date_added": "2026-06-03",
-      "price_at_add": 82800.0,
-      "score": 1.4,
-      "selection_rank": 2,
-      "selection_tier": "B",
-      "selection_lane": "pullback",
-      "selection_lane_status": "PASS",
-      "selection_lane_rank": 4,
-      "selection_catalyst_freshness_rank": 3,
-      "selection_support_count": 1,
-      "selection_opportunity_score": 4.55,
-      "signal_keys": [
-        "bb_squeeze"
-      ],
-      "shadow_signal_keys": [],
-      "factor_score": -0.0,
-      "factor_positives": [
-        "liquidity_good"
-      ],
-      "factor_negatives": [
-        "chasing_extreme",
-        "volatility_extreme"
-      ],
-      "quality_flags": [
-        "overextended_20d"
-      ],
-      "catalyst_status": "found",
-      "catalyst_classification": "POSITIVE_REVALUATION",
-      "catalyst_freshness": "RECENT_14D",
-      "catalyst_reaction": "NO_CONFIRM",
-      "catalyst_top3_excluded_reason": "",
-      "catalyst_score": 0.0,
-      "theme_industry_status": "NO_MAPPING",
-      "theme_industry_confidence_delta": 0,
-      "quality_auditor_status": "NEUTRAL",
-      "quality_auditor_source": "dart",
-      "quality_auditor_confidence_delta": 1,
-      "data_coverage": {
-        "fundamental": {
-          "status": "not_supported_non_us",
-          "label": "수집 미지원(비미국)",
-          "missing_fields": [
-            "PE",
-            "Forward PE",
-            "EPS Growth",
-            "RSI",
-            "Insider",
-            "Institutional"
-          ]
-        },
-        "catalyst": {
-          "status": "found",
-          "label": "수집 완료",
-          "detail": "최근 촉매성 뉴스 확인"
-        }
-      },
-      "track_d": "",
-      "source": "SCOUT"
-    },
-    {
-      "ticker": "CMCSA",
-      "name": "Comcast Corp",
-      "country": "US",
-      "sector": "Communication Services",
-      "date_added": "2026-06-03",
-      "price_at_add": 24.85,
-      "score": 1.2,
-      "selection_rank": 3,
-      "selection_tier": "B",
-      "selection_lane": "left_side",
-      "selection_lane_status": "STAGE2_PASS",
-      "selection_lane_rank": 4,
-      "selection_catalyst_freshness_rank": 0,
-      "selection_support_count": 2,
-      "selection_opportunity_score": 3.501,
-      "signal_keys": [
-        "bb_squeeze"
-      ],
-      "shadow_signal_keys": [
-        "ronin_structure_support"
-      ],
-      "factor_score": 0.0,
-      "factor_positives": [
-        "not_chasing",
-        "volatility_healthy"
-      ],
-      "factor_negatives": [
-        "liquidity_weak"
-      ],
-      "quality_flags": [
-        "left_side_context",
-        "low_liquidity_buffer"
-      ],
-      "catalyst_status": "not_checked",
-      "catalyst_classification": "",
-      "catalyst_freshness": "",
-      "catalyst_reaction": "",
-      "catalyst_top3_excluded_reason": "",
-      "catalyst_score": 0.0,
-      "theme_industry_status": "SUPPORT",
-      "theme_industry_confidence_delta": 1,
-      "quality_auditor_status": "STRONG_QUALITY",
-      "quality_auditor_source": "fmp",
-      "quality_auditor_confidence_delta": 3,
-      "data_coverage": {
-        "fundamental": {
-          "status": "partial",
-          "label": "일부 수집",
-          "missing_fields": [
-            "Forward PE",
-            "RSI",
-            "Insider",
-            "Institutional"
-          ]
-        },
-        "catalyst": {
-          "status": "not_checked",
-          "label": "미확인",
-          "detail": "레이더 상위 평가 대상이 아니거나 아직 미확인"
-        }
-      },
-      "track_d": "",
-      "source": "SCOUT"
-    },
-    {
-      "ticker": "NVT",
-      "name": "nVent Electric plc",
-      "country": "US",
-      "sector": "Industrials",
-      "date_added": "2026-06-04",
-      "price_at_add": 176.39,
-      "score": 2.2,
-      "selection_rank": 1,
-      "selection_tier": "A",
-      "selection_lane": "strength",
-      "selection_lane_status": "STRONG_PASS",
-      "selection_lane_rank": 5,
-      "selection_catalyst_freshness_rank": 4,
-      "selection_support_count": 3,
-      "selection_opportunity_score": 3.9,
-      "signal_keys": [
-        "rrg_improving",
-        "bb_squeeze"
-      ],
-      "shadow_signal_keys": [],
-      "factor_score": -0.0,
-      "factor_positives": [
-        "volatility_healthy"
-      ],
-      "factor_negatives": [
-        "liquidity_weak"
-      ],
-      "quality_flags": [
-        "low_liquidity_buffer",
-        "near_52w_high"
-      ],
-      "catalyst_status": "found",
-      "catalyst_classification": "POSITIVE_REVALUATION",
-      "catalyst_freshness": "FRESH_3D",
-      "catalyst_reaction": "NO_CONFIRM",
-      "catalyst_top3_excluded_reason": "",
-      "catalyst_score": 0.0,
-      "theme_industry_status": "SUPPORT",
-      "theme_industry_confidence_delta": 1,
-      "quality_auditor_status": "QUALITY_SUPPORT",
-      "quality_auditor_source": "fmp",
-      "quality_auditor_confidence_delta": 3,
-      "data_coverage": {
-        "fundamental": {
-          "status": "partial",
-          "label": "일부 수집",
-          "missing_fields": [
-            "Forward PE",
-            "RSI",
-            "Insider",
-            "Institutional"
-          ]
-        },
-        "catalyst": {
-          "status": "found",
-          "label": "수집 완료",
-          "detail": "최근 촉매성 뉴스 확인"
-        }
-      },
-      "track_d": "",
-      "source": "SCOUT"
-    },
-    {
-      "ticker": "CECO",
-      "name": "Ceco Environmental Corp",
-      "country": "US",
-      "sector": "Industrials",
-      "date_added": "2026-06-04",
-      "price_at_add": 79.47,
-      "score": 2.2,
-      "selection_rank": 2,
-      "selection_tier": "A",
-      "selection_lane": "strength",
-      "selection_lane_status": "STRONG_PASS",
-      "selection_lane_rank": 5,
-      "selection_catalyst_freshness_rank": 0,
-      "selection_support_count": 2,
-      "selection_opportunity_score": 5.7,
-      "signal_keys": [
-        "rrg_improving",
-        "bb_squeeze"
-      ],
-      "shadow_signal_keys": [],
-      "factor_score": 0.0,
-      "factor_positives": [
-        "not_chasing",
-        "volatility_healthy"
-      ],
-      "factor_negatives": [
-        "liquidity_weak"
-      ],
-      "quality_flags": [
-        "low_liquidity_buffer"
-      ],
-      "catalyst_status": "not_checked",
-      "catalyst_classification": "",
-      "catalyst_freshness": "",
-      "catalyst_reaction": "",
-      "catalyst_top3_excluded_reason": "",
-      "catalyst_score": 0.0,
-      "theme_industry_status": "SUPPORT",
-      "theme_industry_confidence_delta": 1,
-      "quality_auditor_status": "QUALITY_SUPPORT",
-      "quality_auditor_source": "fmp",
-      "quality_auditor_confidence_delta": 2,
-      "data_coverage": {
-        "fundamental": {
-          "status": "partial",
-          "label": "일부 수집",
-          "missing_fields": [
-            "Forward PE",
-            "RSI",
-            "Insider",
-            "Institutional"
-          ]
-        },
-        "catalyst": {
-          "status": "not_checked",
-          "label": "미확인",
-          "detail": "레이더 상위 평가 대상이 아니거나 아직 미확인"
-        }
-      },
-      "track_d": "",
-      "source": "SCOUT"
-    },
-    {
-      "ticker": "DAC",
-      "name": "Danaos Corp",
-      "country": "US",
-      "sector": "Industrials",
-      "date_added": "2026-06-04",
-      "price_at_add": 128.37,
-      "score": 2.2,
-      "selection_rank": 3,
-      "selection_tier": "A",
-      "selection_lane": "strength",
-      "selection_lane_status": "STRONG_PASS",
-      "selection_lane_rank": 5,
-      "selection_catalyst_freshness_rank": 0,
-      "selection_support_count": 2,
-      "selection_opportunity_score": 3.906,
-      "signal_keys": [
-        "rrg_improving",
-        "bb_squeeze"
-      ],
-      "shadow_signal_keys": [],
-      "factor_score": 0.0,
-      "factor_positives": [
-        "not_chasing",
-        "volatility_healthy"
-      ],
-      "factor_negatives": [
-        "liquidity_weak"
-      ],
-      "quality_flags": [
-        "low_liquidity_buffer"
-      ],
-      "catalyst_status": "not_checked",
-      "catalyst_classification": "",
-      "catalyst_freshness": "",
-      "catalyst_reaction": "",
-      "catalyst_top3_excluded_reason": "",
-      "catalyst_score": 0.0,
-      "theme_industry_status": "SUPPORT",
-      "theme_industry_confidence_delta": 1,
-      "quality_auditor_status": "STRONG_QUALITY",
-      "quality_auditor_source": "fmp",
-      "quality_auditor_confidence_delta": 3,
-      "data_coverage": {
-        "fundamental": {
-          "status": "partial",
-          "label": "일부 수집",
-          "missing_fields": [
-            "Forward PE",
-            "RSI",
-            "Insider",
-            "Institutional"
-          ]
-        },
-        "catalyst": {
-          "status": "not_checked",
-          "label": "미확인",
-          "detail": "레이더 상위 평가 대상이 아니거나 아직 미확인"
-        }
-      },
-      "track_d": "",
-      "source": "SCOUT"
-    },
     {
       "ticker": "IRM",
       "name": "Iron Mountain Inc",
@@ -13339,10 +12956,6 @@
     "001800.KS": "2026-07-04",
     "KT": "2026-06-25",
     "080220.KQ": "2026-06-23",
-    "034220.KS": "2026-06-18",
-    "REGN": "2026-06-18",
-    "WMT": "2026-06-19",
-    "FFIV": "2026-06-19",
     "TRGP": "2026-06-25",
     "420770.KQ": "2026-06-20",
     "031330.KQ": "2026-06-20",
