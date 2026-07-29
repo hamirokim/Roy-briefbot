@@ -77,6 +77,23 @@ def _research_review(ticker: str, disposition: str) -> dict:
 
 
 class ProductionGateTests(unittest.TestCase):
+    def test_llm_prompt_requires_korean_human_readable_summaries(self):
+        _, user = scout._top3_llm_prompts(
+            today="2026-07-29",
+            market_context={},
+            rule_candidates=[],
+            research_packets=[],
+            additions_allowed=False,
+        )
+        payload = json.loads(user)
+
+        self.assertEqual(payload["schema_version"], "scout_top3_llm_prompt_v0_4")
+        self.assertEqual(
+            payload["required_output_schema"]["schema_version"],
+            "scout_top3_llm_review_v0_4",
+        )
+        self.assertTrue(any("concise Korean" in rule for rule in payload["rules"]))
+
     def test_2026_07_15_replay_returns_zero_without_backfill(self):
         payload = json.loads((ROOT / "data/scout/radar_pool_2026-07-15.json").read_text(encoding="utf-8"))
         selected, audit = scout._select_top3_candidates(
@@ -150,7 +167,7 @@ class ProductionGateTests(unittest.TestCase):
         rule = _candidate("RULE")
         watch = _candidate("WATCH", tier="B")
         raw = json.dumps({
-            "schema_version": "scout_top3_llm_review_v0_3",
+            "schema_version": "scout_top3_llm_review_v0_4",
             "selected_top3": [{"rank": 1, "ticker": "WATCH"}],
             "rejected": [],
             "overrides": [{"dropped_ticker": "RULE", "added_ticker": "WATCH", "reason": "replace"}],
@@ -178,7 +195,7 @@ class ProductionGateTests(unittest.TestCase):
         first = _candidate("FIRST")
         second = _candidate("SECOND")
         raw = json.dumps({
-            "schema_version": "scout_top3_llm_review_v0_3",
+            "schema_version": "scout_top3_llm_review_v0_4",
             "selected_top3": [{"rank": 1, "ticker": "SECOND"}],
             "rejected": [{"ticker": "FIRST", "reason": "remaining risk"}],
             "overrides": [],
@@ -211,7 +228,7 @@ class ProductionGateTests(unittest.TestCase):
     def test_llm_may_abstain_when_every_evidence_review_says_drop(self):
         only = _candidate("ONLY")
         raw = json.dumps({
-            "schema_version": "scout_top3_llm_review_v0_3",
+            "schema_version": "scout_top3_llm_review_v0_4",
             "selected_top3": [],
             "rejected": [{"ticker": "ONLY", "reason": "free-form text is ignored"}],
             "overrides": [],
@@ -237,10 +254,15 @@ class ProductionGateTests(unittest.TestCase):
 
 
 class DigestContractTests(unittest.TestCase):
-    def test_zero_day_is_explicit_and_watchlist_is_not_a_recommendation(self):
+    @staticmethod
+    def _digest_agent():
         agent = DigestAgent.__new__(DigestAgent)
         agent.settings = {"digest": {"telegram": {"max_chars": 10000}}}
         agent.log = logging.getLogger("test.digest")
+        return agent
+
+    def test_zero_day_is_explicit_and_watchlist_is_not_a_recommendation(self):
+        agent = self._digest_agent()
         message = agent._build_telegram(
             [],
             {},
@@ -276,16 +298,94 @@ class DigestContractTests(unittest.TestCase):
             },
         )
 
+        self.assertIn("오늘 결론", message)
+        self.assertIn("추천 없음</b> — 관찰만", message)
         self.assertIn("신규 추천</b> 오늘 없음", message)
         self.assertIn("관찰 레이더 (추천 아님)", message)
         self.assertIn("판정 상태: 정상 관망", message)
         self.assertIn("추천 기준 통과 후보 없음", message)
         self.assertNotIn("52개 중 엄선", message)
 
+    def test_primary_pick_is_expanded_and_other_picks_are_compact(self):
+        agent = self._digest_agent()
+        candidates = [
+            {
+                "ticker": "AAA",
+                "country": "US",
+                "selection_rank": 1,
+                "selection_lane": "pullback",
+                "score": 4.2,
+                "market_cap": 10_000_000_000,
+                "signals": {"bb_squeeze": True},
+                "top3_selection": {
+                    "tier": "A",
+                    "tier_rank": 4,
+                    "lane_rank": 3,
+                    "support_count": 4,
+                    "production_gate_passed": True,
+                    "selection_rank": 1,
+                },
+                "selective_research": {
+                    "disposition": "KEEP",
+                    "memory_effect": "SUPPORT",
+                    "bull_case": {"summary": "가격 구조와 품질 근거가 함께 확인됨"},
+                    "invalidation": {"summary": "지지 구간 이탈 시 무효"},
+                },
+            },
+            {
+                "ticker": "BBB",
+                "country": "US",
+                "selection_rank": 2,
+                "selection_lane": "strength",
+                "score": 3.8,
+                "signals": {"rrg_improving": True},
+                "top3_selection": {
+                    "tier": "A",
+                    "tier_rank": 4,
+                    "lane_rank": 2,
+                    "support_count": 3,
+                    "production_gate_passed": True,
+                    "selection_rank": 2,
+                },
+            },
+            {
+                "ticker": "CCC",
+                "country": "KR",
+                "selection_rank": 3,
+                "selection_lane": "left_side",
+                "score": 3.5,
+                "signals": {},
+                "top3_selection": {
+                    "tier": "A",
+                    "tier_rank": 4,
+                    "lane_rank": 2,
+                    "support_count": 2,
+                    "production_gate_passed": True,
+                    "selection_rank": 3,
+                },
+            },
+        ]
+
+        message = agent._build_telegram(
+            candidates,
+            {"held_count": 4, "alerts": [{"ticker": "HELD"}]},
+            {},
+            scout_out={"radar_summary": {"radar_pool_count": 58}},
+        )
+
+        self.assertIn("AAA 1순위 조건 확인", message)
+        self.assertIn("신규 추천 1순위", message)
+        self.assertIn("진입 조건:", message)
+        self.assertIn("무효화: <i>지지 구간 이탈 시 무효</i>", message)
+        self.assertIn("과거 유사조건 지지", message)
+        self.assertIn("BBB보다 가격 구조가 우위", message)
+        self.assertIn("후순위(1순위 아님): <i>BBB [A] strength · CCC [A] left_side</i>", message)
+        self.assertEqual(message.count("진입 조건:"), 1)
+        self.assertEqual(message.count("무효화:"), 1)
+        self.assertIn("보유: 4종목 중 주목 1종목", message)
+
     def test_macro_degraded_coverage_is_visible(self):
-        agent = DigestAgent.__new__(DigestAgent)
-        agent.settings = {"digest": {"telegram": {"max_chars": 10000}}}
-        agent.log = logging.getLogger("test.digest")
+        agent = self._digest_agent()
         message = agent._build_telegram(
             [],
             {},

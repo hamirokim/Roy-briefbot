@@ -243,7 +243,7 @@ Required LLM output:
 
 ```json
 {
-  "schema_version": "scout_top3_llm_review_v0_3",
+  "schema_version": "scout_top3_llm_review_v0_4",
   "selected_top3": [
     {
       "rank": 1,
@@ -601,16 +601,35 @@ Rule:
 
 - Never hardcode secrets into source files.
 
+## Brief Decision Contract
+
+Telegram is an action-first view. It does not change SCOUT selection authority or the detailed
+Sheets record.
+
+- Lead with today's new-candidate action and the number of held-position alerts.
+- Expand only the final rank-1 recommendation.
+- The primary recommendation must show entry confirmation, invalidation, evidence health, and
+  the nearest alternative comparison.
+- Keep final ranks 2-3 on one explicitly subordinate line.
+- Keep zero recommendations as a healthy operational result.
+- Keep the watch radar explicitly non-actionable and show no more than two names.
+- Surface Outcome Memory only when a validated prior-date lesson has `SUPPORT` or `WEAKEN`
+  effect in selective research.
+- Require LLM-generated human-readable research summaries to be concise Korean; deterministic
+  facts, ticker symbols, and evidence IDs remain unchanged.
+
 ## Current Next Work Order
 
-Priority 1: Step 5 Brief Redesign.
+Priority 1: Deploy Step 5 and audit one untouched scheduled brief.
 
-- Lead with what changed, whether action exists, and why it matters to Roy's holdings.
-- Show one primary recommendation in the normal case; retain zero as a valid result.
-- Include entry condition, invalidation, evidence health, and why the pick beat the nearest
-  rejected alternative.
-- Keep watch candidates compact and explicitly non-actionable.
-- Surface Outcome Memory only when an active prior-date lesson materially changes the risk review.
+- Do not trigger a duplicate Telegram message solely to preview formatting.
+- On the next normal scheduled run, confirm the top decision block agrees with the detailed
+  recommendation section.
+- Confirm only one recommendation is expanded and ranks 2-3 remain subordinate.
+- Confirm entry condition, invalidation, evidence health, and nearest-alternative comparison are
+  present when a recommendation exists.
+- Confirm a zero-candidate day still says recommendation none and keeps watch names non-actionable.
+- Confirm newly generated selective-research summaries are Korean.
 
 Priority 2: Run future daily briefs and inspect the US precision shadow ledger.
 

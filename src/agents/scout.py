@@ -3186,6 +3186,7 @@ def _top3_llm_prompts(
         "Do not let a historical cohort override a current hard gate or current contradictory evidence.",
         "Set memory_effect to SUPPORT or WEAKEN only when cited historical_outcome evidence materially affects the review.",
         "Otherwise set memory_effect to NONE and memory_evidence_refs to an empty list.",
+        "Write every human-readable reason and case summary in concise Korean. Keep ticker symbols and evidence_ids unchanged.",
     ]
     if additions_allowed:
         rules.extend([
@@ -3203,13 +3204,13 @@ def _top3_llm_prompts(
         task = "Review only rule_based_top3. Reorder or reduce it without adding any ticker."
 
     user_payload = {
-        "schema_version": "scout_top3_llm_prompt_v0_3",
+        "schema_version": "scout_top3_llm_prompt_v0_4",
         "date": today,
         "task": task,
         "llm_additions_allowed": bool(additions_allowed),
         "rules": rules,
         "required_output_schema": {
-            "schema_version": "scout_top3_llm_review_v0_3",
+            "schema_version": "scout_top3_llm_review_v0_4",
             "selected_top3": [{"rank": 1, "ticker": "TICKER"}],
             "rejected": [{"ticker": "TICKER", "reason": "why not selected"}],
             "overrides": [{"dropped_ticker": "TICKER", "added_ticker": "TICKER", "reason": "why override"}],
@@ -3245,7 +3246,7 @@ def _fallback_llm_review_audit(
     return {
         "enabled": True,
         "status": status,
-        "schema_version": "scout_top3_llm_review_v0_3",
+        "schema_version": "scout_top3_llm_review_v0_4",
         "input_count": int(len(review_pool)),
         "rule_based_top3": _ticker_set(rule_candidates),
         "final_top3": _ticker_set(rule_candidates),
@@ -3363,7 +3364,7 @@ def _apply_llm_top3_review(
             research_packets,
             facts_before,
         )
-    if str(data.get("schema_version", "") or "") != "scout_top3_llm_review_v0_3":
+    if str(data.get("schema_version", "") or "") != "scout_top3_llm_review_v0_4":
         return rule_candidates, _fallback_llm_review_audit(
             "fallback_schema_failed",
             rule_candidates,
@@ -3520,7 +3521,7 @@ def _apply_llm_top3_review(
     return final, _json_safe_value({
         "enabled": True,
         "status": "ok",
-        "schema_version": "scout_top3_llm_review_v0_3",
+        "schema_version": "scout_top3_llm_review_v0_4",
         "input_count": int(len(review_pool)),
         "input_tickers": _ticker_set(review_pool),
         "rule_based_top3": rule_tickers,
@@ -3540,7 +3541,7 @@ def _apply_llm_top3_review(
         "overrides": overrides[:8],
         "dropped_tickers": sorted(dropped),
         "added_tickers": sorted(added),
-        "prompt_version": "scout_top3_llm_prompt_v0_3",
+        "prompt_version": "scout_top3_llm_prompt_v0_4",
         "selective_research": {
             "schema_version": RESEARCH_SCHEMA_VERSION,
             "status": "ok",

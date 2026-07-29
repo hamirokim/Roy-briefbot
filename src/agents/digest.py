@@ -286,6 +286,104 @@ def _candidate_judgment_summary(candidates: list) -> dict:
     return {"counts": counts, "judged": judged, "conclusion": conclusion}
 
 
+def _candidate_research(candidate: dict) -> dict:
+    return (
+        candidate.get("selective_research")
+        or (candidate.get("top3_selection") or {}).get("selective_research")
+        or {}
+    )
+
+
+def _candidate_entry_condition(candidate: dict) -> str:
+    lane = str(
+        candidate.get("selection_lane")
+        or (candidate.get("top3_selection") or {}).get("primary_lane")
+        or ""
+    )
+    conditions = {
+        "strength": "추세 유지와 거래량 재확인이 함께 나올 때만 검토",
+        "pullback": "눌림 지지 유지 뒤 반등 신호가 확인될 때만 검토",
+        "left_side": "STAGE2 전환 또는 추세 확인이 나온 뒤 검토",
+    }
+    return conditions.get(lane, "현재 가격 구조와 거래량 신호가 다음 거래일에도 유지될 때만 검토")
+
+
+def _candidate_invalidation(candidate: dict) -> str:
+    research = _candidate_research(candidate)
+    summary = str((research.get("invalidation") or {}).get("summary", "") or "").strip()
+    if summary:
+        return summary[:180]
+    risk = str(
+        candidate.get("llm_risk")
+        or (candidate.get("top3_selection") or {}).get("llm_risk")
+        or ""
+    ).strip()
+    if risk:
+        return risk[:180]
+    return "선정 당시 가격 구조 또는 품질 게이트가 깨지면 후보에서 제외"
+
+
+def _candidate_evidence_health(candidate: dict) -> str:
+    selection = candidate.get("top3_selection") or {}
+    research = _candidate_research(candidate)
+    coverage = candidate.get("data_coverage") or {}
+    fundamental = str((coverage.get("fundamental") or {}).get("status", "") or "")
+    catalyst = str((coverage.get("catalyst") or {}).get("status", "") or "")
+    bad_statuses = {
+        "collector_import_failed", "collection_failed", "empty_result", "error",
+        "bad_response", "http_400", "http_401", "http_429", "http_500",
+    }
+
+    checks = []
+    checks.append("실전 게이트 통과" if selection.get("production_gate_passed") else "실전 게이트 미확인")
+    checks.append("선택연구 확인" if research.get("disposition") == "KEEP" else "선택연구 미확인")
+    if fundamental in bad_statuses or catalyst in bad_statuses:
+        checks.append("수집 일부 실패")
+    elif fundamental or catalyst:
+        checks.append("수집 상태 확인")
+
+    memory_effect = str(research.get("memory_effect", "") or "").upper()
+    if memory_effect == "SUPPORT":
+        checks.append("과거 유사조건 지지")
+    elif memory_effect == "WEAKEN":
+        checks.append("과거 유사조건 주의")
+    return " · ".join(checks)
+
+
+def _selection_value(candidate: dict, key: str, fallback: Any = 0) -> Any:
+    selection = candidate.get("top3_selection") or {}
+    return selection.get(key, candidate.get(key, fallback))
+
+
+def _nearest_alternative_text(primary: dict, alternative: dict | None) -> str:
+    if not alternative:
+        return "비교 가능한 차선 후보 없음"
+
+    primary_ticker = str(primary.get("ticker", "") or "")
+    alt_ticker = str(alternative.get("ticker", "") or "")
+    comparisons = [
+        ("tier_rank", "선정 등급"),
+        ("lane_rank", "가격 구조"),
+        ("catalyst_freshness_rank", "촉매 신선도"),
+        ("support_count", "보조 근거 수"),
+        ("opportunity_score", "기회 점수"),
+    ]
+    for key, label in comparisons:
+        primary_value = float(_selection_value(primary, key, 0) or 0)
+        alt_value = float(_selection_value(alternative, key, 0) or 0)
+        if primary_value > alt_value:
+            return f"{alt_ticker}보다 {label}가 우위라 {primary_ticker} 우선"
+
+    primary_reason = str(
+        primary.get("llm_reason")
+        or (primary.get("top3_selection") or {}).get("llm_reason")
+        or ""
+    ).strip()
+    if primary_reason:
+        return f"{alt_ticker}보다 최종 재심사 순위가 앞섬 — {primary_reason[:110]}"
+    return f"{alt_ticker}보다 최종 선발 순위가 앞섬"
+
+
 def _top3_audit_from_scout(scout_out: dict) -> dict:
     radar_summary = (scout_out or {}).get("radar_summary", {}) or {}
     filter_audit = radar_summary.get("filter_audit", {}) or {}
@@ -820,6 +918,31 @@ class DigestAgent(BaseAgent):
 
         lines = [f"<b>📊 RONIN BRIEF — {date_str}{mode_badge}</b>", ""]
 
+        alerts = guard_out.get("alerts", []) or []
+        held_count = int(guard_out.get("held_count", 0) or 0)
+        ordered_candidates = sorted(
+            candidates,
+            key=lambda item: int(
+                item.get("selection_rank")
+                or (item.get("top3_selection") or {}).get("selection_rank")
+                or 999
+            ),
+        )
+        lines.append("<b>🧭 오늘 결론</b>")
+        if ordered_candidates:
+            lines.append(
+                f"• 신규: <b>{ordered_candidates[0].get('ticker')} 1순위 조건 확인</b> "
+                "— 조건 미충족이면 관망"
+            )
+        else:
+            lines.append("• 신규: <b>추천 없음</b> — 관찰만")
+        if held_count:
+            holding_text = f"주목 {len(alerts)}종목" if alerts else "특별 경보 없음"
+            lines.append(f"• 보유: {held_count}종목 중 {holding_text}")
+        else:
+            lines.append("• 보유: 등록 종목 없음")
+        lines.append("")
+
         # ── 0. 주간/월간 종합 (있을 때만) ──
         if period_summary:
             if briefing_mode == "monthly":
@@ -878,7 +1001,7 @@ class DigestAgent(BaseAgent):
             lines.append("<b>🧬 테마 흐름판</b>")
             lines.append(f"<i>기준: 강함=같은 테마 ETF 2개 이상 주도/개선 / 관찰=1개만 먼저 개선 / 보류=대부분 약화·부진</i>")
             lines.append(f"<i>오늘 분포: {_theme_counts_text(theme_counts)}</i>")
-            for theme in theme_focus[:3]:
+            for theme in theme_focus[:2]:
                 etf_text = _format_theme_etfs(theme.get("etfs", []), 6)
                 lines.append(
                     f"• <b>{theme.get('label')}</b> [{theme.get('judgment')}] "
@@ -916,7 +1039,7 @@ class DigestAgent(BaseAgent):
         if macro_interp:
             lines.append(f"<b>🧠 매크로 해석</b>")
             # 텔레그램은 압축 (시트는 풀버전)
-            interp_short = macro_interp if len(macro_interp) <= 500 else macro_interp[:480] + "…"
+            interp_short = macro_interp if len(macro_interp) <= 400 else macro_interp[:380] + "…"
             lines.append(f"<i>{interp_short}</i>")
             lines.append("")
 
@@ -937,41 +1060,42 @@ class DigestAgent(BaseAgent):
         decision_health = radar_summary.get("decision_health", {}) or {}
         watchlist = scout_out.get("watchlist_candidates", []) or []
         llm_review_line = _format_llm_review_line(scout_out)
-        if candidates:
-            judgment_summary = _candidate_judgment_summary(candidates)
-            counts = judgment_summary["counts"]
-            lines.append(f"<b>🎯 신규 추천 판단</b>")
+        if ordered_candidates:
+            primary = ordered_candidates[0]
+            judgment = _candidate_judgment(primary)
+            alternative = ordered_candidates[1] if len(ordered_candidates) > 1 else (watchlist[0] if watchlist else None)
+            flag = _COUNTRY_FLAG.get(primary.get("country", ""), "·")
+            cap = _format_market_cap(primary.get("market_cap", 0))
+            sig_short = _format_signals_short(primary.get("signals", {}) or {})
+            research = _candidate_research(primary)
+            bull_case = str((research.get("bull_case") or {}).get("summary", "") or "").strip()
+
+            lines.append("<b>🎯 신규 추천 1순위</b>")
             lines.append(
-                f"{judgment_summary['conclusion']} — "
-                f"강함 {counts.get('강함', 0)} / 관찰 {counts.get('관찰', 0)} / 보류 {counts.get('보류', 0)}"
+                f"{flag} <b>{primary.get('ticker')}</b> [{judgment['label']}] "
+                f"{cap} | 레이더 {primary.get('score', 0)}"
             )
-            lines.append(
-                "<i>기준: 강함=신호 여러 개+데이터 확인 양호 / "
-                "관찰=신호는 있으나 확인 데이터 부족 / 보류=과열·유동성·수집 실패 같은 흠 우선</i>"
-            )
+            lines.append(f"  선택 이유: <i>{(bull_case or judgment['reason'])[:180]}</i>")
+            if sig_short:
+                lines.append(f"  핵심 신호: {sig_short}")
+            lines.append(f"  진입 조건: <i>{_candidate_entry_condition(primary)}</i>")
+            lines.append(f"  무효화: <i>{_candidate_invalidation(primary)}</i>")
+            lines.append(f"  근거 상태: <i>{_candidate_evidence_health(primary)}</i>")
+            lines.append(f"  차선 비교: <i>{_nearest_alternative_text(primary, alternative)}</i>")
             if radar_count:
                 lines.append(f"<i>내부 관찰풀 {radar_count}개 중 엄선</i>")
             if llm_review_line:
                 lines.append(f"<i>{llm_review_line}</i>")
-            for c, judgment in judgment_summary["judged"]:
-                flag = _COUNTRY_FLAG.get(c["country"], "·")
-                cap = _format_market_cap(c.get("market_cap", 0))
-                sig_short = _format_signals_short(c["signals"])
-                lines.append(
-                    f"{flag} <b>{c['ticker']}</b> [{judgment['label']}] {cap} | 레이더 {c.get('score', 0)}"
-                )
-                lines.append(f"  판단: <i>{judgment['reason']}</i>")
-                lines.append(f"  신호: {sig_short or '신호 요약 없음'}")
-                try:
-                    from src.modules.m1_5_buyquestions import summarize_data_coverage
-                    coverage_text = summarize_data_coverage(c)
-                    if coverage_text:
-                        lines.append(f"  데이터: <i>{coverage_text[:160]}</i>")
-                except Exception as e:
-                    self.log.debug("[digest] 데이터 커버리지 포맷 실패: %s", e)
-                headline = _candidate_catalyst_headline(c)
-                if headline:
-                    lines.append(f"  촉매: <i>{headline}</i>")
+            headline = _candidate_catalyst_headline(primary)
+            if headline:
+                lines.append(f"  촉매: <i>{headline}</i>")
+            if len(ordered_candidates) > 1:
+                compact = []
+                for candidate in ordered_candidates[1:3]:
+                    tier = _selection_value(candidate, "tier", candidate.get("selection_tier", ""))
+                    lane = _selection_value(candidate, "primary_lane", candidate.get("selection_lane", ""))
+                    compact.append(f"{candidate.get('ticker')} [{tier}] {lane}")
+                lines.append(f"  후순위(1순위 아님): <i>{' · '.join(compact)}</i>")
             lines.append("")
         else:
             reason = radar_summary.get("no_candidate_reason") or "최종 보고 기준 미달"
@@ -990,7 +1114,7 @@ class DigestAgent(BaseAgent):
             if watchlist:
                 lines.append("")
                 lines.append("<b>👀 관찰 레이더 (추천 아님)</b>")
-                for w in watchlist[:3]:
+                for w in watchlist[:2]:
                     flag = _COUNTRY_FLAG.get(w.get("country", ""), "·")
                     sig_text = _format_signals_short(w.get("signals", {}) or {})
                     lane = f"{w.get('selection_lane', '')}:{w.get('selection_lane_status', '')}".strip(":")
@@ -1084,7 +1208,7 @@ class DigestAgent(BaseAgent):
         notes = regime_out.get("interpretation", {}).get("learning_notes", [])
         if notes:
             lines.append(f"<b>📚 학습</b>")
-            for n in notes[:3]:  # D87: 2 → 3개로 확장
+            for n in notes[:1]:
                 term = n.get("term", "")
                 explain = n.get("explain", "")
                 if term and explain:
