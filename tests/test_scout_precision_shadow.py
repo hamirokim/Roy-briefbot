@@ -113,6 +113,11 @@ class PrecisionShadowSelectionTests(unittest.TestCase):
 class PrecisionShadowPersistenceTests(unittest.TestCase):
     def test_snapshot_v04_preserves_metadata_policy_and_shadow_candidates(self):
         final_candidate = _item("LIVE")
+        final_candidate["selective_research"] = {
+            "ticker": "LIVE",
+            "disposition": "KEEP",
+            "bull_case": {"summary": "supported", "evidence_refs": ["LIVE:E001"]},
+        }
         shadow_candidate = _item("SHADOW")
         shadow_candidate["shadow_selection"] = {
             "policy_id": "us_precision_v1",
@@ -135,7 +140,16 @@ class PrecisionShadowPersistenceTests(unittest.TestCase):
                 candidates=[final_candidate],
                 radar_pool=[final_candidate, shadow_candidate],
                 radar_summary={
-                    "filter_audit": {},
+                    "filter_audit": {
+                        "top3_selection_audit": {
+                            "llm_review": {
+                                "selective_research": {
+                                    "schema_version": "scout_selective_research_v0_1",
+                                    "fact_lock": {"unchanged": True},
+                                },
+                            },
+                        },
+                    },
                     "decision_health": {"status": "RECOMMENDATION_AVAILABLE"},
                 },
                 snapshot_cfg={"enabled": True, "include_radar_top": 2, "parquet_enabled": False},
@@ -153,6 +167,9 @@ class PrecisionShadowPersistenceTests(unittest.TestCase):
         self.assertEqual(payload["summary"]["candidate_count"], 1)
         self.assertEqual(payload["summary"]["shadow_policy_counts"]["us_precision_v1"], 1)
         self.assertEqual(payload["shadow_policies"]["us_precision_v1"]["candidates"][0]["ticker"], "SHADOW")
+        research = payload["summary"]["top3_selection_audit"]["llm_review"]["selective_research"]
+        self.assertTrue(research["fact_lock"]["unchanged"])
+        self.assertEqual(payload["candidates"][0]["selective_research"]["ticker"], "LIVE")
 
     def test_performance_groups_shadow_without_changing_candidate_bucket(self):
         snapshot = {

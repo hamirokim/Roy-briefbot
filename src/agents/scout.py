@@ -32,6 +32,13 @@ import pandas as pd
 import requests
 
 from src.agents.base import BaseAgent
+from src.modules.scout_research import (
+    MAX_FINALISTS as RESEARCH_MAX_FINALISTS,
+    SCHEMA_VERSION as RESEARCH_SCHEMA_VERSION,
+    build_research_packets,
+    fact_fingerprint,
+    validate_research_reviews,
+)
 from src.utils import now_kst, today_kst_str
 
 logger = logging.getLogger(__name__)
@@ -3148,20 +3155,25 @@ def _top3_llm_prompts(
     today: str,
     market_context: dict,
     rule_candidates: list[dict],
-    review_pool: list[dict],
+    research_packets: list[dict],
     additions_allowed: bool = False,
 ) -> tuple[str, str]:
     system = (
-        "You are RONIN SCOUT's final Top3 review auditor. "
+        "You are RONIN SCOUT's selective research auditor. "
         "This is system selection, not investment advice. "
-        "Use only the provided JSON facts. "
+        "Deterministic code owns every fact and number. "
+        "Use only the provided evidence IDs and never invent, correct, or replace a fact. "
         "Return exactly one JSON object. No markdown. No code fences."
     )
     rules = [
         "RISK_CATALYST or top3_excluded candidates cannot be selected.",
         "Avoid overextended chase candidates unless catalyst and price/volume reaction are both strong.",
         "Prefer useful lane balance when candidate quality is similar.",
-        "Every selected ticker needs a concise reason and remaining risk.",
+        "Review every input ticker with separate bull, bear, risk, and invalidation cases.",
+        "Every case must cite one or more evidence_ids belonging to the same ticker.",
+        "Do not state a numeric fact unless that exact value exists in cited evidence.",
+        "disposition KEEP means selected_top3; disposition DROP means rejected.",
+        "selected_top3 may be empty only when every input ticker disposition is DROP.",
     ]
     if additions_allowed:
         rules.extend([
@@ -3179,21 +3191,29 @@ def _top3_llm_prompts(
         task = "Review only rule_based_top3. Reorder or reduce it without adding any ticker."
 
     user_payload = {
-        "schema_version": "scout_top3_llm_prompt_v0_1",
+        "schema_version": "scout_top3_llm_prompt_v0_2",
         "date": today,
         "task": task,
         "llm_additions_allowed": bool(additions_allowed),
         "rules": rules,
         "required_output_schema": {
-            "schema_version": "scout_top3_llm_review_v0_1",
-            "selected_top3": [{"rank": 1, "ticker": "TICKER", "reason": "why selected", "risk": "remaining risk"}],
+            "schema_version": "scout_top3_llm_review_v0_2",
+            "selected_top3": [{"rank": 1, "ticker": "TICKER"}],
             "rejected": [{"ticker": "TICKER", "reason": "why not selected"}],
             "overrides": [{"dropped_ticker": "TICKER", "added_ticker": "TICKER", "reason": "why override"}],
+            "research_reviews": [{
+                "ticker": "TICKER",
+                "disposition": "KEEP",
+                "bull_case": {"summary": "evidence-backed upside case", "evidence_refs": ["TICKER:E001"]},
+                "bear_case": {"summary": "evidence-backed counter case", "evidence_refs": ["TICKER:E002"]},
+                "risk_case": {"summary": "main remaining risk", "evidence_refs": ["TICKER:E003"]},
+                "invalidation": {"summary": "observable invalidation condition", "evidence_refs": ["TICKER:E004"]},
+            }],
             "llm_override": False,
         },
         "market_context": market_context,
         "rule_based_top3": [_theme_lookup_key(str(i.get("ticker", "") or "")) for i in rule_candidates],
-        "candidate_pool": [_compact_candidate_for_llm(i) for i in review_pool],
+        "research_packets": research_packets,
     }
     return system, json.dumps(_json_safe_value(user_payload), ensure_ascii=False)
 
@@ -3205,11 +3225,13 @@ def _fallback_llm_review_audit(
     reason: str = "",
     raw: str = "",
     additions_allowed: bool = False,
+    research_packets: Optional[list[dict]] = None,
+    fact_fingerprint_before: str = "",
 ) -> dict:
     return {
         "enabled": True,
         "status": status,
-        "schema_version": "scout_top3_llm_review_v0_1",
+        "schema_version": "scout_top3_llm_review_v0_2",
         "input_count": int(len(review_pool)),
         "rule_based_top3": _ticker_set(rule_candidates),
         "final_top3": _ticker_set(rule_candidates),
@@ -3219,6 +3241,17 @@ def _fallback_llm_review_audit(
         "rejected": [],
         "fallback_reason": reason,
         "raw_excerpt": str(raw or "")[:500],
+        "selective_research": {
+            "schema_version": RESEARCH_SCHEMA_VERSION,
+            "status": status,
+            "evidence_packets": research_packets or [],
+            "reviews": [],
+            "fact_lock": {
+                "before": fact_fingerprint_before,
+                "after": fact_fingerprint(rule_candidates),
+                "unchanged": fact_fingerprint_before == fact_fingerprint(rule_candidates),
+            },
+        },
     }
 
 
@@ -3242,28 +3275,79 @@ def _apply_llm_top3_review(
             "llm_additions_allowed": False,
         }
     additions_allowed = bool(llm_cfg.get("additions_allowed", False))
-    limit = int(llm_cfg.get("candidate_limit", 12) or 12)
+    limit = min(
+        int(llm_cfg.get("candidate_limit", RESEARCH_MAX_FINALISTS) or RESEARCH_MAX_FINALISTS),
+        RESEARCH_MAX_FINALISTS,
+    )
     if additions_allowed:
         review_pool = _build_llm_review_pool(radar_pool, rule_candidates, watchlist_candidates, limit=limit)
     else:
         review_pool = list(rule_candidates)[:max(0, limit)]
+    research_packets = build_research_packets(review_pool, today, limit=limit)
+    facts_before = fact_fingerprint(review_pool)
     if len(rule_candidates) < 1 or len(review_pool) < 1:
         return rule_candidates, _fallback_llm_review_audit(
-            "fallback_empty_pool", rule_candidates, review_pool, "empty_pool", additions_allowed=additions_allowed
+            "fallback_empty_pool",
+            rule_candidates,
+            review_pool,
+            "empty_pool",
+            additions_allowed=additions_allowed,
+            research_packets=research_packets,
+            fact_fingerprint_before=facts_before,
         )
     if llm_call is None or not os.environ.get("GPT_API_KEY"):
         return rule_candidates, _fallback_llm_review_audit(
-            "fallback_no_llm_key", rule_candidates, review_pool, "GPT_API_KEY_missing", additions_allowed=additions_allowed
+            "fallback_no_llm_key",
+            rule_candidates,
+            review_pool,
+            "GPT_API_KEY_missing",
+            additions_allowed=additions_allowed,
+            research_packets=research_packets,
+            fact_fingerprint_before=facts_before,
         )
 
     system, user = _top3_llm_prompts(
-        today, market_context, rule_candidates, review_pool, additions_allowed=additions_allowed
+        today, market_context, rule_candidates, research_packets, additions_allowed=additions_allowed
     )
     raw = llm_call(system, user, max_tokens=int(llm_cfg.get("max_tokens", 1200) or 1200))
     data = _parse_llm_json(raw)
     if not data:
         return rule_candidates, _fallback_llm_review_audit(
-            "fallback_parse_failed", rule_candidates, review_pool, "json_parse_failed", raw or "", additions_allowed
+            "fallback_parse_failed",
+            rule_candidates,
+            review_pool,
+            "json_parse_failed",
+            raw or "",
+            additions_allowed,
+            research_packets,
+            facts_before,
+        )
+    if str(data.get("schema_version", "") or "") != "scout_top3_llm_review_v0_2":
+        return rule_candidates, _fallback_llm_review_audit(
+            "fallback_schema_failed",
+            rule_candidates,
+            review_pool,
+            "schema_version_mismatch",
+            raw or "",
+            additions_allowed,
+            research_packets,
+            facts_before,
+        )
+
+    research_reviews, research_error = validate_research_reviews(
+        data.get("research_reviews"),
+        research_packets,
+    )
+    if research_error:
+        return rule_candidates, _fallback_llm_review_audit(
+            "fallback_evidence_validation_failed",
+            rule_candidates,
+            review_pool,
+            research_error,
+            raw or "",
+            additions_allowed,
+            research_packets,
+            facts_before,
         )
 
     by_ticker = {
@@ -3271,10 +3355,17 @@ def _apply_llm_top3_review(
         for item in review_pool
         if _theme_lookup_key(str(item.get("ticker", "") or ""))
     }
-    selected_rows = data.get("selected_top3") or []
-    if not isinstance(selected_rows, list) or not selected_rows:
+    selected_rows = data.get("selected_top3")
+    if not isinstance(selected_rows, list):
         return rule_candidates, _fallback_llm_review_audit(
-            "fallback_schema_failed", rule_candidates, review_pool, "selected_top3_missing", raw or "", additions_allowed
+            "fallback_schema_failed",
+            rule_candidates,
+            review_pool,
+            "selected_top3_not_list",
+            raw or "",
+            additions_allowed,
+            research_packets,
+            facts_before,
         )
 
     max_picks = len(rule_candidates) if rule_candidates else int((selection_cfg or {}).get("max_picks", 3) or 3)
@@ -3299,22 +3390,29 @@ def _apply_llm_top3_review(
             break
         seen.add(ticker)
         reasons[ticker] = {
-            "reason": str(row.get("reason", "") or "")[:500],
-            "risk": str(row.get("risk", "") or "")[:500],
+            "reason": str((research_reviews.get(ticker, {}).get("bull_case") or {}).get("summary", "") or "")[:500],
+            "risk": str((research_reviews.get(ticker, {}).get("risk_case") or {}).get("summary", "") or "")[:500],
         }
         final.append(item)
         if len(final) >= max_picks:
             break
 
-    not_enough_selected = not final if not additions_allowed else len(final) < min(max_picks, len(review_pool))
-    if invalid_reason or not_enough_selected:
+    not_enough_selected = additions_allowed and len(final) < min(max_picks, len(review_pool))
+    disposition_keep = {
+        ticker for ticker, review in research_reviews.items()
+        if str(review.get("disposition", "") or "") == "KEEP"
+    }
+    disposition_mismatch = set(_ticker_set(final)) != disposition_keep
+    if invalid_reason or not_enough_selected or disposition_mismatch:
         return rule_candidates, _fallback_llm_review_audit(
             "fallback_validation_failed",
             rule_candidates,
             review_pool,
-            invalid_reason or "not_enough_valid_selected",
+            invalid_reason or ("disposition_selection_mismatch" if disposition_mismatch else "not_enough_valid_selected"),
             raw or "",
             additions_allowed,
+            research_packets,
+            facts_before,
         )
 
     rule_tickers = _ticker_set(rule_candidates)
@@ -3325,12 +3423,11 @@ def _apply_llm_top3_review(
 
     dropped = set(rule_tickers) - set(final_tickers)
     added = set(final_tickers) - set(rule_tickers)
-    drop_reason_by_ticker = {}
-    for row in rejected_rows:
-        if isinstance(row, dict):
-            t = _theme_lookup_key(str(row.get("ticker", "") or ""))
-            if t:
-                drop_reason_by_ticker[t] = str(row.get("reason", "") or "")[:500]
+    drop_reason_by_ticker = {
+        ticker: str((review.get("bear_case") or {}).get("summary", "") or "")[:500]
+        for ticker, review in research_reviews.items()
+        if ticker in dropped
+    }
 
     for item in radar_pool:
         ticker = _theme_lookup_key(str(item.get("ticker", "") or ""))
@@ -3346,6 +3443,9 @@ def _apply_llm_top3_review(
         if ticker in reasons:
             top3["llm_reason"] = reasons[ticker].get("reason", "")
             top3["llm_risk"] = reasons[ticker].get("risk", "")
+        if ticker in research_reviews:
+            top3["selective_research"] = research_reviews[ticker]
+            item["selective_research"] = research_reviews[ticker]
         if ticker in dropped:
             top3["llm_dropped"] = True
             top3["llm_drop_reason"] = drop_reason_by_ticker.get(ticker, "LLM excluded from final Top3")
@@ -3363,10 +3463,23 @@ def _apply_llm_top3_review(
         item["selection_rank"] = idx
         item.setdefault("top3_selection", {})["selection_rank"] = idx
 
+    facts_after = fact_fingerprint(review_pool)
+    if facts_after != facts_before:
+        return rule_candidates, _fallback_llm_review_audit(
+            "fallback_fact_lock_failed",
+            rule_candidates,
+            review_pool,
+            "deterministic_fact_changed",
+            raw or "",
+            additions_allowed,
+            research_packets,
+            facts_before,
+        )
+
     return final, _json_safe_value({
         "enabled": True,
         "status": "ok",
-        "schema_version": "scout_top3_llm_review_v0_1",
+        "schema_version": "scout_top3_llm_review_v0_2",
         "input_count": int(len(review_pool)),
         "input_tickers": _ticker_set(review_pool),
         "rule_based_top3": rule_tickers,
@@ -3386,7 +3499,18 @@ def _apply_llm_top3_review(
         "overrides": overrides[:8],
         "dropped_tickers": sorted(dropped),
         "added_tickers": sorted(added),
-        "prompt_version": "scout_top3_llm_prompt_v0_1",
+        "prompt_version": "scout_top3_llm_prompt_v0_2",
+        "selective_research": {
+            "schema_version": RESEARCH_SCHEMA_VERSION,
+            "status": "ok",
+            "evidence_packets": research_packets,
+            "reviews": list(research_reviews.values()),
+            "fact_lock": {
+                "before": facts_before,
+                "after": facts_after,
+                "unchanged": True,
+            },
+        },
         "raw_excerpt": str(raw or "")[:500],
     })
 

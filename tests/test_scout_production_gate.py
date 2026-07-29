@@ -59,7 +59,18 @@ def _selection_config() -> dict:
             "excluded_factor_negatives": ["volatility_extreme", "chasing_extreme", "chasing_hot"],
             "backfill": False,
         },
-        "llm_review": {"enabled": True, "additions_allowed": False, "candidate_limit": 12},
+        "llm_review": {"enabled": True, "additions_allowed": False, "candidate_limit": 5},
+    }
+
+
+def _research_review(ticker: str, disposition: str) -> dict:
+    return {
+        "ticker": ticker,
+        "disposition": disposition,
+        "bull_case": {"summary": "bull", "evidence_refs": [f"{ticker}:E001"]},
+        "bear_case": {"summary": "bear", "evidence_refs": [f"{ticker}:E002"]},
+        "risk_case": {"summary": "risk", "evidence_refs": [f"{ticker}:E003"]},
+        "invalidation": {"summary": "invalidate", "evidence_refs": [f"{ticker}:E004"]},
     }
 
 
@@ -137,10 +148,11 @@ class ProductionGateTests(unittest.TestCase):
         rule = _candidate("RULE")
         watch = _candidate("WATCH", tier="B")
         raw = json.dumps({
-            "schema_version": "scout_top3_llm_review_v0_1",
-            "selected_top3": [{"rank": 1, "ticker": "WATCH", "reason": "replace", "risk": ""}],
+            "schema_version": "scout_top3_llm_review_v0_2",
+            "selected_top3": [{"rank": 1, "ticker": "WATCH"}],
             "rejected": [],
             "overrides": [{"dropped_ticker": "RULE", "added_ticker": "WATCH", "reason": "replace"}],
+            "research_reviews": [_research_review("RULE", "KEEP")],
             "llm_override": True,
         })
 
@@ -164,10 +176,14 @@ class ProductionGateTests(unittest.TestCase):
         first = _candidate("FIRST")
         second = _candidate("SECOND")
         raw = json.dumps({
-            "schema_version": "scout_top3_llm_review_v0_1",
-            "selected_top3": [{"rank": 1, "ticker": "SECOND", "reason": "lower risk", "risk": ""}],
+            "schema_version": "scout_top3_llm_review_v0_2",
+            "selected_top3": [{"rank": 1, "ticker": "SECOND"}],
             "rejected": [{"ticker": "FIRST", "reason": "remaining risk"}],
             "overrides": [],
+            "research_reviews": [
+                _research_review("FIRST", "DROP"),
+                _research_review("SECOND", "KEEP"),
+            ],
             "llm_override": True,
         })
 
@@ -186,6 +202,36 @@ class ProductionGateTests(unittest.TestCase):
         self.assertEqual(audit["status"], "ok")
         self.assertEqual(audit["dropped_tickers"], ["FIRST"])
         self.assertEqual(audit["added_tickers"], [])
+        self.assertTrue(audit["selective_research"]["fact_lock"]["unchanged"])
+        self.assertEqual(final[0]["selective_research"]["bear_case"]["summary"], "bear")
+        self.assertEqual(first["llm_drop_reason"], "bear")
+
+    def test_llm_may_abstain_when_every_evidence_review_says_drop(self):
+        only = _candidate("ONLY")
+        raw = json.dumps({
+            "schema_version": "scout_top3_llm_review_v0_2",
+            "selected_top3": [],
+            "rejected": [{"ticker": "ONLY", "reason": "free-form text is ignored"}],
+            "overrides": [],
+            "research_reviews": [_research_review("ONLY", "DROP")],
+            "llm_override": True,
+        })
+
+        with patch.dict("os.environ", {"GPT_API_KEY": "test"}):
+            final, audit = scout._apply_llm_top3_review(
+                "2026-07-15",
+                [only],
+                [only],
+                [],
+                _selection_config(),
+                {},
+                lambda *args, **kwargs: raw,
+            )
+
+        self.assertEqual(final, [])
+        self.assertEqual(audit["status"], "ok")
+        self.assertEqual(audit["final_top3"], [])
+        self.assertEqual(only["llm_drop_reason"], "bear")
 
 
 class DigestContractTests(unittest.TestCase):

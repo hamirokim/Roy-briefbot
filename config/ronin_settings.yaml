@@ -156,7 +156,7 @@ scout:
     llm_review:
       enabled: true                    # 규칙 기반 Top3를 LLM이 최종 재심사. 실패 시 규칙 기반 결과 유지
       additions_allowed: false         # LLM은 규칙 후보를 줄이거나 재정렬만 가능. WATCHLIST 승격 금지
-      candidate_limit: 12              # additions_allowed=false이면 규칙 통과 후보만 투입
+      candidate_limit: 5               # Selective Research는 확정 후보 최대 5개만 근거 검토
       max_tokens: 1200
     precision_shadow:
       enabled: true                    # Step3 가설의 미래 검증 전용. Telegram/Sheets/final Top3에는 영향 없음

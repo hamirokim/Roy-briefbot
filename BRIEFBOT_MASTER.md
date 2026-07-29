@@ -87,6 +87,9 @@ Status as of 2026-07-29:
 - Recommendation snapshot and performance ledger are implemented.
 - Top3 selection is tier-based. Legacy `brief_min_score` / `signals_required` final-candidate gates are removed.
 - Optional LLM Top3 review is implemented with structured JSON, validation, and rule-based fallback.
+- Selective Research v1 reviews only production finalists (maximum 5) with deterministic evidence
+  IDs, source provenance, separate bull/bear/risk/invalidation cases, and a fact fingerprint lock.
+  Unsupported evidence references or any deterministic-fact mutation fall back to rule selection.
 - Broad Radar Pool remains intentionally wide for learning. Tightness is applied at Top3/WATCHLIST first.
 - Integrity Reset v1 uses the common-gate OHLCV 20-day traded value as the single liquidity
   evidence source for quality/factor checks. The universe `avg_volume_value` remains descriptive
@@ -227,7 +230,7 @@ Input scope:
 
 Current input limit:
 
-- `candidate_limit: 12`
+- `candidate_limit: 5`
 - `max_tokens: 1200`
 - `additions_allowed: false`
 
@@ -235,13 +238,11 @@ Required LLM output:
 
 ```json
 {
-  "schema_version": "scout_top3_llm_review_v0_1",
+  "schema_version": "scout_top3_llm_review_v0_2",
   "selected_top3": [
     {
       "rank": 1,
-      "ticker": "AVGO",
-      "reason": "why selected",
-      "risk": "remaining risk"
+      "ticker": "AVGO"
     }
   ],
   "rejected": [
@@ -257,9 +258,31 @@ Required LLM output:
       "reason": "why override"
     }
   ],
+  "research_reviews": [
+    {
+      "ticker": "AVGO",
+      "disposition": "KEEP",
+      "bull_case": {"summary": "upside case", "evidence_refs": ["AVGO:E001"]},
+      "bear_case": {"summary": "counter case", "evidence_refs": ["AVGO:E002"]},
+      "risk_case": {"summary": "main risk", "evidence_refs": ["AVGO:E003"]},
+      "invalidation": {"summary": "observable invalidation", "evidence_refs": ["AVGO:E004"]}
+    }
+  ],
   "llm_override": true
 }
 ```
+
+Selective Research evidence contract:
+
+- Every evidence item stores `evidence_id`, `category`, `claim`, `value`, `as_of`, `source`, and
+  optional `url`.
+- Deterministic inputs cover price/liquidity, price lane, signals, factor risk, quality, theme,
+  production selection, catalyst news, and known data gaps.
+- Every bull, bear, risk, and invalidation case must cite evidence IDs belonging to the same ticker.
+- LLM prose may be attached to a candidate, but ticker, price, score, tier, lane, source metrics,
+  and gate results are protected by a before/after SHA-256 fact fingerprint.
+- Evidence packets and validated reviews are stored under
+  `top3_selection_audit.llm_review.selective_research`.
 
 Stored fields:
 
@@ -272,6 +295,7 @@ Stored fields:
 - `llm_drop_reason`
 - `llm_override`
 - `rule_selection_rank`
+- `selective_research`
 
 Telegram visibility:
 
@@ -286,6 +310,8 @@ Fallback conditions:
 - LLM call failure or timeout.
 - JSON parsing failure.
 - missing or empty `selected_top3`.
+- missing candidate review, unsupported evidence reference, or disposition/selection mismatch.
+- deterministic fact fingerprint mismatch.
 - selected ticker not in LLM input pool.
 - selected ticker is Top3-excluded / RISK_CATALYST.
 
@@ -299,6 +325,7 @@ Fallback behavior:
 Live LLM boundary:
 
 - LLM may reorder or reduce the rule-based production candidates.
+- LLM may return zero final candidates when every finalist has a validated `DROP` review.
 - LLM cannot add or replace a ticker from WATCHLIST or Radar Pool.
 - Empty production-gate output bypasses LLM selection and remains an empty recommendation day.
 - Telegram labels WATCHLIST output as `관찰 레이더 (추천 아님)`.
@@ -505,14 +532,23 @@ Rule:
 
 ## Current Next Work Order
 
-Priority 1: Run future daily briefs and inspect the US precision shadow ledger.
+Priority 1: Step 4 Outcome Memory.
+
+- Join each decision-time evidence ID and review case to realized raw return and benchmark alpha.
+- Store compact same-ticker and same-setup lessons without allowing hindsight facts into the
+  original recommendation snapshot.
+- Apply sample-size, recency, regime, and invalidation controls before a lesson may influence a
+  future finalist review.
+- Keep Outcome Memory advisory until an untouched evaluation window shows measurable improvement.
+
+Priority 2: Run future daily briefs and inspect the US precision shadow ledger.
 
 - Confirm snapshots contain `generated_at`, `timezone`, `data_as_of`, and `shadow_policies.us_precision_v1`.
 - Confirm the shadow count can be 0, 1, 2, or 3 and no backfill occurs.
 - Confirm Telegram, Sheets, cooldown, and final Top3 remain unchanged.
 - Compare future D5/D10 net return and benchmark-relative alpha using Evaluation Harness v1.
 
-Priority 2: Validate whether precision shadow survives unseen data.
+Priority 3: Validate whether precision shadow survives unseen data.
 
 - Use at least 20 independent future briefing dates as a temporary governance checkpoint, not as a final threshold.
 - Require positive cost-adjusted D5/D10 mean and benchmark-relative alpha with date-clustered uncertainty checks before proposing a live switch.
