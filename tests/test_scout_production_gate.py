@@ -67,6 +67,8 @@ def _research_review(ticker: str, disposition: str) -> dict:
     return {
         "ticker": ticker,
         "disposition": disposition,
+        "memory_effect": "NONE",
+        "memory_evidence_refs": [],
         "bull_case": {"summary": "bull", "evidence_refs": [f"{ticker}:E001"]},
         "bear_case": {"summary": "bear", "evidence_refs": [f"{ticker}:E002"]},
         "risk_case": {"summary": "risk", "evidence_refs": [f"{ticker}:E003"]},
@@ -148,7 +150,7 @@ class ProductionGateTests(unittest.TestCase):
         rule = _candidate("RULE")
         watch = _candidate("WATCH", tier="B")
         raw = json.dumps({
-            "schema_version": "scout_top3_llm_review_v0_2",
+            "schema_version": "scout_top3_llm_review_v0_3",
             "selected_top3": [{"rank": 1, "ticker": "WATCH"}],
             "rejected": [],
             "overrides": [{"dropped_ticker": "RULE", "added_ticker": "WATCH", "reason": "replace"}],
@@ -176,7 +178,7 @@ class ProductionGateTests(unittest.TestCase):
         first = _candidate("FIRST")
         second = _candidate("SECOND")
         raw = json.dumps({
-            "schema_version": "scout_top3_llm_review_v0_2",
+            "schema_version": "scout_top3_llm_review_v0_3",
             "selected_top3": [{"rank": 1, "ticker": "SECOND"}],
             "rejected": [{"ticker": "FIRST", "reason": "remaining risk"}],
             "overrides": [],
@@ -209,7 +211,7 @@ class ProductionGateTests(unittest.TestCase):
     def test_llm_may_abstain_when_every_evidence_review_says_drop(self):
         only = _candidate("ONLY")
         raw = json.dumps({
-            "schema_version": "scout_top3_llm_review_v0_2",
+            "schema_version": "scout_top3_llm_review_v0_3",
             "selected_top3": [],
             "rejected": [{"ticker": "ONLY", "reason": "free-form text is ignored"}],
             "overrides": [],

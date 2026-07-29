@@ -86,6 +86,8 @@ def _review(ticker: str, evidence_ids: list[str]) -> dict:
     return {
         "ticker": ticker,
         "disposition": "KEEP",
+        "memory_effect": "NONE",
+        "memory_evidence_refs": [],
         "bull_case": {"summary": "supported bull case", "evidence_refs": [evidence_ids[0]]},
         "bear_case": {"summary": "supported bear case", "evidence_refs": [evidence_ids[1]]},
         "risk_case": {"summary": "supported risk", "evidence_refs": [evidence_ids[2]]},

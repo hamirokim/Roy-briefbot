@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 
 from src.collectors.global_ohlcv import fetch_daily_ohlcv_yf, fetch_ohlcv
+from src.modules.scout_outcome_memory import classify_market_regime
 from src.utils import now_kst, today_kst_str
 
 logger = logging.getLogger(__name__)
@@ -399,11 +400,19 @@ def _extract_record(
     primary_lane, primary_lane_status = _primary_lane_from_item(item)
     catalyst = item.get("catalyst_context") or {}
     top3 = item.get("top3_selection") or {}
+    selective_research = top3.get("selective_research") or item.get("selective_research") or {}
     price_lanes = item.get("price_lanes") or {}
     primary_lane_data = price_lanes.get(primary_lane) or {}
     primary_lane_metrics = primary_lane_data.get("metrics") or {}
     factor_context = item.get("factor_context") or {}
     factor_metrics = factor_context.get("metrics") or {}
+    common_metrics = ((item.get("common_gate") or {}).get("metrics") or {})
+    theme_industry = item.get("theme_industry") or {}
+    theme_sector = theme_industry.get("sector") or {}
+    catalyst_news = [
+        row for row in (catalyst.get("news") or [])
+        if isinstance(row, dict)
+    ]
     strength_lane = price_lanes.get("strength") or {}
     pullback_lane = price_lanes.get("pullback") or {}
     left_side_lane = price_lanes.get("left_side") or {}
@@ -452,12 +461,26 @@ def _extract_record(
         "llm_risk": str(top3.get("llm_risk", item.get("llm_risk", "")) or ""),
         "llm_dropped": bool(top3.get("llm_dropped", item.get("llm_dropped", False))),
         "llm_drop_reason": str(top3.get("llm_drop_reason", item.get("llm_drop_reason", "")) or ""),
+        "outcome_memory_effect": str(selective_research.get("memory_effect", "NONE") or "NONE"),
+        "outcome_memory_evidence_refs": _safe_list(
+            selective_research.get("memory_evidence_refs", [])
+        ),
         "opportunity_score": opportunity_score,
         "drawdown_from_high": drawdown_from_high,
         "factor_ret_20d": _metric_from(factor_metrics, key="ret_20d", default=None),
         "factor_atr_pct": _metric_from(factor_metrics, key="atr_pct", default=None),
         "factor_positives": _safe_list(factor_context.get("positives", [])),
         "factor_negatives": _safe_list(factor_context.get("negatives", [])),
+        "liquidity_buffer_multiple": _metric_from(
+            factor_metrics,
+            key="liquidity_buffer_multiple",
+            default=None,
+        ),
+        "avg_traded_value_20d": _metric_from(
+            common_metrics,
+            key="avg_traded_value_20d",
+            default=None,
+        ),
         "primary_lane": primary_lane,
         "primary_lane_status": primary_lane_status,
         "primary_lane_reasons": _safe_list(primary_lane_data.get("reasons", [])),
@@ -472,9 +495,22 @@ def _extract_record(
         "left_side_lane_metrics": left_side_lane.get("metrics", {}) or {},
         "signal_keys": _signal_keys(item),
         "theme_industry_status": _nested_status(item, "theme_industry_status", "theme_industry"),
+        "sector_rrg_quadrant": str(theme_sector.get("quadrant", "") or ""),
+        "theme_keys": [
+            str(row.get("theme_key"))
+            for row in (theme_industry.get("themes") or [])
+            if isinstance(row, dict) and row.get("theme_key")
+        ],
         "quality_auditor_status": _nested_status(item, "quality_auditor_status", "quality_auditor"),
         "catalyst_classification": str(item.get("catalyst_classification") or catalyst.get("classification", "") or ""),
         "catalyst_freshness": str(item.get("catalyst_freshness") or ((catalyst.get("freshness") or {}).get("status", "")) or ""),
+        "catalyst_event_types": sorted({
+            str(row.get("event_type"))
+            for row in catalyst_news
+            if row.get("event_type")
+        }),
+        "catalyst_has_upcoming": bool((catalyst.get("freshness") or {}).get("has_upcoming")),
+        "decision_context": item.get("decision_context") or {},
         "actually_bought": ticker in historical_pos,
         "currently_open": ticker in open_pos,
         "position_id": historical_pos.get(ticker, ""),
@@ -543,36 +579,7 @@ def _build_records(days: int, include_radar_top: bool) -> list[dict]:
 
 def _market_regime(df: pd.DataFrame, entry_idx: int) -> dict:
     """Classify the market using benchmark data strictly before the executable entry."""
-    history = df.iloc[:entry_idx]
-    if len(history) < 21:
-        return {"status": "UNKNOWN", "reason": "benchmark_history_short"}
-    close = history["Close"].astype(float)
-    current = float(close.iloc[-1])
-    ret_20d = current / float(close.iloc[-21]) - 1
-    ma200 = float(close.iloc[-200:].mean()) if len(close) >= 200 else None
-    if ma200 is None:
-        status = "POSITIVE" if ret_20d > 0 else "NEGATIVE" if ret_20d < 0 else "MIXED"
-        reason = "20d_return_only"
-    elif current > ma200 and ret_20d > 0:
-        status = "BULL"
-        reason = "above_ma200_and_positive_20d"
-    elif current < ma200 and ret_20d < 0:
-        status = "BEAR"
-        reason = "below_ma200_and_negative_20d"
-    else:
-        status = "MIXED"
-        reason = "trend_and_momentum_diverge"
-    return {
-        "status": status,
-        "reason": reason,
-        "as_of": pd.to_datetime(history["Date"].iloc[-1]).strftime("%Y-%m-%d"),
-        "ret_20d_pct": round(ret_20d * 100, 2),
-        "close_vs_ma200_pct": (
-            round((current / ma200 - 1) * 100, 2)
-            if ma200 and ma200 > 0
-            else None
-        ),
-    }
+    return classify_market_regime(df.iloc[:entry_idx])
 
 
 def _benchmark_outcome(
@@ -717,6 +724,26 @@ def _aggregate(records: list[dict], key: str) -> list[dict]:
     return rows
 
 
+def _outcome_memory_comparison(records: list[dict]) -> dict:
+    groups: dict[str, list[dict]] = defaultdict(list)
+    for record in records:
+        if record.get("bucket") != "candidate":
+            continue
+        effect = str(record.get("outcome_memory_effect", "NONE") or "NONE").upper()
+        if effect not in {"NONE", "SUPPORT", "WEAKEN"}:
+            effect = "NONE"
+        groups[effect].append(record)
+    return {
+        "evidence_status": "COLLECTING_UNTOUCHED_WINDOW",
+        "counterfactual_proven": False,
+        "winner_declared": False,
+        "groups": {
+            effect: _cohort_metrics(rows)
+            for effect, rows in sorted(groups.items())
+        },
+    }
+
+
 def _summary(records: list[dict], snapshots: Optional[list[dict]] = None) -> dict:
     candidates = [r for r in records if r.get("bucket") == "candidate"]
     ok = [r for r in candidates if r.get("status") == "OK"]
@@ -745,6 +772,7 @@ def _summary(records: list[dict], snapshots: Optional[list[dict]] = None) -> dic
             "by_market_regime": _aggregate(records, "market_regime"),
         },
         "llm_override_comparison": _llm_override_comparison(records),
+        "outcome_memory_comparison": _outcome_memory_comparison(records),
         "shadow_policy_comparison": _shadow_policy_comparison(records),
         "policy_comparison": _policy_comparison(records),
         "decision_audit": _decision_audit_summary(decision_audits),
@@ -1161,6 +1189,18 @@ def _markdown_report(today: str, summary: dict, records: list[dict]) -> str:
                     f"lane={row.get('primary_lane')}:{row.get('primary_lane_status')}"
                 )
     lines.append("")
+    lines.append("## Outcome Memory Comparison")
+    memory_comparison = summary.get("outcome_memory_comparison") or {}
+    lines.append(f"- evidence status: {memory_comparison.get('evidence_status', '')}")
+    lines.append(f"- counterfactual proven: {memory_comparison.get('counterfactual_proven', False)}")
+    lines.append(f"- winner declared: {memory_comparison.get('winner_declared', False)}")
+    for effect, metrics in (memory_comparison.get("groups") or {}).items():
+        lines.append(
+            f"- {effect}: n={metrics.get('evaluated_count', 0)}/{metrics.get('count', 0)}, "
+            f"alpha={metrics.get('avg_alpha_pct', {})}, "
+            f"positiveAlpha={metrics.get('positive_alpha_rate', {})}"
+        )
+    lines.append("")
     lines.append("## Precision Shadow Comparison")
     shadow_comparison = summary.get("shadow_policy_comparison") or {}
     if not shadow_comparison:
@@ -1303,7 +1343,7 @@ def run_scout_performance(
     summary = _summary(evaluated, snapshots=snapshots)
     payload = _json_safe({
         "date": today,
-        "schema_version": "scout_performance_v0_4",
+        "schema_version": "scout_performance_v0_5",
         "lookback_days": int(days),
         "followup_days": FOLLOWUP_DAYS,
         "evaluation_protocol": {
@@ -1352,10 +1392,16 @@ def run_scout_performance(
                 "llm_selected": r.get("llm_selected"),
                 "llm_override": r.get("llm_override"),
                 "llm_dropped": r.get("llm_dropped"),
+                "outcome_memory_effect": r.get("outcome_memory_effect"),
+                "outcome_memory_evidence_refs": ",".join(
+                    r.get("outcome_memory_evidence_refs", []) or []
+                ),
                 "opportunity_score": r.get("opportunity_score"),
                 "drawdown_from_high": r.get("drawdown_from_high"),
                 "factor_ret_20d": r.get("factor_ret_20d"),
                 "factor_atr_pct": r.get("factor_atr_pct"),
+                "liquidity_buffer_multiple": r.get("liquidity_buffer_multiple"),
+                "avg_traded_value_20d": r.get("avg_traded_value_20d"),
                 "d1_return_pct": (r.get("followup", {}).get("d1") or {}).get("return_pct"),
                 "d3_return_pct": (r.get("followup", {}).get("d3") or {}).get("return_pct"),
                 "d5_return_pct": (r.get("followup", {}).get("d5") or {}).get("return_pct"),
@@ -1379,8 +1425,12 @@ def run_scout_performance(
                 "primary_lane": r.get("primary_lane"),
                 "primary_lane_status": r.get("primary_lane_status"),
                 "theme_industry_status": r.get("theme_industry_status"),
+                "sector_rrg_quadrant": r.get("sector_rrg_quadrant"),
+                "theme_keys": ",".join(r.get("theme_keys", []) or []),
                 "quality_auditor_status": r.get("quality_auditor_status"),
                 "catalyst_classification": r.get("catalyst_classification"),
+                "catalyst_event_types": ",".join(r.get("catalyst_event_types", []) or []),
+                "catalyst_has_upcoming": r.get("catalyst_has_upcoming"),
                 "actually_bought": r.get("actually_bought"),
                 "currently_open": r.get("currently_open"),
                 "position_id": r.get("position_id"),

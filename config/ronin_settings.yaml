@@ -181,6 +181,22 @@ scout:
     include_radar_top: 20              # 최종 후보 외 비교용 레이더 상위 N개 저장
     parquet_enabled: true              # pyarrow 없으면 JSON만 저장하고 경고
 
+  # Step 4 Outcome Memory — 독립 날짜·benchmark alpha 기반 조건별 경험
+  outcome_memory:
+    enabled: true
+    influence_mode: "advisory"         # LLM 검토 근거로만 사용. 하드 게이트/점수 변경 권한 없음
+    lookback_days: 180
+    horizons: [5, 10, 20]
+    min_records: 12                    # 2026-07-29 replay 민감도 기준. 1~2건 성공은 계속 차단
+    min_independent_dates: 8           # 254개 유효 조건 중 7개만 활성화된 보수적 임시 기준
+    min_recent_dates: 4
+    recent_window_days: 20
+    half_life_days: 30
+    prior_strength_dates: 5            # 전체 평균으로 축소해 작은 표본 과신 방지
+    stale_after_days: 60
+    min_drift_alpha_pct: 2.0
+    max_lessons_per_candidate: 6
+
   # SCOUT v3 테마/산업 감사관 — 탈락 권한 없음, 신뢰도 보조와 표시 전용
   theme_industry_auditor:
     enabled: true

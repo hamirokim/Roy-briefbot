@@ -58,6 +58,7 @@ class BriefBotState(TypedDict, total=False):
     regime_out: dict                   # REGIME: vix, sectors, macro_events, fx
     m6_out: dict                       # M6: summary_text, detailed_lines, track_count
     scout_performance_out: dict        # SCOUT 성과표: 1/3/5/10/20d, MFE/MAE, 구조 이벤트
+    scout_outcome_memory_out: dict     # 조건별 benchmark-alpha 경험 메모리
     digest_out: dict                   # DIGEST: telegram_text, sheets_text
 
     # ── 메타 ──
@@ -215,12 +216,40 @@ def m6_node(state: BriefBotState) -> dict:
     # ═══════════════════════════════════════════════════════════
     try:
         from src.modules.scout_performance import run_scout_performance
+        from src.modules.scout_outcome_memory import (
+            build_outcome_memory,
+            load_outcome_memory_config,
+        )
 
-        perf_out = run_scout_performance(days=45, include_radar_top=True)
+        memory_cfg = load_outcome_memory_config()
+        perf_out = run_scout_performance(
+            days=int(memory_cfg.get("lookback_days", 180) or 180),
+            include_radar_top=True,
+        )
         update["scout_performance_out"] = perf_out
         if update.get("m6_out") is not None:
             update["m6_out"]["performance"] = perf_out
         logger.info("[m6_node] SCOUT 성과표 갱신: %s", (perf_out or {}).get("summary_text", ""))
+        try:
+            memory_out = build_outcome_memory(
+                records=(perf_out or {}).get("records", []) or [],
+                as_of_date=state.get("date", ""),
+                cfg=memory_cfg,
+                persist=bool(memory_cfg.get("enabled", False)),
+            )
+            update["scout_outcome_memory_out"] = memory_out
+            logger.info(
+                "[m6_node] Outcome Memory 갱신: lessons=%d actionable=%d",
+                int((memory_out.get("summary") or {}).get("lesson_count", 0) or 0),
+                int((memory_out.get("summary") or {}).get("actionable_count", 0) or 0),
+            )
+        except Exception as memory_error:
+            logger.warning("[m6_node] Outcome Memory 갱신 실패: %s", memory_error)
+            update["scout_outcome_memory_out"] = {
+                "summary": {},
+                "lessons": [],
+                "error": str(memory_error),
+            }
     except Exception as e:
         logger.warning("[m6_node] SCOUT 성과표 갱신 실패: %s", e)
         update["scout_performance_out"] = {
@@ -228,6 +257,11 @@ def m6_node(state: BriefBotState) -> dict:
             "records": [],
             "summary": {},
             "paths": {},
+            "error": str(e),
+        }
+        update["scout_outcome_memory_out"] = {
+            "summary": {},
+            "lessons": [],
             "error": str(e),
         }
 

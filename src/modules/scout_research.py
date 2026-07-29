@@ -9,7 +9,9 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
+
+from src.modules.scout_outcome_memory import match_outcome_lessons
 
 
 SCHEMA_VERSION = "scout_selective_research_v0_1"
@@ -54,6 +56,7 @@ def _locked_facts(item: dict) -> dict:
         "score": item.get("score"),
         "signal_count": item.get("signal_count"),
         "signal_keys": item.get("signal_keys") or [],
+        "decision_context": item.get("decision_context") or {},
         "common_gate": item.get("common_gate") or {},
         "price_lanes": item.get("price_lanes") or {},
         "factor_context": item.get("factor_context") or {},
@@ -93,7 +96,12 @@ def _news_as_of(value: Any) -> str:
     return ""
 
 
-def build_evidence_packet(item: dict, decision_date: str) -> dict:
+def build_evidence_packet(
+    item: dict,
+    decision_date: str,
+    outcome_memory: Optional[dict] = None,
+    max_outcome_lessons: int = 6,
+) -> dict:
     ticker = _ticker(item)
     common = item.get("common_gate") or {}
     common_metrics = common.get("metrics") or {}
@@ -130,6 +138,14 @@ def build_evidence_packet(item: dict, decision_date: str) -> dict:
         },
         "yfinance_ohlcv",
         latest_date,
+    )
+    market_regime = ((item.get("decision_context") or {}).get("market_regime") or {})
+    add(
+        "market_regime",
+        "Benchmark regime calculated from observations available at decision time",
+        market_regime,
+        "derived:benchmark.market_regime",
+        str(market_regime.get("as_of", "") or latest_date),
     )
     add(
         "technical",
@@ -236,19 +252,60 @@ def build_evidence_packet(item: dict, decision_date: str) -> dict:
         "derived:scout.data_coverage",
         decision_date,
     )
+    matched_lessons = match_outcome_lessons(
+        item,
+        outcome_memory or {},
+        max_lessons=max_outcome_lessons,
+    )
+    for lesson in matched_lessons:
+        add(
+            "historical_outcome",
+            "Benchmark-relative cohort outcome from prior independent decision dates",
+            {
+                "lesson_id": lesson.get("lesson_id"),
+                "cohort_type": lesson.get("cohort_type"),
+                "dimensions": lesson.get("dimensions") or {},
+                "horizon": lesson.get("horizon"),
+                "status": lesson.get("status"),
+                "policy_effect": lesson.get("policy_effect"),
+                "record_count": lesson.get("record_count"),
+                "independent_date_count": lesson.get("independent_date_count"),
+                "shrunk_alpha_pct": lesson.get("shrunk_alpha_pct"),
+                "ci95_alpha_pct": lesson.get("ci95_alpha_pct") or {},
+                "drift": lesson.get("drift") or {},
+            },
+            "derived:scout.outcome_memory",
+            str((outcome_memory or {}).get("as_of_date", "") or decision_date),
+        )
 
     return {
         "schema_version": SCHEMA_VERSION,
         "ticker": ticker,
         "decision_date": decision_date,
         "fact_fingerprint": fact_fingerprint([item]),
+        "outcome_memory_as_of": str((outcome_memory or {}).get("as_of_date", "") or ""),
+        "matched_outcome_lesson_count": len(matched_lessons),
         "evidence": entries,
     }
 
 
-def build_research_packets(candidates: list[dict], decision_date: str, limit: int = MAX_FINALISTS) -> list[dict]:
+def build_research_packets(
+    candidates: list[dict],
+    decision_date: str,
+    limit: int = MAX_FINALISTS,
+    outcome_memory: Optional[dict] = None,
+    max_outcome_lessons: int = 6,
+) -> list[dict]:
     capped = max(0, min(int(limit or MAX_FINALISTS), MAX_FINALISTS))
-    return [build_evidence_packet(item, decision_date) for item in candidates[:capped]]
+    return [
+        build_evidence_packet(
+            item,
+            decision_date,
+            outcome_memory=outcome_memory,
+            max_outcome_lessons=max_outcome_lessons,
+        )
+        for item in candidates[:capped]
+    ]
 
 
 def validate_research_reviews(rows: Any, packets: list[dict]) -> tuple[dict[str, dict], str]:
@@ -258,6 +315,17 @@ def validate_research_reviews(rows: Any, packets: list[dict]) -> tuple[dict[str,
     packet_by_ticker = {str(packet.get("ticker", "")): packet for packet in packets}
     valid_ids = {
         ticker: {str(entry.get("evidence_id", "")) for entry in packet.get("evidence", [])}
+        for ticker, packet in packet_by_ticker.items()
+    }
+    historical_effect_by_id = {
+        ticker: {
+            str(entry.get("evidence_id", "")): str(
+                ((entry.get("value") or {}).get("policy_effect", ""))
+                or ""
+            ).upper()
+            for entry in packet.get("evidence", [])
+            if entry.get("category") == "historical_outcome"
+        }
         for ticker, packet in packet_by_ticker.items()
     }
     reviews: dict[str, dict] = {}
@@ -275,7 +343,30 @@ def validate_research_reviews(rows: Any, packets: list[dict]) -> tuple[dict[str,
         if disposition not in {"KEEP", "DROP"}:
             return {}, f"invalid_disposition:{ticker}"
 
-        normalized = {"ticker": ticker, "disposition": disposition}
+        memory_effect = str(row.get("memory_effect", "") or "").upper()
+        memory_refs = row.get("memory_evidence_refs")
+        if memory_effect not in {"NONE", "SUPPORT", "WEAKEN"}:
+            return {}, f"invalid_memory_effect:{ticker}"
+        if not isinstance(memory_refs, list):
+            return {}, f"memory_evidence_refs_missing:{ticker}"
+        normalized_memory_refs = list(dict.fromkeys(str(ref) for ref in memory_refs))[:8]
+        if memory_effect == "NONE" and normalized_memory_refs:
+            return {}, f"memory_none_with_refs:{ticker}"
+        if memory_effect != "NONE":
+            if not normalized_memory_refs:
+                return {}, f"memory_effect_unsupported:{ticker}"
+            effects = historical_effect_by_id[ticker]
+            if any(ref not in effects for ref in normalized_memory_refs):
+                return {}, f"memory_effect_invalid_ref:{ticker}"
+            if memory_effect not in {effects[ref] for ref in normalized_memory_refs}:
+                return {}, f"memory_effect_mismatch:{ticker}"
+
+        normalized = {
+            "ticker": ticker,
+            "disposition": disposition,
+            "memory_effect": memory_effect,
+            "memory_evidence_refs": normalized_memory_refs,
+        }
         for case_name in required_cases:
             case = row.get(case_name)
             if not isinstance(case, dict):

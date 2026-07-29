@@ -90,6 +90,11 @@ Status as of 2026-07-29:
 - Selective Research v1 reviews only production finalists (maximum 5) with deterministic evidence
   IDs, source provenance, separate bull/bear/risk/invalidation cases, and a fact fingerprint lock.
   Unsupported evidence references or any deterministic-fact mutation fall back to rule selection.
+- Outcome Memory v1 converts mature benchmark-alpha results into date-clustered condition cohorts.
+  It separates setup, market regime, signal, sector/theme state, liquidity/quality, and catalyst
+  timing; applies recency decay, global-mean shrinkage, confidence intervals, and drift invalidation.
+  Only a prior-date memory file may enter Selective Research, and memory has no hard-gate or score
+  authority.
 - Broad Radar Pool remains intentionally wide for learning. Tightness is applied at Top3/WATCHLIST first.
 - Integrity Reset v1 uses the common-gate OHLCV 20-day traded value as the single liquidity
   evidence source for quality/factor checks. The universe `avg_volume_value` remains descriptive
@@ -238,7 +243,7 @@ Required LLM output:
 
 ```json
 {
-  "schema_version": "scout_top3_llm_review_v0_2",
+  "schema_version": "scout_top3_llm_review_v0_3",
   "selected_top3": [
     {
       "rank": 1,
@@ -262,6 +267,8 @@ Required LLM output:
     {
       "ticker": "AVGO",
       "disposition": "KEEP",
+      "memory_effect": "NONE",
+      "memory_evidence_refs": [],
       "bull_case": {"summary": "upside case", "evidence_refs": ["AVGO:E001"]},
       "bear_case": {"summary": "counter case", "evidence_refs": ["AVGO:E002"]},
       "risk_case": {"summary": "main risk", "evidence_refs": ["AVGO:E003"]},
@@ -374,7 +381,7 @@ Source: `src/modules/scout_performance.py`
 
 Current schema:
 
-- `scout_performance_v0_4`
+- `scout_performance_v0_5`
 
 Tracks:
 
@@ -413,6 +420,70 @@ Tracks:
 - Shadow rows are reported separately and never change normal candidate headline counts or aggregates.
 - Legacy snapshots without `generated_at` remain clearly labeled `snapshot_date_legacy`; new
   snapshots use market-clock-aware execution timing.
+
+## Outcome Memory
+
+Source: `src/modules/scout_outcome_memory.py`
+
+Purpose:
+
+- Convert accumulated outcomes into condition-specific experience instead of ticker anecdotes.
+- Use benchmark alpha, not raw return alone.
+- Prevent several candidates from the same briefing date from masquerading as independent samples.
+- Detect conditions that worked historically but reversed in recent observations.
+
+Current cohort families:
+
+- market regime;
+- setup and setup × regime;
+- signal and signal × regime;
+- sector RRG state;
+- theme × regime and theme × sector state;
+- quality × liquidity;
+- BB compression × quality × liquidity;
+- catalyst classification × earnings timing.
+
+Current temporary governance:
+
+- lookback: `180` calendar days;
+- horizons: D5, D10, D20;
+- minimum `12` records and `8` independent briefing dates;
+- same-date candidates are averaged into one date cluster;
+- recency half-life: `30` days;
+- small cohorts are shrunk toward the global date-cluster alpha using `5` prior dates;
+- positive/negative lessons require a 95% confidence interval on the same side of zero;
+- an older positive condition becomes `INVALIDATED_BY_DRIFT` when enough recent dates turn negative;
+- `COLLECTING`, `MIXED`, and `STALE` cohorts cannot influence a finalist review.
+
+The `12 records / 8 dates` checkpoint is not a permanent trading threshold. On the saved
+2026-07-29 Evaluation Harness replay, `20/10` activated no lessons, `10/6` activated conflicting
+small-sample lessons, and `12/8` activated only 7 of 254 valid cohorts after unknown-state removal
+and horizon-adjusted recency windows.
+
+Runtime order:
+
+```text
+Day T SCOUT
+  → loads only outcome_memory files dated before Day T
+  → attaches matched SUPPORT/WEAKEN lessons as provenance evidence
+  → Selective Research may use them as advisory context
+
+Day T M6
+  → refreshes performance ledger
+  → writes outcome_memory_Day-T.json for Day T+1 or later
+```
+
+Authority boundary:
+
+- Outcome Memory cannot add a ticker.
+- Outcome Memory cannot edit price, score, tier, lane, quality, or production-gate facts.
+- Outcome Memory cannot directly veto a candidate.
+- Historical lessons appear only as evidence for the existing Selective Research auditor.
+- Every finalist review records `memory_effect` (`SUPPORT`, `WEAKEN`, or `NONE`) and the exact
+  historical evidence IDs used. Unsupported or mismatched memory-effect claims fail validation.
+- The performance ledger keeps separate memory-effect cohorts with
+  `COLLECTING_UNTOUCHED_WINDOW`; it never declares a winner automatically.
+- A live policy-weight or hard-veto change still requires untouched-window validation.
 
 Core purpose:
 
@@ -532,14 +603,14 @@ Rule:
 
 ## Current Next Work Order
 
-Priority 1: Step 4 Outcome Memory.
+Priority 1: Step 5 Brief Redesign.
 
-- Join each decision-time evidence ID and review case to realized raw return and benchmark alpha.
-- Store compact same-ticker and same-setup lessons without allowing hindsight facts into the
-  original recommendation snapshot.
-- Apply sample-size, recency, regime, and invalidation controls before a lesson may influence a
-  future finalist review.
-- Keep Outcome Memory advisory until an untouched evaluation window shows measurable improvement.
+- Lead with what changed, whether action exists, and why it matters to Roy's holdings.
+- Show one primary recommendation in the normal case; retain zero as a valid result.
+- Include entry condition, invalidation, evidence health, and why the pick beat the nearest
+  rejected alternative.
+- Keep watch candidates compact and explicitly non-actionable.
+- Surface Outcome Memory only when an active prior-date lesson materially changes the risk review.
 
 Priority 2: Run future daily briefs and inspect the US precision shadow ledger.
 

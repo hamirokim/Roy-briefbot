@@ -39,6 +39,10 @@ from src.modules.scout_research import (
     fact_fingerprint,
     validate_research_reviews,
 )
+from src.modules.scout_outcome_memory import (
+    classify_market_regime,
+    load_latest_outcome_memory,
+)
 from src.utils import now_kst, today_kst_str
 
 logger = logging.getLogger(__name__)
@@ -1475,6 +1479,7 @@ def _build_radar_item(
         "liquidity_score": round(liquidity_score, 3),
         "factor_score": round(factor_score, 3),
         "factor_context": dict(info.get("factor") or {}),
+        "decision_context": dict(info.get("decision_context") or {}),
         "common_gate": dict(info.get("common_gate") or {}),
         "price_lanes": dict(info.get("price_lanes") or {}),
         "signal_count": len(signal_keys),
@@ -2641,6 +2646,9 @@ def _save_radar_pool(today: str, radar_pool: list[dict], summary: dict) -> dict:
                 "factor_score": item.get("factor_score", 0.0),
                 "factor_positives": ",".join(item.get("factor_context", {}).get("positives", [])),
                 "factor_negatives": ",".join(item.get("factor_context", {}).get("negatives", [])),
+                "decision_market_regime": (
+                    ((item.get("decision_context") or {}).get("market_regime") or {}).get("status", "")
+                ),
                 "common_gate_status": item.get("common_gate", {}).get("status", ""),
                 "common_gate_fail_reasons": ",".join(item.get("common_gate", {}).get("hard_fail_reasons", [])),
                 "common_gate_review_flags": ",".join(item.get("common_gate", {}).get("review_flags", [])),
@@ -3174,6 +3182,10 @@ def _top3_llm_prompts(
         "Do not state a numeric fact unless that exact value exists in cited evidence.",
         "disposition KEEP means selected_top3; disposition DROP means rejected.",
         "selected_top3 may be empty only when every input ticker disposition is DROP.",
+        "Historical outcome evidence is advisory and uses prior decision dates only.",
+        "Do not let a historical cohort override a current hard gate or current contradictory evidence.",
+        "Set memory_effect to SUPPORT or WEAKEN only when cited historical_outcome evidence materially affects the review.",
+        "Otherwise set memory_effect to NONE and memory_evidence_refs to an empty list.",
     ]
     if additions_allowed:
         rules.extend([
@@ -3191,19 +3203,21 @@ def _top3_llm_prompts(
         task = "Review only rule_based_top3. Reorder or reduce it without adding any ticker."
 
     user_payload = {
-        "schema_version": "scout_top3_llm_prompt_v0_2",
+        "schema_version": "scout_top3_llm_prompt_v0_3",
         "date": today,
         "task": task,
         "llm_additions_allowed": bool(additions_allowed),
         "rules": rules,
         "required_output_schema": {
-            "schema_version": "scout_top3_llm_review_v0_2",
+            "schema_version": "scout_top3_llm_review_v0_3",
             "selected_top3": [{"rank": 1, "ticker": "TICKER"}],
             "rejected": [{"ticker": "TICKER", "reason": "why not selected"}],
             "overrides": [{"dropped_ticker": "TICKER", "added_ticker": "TICKER", "reason": "why override"}],
             "research_reviews": [{
                 "ticker": "TICKER",
                 "disposition": "KEEP",
+                "memory_effect": "NONE",
+                "memory_evidence_refs": [],
                 "bull_case": {"summary": "evidence-backed upside case", "evidence_refs": ["TICKER:E001"]},
                 "bear_case": {"summary": "evidence-backed counter case", "evidence_refs": ["TICKER:E002"]},
                 "risk_case": {"summary": "main remaining risk", "evidence_refs": ["TICKER:E003"]},
@@ -3231,7 +3245,7 @@ def _fallback_llm_review_audit(
     return {
         "enabled": True,
         "status": status,
-        "schema_version": "scout_top3_llm_review_v0_2",
+        "schema_version": "scout_top3_llm_review_v0_3",
         "input_count": int(len(review_pool)),
         "rule_based_top3": _ticker_set(rule_candidates),
         "final_top3": _ticker_set(rule_candidates),
@@ -3246,6 +3260,20 @@ def _fallback_llm_review_audit(
             "status": status,
             "evidence_packets": research_packets or [],
             "reviews": [],
+            "outcome_memory": {
+                "as_of_date": next(
+                    (
+                        str(packet.get("outcome_memory_as_of", "") or "")
+                        for packet in (research_packets or [])
+                        if packet.get("outcome_memory_as_of")
+                    ),
+                    "",
+                ),
+                "matched_lesson_count": sum(
+                    int(packet.get("matched_outcome_lesson_count", 0) or 0)
+                    for packet in (research_packets or [])
+                ),
+            },
             "fact_lock": {
                 "before": fact_fingerprint_before,
                 "after": fact_fingerprint(rule_candidates),
@@ -3263,6 +3291,7 @@ def _apply_llm_top3_review(
     selection_cfg: dict,
     market_context: dict,
     llm_call,
+    outcome_memory_cfg: Optional[dict] = None,
 ) -> tuple[list[dict], dict]:
     llm_cfg = (selection_cfg or {}).get("llm_review", {}) or {}
     if not bool(llm_cfg.get("enabled", False)):
@@ -3283,7 +3312,19 @@ def _apply_llm_top3_review(
         review_pool = _build_llm_review_pool(radar_pool, rule_candidates, watchlist_candidates, limit=limit)
     else:
         review_pool = list(rule_candidates)[:max(0, limit)]
-    research_packets = build_research_packets(review_pool, today, limit=limit)
+    memory_cfg = outcome_memory_cfg or {}
+    outcome_memory = (
+        load_latest_outcome_memory(today, directory=RADAR_DIR)
+        if bool(memory_cfg.get("enabled", False))
+        else {}
+    )
+    research_packets = build_research_packets(
+        review_pool,
+        today,
+        limit=limit,
+        outcome_memory=outcome_memory,
+        max_outcome_lessons=int(memory_cfg.get("max_lessons_per_candidate", 6) or 6),
+    )
     facts_before = fact_fingerprint(review_pool)
     if len(rule_candidates) < 1 or len(review_pool) < 1:
         return rule_candidates, _fallback_llm_review_audit(
@@ -3322,7 +3363,7 @@ def _apply_llm_top3_review(
             research_packets,
             facts_before,
         )
-    if str(data.get("schema_version", "") or "") != "scout_top3_llm_review_v0_2":
+    if str(data.get("schema_version", "") or "") != "scout_top3_llm_review_v0_3":
         return rule_candidates, _fallback_llm_review_audit(
             "fallback_schema_failed",
             rule_candidates,
@@ -3479,7 +3520,7 @@ def _apply_llm_top3_review(
     return final, _json_safe_value({
         "enabled": True,
         "status": "ok",
-        "schema_version": "scout_top3_llm_review_v0_2",
+        "schema_version": "scout_top3_llm_review_v0_3",
         "input_count": int(len(review_pool)),
         "input_tickers": _ticker_set(review_pool),
         "rule_based_top3": rule_tickers,
@@ -3499,12 +3540,23 @@ def _apply_llm_top3_review(
         "overrides": overrides[:8],
         "dropped_tickers": sorted(dropped),
         "added_tickers": sorted(added),
-        "prompt_version": "scout_top3_llm_prompt_v0_2",
+        "prompt_version": "scout_top3_llm_prompt_v0_3",
         "selective_research": {
             "schema_version": RESEARCH_SCHEMA_VERSION,
             "status": "ok",
             "evidence_packets": research_packets,
             "reviews": list(research_reviews.values()),
+            "outcome_memory": {
+                "as_of_date": str(outcome_memory.get("as_of_date", "") or ""),
+                "influence_mode": str(
+                    ((outcome_memory.get("governance") or {}).get("influence_mode", ""))
+                    or memory_cfg.get("influence_mode", "advisory")
+                ),
+                "matched_lesson_count": sum(
+                    int(packet.get("matched_outcome_lesson_count", 0) or 0)
+                    for packet in research_packets
+                ),
+            },
             "fact_lock": {
                 "before": facts_before,
                 "after": facts_after,
@@ -3803,6 +3855,9 @@ def _snapshot_flat_row(today: str, item: dict, rank_no: int, bucket: str) -> dic
         "factor_score": item.get("factor_score", 0),
         "factor_positives": ",".join(factor.get("positives", []) or []),
         "factor_negatives": ",".join(factor.get("negatives", []) or []),
+        "decision_market_regime": (
+            ((item.get("decision_context") or {}).get("market_regime") or {}).get("status", "")
+        ),
         "quality_flags": ",".join(item.get("quality_flags", []) or []),
         "market_cap": item.get("market_cap", 0),
         "avg_volume_value": item.get("avg_volume_value", 0),
@@ -4257,6 +4312,11 @@ class ScoutAgent(BaseAgent):
                 for key in ["SPY", "^KS11", "^KQ11"]
                 if ohlcv_data.get(key) is not None
             }
+            benchmark_regimes = {
+                key: classify_market_regime(frame)
+                for key, frame in benchmark_data.items()
+                if frame is not None and not frame.empty
+            }
 
             for ticker, info in ohlcv_targets.items():
                 df = ohlcv_data.get(ticker)
@@ -4296,6 +4356,14 @@ class ScoutAgent(BaseAgent):
                     common_gate_cfg=common_gate_cfg,
                 )
                 info["price_lanes"] = _assess_price_lanes(df, info["row"], benchmark_data, price_lanes_cfg)
+                benchmark_key = _bench_key_for_row(info["row"])
+                info["decision_context"] = {
+                    "market_regime": benchmark_regimes.get(
+                        benchmark_key,
+                        {"status": "UNKNOWN", "reason": "benchmark_regime_missing"},
+                    ),
+                    "benchmark_ticker": benchmark_key,
+                }
 
                 # bb_squeeze
                 if scout_cfg["signals"]["bb_squeeze"]["enabled"]:
@@ -4473,6 +4541,7 @@ class ScoutAgent(BaseAgent):
             selection_cfg=top3_selection_cfg,
             market_context=llm_market_context,
             llm_call=self.call_llm,
+            outcome_memory_cfg=scout_cfg.get("outcome_memory", {}) or {},
         )
         top3_selection_audit["llm_review"] = llm_review_audit
         top3_selection_audit["rule_based_top3"] = llm_review_audit.get("rule_based_top3", _ticker_set(rule_based_candidates))
