@@ -111,7 +111,7 @@ class PrecisionShadowSelectionTests(unittest.TestCase):
 
 
 class PrecisionShadowPersistenceTests(unittest.TestCase):
-    def test_snapshot_v03_preserves_metadata_and_shadow_candidates(self):
+    def test_snapshot_v04_preserves_metadata_policy_and_shadow_candidates(self):
         final_candidate = _item("LIVE")
         shadow_candidate = _item("SHADOW")
         shadow_candidate["shadow_selection"] = {
@@ -134,14 +134,19 @@ class PrecisionShadowPersistenceTests(unittest.TestCase):
                 today="2026-07-15",
                 candidates=[final_candidate],
                 radar_pool=[final_candidate, shadow_candidate],
-                radar_summary={"filter_audit": {}},
+                radar_summary={
+                    "filter_audit": {},
+                    "decision_health": {"status": "RECOMMENDATION_AVAILABLE"},
+                },
                 snapshot_cfg={"enabled": True, "include_radar_top": 2, "parquet_enabled": False},
                 shadow_policies=shadow_policies,
                 generated_at="2026-07-15T07:10:00+09:00",
             )
             payload = json.loads(Path(paths["json"]).read_text(encoding="utf-8"))
 
-        self.assertEqual(payload["schema_version"], "scout_recommendation_snapshot_v0_3")
+        self.assertEqual(payload["schema_version"], "scout_recommendation_snapshot_v0_4")
+        self.assertEqual(payload["policy"]["production_policy_id"], "integrity_v1")
+        self.assertEqual(payload["summary"]["decision_health"]["status"], "RECOMMENDATION_AVAILABLE")
         self.assertEqual(payload["generated_at"], "2026-07-15T07:10:00+09:00")
         self.assertEqual(payload["timezone"], "Asia/Seoul")
         self.assertEqual(payload["data_as_of"]["ohlcv_latest_by_country"]["US"], "2026-07-14")

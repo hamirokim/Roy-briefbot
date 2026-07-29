@@ -3732,10 +3732,16 @@ def _save_recommendation_snapshot(
             "theme_snapshot_dates": sorted(theme_dates),
             "source_policy": "latest_available_at_generation",
         },
-        "schema_version": "scout_recommendation_snapshot_v0_3",
+        "schema_version": "scout_recommendation_snapshot_v0_4",
+        "policy": {
+            "production_policy_id": "integrity_v1",
+            "selection_policy": "tier_a_quality_confirmed",
+            "backfill": False,
+        },
         "summary": {
             "candidate_count": int(len(candidates)),
             "radar_top_count": int(min(len(radar_pool), radar_top_n)),
+            "decision_health": radar_summary.get("decision_health", {}) or {},
             "shadow_policy_counts": {
                 str(key): int(len((value or {}).get("candidates", []) or []))
                 for key, value in shadow_policies.items()

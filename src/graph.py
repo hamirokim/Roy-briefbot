@@ -216,7 +216,7 @@ def m6_node(state: BriefBotState) -> dict:
     try:
         from src.modules.scout_performance import run_scout_performance
 
-        perf_out = run_scout_performance(days=45, include_radar_top=False)
+        perf_out = run_scout_performance(days=45, include_radar_top=True)
         update["scout_performance_out"] = perf_out
         if update.get("m6_out") is not None:
             update["m6_out"]["performance"] = perf_out

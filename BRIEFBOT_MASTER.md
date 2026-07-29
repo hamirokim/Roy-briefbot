@@ -97,6 +97,8 @@ Status as of 2026-07-29:
   ETF used by the displayed judgment.
 - Zero-recommendation output records `HEALTHY_ABSTENTION`, `DEGRADED_DATA`, or `PIPELINE_EMPTY`
   so policy abstention is not confused with missing evaluation data.
+- Evaluation Harness v1 replays the first executable session open, measures benchmark alpha and
+  pre-entry market regime, and audits rejected-radar opportunity cost and abstention quality.
 - Step4 precision shadow is implemented as a non-user-visible comparison lane. It does not replace Telegram, Sheets, cooldown, or final Top3.
 - Step6 production recommendation gate allows 0 to 3 live recommendations. Tier B/C/D candidates remain WATCHLIST-only and are never used as slot backfill.
 
@@ -331,8 +333,10 @@ LLM boundary:
 
 Persistence:
 
-- Recommendation snapshots use schema `scout_recommendation_snapshot_v0_3`.
+- Recommendation snapshots use schema `scout_recommendation_snapshot_v0_4`.
 - Top-level `generated_at`, `timezone`, and `data_as_of` preserve the decision-time context.
+- Top-level `policy.production_policy_id` identifies the live policy used for the decision.
+- `summary.decision_health` preserves recommendation, abstention, and degraded-data state.
 - Top-level `shadow_policies.us_precision_v1` stores the full frozen candidate objects and audit.
 - `top3_selection_audit.precision_shadow` stores compact counts and selected tickers.
 - Shadow output is file-only. It must not appear in Telegram or Journal Sheets until Roy explicitly approves a production switch.
@@ -343,11 +347,19 @@ Source: `src/modules/scout_performance.py`
 
 Current schema:
 
-- `scout_performance_v0_3`
+- `scout_performance_v0_4`
 
 Tracks:
 
 - 1/3/5/10/20 trading-day follow-up prices and returns.
+- first executable session `Open` entry; recommendation-date `Close` is never used as an executable price.
+- SPY / KOSPI / KOSDAQ benchmark return and D5/D10/D20 alpha.
+- market regime calculated only from benchmark observations before entry.
+- rejected Radar Top comparison, opportunity cost, and abstention quality.
+- opportunity cost uses the highest-ranked rejected alternative known at decision time; the
+  hindsight-best rejected candidate is reported separately as an ex-post upper-bound gap.
+- recorded production policy, precision shadow, and non-selected Radar baseline cohorts.
+- policy comparison never auto-declares a winner while forward evidence is still accumulating.
 - MFE / MAE.
 - structure events:
   - higher low,
@@ -372,7 +384,8 @@ Tracks:
   - reports should show dropped vs added candidates side by side so LLM override quality can be checked after D1/D3/D5/D10/D20 data accumulates.
 - Precision shadow candidates are loaded from `shadow_policies` into separate `shadow:<policy_id>` buckets.
 - Shadow rows are reported separately and never change normal candidate headline counts or aggregates.
-- The runtime performance ledger still uses its legacy recommendation-date close convention. Live-switch decisions must use the Step3 corrected first-executable-session replay until that label contract is migrated separately.
+- Legacy snapshots without `generated_at` remain clearly labeled `snapshot_date_legacy`; new
+  snapshots use market-clock-aware execution timing.
 
 Core purpose:
 
@@ -497,7 +510,7 @@ Priority 1: Run future daily briefs and inspect the US precision shadow ledger.
 - Confirm snapshots contain `generated_at`, `timezone`, `data_as_of`, and `shadow_policies.us_precision_v1`.
 - Confirm the shadow count can be 0, 1, 2, or 3 and no backfill occurs.
 - Confirm Telegram, Sheets, cooldown, and final Top3 remain unchanged.
-- Compare future D5/D10 net return and benchmark-relative alpha using the Step3 corrected replay method.
+- Compare future D5/D10 net return and benchmark-relative alpha using Evaluation Harness v1.
 
 Priority 2: Validate whether precision shadow survives unseen data.
 
