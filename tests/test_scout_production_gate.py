@@ -6,10 +6,14 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import numpy as np
+import pandas as pd
+
 from src.agents import digest, scout
+from src.agents import regime
 from src.agents.digest import DigestAgent
 from src.collectors import macro_calendar
-from src.modules import scout_performance
+from src.modules import m2_rotation, scout_performance
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,7 +28,7 @@ def _candidate(ticker: str, tier: str = "A", quality: str = "STRONG_QUALITY") ->
         "signal_count": 3,
         "signals": {},
         "quality_flags": [],
-        "quality_auditor": {"status": quality},
+        "quality_auditor": {"status": quality, "source": "fmp"},
         "factor_context": {"negatives": []},
         "catalyst_context": {},
         "top3_selection": {
@@ -52,7 +56,7 @@ def _selection_config() -> dict:
             "allowed_tiers": ["A"],
             "quality_statuses": ["QUALITY_SUPPORT", "STRONG_QUALITY"],
             "excluded_quality_flags": ["overextended_20d", "low_liquidity_buffer"],
-            "excluded_factor_negatives": ["liquidity_weak", "volatility_extreme", "chasing_extreme", "chasing_hot"],
+            "excluded_factor_negatives": ["volatility_extreme", "chasing_extreme", "chasing_hot"],
             "backfill": False,
         },
         "llm_review": {"enabled": True, "additions_allowed": False, "candidate_limit": 12},
@@ -78,18 +82,43 @@ class ProductionGateTests(unittest.TestCase):
         tier_b = _candidate("TIERB", tier="B")
         no_quality = _candidate("NOQUALITY", quality="NEUTRAL")
         risky = _candidate("RISKY")
-        risky["factor_context"]["negatives"] = ["liquidity_weak"]
+        risky["factor_context"]["negatives"] = ["volatility_extreme"]
+        diagnostic_only = _candidate("LIQUIDITY_DIAGNOSTIC")
+        diagnostic_only["factor_context"]["negatives"] = ["liquidity_weak"]
         radar = [good, tier_b, no_quality, risky]
+        radar.append(diagnostic_only)
 
         with patch.object(scout, "_annotate_top3_selection", side_effect=lambda item: item["top3_selection"]):
             selected, audit = scout._select_top3_candidates(
                 radar, 3, lambda item: True, _selection_config()
             )
 
-        self.assertEqual([item["ticker"] for item in selected], ["GOOD"])
+        self.assertEqual(
+            [item["ticker"] for item in selected],
+            ["GOOD", "LIQUIDITY_DIAGNOSTIC"],
+        )
         self.assertEqual(audit["production_gate"]["rejection_counts"]["tier_not_allowed"], 1)
         self.assertEqual(audit["production_gate"]["rejection_counts"]["quality_not_confirmed"], 1)
         self.assertEqual(audit["production_gate"]["rejection_counts"]["factor_risk"], 1)
+
+    def test_not_checked_quality_is_reported_as_not_evaluated(self):
+        item = _candidate("UNCHECKED", quality="not_checked")
+        reason = scout._production_gate_rejection_reason(
+            item,
+            item["top3_selection"],
+            _selection_config(),
+        )
+        self.assertEqual(reason, "quality_not_evaluated")
+
+    def test_missing_quality_source_cannot_pass_on_price_context_alone(self):
+        item = _candidate("SOURCELESS")
+        item["quality_auditor"]["source"] = "empty"
+        reason = scout._production_gate_rejection_reason(
+            item,
+            item["top3_selection"],
+            _selection_config(),
+        )
+        self.assertEqual(reason, "quality_source_missing")
 
     def test_disabled_gate_does_not_mark_legacy_candidates_as_passed(self):
         legacy = _candidate("LEGACY", tier="B")
@@ -182,6 +211,10 @@ class DigestContractTests(unittest.TestCase):
                 "radar_summary": {
                     "radar_pool_count": 52,
                     "no_candidate_reason": "Tier A 확실 후보 없음",
+                    "decision_health": {
+                        "status": "HEALTHY_ABSTENTION",
+                        "label": "정상 관망",
+                    },
                     "filter_audit": {"top3_selection_audit": {
                         "llm_review": {
                             "enabled": True,
@@ -197,6 +230,7 @@ class DigestContractTests(unittest.TestCase):
 
         self.assertIn("신규 추천</b> 오늘 없음", message)
         self.assertIn("관찰 레이더 (추천 아님)", message)
+        self.assertIn("판정 상태: 정상 관망", message)
         self.assertIn("추천 기준 통과 후보 없음", message)
         self.assertNotIn("52개 중 엄선", message)
 
@@ -249,6 +283,151 @@ class DigestContractTests(unittest.TestCase):
         })
         self.assertIn("실패 56 (조기 56 / 20일 무진전 0)", text)
         self.assertNotIn("FALSE_POSITIVE 0", text)
+
+
+class IntegrityResetTests(unittest.TestCase):
+    @staticmethod
+    def _ohlcv() -> pd.DataFrame:
+        size = 260
+        close = np.linspace(80.0, 100.0, size)
+        return pd.DataFrame({
+            "open": close - 0.5,
+            "high": close + 1.0,
+            "low": close - 1.0,
+            "close": close,
+            "volume": np.full(size, 12_500_000.0),
+        })
+
+    def test_liquidity_uses_common_gate_ohlcv_instead_of_zero_universe_field(self):
+        row = pd.Series({
+            "ticker": "ACN",
+            "country": "US",
+            "avg_volume_value": 0,
+        })
+        common_gate = {"metrics": {"avg_traded_value_20d": 1_246_000_000}}
+        common_gate_cfg = {"min_avg_traded_value_20d": {"US": 10_000_000}}
+
+        quality = scout._assess_quality_context(
+            self._ohlcv(),
+            row,
+            5_000_000,
+            common_gate=common_gate,
+            common_gate_cfg=common_gate_cfg,
+        )
+        factor = scout._assess_factor_profile(
+            self._ohlcv(),
+            row,
+            {"enabled": True, "weights": {}},
+            5_000_000,
+            common_gate=common_gate,
+            common_gate_cfg=common_gate_cfg,
+        )
+
+        self.assertNotIn("low_liquidity_buffer", quality["flags"])
+        self.assertNotIn("liquidity_weak", factor["negatives"])
+        self.assertIn("liquidity_good", factor["positives"])
+        self.assertEqual(quality["metrics"]["liquidity_source"], "common_gate_ohlcv")
+        self.assertEqual(quality["metrics"]["liquidity_buffer_multiple"], 124.6)
+
+    def test_quality_auditor_covers_all_production_eligible_items_beyond_cost_limit(self):
+        radar = []
+        for index in range(35):
+            radar.append({
+                "ticker": f"T{index:02d}",
+                "country": "US",
+                "market_cap": 1_000_000_000,
+                "price_lanes": {"strength": {"status": "STRONG_PASS"}},
+            })
+        cfg = {"enabled": True, "eval_limit": 30}
+        production = {"enabled": True, "allowed_tiers": ["A"]}
+
+        with patch.object(scout, "_fetch_quality_fundamental", return_value=("fmp", {})), \
+             patch.object(scout, "_assess_quality_auditor", return_value={"status": "NEUTRAL"}), \
+             patch.object(scout.time, "sleep", return_value=None):
+            audit = scout._apply_quality_auditor(radar, cfg, production)
+
+        self.assertEqual(audit["evaluated"], 35)
+        self.assertEqual(audit["production_required"], 35)
+        self.assertEqual(audit["production_required_missing"], 0)
+        self.assertTrue(audit["production_coverage_complete"])
+        self.assertTrue(all("quality_auditor" in item for item in radar))
+
+    def test_disabled_quality_auditor_is_not_reported_as_complete(self):
+        radar = [{
+            "ticker": "A_ONLY",
+            "country": "US",
+            "price_lanes": {"strength": {"status": "STRONG_PASS"}},
+        }]
+        audit = scout._apply_quality_auditor(
+            radar,
+            {"enabled": False, "eval_limit": 30},
+            {"enabled": True, "allowed_tiers": ["A"]},
+        )
+
+        self.assertEqual(audit["production_required"], 1)
+        self.assertEqual(audit["production_required_missing"], 1)
+        self.assertFalse(audit["production_coverage_complete"])
+        self.assertFalse(audit["production_data_complete"])
+
+    def test_theme_groups_do_not_mix_semiconductor_weakness_with_cloud_strength(self):
+        quadrants = {
+            "SMH": "lagging",
+            "SOXX": "lagging",
+            "AIQ": "lagging",
+            "ARTY": "lagging",
+            "SKYY": "leading",
+            "IGV": "improving",
+        }
+        snapshot = {}
+        for ticker, quadrant in quadrants.items():
+            snapshot[ticker] = {
+                **m2_rotation._DEFAULT_THEME_MAP[ticker],
+                "quadrant": quadrant,
+                "ratio": 100,
+                "momentum": 100,
+            }
+
+        grouped = regime._group_theme_snapshot(snapshot)
+        judgments = {group["label"]: group["judgment"] for group in grouped["groups"]}
+
+        self.assertEqual(judgments["AI·반도체"], "보류")
+        self.assertEqual(judgments["클라우드·소프트웨어"], "강함")
+        self.assertNotIn("AI·반도체·클라우드", judgments)
+        self.assertEqual(
+            digest._format_theme_etfs(grouped["groups"][0]["etfs"], 6).count(",") + 1,
+            len(grouped["groups"][0]["etfs"]),
+        )
+
+    def test_decision_health_distinguishes_abstention_from_missing_quality_data(self):
+        radar = [{"ticker": "WAIT"}]
+        healthy = scout._decision_health_summary(
+            radar,
+            [],
+            {
+                "quality_audit": {
+                    "production_required_missing": 0,
+                    "production_required_source_missing": 0,
+                },
+                "top3_selection_audit": {
+                    "production_gate": {"rejection_counts": {"tier_not_allowed": 1}}
+                },
+            },
+        )
+        degraded = scout._decision_health_summary(
+            radar,
+            [],
+            {
+                "quality_audit": {
+                    "production_required_missing": 0,
+                    "production_required_source_missing": 2,
+                },
+                "top3_selection_audit": {"production_gate": {"rejection_counts": {}}},
+            },
+        )
+
+        self.assertEqual(healthy["status"], "HEALTHY_ABSTENTION")
+        self.assertEqual(degraded["status"], "DEGRADED_DATA")
+        self.assertIn("품질 원천데이터 없음 2개", degraded["reason"])
 
 
 class MacroCoverageTests(unittest.TestCase):

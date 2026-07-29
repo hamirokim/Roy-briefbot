@@ -47,13 +47,13 @@ _DEFAULT_SECTOR_MAP = {
 # 섹터(11개) 안의 sub-industry 또는 cross-sector 테마 추적용
 # AAPL/NVDA 같은 주도주가 매집 단계 못 통과해도 테마 RRG로 잡힘
 _DEFAULT_THEME_MAP = {
-    # AI·반도체·클라우드
-    "SMH":  {"label": "반도체 (VanEck)",          "category": "semiconductor", "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
-    "SOXX": {"label": "반도체 (iShares)",         "category": "semiconductor", "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
-    "AIQ":  {"label": "AI & 빅데이터",             "category": "ai",            "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
-    "ARTY": {"label": "Future AI & Tech",         "category": "ai",            "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
-    "SKYY": {"label": "클라우드 컴퓨팅",           "category": "cloud",         "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
-    "IGV":  {"label": "소프트웨어",                "category": "software",      "theme_group": "ai_semis_cloud", "group_label": "AI·반도체·클라우드"},
+    # AI·반도체와 클라우드·소프트웨어는 서로 다른 순환매로 판정
+    "SMH":  {"label": "반도체 (VanEck)",          "category": "semiconductor", "theme_group": "ai_semiconductor", "group_label": "AI·반도체"},
+    "SOXX": {"label": "반도체 (iShares)",         "category": "semiconductor", "theme_group": "ai_semiconductor", "group_label": "AI·반도체"},
+    "AIQ":  {"label": "AI & 빅데이터",             "category": "ai",            "theme_group": "ai_semiconductor", "group_label": "AI·반도체"},
+    "ARTY": {"label": "Future AI & Tech",         "category": "ai",            "theme_group": "ai_semiconductor", "group_label": "AI·반도체"},
+    "SKYY": {"label": "클라우드 컴퓨팅",           "category": "cloud",         "theme_group": "cloud_software", "group_label": "클라우드·소프트웨어"},
+    "IGV":  {"label": "소프트웨어",                "category": "software",      "theme_group": "cloud_software", "group_label": "클라우드·소프트웨어"},
     # 로봇·자동화
     "BOTZ": {"label": "로봇 & AI",                 "category": "robotics",      "theme_group": "robotics_automation", "group_label": "로봇·자동화"},
     "ROBO": {"label": "로봇 & 자동화",             "category": "robotics",      "theme_group": "robotics_automation", "group_label": "로봇·자동화"},

@@ -74,7 +74,7 @@ Telegram + Journal Sheets + state.json
 
 ## Current Implementation Status
 
-Status as of 2026-07-15:
+Status as of 2026-07-29:
 
 - GitHub Actions scheduled daily run is active.
 - SCOUT, GUARD, REGIME, M6, DIGEST workflow is implemented.
@@ -88,6 +88,15 @@ Status as of 2026-07-15:
 - Top3 selection is tier-based. Legacy `brief_min_score` / `signals_required` final-candidate gates are removed.
 - Optional LLM Top3 review is implemented with structured JSON, validation, and rule-based fallback.
 - Broad Radar Pool remains intentionally wide for learning. Tightness is applied at Top3/WATCHLIST first.
+- Integrity Reset v1 uses the common-gate OHLCV 20-day traded value as the single liquidity
+  evidence source for quality/factor checks. The universe `avg_volume_value` remains descriptive
+  fallback only.
+- Every candidate whose price lane can enter a production-allowed tier receives quality-auditor
+  coverage even when that exceeds the ordinary cost-control `eval_limit`.
+- REGIME separates `AI·반도체` from `클라우드·소프트웨어`; Telegram theme evidence includes every
+  ETF used by the displayed judgment.
+- Zero-recommendation output records `HEALTHY_ABSTENTION`, `DEGRADED_DATA`, or `PIPELINE_EMPTY`
+  so policy abstention is not confused with missing evaluation data.
 - Step4 precision shadow is implemented as a non-user-visible comparison lane. It does not replace Telegram, Sheets, cooldown, or final Top3.
 - Step6 production recommendation gate allows 0 to 3 live recommendations. Tier B/C/D candidates remain WATCHLIST-only and are never used as slot backfill.
 
@@ -181,6 +190,8 @@ Current settings:
 - RISK_CATALYST review pool: `true`
 - production gate allowed tier: `A`
 - production gate requires quality support and excludes overextension, weak liquidity, extreme volatility, and chasing flags
+- weak liquidity has one production veto path (`low_liquidity_buffer`); factor-layer
+  `liquidity_weak` remains diagnostic and is not a duplicate production veto
 - zero recommendations are valid; backfill is disabled
 - tier order remains descriptive for Radar/WATCHLIST ordering: `A`, `B`, `C`, `D`
 

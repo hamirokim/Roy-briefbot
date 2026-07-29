@@ -217,6 +217,9 @@ def _format_theme_etfs(etfs: list[dict], limit: int = 4) -> str:
     for etf in (etfs or [])[:limit]:
         q = _QUADRANT_KO.get(etf.get("quadrant", ""), etf.get("quadrant", ""))
         parts.append(f"{etf.get('ticker')} {q}")
+    hidden = max(0, len(etfs or []) - limit)
+    if hidden:
+        parts.append(f"외 {hidden}개")
     return ", ".join(parts)
 
 
@@ -876,7 +879,7 @@ class DigestAgent(BaseAgent):
             lines.append(f"<i>기준: 강함=같은 테마 ETF 2개 이상 주도/개선 / 관찰=1개만 먼저 개선 / 보류=대부분 약화·부진</i>")
             lines.append(f"<i>오늘 분포: {_theme_counts_text(theme_counts)}</i>")
             for theme in theme_focus[:3]:
-                etf_text = _format_theme_etfs(theme.get("etfs", []), 4)
+                etf_text = _format_theme_etfs(theme.get("etfs", []), 6)
                 lines.append(
                     f"• <b>{theme.get('label')}</b> [{theme.get('judgment')}] "
                     f"<i>{theme.get('reason')}</i>"
@@ -931,6 +934,7 @@ class DigestAgent(BaseAgent):
         radar_summary = scout_out.get("radar_summary", {}) or {}
         radar_count = int(radar_summary.get("radar_pool_count", 0) or 0)
         top_signals = radar_summary.get("top_signals", []) or []
+        decision_health = radar_summary.get("decision_health", {}) or {}
         watchlist = scout_out.get("watchlist_candidates", []) or []
         llm_review_line = _format_llm_review_line(scout_out)
         if candidates:
@@ -972,6 +976,8 @@ class DigestAgent(BaseAgent):
         else:
             reason = radar_summary.get("no_candidate_reason") or "최종 보고 기준 미달"
             lines.append(f"<b>🎯 신규 추천</b> 오늘 없음")
+            if decision_health.get("label"):
+                lines.append(f"<b>판정 상태: {decision_health['label']}</b>")
             lines.append(f"<i>{reason}</i>")
             if radar_count:
                 lines.append(f"내부 관찰풀은 {radar_count}개 쌓임")
@@ -1313,6 +1319,7 @@ class DigestAgent(BaseAgent):
         source_counts = radar_summary.get("source_counts", {}) or {}
         filter_audit = radar_summary.get("filter_audit", {}) or {}
         no_candidate_reason = radar_summary.get("no_candidate_reason", "")
+        decision_health = radar_summary.get("decision_health", {}) or {}
         watchlist = scout_out.get("watchlist_candidates", []) or []
         passed = len(candidates)
 
@@ -1640,6 +1647,8 @@ class DigestAgent(BaseAgent):
                 lines.append("")
         else:
             reason = no_candidate_reason or "최종 보고 기준 미달"
+            if decision_health.get("label"):
+                lines.append(f"  • 판정 상태   : {decision_health['label']}")
             lines.append(f"  (오늘 엄선 후보 없음 — {reason})")
             if radar_count > 0:
                 lines.append("  관찰풀은 쌓였으니 억지로 종목을 찾기보다 다음 신호 확인을 기다리는 구간입니다.")

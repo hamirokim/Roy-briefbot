@@ -642,7 +642,33 @@ def _assess_quality_auditor(item: dict, fundamental: dict, source: str, cfg: dic
     }
 
 
-def _apply_quality_auditor(radar_items: list[dict], quality_cfg: dict) -> dict:
+def _production_quality_targets(radar_items: list[dict], production_gate_cfg: dict) -> list[dict]:
+    """Return candidates whose lane tier can reach the production gate."""
+    if not bool((production_gate_cfg or {}).get("enabled", False)):
+        return []
+    allowed_tiers = {
+        str(value).upper()
+        for value in ((production_gate_cfg or {}).get("allowed_tiers") or ["A"])
+    }
+    targets = []
+    for item in radar_items:
+        primary = _primary_lane(item.get("price_lanes") or {})
+        tier, _ = _top3_tier(
+            lane_rank=int(primary.get("rank", 0) or 0),
+            freshness_rank=0,
+            support_count=0,
+            excluded=False,
+        )
+        if tier in allowed_tiers:
+            targets.append(item)
+    return targets
+
+
+def _apply_quality_auditor(
+    radar_items: list[dict],
+    quality_cfg: dict,
+    production_gate_cfg: Optional[dict] = None,
+) -> dict:
     audit = {
         "enabled": bool((quality_cfg or {}).get("enabled", False)),
         "eval_limit": int((quality_cfg or {}).get("eval_limit", 0) or 0),
@@ -655,13 +681,36 @@ def _apply_quality_auditor(radar_items: list[dict], quality_cfg: dict) -> dict:
         "non_us": 0,
         "status_counts": {},
         "reject_authority": False,
+        "production_required": 0,
+        "production_required_evaluated": 0,
+        "production_required_missing": 0,
+        "production_required_source_missing": 0,
+        "production_coverage_complete": True,
+        "production_data_complete": True,
     }
+    required = _production_quality_targets(radar_items, production_gate_cfg or {})
+    required_ids = {id(item) for item in required}
+    audit["production_required"] = len(required)
     if not audit["enabled"] or audit["eval_limit"] <= 0:
+        audit["production_required_missing"] = len(required)
+        audit["production_coverage_complete"] = not bool(required)
+        audit["production_data_complete"] = not bool(required)
         return audit
 
+    targets = list(required)
+    target_ids = set(required_ids)
+    for item in radar_items:
+        if len(targets) >= audit["eval_limit"]:
+            break
+        if id(item) not in target_ids:
+            targets.append(item)
+            target_ids.add(id(item))
+
     status_counter = Counter()
-    for item in radar_items[:audit["eval_limit"]]:
+    evaluated_ids = set()
+    for item in targets:
         audit["evaluated"] += 1
+        evaluated_ids.add(id(item))
         source, fundamental = _fetch_quality_fundamental(
             ticker=str(item.get("ticker", "") or ""),
             country=str(item.get("country", "") or ""),
@@ -680,20 +729,65 @@ def _apply_quality_auditor(radar_items: list[dict], quality_cfg: dict) -> dict:
         else:
             audit["empty"] += 1
         item["quality_auditor"] = _assess_quality_auditor(item, fundamental, source, quality_cfg)
+        if id(item) in required_ids and source not in {"fmp", "finviz", "dart"}:
+            audit["production_required_source_missing"] += 1
         status_counter[str(item["quality_auditor"].get("status", ""))] += 1
         time.sleep(0.05)
 
+    audit["production_required_evaluated"] = sum(
+        1 for item in required if id(item) in evaluated_ids
+    )
+    audit["production_required_missing"] = max(
+        0,
+        audit["production_required"] - audit["production_required_evaluated"],
+    )
+    audit["production_coverage_complete"] = audit["production_required_missing"] == 0
+    audit["production_data_complete"] = (
+        audit["production_coverage_complete"]
+        and audit["production_required_source_missing"] == 0
+    )
     audit["status_counts"] = {str(k): int(v) for k, v in status_counter.items()}
     return audit
 
 
-def _liquidity_boost(row: pd.Series, min_liquidity: float, weight: float) -> float:
+def _resolve_liquidity_context(
+    row: pd.Series,
+    common_gate: Optional[dict],
+    common_gate_cfg: Optional[dict],
+    fallback_min_liquidity: float,
+) -> dict:
+    """Use the same OHLCV traded-value evidence that passed the common gate."""
+    country = str(row.get("country", "") or "")
+    gate_metrics = (common_gate or {}).get("metrics", {}) or {}
+    gate_value = _as_float(gate_metrics.get("avg_traded_value_20d"), np.nan)
+    gate_min_map = (common_gate_cfg or {}).get("min_avg_traded_value_20d", {}) or {}
+    gate_min = _as_float(gate_min_map.get(country), 0.0)
+    if not np.isnan(gate_value) and gate_value >= 0 and gate_min > 0:
+        value = gate_value
+        minimum = gate_min
+        source = "common_gate_ohlcv"
+        unit = "KRW" if country == "KR" else "USD"
+    else:
+        value = _as_float(row.get("avg_volume_value"), 0.0)
+        minimum = float(fallback_min_liquidity or 0.0)
+        source = "universe_fallback"
+        unit = "USD"
+
+    buffer_multiple = value / minimum if minimum > 0 else None
+    return {
+        "value": float(value),
+        "minimum": float(minimum),
+        "source": source,
+        "unit": unit,
+        "buffer_multiple": round(buffer_multiple, 3) if buffer_multiple is not None else None,
+    }
+
+
+def _liquidity_boost(liquidity: dict, weight: float) -> float:
     """거래대금이 기준을 넘으면 작은 보너스만 준다."""
-    try:
-        value = float(row.get("avg_volume_value", 0) or 0)
-    except (TypeError, ValueError):
-        value = 0.0
-    if min_liquidity <= 0 or value >= min_liquidity:
+    value = _as_float((liquidity or {}).get("value"), 0.0)
+    minimum = _as_float((liquidity or {}).get("minimum"), 0.0)
+    if minimum <= 0 or value >= minimum:
         return float(weight)
     return 0.0
 
@@ -711,7 +805,13 @@ def _label_signal_dict(signals: dict) -> dict:
     return labeled
 
 
-def _assess_quality_context(df: pd.DataFrame, row: pd.Series, min_liquidity: float) -> dict:
+def _assess_quality_context(
+    df: pd.DataFrame,
+    row: pd.Series,
+    min_liquidity: float,
+    common_gate: Optional[dict] = None,
+    common_gate_cfg: Optional[dict] = None,
+) -> dict:
     """후보를 차단하지 않고, 나중에 판단할 품질 태그를 붙인다.
 
     v1 원칙: 매수/매도 제안이 아니라 감사용 태그다. 태그가 있어도 후보 탈락은 하지 않는다.
@@ -759,12 +859,20 @@ def _assess_quality_context(df: pd.DataFrame, row: pd.Series, min_liquidity: flo
                 if drawdown_from_high > -0.03:
                     flags.append("near_52w_high")
 
-    try:
-        avg_value = float(row.get("avg_volume_value", 0) or 0)
-    except Exception:
-        avg_value = 0.0
+    liquidity = _resolve_liquidity_context(
+        row,
+        common_gate,
+        common_gate_cfg,
+        min_liquidity,
+    )
+    avg_value = float(liquidity["value"])
+    liquidity_min = float(liquidity["minimum"])
     metrics["avg_volume_value"] = round(avg_value, 2)
-    if min_liquidity > 0 and avg_value < min_liquidity * 5:
+    metrics["liquidity_min_value"] = round(liquidity_min, 2)
+    metrics["liquidity_source"] = liquidity["source"]
+    metrics["liquidity_unit"] = liquidity["unit"]
+    metrics["liquidity_buffer_multiple"] = liquidity["buffer_multiple"]
+    if liquidity_min > 0 and avg_value < liquidity_min * 5:
         flags.append("low_liquidity_buffer")
 
     try:
@@ -1208,7 +1316,14 @@ def _assess_price_lanes(df: pd.DataFrame, row: pd.Series, benchmark_data: dict[s
     }
 
 
-def _assess_factor_profile(df: pd.DataFrame, row: pd.Series, factor_cfg: dict, min_liquidity: float) -> dict:
+def _assess_factor_profile(
+    df: pd.DataFrame,
+    row: pd.Series,
+    factor_cfg: dict,
+    min_liquidity: float,
+    common_gate: Optional[dict] = None,
+    common_gate_cfg: Optional[dict] = None,
+) -> dict:
     """가격/거래량 기반 저비용 因子 점수.
 
     목적: 좋은 종목을 새로 찾기보다, 애매한 후보가 최종 브리핑을 채우는 일을 줄인다.
@@ -1237,17 +1352,25 @@ def _assess_factor_profile(df: pd.DataFrame, row: pd.Series, factor_cfg: dict, m
         score += float(weights.get("data_short", -0.3))
         negatives.append("data_short")
 
-    try:
-        avg_value = float(row.get("avg_volume_value", 0) or 0)
-    except Exception:
-        avg_value = 0.0
+    liquidity = _resolve_liquidity_context(
+        row,
+        common_gate,
+        common_gate_cfg,
+        min_liquidity,
+    )
+    avg_value = float(liquidity["value"])
+    liquidity_min = float(liquidity["minimum"])
     metrics["avg_volume_value"] = round(avg_value, 2)
-    good_liq = min_liquidity * float(factor_cfg.get("liquidity_good_multiple", 10) or 10)
-    weak_liq = min_liquidity * float(factor_cfg.get("liquidity_weak_multiple", 3) or 3)
-    if min_liquidity > 0 and avg_value >= good_liq:
+    metrics["liquidity_min_value"] = round(liquidity_min, 2)
+    metrics["liquidity_source"] = liquidity["source"]
+    metrics["liquidity_unit"] = liquidity["unit"]
+    metrics["liquidity_buffer_multiple"] = liquidity["buffer_multiple"]
+    good_liq = liquidity_min * float(factor_cfg.get("liquidity_good_multiple", 10) or 10)
+    weak_liq = liquidity_min * float(factor_cfg.get("liquidity_weak_multiple", 3) or 3)
+    if liquidity_min > 0 and avg_value >= good_liq:
         score += float(weights.get("liquidity_good", 0.2))
         positives.append("liquidity_good")
-    elif min_liquidity > 0 and avg_value < weak_liq:
+    elif liquidity_min > 0 and avg_value < weak_liq:
         score += float(weights.get("liquidity_weak", -0.25))
         negatives.append("liquidity_weak")
 
@@ -1316,7 +1439,14 @@ def _build_radar_item(
     row = info["row"]
     matches = ticker_themes.get(_theme_lookup_key(ticker), [])
     theme_score = _theme_bonus(matches, weights)
-    liquidity_score = _liquidity_boost(row, min_liquidity, float(weights.get("liquidity_boost", 0.0)))
+    factor_metrics = ((info.get("factor") or {}).get("metrics") or {})
+    liquidity_score = _liquidity_boost(
+        {
+            "value": factor_metrics.get("avg_volume_value", row.get("avg_volume_value", 0)),
+            "minimum": factor_metrics.get("liquidity_min_value", min_liquidity),
+        },
+        float(weights.get("liquidity_boost", 0.0)),
+    )
     factor_score = float((info.get("factor") or {}).get("score", 0.0) or 0.0) * float(weights.get("factor_quality", 1.0))
     signal_score = float(info.get("score", 0.0))
     radar_score = round(signal_score + theme_score + liquidity_score + factor_score, 3)
@@ -2299,6 +2429,89 @@ def _signal_ronin_structure_support(df: pd.DataFrame, params: dict) -> tuple[boo
     return False, {"reason": "not near support/reclaimed resistance", "margin": round(margin, 3)}
 
 
+def _decision_health_summary(
+    radar_pool: list[dict],
+    candidates: list[dict],
+    filter_audit: dict,
+) -> dict:
+    """Separate deliberate abstention from missing data or an empty pipeline."""
+    quality_audit = (filter_audit or {}).get("quality_audit", {}) or {}
+    scope = (filter_audit or {}).get("evaluation_scope", {}) or {}
+    common_gate = (filter_audit or {}).get("common_gate_audit", {}) or {}
+    production_gate = (
+        ((filter_audit or {}).get("top3_selection_audit") or {}).get("production_gate")
+        or {}
+    )
+    rejection_counts = {
+        str(key): int(value)
+        for key, value in (production_gate.get("rejection_counts", {}) or {}).items()
+    }
+
+    if candidates:
+        return {
+            "status": "RECOMMENDATION_AVAILABLE",
+            "label": "추천 후보 확인",
+            "reason_code": "PRODUCTION_GATE_PASSED",
+            "reason": f"추천 기준을 통과한 후보 {len(candidates)}개 확인",
+            "blockers": rejection_counts,
+        }
+
+    coverage_missing = int(quality_audit.get("production_required_missing", 0) or 0)
+    source_missing = int(quality_audit.get("production_required_source_missing", 0) or 0)
+    ohlcv_selected = int(scope.get("ohlcv_selected", 0) or 0)
+    ohlcv_missing = int(scope.get("ohlcv_missing", 0) or 0)
+    gate_failures = common_gate.get("fail_reasons", {}) or {}
+    stale_or_missing = sum(
+        int(gate_failures.get(key, 0) or 0)
+        for key in ("ohlcv_missing", "data_stale", "date_missing")
+    )
+    if coverage_missing or source_missing:
+        details = []
+        if coverage_missing:
+            details.append(f"품질검사 미실행 {coverage_missing}개")
+        if source_missing:
+            details.append(f"품질 원천데이터 없음 {source_missing}개")
+        return {
+            "status": "DEGRADED_DATA",
+            "label": "데이터 불완전",
+            "reason_code": "PRODUCTION_QUALITY_INCOMPLETE",
+            "reason": "추천 판단 보류 — " + ", ".join(details),
+            "blockers": rejection_counts,
+        }
+
+    if not radar_pool:
+        systemic_ohlcv_failure = (
+            ohlcv_selected > 0
+            and max(ohlcv_missing, stale_or_missing) >= ohlcv_selected
+        )
+        if systemic_ohlcv_failure:
+            return {
+                "status": "DEGRADED_DATA",
+                "label": "데이터 불완전",
+                "reason_code": "OHLCV_INCOMPLETE",
+                "reason": f"추천 판단 보류 — 시세 데이터 누락 {max(ohlcv_missing, stale_or_missing)}개",
+                "blockers": rejection_counts,
+            }
+        reason = "관찰풀 기준을 넘은 종목이 없음"
+        if ohlcv_missing or stale_or_missing:
+            reason += f" (시세 일부 누락 {max(ohlcv_missing, stale_or_missing)}개)"
+        return {
+            "status": "PIPELINE_EMPTY",
+            "label": "관찰 후보 없음",
+            "reason_code": "NO_RADAR_CANDIDATE",
+            "reason": reason,
+            "blockers": rejection_counts,
+        }
+
+    return {
+        "status": "HEALTHY_ABSTENTION",
+        "label": "정상 관망",
+        "reason_code": "PRODUCTION_GATE_NO_PASS",
+        "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
+        "blockers": rejection_counts,
+    }
+
+
 def _summarize_radar(
     radar_pool: list[dict],
     candidates: list[dict],
@@ -2349,15 +2562,8 @@ def _summarize_radar(
                 "threshold": int(threshold),
             })
 
-    production_gate = (((filter_audit or {}).get("top3_selection_audit") or {}).get("production_gate") or {})
-    if candidates:
-        no_candidate_reason = ""
-    elif not radar_pool:
-        no_candidate_reason = "관찰풀 기준을 넘은 종목이 없음"
-    elif production_gate.get("enabled"):
-        no_candidate_reason = "확실 후보(Tier A + 품질 확인)가 없어 추천하지 않음"
-    else:
-        no_candidate_reason = "관찰풀은 있으나 최종 보고 기준 미달"
+    decision_health = _decision_health_summary(radar_pool, candidates, filter_audit)
+    no_candidate_reason = "" if candidates else decision_health["reason"]
 
     return {
         "scanned_total": scanned_total,
@@ -2377,6 +2583,7 @@ def _summarize_radar(
         "filter_audit": filter_audit,
         "coverage_warnings": coverage_warnings,
         "no_candidate_reason": no_candidate_reason,
+        "decision_health": decision_health,
     }
 
 
@@ -3195,7 +3402,13 @@ def _production_gate_rejection_reason(item: dict, selection: dict, selection_cfg
         return "tier_not_allowed"
 
     allowed_quality = {str(value).upper() for value in (cfg.get("quality_statuses") or [])}
-    quality_status = str((item.get("quality_auditor") or {}).get("status", "") or "").upper()
+    quality_auditor = item.get("quality_auditor") or {}
+    quality_status = str(quality_auditor.get("status", "") or "").upper()
+    if allowed_quality and quality_status in {"", "NOT_CHECKED"}:
+        return "quality_not_evaluated"
+    quality_source = str(quality_auditor.get("source", "") or "").lower()
+    if allowed_quality and quality_source not in {"fmp", "finviz", "dart"}:
+        return "quality_source_missing"
     if allowed_quality and quality_status not in allowed_quality:
         return "quality_not_confirmed"
 
@@ -3937,8 +4150,21 @@ class ScoutAgent(BaseAgent):
                     info["shadow_signals"] = {}
                     continue
 
-                info["quality"] = _assess_quality_context(df, info["row"], min_liquidity)
-                info["factor"] = _assess_factor_profile(df, info["row"], factor_cfg, min_liquidity)
+                info["quality"] = _assess_quality_context(
+                    df,
+                    info["row"],
+                    min_liquidity,
+                    common_gate=common_gate,
+                    common_gate_cfg=common_gate_cfg,
+                )
+                info["factor"] = _assess_factor_profile(
+                    df,
+                    info["row"],
+                    factor_cfg,
+                    min_liquidity,
+                    common_gate=common_gate,
+                    common_gate_cfg=common_gate_cfg,
+                )
                 info["price_lanes"] = _assess_price_lanes(df, info["row"], benchmark_data, price_lanes_cfg)
 
                 # bb_squeeze
@@ -4056,7 +4282,12 @@ class ScoutAgent(BaseAgent):
             radar_eligible,
             top_n=int((theme_industry_cfg or {}).get("peer_confirm_top_n", 30) or 30),
         )
-        quality_audit = _apply_quality_auditor(radar_eligible, quality_auditor_cfg)
+        top3_selection_cfg = scout_cfg.get("top3_selection", {}) or {}
+        quality_audit = _apply_quality_auditor(
+            radar_eligible,
+            quality_auditor_cfg,
+            production_gate_cfg=(top3_selection_cfg.get("production_gate") or {}),
+        )
         catalyst_audit = _apply_catalyst_layer(
             radar_eligible,
             scout_cfg.get("catalyst", {}) or {},
@@ -4067,7 +4298,6 @@ class ScoutAgent(BaseAgent):
 
         # ── Stage 5: 로이에게 보고할 엄선 후보만 추출 ──
         quality_gate = scout_cfg.get("brief_quality_gate", {}) or {}
-        top3_selection_cfg = scout_cfg.get("top3_selection", {}) or {}
 
         def _passes_brief_quality_gate(item: dict) -> bool:
             catalyst_context = item.get("catalyst_context", {}) or {}
@@ -4316,6 +4546,13 @@ class ScoutAgent(BaseAgent):
             "filter_audit": {},
             "coverage_warnings": [],
             "no_candidate_reason": "유니버스가 비었거나 재선정대기 필터 후 남은 종목이 없음",
+            "decision_health": {
+                "status": "PIPELINE_EMPTY",
+                "label": "관찰 후보 없음",
+                "reason_code": "UNIVERSE_OR_COOLDOWN_EMPTY",
+                "reason": "유니버스가 비었거나 재선정대기 필터 후 남은 종목이 없음",
+                "blockers": {},
+            },
         }
         return {
             "candidates": [],
@@ -4350,6 +4587,13 @@ class ScoutAgent(BaseAgent):
                 "source_counts": {},
                 "filter_audit": {},
                 "coverage_warnings": [],
+                "decision_health": {
+                    "status": "DEGRADED_DATA",
+                    "label": "데이터 불완전",
+                    "reason_code": "SCOUT_ERROR",
+                    "reason": error_msg,
+                    "blockers": {},
+                },
             },
             "radar_paths": {},
             "today": today_kst_str(),
