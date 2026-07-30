@@ -108,6 +108,10 @@ Status as of 2026-07-29:
 - Evaluation Harness v1 replays the first executable session open, measures benchmark alpha and
   pre-entry market regime, and audits rejected-radar opportunity cost and abstention quality.
 - Step4 precision shadow is implemented as a non-user-visible comparison lane. It does not replace Telegram, Sheets, cooldown, or final Top3.
+- Left-side Context Shadow v1 tests the agreed execution contract before any live switch:
+  production-gate pass, `left_side` Stage 2, supportive sector RRG, and group-level theme breadth
+  when a candidate has a mapped theme. It allows 0 to 2 picks without backfill and is stored only
+  as a shadow policy; Telegram, Sheets, cooldown, and final Top3 remain unchanged.
 - Step6 production recommendation gate allows 0 to 3 live recommendations. Tier B/C/D candidates remain WATCHLIST-only and are never used as slot backfill.
 
 ## SCOUT Candidate Pipeline
@@ -620,41 +624,30 @@ Sheets record.
 
 ## Current Next Work Order
 
-Priority 1: Deploy Step 5 and audit one untouched scheduled brief.
+Priority 1: Deploy Left-side Context Shadow v1 and audit one untouched scheduled brief.
 
-- Do not trigger a duplicate Telegram message solely to preview formatting.
-- On the next normal scheduled run, confirm the top decision block agrees with the detailed
-  recommendation section.
-- Confirm only one recommendation is expanded and ranks 2-3 remain subordinate.
-- Confirm entry condition, invalidation, evidence health, and nearest-alternative comparison are
-  present when a recommendation exists.
-- Confirm a zero-candidate day still says recommendation none and keeps watch names non-actionable.
-- Confirm newly generated selective-research summaries are Korean.
+- Do not trigger a duplicate Telegram message solely for the shadow policy.
+- Confirm the new snapshot stores `shadow_policies.left_side_context_v1`.
+- Confirm the policy returns 0 to 2 candidates, never backfills, and does not alter Telegram,
+  Sheets, cooldown, or final Top3.
+- Confirm every selected row passed the production gate, is `left_side` Stage 2, and has supportive
+  sector RRG plus group breadth when a theme is mapped.
 
-Priority 2: Run future daily briefs and inspect the US precision shadow ledger.
+Priority 2: Accumulate untouched future outcomes.
 
-- Confirm snapshots contain `generated_at`, `timezone`, `data_as_of`, and `shadow_policies.us_precision_v1`.
-- Confirm the shadow count can be 0, 1, 2, or 3 and no backfill occurs.
-- Confirm Telegram, Sheets, cooldown, and final Top3 remain unchanged.
-- Compare future D5/D10 net return and benchmark-relative alpha using Evaluation Harness v1.
+- Historical replay currently has no mature D5/D10 sample for this policy; do not infer performance
+  from the two recent `LVS` selections.
+- Compare D5/D10 raw return and benchmark alpha against live candidates, rejected alternatives, and
+  zero-recommendation dates.
+- Keep Outcome Memory advisory and do not let it override a current hard gate.
 
-Priority 3: Validate whether precision shadow survives unseen data.
+Priority 3: Propose a live left-side-only switch only after forward evidence is useful.
 
-- Use at least 20 independent future briefing dates as a temporary governance checkpoint, not as a final threshold.
-- Require positive cost-adjusted D5/D10 mean and benchmark-relative alpha with date-clustered uncertainty checks before proposing a live switch.
-- Continue storing LLM override comparison rows, but do not use LLM to alter precision shadow.
-
-Priority 3: Keep KR outside precision shadow and redesign it separately.
-
-- Add or harden KR quality/catalyst support using DART / Naver free sources.
-- Build a KR-specific regime, mapping, and benchmark policy before replaying KR recommendations.
-- Do not widen JP/CN operational gate until source quality is validated.
-
-Priority 4: Tune or replace live Top3 only after shadow evidence accumulates.
-
-- Do not tighten common gate immediately.
-- First adjust lane-level penalties if repeated false positives appear.
-- Especially monitor overextended strength candidates.
+- The agreed target is 0 to 2 executable left-side candidates, with strength/breakout candidates
+  remaining internal until TradingView gains a separately validated breakout route.
+- Redesign Telegram around market opportunity/risk, separate FX judgment, and only candidates worth
+  opening in TradingView after the selection policy itself is validated.
+- Continue the existing US precision shadow as an independent comparison policy.
 
 ## Verification Rules
 

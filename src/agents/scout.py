@@ -2998,6 +2998,147 @@ def _select_precision_shadow_candidates(
     return selected, audit
 
 
+def _select_left_side_context_shadow_candidates(
+    radar_pool: list[dict],
+    selection_cfg: dict,
+) -> tuple[list[dict], dict]:
+    """Freeze the left-side execution contract without changing live candidates."""
+    cfg = ((selection_cfg or {}).get("left_side_context_shadow") or {})
+    enabled = bool(cfg.get("enabled", False))
+    policy_id = str(cfg.get("policy_id", "left_side_context_v1") or "left_side_context_v1")
+    max_picks = min(2, max(0, int(cfg.get("max_picks", 2) or 0)))
+    allowed_countries = {
+        str(value).upper() for value in (cfg.get("allowed_countries") or ["US", "KR"])
+    }
+    required_lane = str(cfg.get("required_primary_lane", "left_side") or "left_side")
+    allowed_lane_statuses = {
+        str(value).upper()
+        for value in (
+            cfg.get("allowed_lane_statuses")
+            or ["STAGE2_PASS", "STAGE2_STRONG_PASS"]
+        )
+    }
+    allowed_sector_quadrants = {
+        str(value).upper()
+        for value in (cfg.get("allowed_sector_quadrants") or ["LEADING", "IMPROVING"])
+    }
+    mapped_theme_statuses = {
+        str(value).upper()
+        for value in (cfg.get("mapped_theme_statuses") or ["GROUP_SUPPORT"])
+    }
+    allow_unmapped_theme = bool(cfg.get("allow_unmapped_theme", True))
+    require_production_gate = bool(cfg.get("require_production_gate", True))
+
+    audit = {
+        "enabled": enabled,
+        "shadow_only": True,
+        "policy_id": policy_id,
+        "max_picks": max_picks,
+        "llm_additions_allowed": False,
+        "evaluated": int(len(radar_pool)),
+        "eligible_before_cap": 0,
+        "selected": 0,
+        "selected_tickers": [],
+        "no_signal": True,
+        "rejection_counts": {},
+        "criteria": {
+            "allowed_countries": sorted(allowed_countries),
+            "required_primary_lane": required_lane,
+            "allowed_lane_statuses": sorted(allowed_lane_statuses),
+            "allowed_sector_quadrants": sorted(allowed_sector_quadrants),
+            "mapped_theme_statuses": sorted(mapped_theme_statuses),
+            "allow_unmapped_theme": allow_unmapped_theme,
+            "require_production_gate": require_production_gate,
+            "backfill": False,
+        },
+    }
+    if not enabled:
+        return [], audit
+
+    rejection_counts = Counter()
+    eligible = []
+    for item in radar_pool:
+        selection = item.get("top3_selection") or _annotate_top3_selection(item)
+        country = str(item.get("country", "") or "").upper()
+        lane = str(selection.get("primary_lane", "") or "")
+        lane_status = str(selection.get("primary_lane_status", "") or "").upper()
+        theme_industry = item.get("theme_industry") or {}
+        sector_quadrant = str(
+            ((theme_industry.get("sector") or {}).get("quadrant", "")) or ""
+        ).upper()
+        mapped_themes = [
+            theme
+            for theme in (theme_industry.get("themes") or [])
+            if isinstance(theme, dict)
+            and (
+                theme.get("theme_key")
+                or theme.get("theme_group")
+                or theme.get("parent_theme_etf")
+            )
+        ]
+
+        if country not in allowed_countries:
+            rejection_counts["country"] += 1
+            continue
+        if require_production_gate and not bool(
+            selection.get("production_gate_passed", item.get("production_gate_passed", False))
+        ):
+            rejection_counts["production_gate"] += 1
+            continue
+        if lane != required_lane:
+            rejection_counts["primary_lane"] += 1
+            continue
+        if lane_status not in allowed_lane_statuses:
+            rejection_counts["lane_status"] += 1
+            continue
+        if sector_quadrant not in allowed_sector_quadrants:
+            rejection_counts["sector"] += 1
+            continue
+        if mapped_themes:
+            has_group_support = any(
+                str(theme.get("status", "") or "").upper() in mapped_theme_statuses
+                for theme in mapped_themes
+            )
+            if not has_group_support:
+                rejection_counts["mapped_theme"] += 1
+                continue
+        elif not allow_unmapped_theme:
+            rejection_counts["unmapped_theme"] += 1
+            continue
+        eligible.append(item)
+
+    best_by_ticker: dict[str, dict] = {}
+    for item in sorted(eligible, key=_selection_sort_key, reverse=True):
+        ticker = _theme_lookup_key(str(item.get("ticker", "") or ""))
+        if ticker and ticker not in best_by_ticker:
+            best_by_ticker[ticker] = item
+
+    selected_source = sorted(
+        best_by_ticker.values(),
+        key=_selection_sort_key,
+        reverse=True,
+    )[:max_picks]
+    selected = []
+    for rank, item in enumerate(selected_source, 1):
+        frozen = deepcopy(item)
+        frozen["shadow_selection"] = {
+            "policy_id": policy_id,
+            "rank": rank,
+            "shadow_only": True,
+            "llm_additions_allowed": False,
+        }
+        selected.append(frozen)
+
+    audit["eligible_before_cap"] = int(len(best_by_ticker))
+    audit["selected"] = int(len(selected))
+    audit["selected_tickers"] = [str(item.get("ticker", "") or "") for item in selected]
+    audit["no_signal"] = not bool(selected)
+    audit["rejection_counts"] = {
+        str(key): int(value) for key, value in rejection_counts.items()
+    }
+    return selected, audit
+
+
 def _pick_from_tier(tier_items: list[dict], used_lanes: set[str]) -> dict:
     """동일 계층 안에서만 레인 균형을 마지막 tie-breaker로 적용한다."""
     sorted_items = sorted(tier_items, key=_selection_sort_key, reverse=True)
@@ -4534,6 +4675,12 @@ class ScoutAgent(BaseAgent):
             radar_pool=radar_pool,
             selection_cfg=top3_selection_cfg,
         )
+        left_side_shadow_candidates, left_side_shadow_audit = (
+            _select_left_side_context_shadow_candidates(
+                radar_pool=radar_pool,
+                selection_cfg=top3_selection_cfg,
+            )
+        )
         candidates, llm_review_audit = _apply_llm_top3_review(
             today=today,
             radar_pool=radar_pool,
@@ -4549,6 +4696,7 @@ class ScoutAgent(BaseAgent):
         top3_selection_audit["final_top3"] = llm_review_audit.get("final_top3", _ticker_set(candidates))
         top3_selection_audit["llm_override"] = bool(llm_review_audit.get("llm_override", False))
         top3_selection_audit["precision_shadow"] = precision_shadow_audit
+        top3_selection_audit["left_side_context_shadow"] = left_side_shadow_audit
         watchlist_candidates = _build_watchlist_candidates(
             radar_pool=radar_pool,
             candidates=candidates,
@@ -4665,6 +4813,18 @@ class ScoutAgent(BaseAgent):
                     "llm_additions_allowed": False,
                     "audit": precision_shadow_audit,
                     "candidates": precision_shadow_candidates,
+                }
+            if left_side_shadow_audit.get("enabled"):
+                policy_id = str(
+                    left_side_shadow_audit.get("policy_id", "left_side_context_v1")
+                    or "left_side_context_v1"
+                )
+                shadow_policies[policy_id] = {
+                    "policy_id": policy_id,
+                    "shadow_only": True,
+                    "llm_additions_allowed": False,
+                    "audit": left_side_shadow_audit,
+                    "candidates": left_side_shadow_candidates,
                 }
             snapshot_paths = _save_recommendation_snapshot(
                 today=today,
