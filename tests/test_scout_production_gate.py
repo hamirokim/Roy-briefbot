@@ -150,6 +150,35 @@ class ProductionGateTests(unittest.TestCase):
         )
         self.assertEqual(reason, "quality_source_missing")
 
+    def test_live_gate_can_restrict_delivery_to_left_side_stage2(self):
+        config = _selection_config()
+        config["production_gate"]["allowed_primary_lanes"] = ["left_side"]
+        config["production_gate"]["allowed_lane_statuses"] = [
+            "STAGE2_PASS",
+            "STAGE2_STRONG_PASS",
+        ]
+        strength = _candidate("STRENGTH")
+        left_side = _candidate("LEFT")
+        left_side["top3_selection"]["primary_lane"] = "left_side"
+        left_side["top3_selection"]["primary_lane_status"] = "STAGE2_STRONG_PASS"
+
+        self.assertEqual(
+            scout._production_gate_rejection_reason(
+                strength,
+                strength["top3_selection"],
+                config,
+            ),
+            "lane_not_allowed",
+        )
+        self.assertEqual(
+            scout._production_gate_rejection_reason(
+                left_side,
+                left_side["top3_selection"],
+                config,
+            ),
+            "",
+        )
+
     def test_disabled_gate_does_not_mark_legacy_candidates_as_passed(self):
         legacy = _candidate("LEGACY", tier="B")
         config = _selection_config()
@@ -261,7 +290,7 @@ class DigestContractTests(unittest.TestCase):
         agent.log = logging.getLogger("test.digest")
         return agent
 
-    def test_zero_day_is_explicit_and_watchlist_is_not_a_recommendation(self):
+    def test_zero_day_is_explicit_and_watchlist_is_hidden(self):
         agent = self._digest_agent()
         message = agent._build_telegram(
             [],
@@ -298,13 +327,14 @@ class DigestContractTests(unittest.TestCase):
             },
         )
 
-        self.assertIn("오늘 결론", message)
-        self.assertIn("추천 없음</b> — 관찰만", message)
-        self.assertIn("신규 추천</b> 오늘 없음", message)
-        self.assertIn("관찰 레이더 (추천 아님)", message)
-        self.assertIn("판정 상태: 정상 관망", message)
-        self.assertIn("추천 기준 통과 후보 없음", message)
-        self.assertNotIn("52개 중 엄선", message)
+        self.assertIn("1. 시장 판단:", message)
+        self.assertIn("2. 환전: 대기", message)
+        self.assertIn("3. TradingView 확인", message)
+        self.assertIn("없음 · 정상 관망", message)
+        self.assertIn("Tier A 확실 후보 없음", message)
+        self.assertNotIn("관찰 레이더", message)
+        self.assertNotIn("HWM", message)
+        self.assertNotIn("내부 관찰풀", message)
 
     def test_primary_pick_is_expanded_and_other_picks_are_compact(self):
         agent = self._digest_agent()
@@ -313,13 +343,16 @@ class DigestContractTests(unittest.TestCase):
                 "ticker": "AAA",
                 "country": "US",
                 "selection_rank": 1,
-                "selection_lane": "pullback",
+                "selection_lane": "left_side",
+                "selection_lane_status": "STAGE2_STRONG_PASS",
                 "score": 4.2,
                 "market_cap": 10_000_000_000,
                 "signals": {"bb_squeeze": True},
                 "top3_selection": {
                     "tier": "A",
                     "tier_rank": 4,
+                    "primary_lane": "left_side",
+                    "primary_lane_status": "STAGE2_STRONG_PASS",
                     "lane_rank": 3,
                     "support_count": 4,
                     "production_gate_passed": True,
@@ -336,12 +369,15 @@ class DigestContractTests(unittest.TestCase):
                 "ticker": "BBB",
                 "country": "US",
                 "selection_rank": 2,
-                "selection_lane": "strength",
+                "selection_lane": "left_side",
+                "selection_lane_status": "STAGE2_PASS",
                 "score": 3.8,
                 "signals": {"rrg_improving": True},
                 "top3_selection": {
                     "tier": "A",
                     "tier_rank": 4,
+                    "primary_lane": "left_side",
+                    "primary_lane_status": "STAGE2_PASS",
                     "lane_rank": 2,
                     "support_count": 3,
                     "production_gate_passed": True,
@@ -353,11 +389,14 @@ class DigestContractTests(unittest.TestCase):
                 "country": "KR",
                 "selection_rank": 3,
                 "selection_lane": "left_side",
+                "selection_lane_status": "STAGE2_PASS",
                 "score": 3.5,
                 "signals": {},
                 "top3_selection": {
                     "tier": "A",
                     "tier_rank": 4,
+                    "primary_lane": "left_side",
+                    "primary_lane_status": "STAGE2_PASS",
                     "lane_rank": 2,
                     "support_count": 2,
                     "production_gate_passed": True,
@@ -373,16 +412,15 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"radar_pool_count": 58}},
         )
 
-        self.assertIn("AAA 1순위 조건 확인", message)
-        self.assertIn("신규 추천 1순위", message)
-        self.assertIn("진입 조건:", message)
-        self.assertIn("무효화: <i>지지 구간 이탈 시 무효</i>", message)
-        self.assertIn("과거 유사조건 지지", message)
-        self.assertIn("BBB보다 가격 구조가 우위", message)
-        self.assertIn("후순위(1순위 아님): <i>BBB [A] strength · CCC [A] left_side</i>", message)
-        self.assertEqual(message.count("진입 조건:"), 1)
-        self.assertEqual(message.count("무효화:"), 1)
-        self.assertIn("보유: 4종목 중 주목 1종목", message)
+        self.assertIn("3. TradingView 확인", message)
+        self.assertIn("1. 🇺🇸 <b>AAA</b> [좌측진입 강함]", message)
+        self.assertIn("2. 🇺🇸 <b>BBB</b> [좌측진입 준비]", message)
+        self.assertNotIn("CCC", message)
+        self.assertIn("TradingView RONIN 인디케이터의 실제 진입 신호", message)
+        self.assertIn("무효: 지지 구간 이탈 시 무효", message)
+        self.assertIn("4. 보유 경보", message)
+        self.assertIn("<b>HELD</b>", message)
+        self.assertNotIn("후순위", message)
 
     def test_macro_degraded_coverage_is_visible(self):
         agent = self._digest_agent()
@@ -406,7 +444,39 @@ class DigestContractTests(unittest.TestCase):
         )
 
         self.assertIn("FRED 0/6", message)
-        self.assertIn("해석 신뢰도 하향", message)
+        self.assertIn("매크로 확신도 하향", message)
+
+    def test_theme_label_without_two_supportive_etfs_cannot_drive_opportunity(self):
+        agent = self._digest_agent()
+        message = agent._build_telegram(
+            [],
+            {},
+            {
+                "vix": 18.0,
+                "rrg": {
+                    "by_quadrant": {
+                        "LEADING": [{"label": "헬스케어"}, {"label": "금융"}],
+                        "IMPROVING": [{"label": "소비재"}],
+                        "LAGGING": [{"label": "기술"}],
+                    },
+                    "theme_intelligence": {
+                        "counts": {"강함": 1},
+                        "focus": [{
+                            "label": "AI·반도체",
+                            "judgment": "강함",
+                            "etfs": [
+                                {"ticker": "SMH", "quadrant": "LAGGING"},
+                                {"ticker": "SOXX", "quadrant": "LAGGING"},
+                            ],
+                        }],
+                    },
+                },
+            },
+            scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
+        )
+
+        self.assertIn("시장 판단: 선별 관찰", message)
+        self.assertNotIn("테마: AI·반도체", message)
 
     def test_malformed_earnings_placeholder_is_not_displayed(self):
         candidate = {

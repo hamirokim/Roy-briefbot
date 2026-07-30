@@ -231,6 +231,118 @@ def _theme_counts_text(counts: dict) -> str:
     )
 
 
+def _rrg_labels(by_quadrant: dict, quadrant: str, limit: int = 4) -> list[str]:
+    return [
+        str(item.get("label") or item.get("ticker") or "").strip()
+        for item in (by_quadrant.get(quadrant, []) or [])[:limit]
+        if str(item.get("label") or item.get("ticker") or "").strip()
+    ]
+
+
+def _market_operating_view(regime_out: dict) -> dict:
+    """Turn REGIME facts into Roy's opportunity/risk operating language."""
+    rrg = regime_out.get("rrg", {}) or {}
+    by_quadrant = rrg.get("by_quadrant", {}) or {}
+    supportive = len(by_quadrant.get("LEADING", []) or []) + len(
+        by_quadrant.get("IMPROVING", []) or []
+    )
+    weak = len(by_quadrant.get("WEAKENING", []) or []) + len(
+        by_quadrant.get("LAGGING", []) or []
+    )
+    theme_intel = rrg.get("theme_intelligence", {}) or {}
+    strong_labels = []
+    for theme in (theme_intel.get("focus", []) or []):
+        supportive_etfs = sum(
+            1
+            for etf in (theme.get("etfs", []) or [])
+            if str(etf.get("quadrant", "") or "") in {"LEADING", "IMPROVING"}
+        )
+        if (
+            str(theme.get("judgment", "") or "") == "강함"
+            and supportive_etfs >= 2
+            and str(theme.get("label", "") or "").strip()
+        ):
+            strong_labels.append(str(theme.get("label", "") or "").strip())
+    strong_labels = strong_labels[:3]
+    strong_themes = len(strong_labels)
+    vix = regime_out.get("vix")
+    vix_value = float(vix) if isinstance(vix, (int, float)) else None
+    vix_regime = str(
+        ((regime_out.get("vix_data") or {}).get("regime", "")) or ""
+    ).upper()
+    volatility_high = (
+        vix_regime in {"HIGH", "EXTREME"}
+        or (not vix_regime and vix_value is not None and vix_value >= 25)
+    )
+    volatility_normal = (
+        vix_regime in {"LOW", "NORMAL"}
+        or (not vix_regime and vix_value is not None and vix_value < 25)
+    )
+
+    if volatility_high:
+        label = "위험 회피"
+        reason = (
+            f"VIX {vix_value:g}로 변동성 경계선이 높음"
+            if vix_value is not None
+            else "변동성 체계가 HIGH 이상"
+        )
+    elif weak > supportive and strong_themes == 0:
+        label = "위험 회피"
+        reason = f"약화·부진 섹터 {weak}개가 주도·개선 {supportive}개보다 많음"
+    elif (
+        volatility_normal
+        and supportive >= weak + 2
+        and strong_themes >= 1
+    ):
+        label = "기회 탐색"
+        reason = (
+            f"VIX {vix_value:g}, 주도·개선 섹터 {supportive}개, "
+            f"강한 테마 {strong_themes}개가 함께 확인됨"
+        )
+    else:
+        label = "선별 관찰"
+        vix_text = f"VIX {vix_value:g}, " if vix_value is not None else ""
+        reason = (
+            f"{vix_text}주도·개선 {supportive}개와 약화·부진 {weak}개가 혼재해 "
+            "시장 전체보다 종목 선별이 중요함"
+        )
+
+    leading = _rrg_labels(by_quadrant, "LEADING")
+    improving = _rrg_labels(by_quadrant, "IMPROVING")
+    lagging = _rrg_labels(by_quadrant, "LAGGING")
+    weakening = _rrg_labels(by_quadrant, "WEAKENING")
+    return {
+        "label": label,
+        "reason": reason,
+        "strong_sectors": leading + improving,
+        "weak_sectors": lagging + weakening,
+        "strong_themes": strong_labels,
+    }
+
+
+def _fx_action(fx: dict) -> dict:
+    current = fx.get("current")
+    if current is None:
+        return {"label": "대기", "reason": "환율 데이터 수집 실패"}
+    judgment = str(fx.get("judgment", "") or "")
+    percentile = fx.get("percentile")
+    if "적정" in judgment:
+        label = "적극"
+    elif "보류" in judgment:
+        label = "대기"
+    elif judgment:
+        label = "분할"
+    elif isinstance(percentile, (int, float)):
+        label = "적극" if percentile <= 30 else ("대기" if percentile >= 70 else "분할")
+    else:
+        label = "분할"
+    if isinstance(percentile, (int, float)):
+        reason = f"{current}원 · 최근 90일 분포 {round(float(percentile))}%"
+    else:
+        reason = f"{current}원 · {fx.get('label', '분포 확인 필요')}"
+    return {"label": label, "reason": reason}
+
+
 def _candidate_judgment(candidate: dict) -> dict:
     """텔레그램 첫 화면용 후보 판단 라벨."""
     score = float(candidate.get("score", 0) or 0)
@@ -887,6 +999,189 @@ class DigestAgent(BaseAgent):
     # 텔레그램 메시지 (4000자 한도)
     # ─────────────────────────────────────────────
     def _build_telegram(
+        self,
+        candidates: list,
+        guard_out: dict,
+        regime_out: dict,
+        scout_out: dict | None = None,
+        briefing_mode: str = "daily",
+        period_summary: str = "",
+        macro_interp: str = "",
+        m6_out: dict | None = None,
+        improvement_report: dict | None = None,
+    ) -> str:
+        """Build the compact decision brief Roy uses before opening TradingView."""
+        del m6_out, improvement_report
+        max_chars = self.settings["digest"]["telegram"]["max_chars"]
+        date_str = now_kst().strftime("%Y-%m-%d (%a)")
+        scout_out = scout_out or {}
+        mode_badge = ""
+        if briefing_mode == "monthly":
+            mode_badge = " · 월간"
+        elif briefing_mode == "weekly":
+            mode_badge = " · 주간"
+
+        ordered_candidates = sorted(
+            [
+                item
+                for item in candidates
+                if str(
+                    item.get("selection_lane")
+                    or (item.get("top3_selection") or {}).get("primary_lane")
+                    or ""
+                )
+                == "left_side"
+                and str(
+                    item.get("selection_lane_status")
+                    or (item.get("top3_selection") or {}).get("primary_lane_status")
+                    or ""
+                )
+                in {"STAGE2_PASS", "STAGE2_STRONG_PASS"}
+            ],
+            key=lambda item: int(
+                item.get("selection_rank")
+                or (item.get("top3_selection") or {}).get("selection_rank")
+                or 999
+            ),
+        )[:2]
+
+        market_view = _market_operating_view(regime_out)
+        fx_view = _fx_action(regime_out.get("fx", {}) or {})
+        radar_summary = scout_out.get("radar_summary", {}) or {}
+        decision_health = radar_summary.get("decision_health", {}) or {}
+        macro = regime_out.get("macro", {}) or {}
+        lines = [f"<b>RONIN BRIEF — {date_str}{mode_badge}</b>", ""]
+
+        lines.append(f"<b>1. 시장 판단: {market_view['label']}</b>")
+        lines.append(f"근거: {market_view['reason']}")
+        if market_view["strong_sectors"]:
+            lines.append(f"기회: {', '.join(market_view['strong_sectors'][:5])}")
+        if market_view["strong_themes"]:
+            lines.append(f"테마: {', '.join(market_view['strong_themes'])}")
+        if market_view["weak_sectors"]:
+            lines.append(f"주의: {', '.join(market_view['weak_sectors'][:5])}")
+
+        yesterday = macro.get("yesterday_announced", []) or []
+        announcement_text = str(
+            (regime_out.get("interpretation", {}) or {}).get(
+                "announcements_interpretation", ""
+            )
+            or ""
+        ).strip()
+        if yesterday:
+            event_names = ", ".join(
+                str(event.get("name", "") or "").strip()
+                for event in yesterday[:2]
+                if str(event.get("name", "") or "").strip()
+            )
+            if event_names:
+                lines.append(f"과거 변화: {event_names}")
+        if announcement_text:
+            lines.append(f"반응: {announcement_text[:180]}")
+        elif macro_interp:
+            lines.append(f"흐름: {macro_interp[:180]}")
+
+        upcoming = macro.get("upcoming", []) or []
+        if upcoming:
+            future = " · ".join(
+                f"{event.get('date')} {event.get('name')}"
+                for event in upcoming[:2]
+                if event.get("name")
+            )
+            if future:
+                lines.append(f"앞으로: {future}")
+        if period_summary:
+            lines.append(f"기간 흐름: {period_summary[:220]}")
+        lines.append("")
+
+        lines.append(f"<b>2. 환전: {fx_view['label']}</b>")
+        lines.append(f"근거: {fx_view['reason']}")
+        lines.append("")
+
+        lines.append("<b>3. TradingView 확인</b>")
+        if ordered_candidates:
+            for rank, candidate in enumerate(ordered_candidates, 1):
+                flag = _COUNTRY_FLAG.get(candidate.get("country", ""), "·")
+                sector = str(
+                    (((candidate.get("theme_industry") or {}).get("sector") or {}).get("name"))
+                    or candidate.get("sector")
+                    or ""
+                )
+                selection = candidate.get("top3_selection") or {}
+                lane_status = str(
+                    candidate.get("selection_lane_status")
+                    or selection.get("primary_lane_status")
+                    or ""
+                )
+                lane_label = (
+                    "좌측진입 강함"
+                    if lane_status == "STAGE2_STRONG_PASS"
+                    else "좌측진입 준비"
+                )
+                why = str(
+                    ((_candidate_research(candidate).get("bull_case") or {}).get("summary"))
+                    or _candidate_judgment(candidate)["reason"]
+                )[:160]
+                lines.append(
+                    f"{rank}. {flag} <b>{candidate.get('ticker')}</b> "
+                    f"[{lane_label}]"
+                    + (f" · {sector}" if sector else "")
+                )
+                lines.append(f"   이유: {why}")
+                lines.append(
+                    "   확인: TradingView RONIN 인디케이터의 실제 진입 신호가 "
+                    "뜰 때만 거래"
+                )
+                lines.append(f"   무효: {_candidate_invalidation(candidate)}")
+        else:
+            health_label = str(decision_health.get("label", "") or "정상 관망")
+            reason = str(
+                radar_summary.get("no_candidate_reason")
+                or decision_health.get("reason")
+                or "좌측진입 Stage 2와 품질 기준을 함께 통과한 후보 없음"
+            )
+            lines.append(f"<b>없음 · {health_label}</b>")
+            lines.append(f"이유: {reason}")
+        lines.append("")
+
+        alerts = guard_out.get("alerts", []) or []
+        if alerts:
+            lines.append("<b>4. 보유 경보</b>")
+            for alert in alerts[:3]:
+                price = alert.get("price", {}) or {}
+                pct = price.get("daily_pct")
+                pct_text = f" {float(pct):+.1f}%" if isinstance(pct, (int, float)) else ""
+                lines.append(f"• <b>{alert.get('ticker')}</b>{pct_text}")
+                news = alert.get("news", []) or []
+                if news:
+                    summary = str(
+                        news[0].get("ko_summary") or news[0].get("headline") or ""
+                    ).strip()
+                    if summary:
+                        lines.append(f"  {summary[:120]}")
+            lines.append("")
+
+        coverage = macro.get("source_coverage", {}) or {}
+        if coverage.get("status") == "DEGRADED":
+            lines.append("<b>데이터 주의</b>")
+            lines.append(
+                f"FRED {coverage.get('fred_collected', 0)}/"
+                f"{coverage.get('fred_requested', 0)}, 시장반응 "
+                f"{coverage.get('market_collected', 0)}/"
+                f"{coverage.get('market_requested', 0)} 수집 · 매크로 확신도 하향"
+            )
+
+        text = "\n".join(lines).strip()
+        if len(text) > max_chars:
+            self.log.warning(
+                "[digest] 텔레그램 길이 초과 (%d > %d), 자르기",
+                len(text),
+                max_chars,
+            )
+            text = text[:max_chars - 50] + "\n\n... (상세 내용은 저널 BRIEFING 시트)"
+        return text
+
+    def _build_telegram_legacy(
         self,
         candidates: list,
         guard_out: dict,

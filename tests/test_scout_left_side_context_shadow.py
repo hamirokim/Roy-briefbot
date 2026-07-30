@@ -14,6 +14,8 @@ def _item(
     sector_quadrant: str = "IMPROVING",
     theme_status: str | None = "GROUP_SUPPORT",
     production_passed: bool = True,
+    quality_status: str = "QUALITY_SUPPORT",
+    risk_catalyst: bool = False,
     opportunity: float = 1.0,
 ) -> dict:
     themes = []
@@ -33,6 +35,14 @@ def _item(
         "signal_count": 2,
         "market_cap": 1_000_000_000,
         "production_gate_passed": production_passed,
+        "quality_auditor": {
+            "status": quality_status,
+            "source": "fmp",
+        },
+        "catalyst_context": {
+            "top3_excluded_reason": "RISK_CATALYST" if risk_catalyst else "",
+        },
+        "factor_context": {"negatives": []},
         "top3_selection": {
             "tier": "A",
             "tier_rank": 4,
@@ -42,7 +52,8 @@ def _item(
             "catalyst_freshness_rank": 0,
             "support_count": 2,
             "opportunity_score": opportunity,
-            "excluded": False,
+            "excluded": risk_catalyst,
+            "exclude_reason": "RISK_CATALYST" if risk_catalyst else "",
             "production_gate_passed": production_passed,
         },
         "theme_industry": {
@@ -65,13 +76,32 @@ def _config() -> dict:
             "allowed_sector_quadrants": ["LEADING", "IMPROVING"],
             "mapped_theme_statuses": ["GROUP_SUPPORT"],
             "allow_unmapped_theme": True,
-            "require_production_gate": True,
+            "quality_statuses": ["QUALITY_SUPPORT", "STRONG_QUALITY"],
+            "excluded_factor_negatives": [
+                "volatility_extreme",
+                "chasing_extreme",
+                "chasing_hot",
+            ],
+            "risk_catalyst_excluded": True,
+            "require_production_gate": False,
             "backfill": False,
         }
     }
 
 
 class LeftSideContextShadowTests(unittest.TestCase):
+    def test_source_pool_does_not_require_a_radar_signal_or_score(self):
+        item = _item("EARLY")
+        item["score"] = 0.0
+        item["signal_count"] = 0
+        item["signals"] = {}
+        item["common_gate"] = {"status": "PASS"}
+        item["price_lanes"] = {
+            "left_side": {"status": "STAGE2_PASS"},
+        }
+
+        self.assertTrue(scout._is_left_side_context_source(item, _config()))
+
     def test_selects_at_most_two_and_freezes_candidates(self):
         radar = [
             _item("LOW", opportunity=1.0),
@@ -90,7 +120,8 @@ class LeftSideContextShadowTests(unittest.TestCase):
     def test_rejects_non_executable_or_unsupported_context(self):
         radar = [
             _item("GOOD"),
-            _item("NO_GATE", production_passed=False),
+            _item("LOW_QUALITY", quality_status="NEUTRAL"),
+            _item("RISK", risk_catalyst=True),
             _item("STRENGTH", lane="strength"),
             _item("WAIT", lane_status="WAIT_CONFIRM"),
             _item("LAGGING", sector_quadrant="LAGGING"),
@@ -99,7 +130,8 @@ class LeftSideContextShadowTests(unittest.TestCase):
         selected, audit = scout._select_left_side_context_shadow_candidates(radar, _config())
 
         self.assertEqual([item["ticker"] for item in selected], ["GOOD"])
-        self.assertEqual(audit["rejection_counts"]["production_gate"], 1)
+        self.assertEqual(audit["rejection_counts"]["quality"], 1)
+        self.assertEqual(audit["rejection_counts"]["risk_catalyst"], 1)
         self.assertEqual(audit["rejection_counts"]["primary_lane"], 1)
         self.assertEqual(audit["rejection_counts"]["lane_status"], 1)
         self.assertEqual(audit["rejection_counts"]["sector"], 1)

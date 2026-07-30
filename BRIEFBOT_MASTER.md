@@ -108,11 +108,17 @@ Status as of 2026-07-29:
 - Evaluation Harness v1 replays the first executable session open, measures benchmark alpha and
   pre-entry market regime, and audits rejected-radar opportunity cost and abstention quality.
 - Step4 precision shadow is implemented as a non-user-visible comparison lane. It does not replace Telegram, Sheets, cooldown, or final Top3.
-- Left-side Context Shadow v1 tests the agreed execution contract before any live switch:
-  production-gate pass, `left_side` Stage 2, supportive sector RRG, and group-level theme breadth
-  when a candidate has a mapped theme. It allows 0 to 2 picks without backfill and is stored only
-  as a shadow policy; Telegram, Sheets, cooldown, and final Top3 remain unchanged.
-- Step6 production recommendation gate allows 0 to 3 live recommendations. Tier B/C/D candidates remain WATCHLIST-only and are never used as slot backfill.
+- Left-side Context Shadow v1 reads the common-gate-passed `left_side` Stage 2 pool before the
+  signal-based Radar threshold. It separately checks sector RRG, mapped-theme group breadth,
+  quality, catalyst risk, and factor extremes. It allows 0 to 2 picks without backfill and remains
+  snapshot-only.
+- The production recommendation gate allows 0 to 2 live recommendations and only permits
+  `left_side` Stage 2 candidates until TradingView has a separately validated breakout route.
+  Tier B/C/D candidates remain internal and are never used as slot backfill.
+- Telegram is a compact decision view, not a second Journal sheet. It shows market opportunity/risk,
+  the reason across recent/current/upcoming context, FX as `적극/분할/대기`, only candidates worth
+  opening in TradingView, holding alerts, and degraded-data warnings. Detailed RRG tables, theme
+  tables, WATCHLIST, SCOUT statistics, quiet news, and learning notes remain in Sheets/snapshots.
 
 ## SCOUT Candidate Pipeline
 
@@ -126,6 +132,7 @@ Universe
   → common gate
   → price lanes
   → theme / quality / catalyst auditors
+  → left-side Stage 2 shadow pool (common-gate branch)
   → Radar Pool
   → rule-based Top3
   → optional LLM Top3 review

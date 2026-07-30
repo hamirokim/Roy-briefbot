@@ -2998,6 +2998,34 @@ def _select_precision_shadow_candidates(
     return selected, audit
 
 
+def _is_left_side_context_source(item: dict, selection_cfg: dict) -> bool:
+    """Admit Stage 2 names before the signal-based Radar threshold."""
+    cfg = ((selection_cfg or {}).get("left_side_context_shadow") or {})
+    if not bool(cfg.get("enabled", False)):
+        return False
+    gate_status = str(((item.get("common_gate") or {}).get("status", "")) or "")
+    if gate_status not in {"PASS", "NEEDS_REVIEW"}:
+        return False
+    allowed_countries = {
+        str(value).upper()
+        for value in (cfg.get("allowed_countries") or ["US", "KR"])
+    }
+    if str(item.get("country", "") or "").upper() not in allowed_countries:
+        return False
+    allowed_statuses = {
+        str(value).upper()
+        for value in (
+            cfg.get("allowed_lane_statuses")
+            or ["STAGE2_PASS", "STAGE2_STRONG_PASS"]
+        )
+    }
+    left_status = str(
+        ((item.get("price_lanes") or {}).get("left_side") or {}).get("status", "")
+        or ""
+    ).upper()
+    return left_status in allowed_statuses
+
+
 def _select_left_side_context_shadow_candidates(
     radar_pool: list[dict],
     selection_cfg: dict,
@@ -3027,7 +3055,22 @@ def _select_left_side_context_shadow_candidates(
         for value in (cfg.get("mapped_theme_statuses") or ["GROUP_SUPPORT"])
     }
     allow_unmapped_theme = bool(cfg.get("allow_unmapped_theme", True))
-    require_production_gate = bool(cfg.get("require_production_gate", True))
+    quality_statuses = {
+        str(value).upper()
+        for value in (
+            cfg.get("quality_statuses")
+            or ["QUALITY_SUPPORT", "STRONG_QUALITY"]
+        )
+    }
+    excluded_factor_negatives = {
+        str(value).lower()
+        for value in (
+            cfg.get("excluded_factor_negatives")
+            or ["volatility_extreme", "chasing_extreme", "chasing_hot"]
+        )
+    }
+    risk_catalyst_excluded = bool(cfg.get("risk_catalyst_excluded", True))
+    require_production_gate = bool(cfg.get("require_production_gate", False))
 
     audit = {
         "enabled": enabled,
@@ -3048,6 +3091,9 @@ def _select_left_side_context_shadow_candidates(
             "allowed_sector_quadrants": sorted(allowed_sector_quadrants),
             "mapped_theme_statuses": sorted(mapped_theme_statuses),
             "allow_unmapped_theme": allow_unmapped_theme,
+            "quality_statuses": sorted(quality_statuses),
+            "excluded_factor_negatives": sorted(excluded_factor_negatives),
+            "risk_catalyst_excluded": risk_catalyst_excluded,
             "require_production_gate": require_production_gate,
             "backfill": False,
         },
@@ -3063,6 +3109,14 @@ def _select_left_side_context_shadow_candidates(
         lane = str(selection.get("primary_lane", "") or "")
         lane_status = str(selection.get("primary_lane_status", "") or "").upper()
         theme_industry = item.get("theme_industry") or {}
+        quality_status = str(
+            ((item.get("quality_auditor") or {}).get("status", "")) or ""
+        ).upper()
+        catalyst = item.get("catalyst_context") or {}
+        factor_negatives = {
+            str(value).lower()
+            for value in ((item.get("factor_context") or {}).get("negatives") or [])
+        }
         sector_quadrant = str(
             ((theme_industry.get("sector") or {}).get("quadrant", "")) or ""
         ).upper()
@@ -3104,6 +3158,18 @@ def _select_left_side_context_shadow_candidates(
                 continue
         elif not allow_unmapped_theme:
             rejection_counts["unmapped_theme"] += 1
+            continue
+        if quality_status not in quality_statuses:
+            rejection_counts["quality"] += 1
+            continue
+        if risk_catalyst_excluded and (
+            str(catalyst.get("top3_excluded_reason", "") or "") == "RISK_CATALYST"
+            or bool(selection.get("excluded"))
+        ):
+            rejection_counts["risk_catalyst"] += 1
+            continue
+        if factor_negatives & excluded_factor_negatives:
+            rejection_counts["factor_extreme"] += 1
             continue
         eligible.append(item)
 
@@ -3718,6 +3784,22 @@ def _production_gate_rejection_reason(item: dict, selection: dict, selection_cfg
     allowed_tiers = {str(value).upper() for value in (cfg.get("allowed_tiers") or ["A"])}
     if tier not in allowed_tiers:
         return "tier_not_allowed"
+
+    primary_lane = str(selection.get("primary_lane", "") or "")
+    allowed_lanes = {
+        str(value)
+        for value in (cfg.get("allowed_primary_lanes") or [])
+    }
+    if allowed_lanes and primary_lane not in allowed_lanes:
+        return "lane_not_allowed"
+
+    lane_status = str(selection.get("primary_lane_status", "") or "").upper()
+    allowed_lane_statuses = {
+        str(value).upper()
+        for value in (cfg.get("allowed_lane_statuses") or [])
+    }
+    if allowed_lane_statuses and lane_status not in allowed_lane_statuses:
+        return "lane_status_not_allowed"
 
     allowed_quality = {str(value).upper() for value in (cfg.get("quality_statuses") or [])}
     quality_auditor = item.get("quality_auditor") or {}
@@ -4584,10 +4666,15 @@ class ScoutAgent(BaseAgent):
                 missing_by_country[country] += 1
 
         radar_eligible = []
+        left_side_context_pool = []
         common_gate_counter = Counter()
         common_gate_fail_counter = Counter()
         common_gate_review_counter = Counter()
         lane_status_counter = Counter()
+        top3_selection_cfg = scout_cfg.get("top3_selection", {}) or {}
+        left_side_shadow_cfg = (
+            top3_selection_cfg.get("left_side_context_shadow") or {}
+        )
         for ticker, info in prelim_scores.items():
             gate = info.get("common_gate") or {}
             gate_status = str(gate.get("status", "NOT_EVALUATED"))
@@ -4614,6 +4701,11 @@ class ScoutAgent(BaseAgent):
                 lane_status = item.get("price_lanes", {}).get(lane_key, {}).get("status", "")
                 if lane_status:
                     lane_status_counter[f"{lane_key}:{lane_status}"] += 1
+            if (
+                bool(left_side_shadow_cfg.get("enabled", False))
+                and _is_left_side_context_source(item, top3_selection_cfg)
+            ):
+                left_side_context_pool.append(deepcopy(item))
             if item["score"] >= radar_min_score and (item["signal_count"] > 0 or item["theme_score"] > 0):
                 radar_eligible.append(item)
 
@@ -4622,7 +4714,6 @@ class ScoutAgent(BaseAgent):
             radar_eligible,
             top_n=int((theme_industry_cfg or {}).get("peer_confirm_top_n", 30) or 30),
         )
-        top3_selection_cfg = scout_cfg.get("top3_selection", {}) or {}
         quality_audit = _apply_quality_auditor(
             radar_eligible,
             quality_auditor_cfg,
@@ -4635,6 +4726,28 @@ class ScoutAgent(BaseAgent):
         )
         radar_eligible.sort(key=lambda x: (-x["score"], -x["signal_count"], -x["market_cap"]))
         radar_pool = radar_eligible[:radar_pool_size]
+
+        shadow_quality_audit = {}
+        shadow_catalyst_audit = {}
+        if left_side_context_pool:
+            _attach_theme_peer_confirmation(
+                left_side_context_pool,
+                top_n=int(
+                    (theme_industry_cfg or {}).get("peer_confirm_top_n", 30) or 30
+                ),
+            )
+            shadow_quality_audit = _apply_quality_auditor(
+                left_side_context_pool,
+                quality_auditor_cfg,
+                production_gate_cfg={},
+            )
+            shadow_catalyst_audit = _apply_catalyst_layer(
+                left_side_context_pool,
+                scout_cfg.get("catalyst", {}) or {},
+                llm_call=self.call_llm,
+            )
+            for item in left_side_context_pool:
+                _annotate_top3_selection(item)
 
         # ── Stage 5: 로이에게 보고할 엄선 후보만 추출 ──
         quality_gate = scout_cfg.get("brief_quality_gate", {}) or {}
@@ -4677,10 +4790,16 @@ class ScoutAgent(BaseAgent):
         )
         left_side_shadow_candidates, left_side_shadow_audit = (
             _select_left_side_context_shadow_candidates(
-                radar_pool=radar_pool,
+                radar_pool=left_side_context_pool,
                 selection_cfg=top3_selection_cfg,
             )
         )
+        left_side_shadow_audit["source_pool"] = {
+            "stage": "common_gate_passed_left_side_stage2",
+            "count": int(len(left_side_context_pool)),
+            "quality_audit": shadow_quality_audit,
+            "catalyst_audit": shadow_catalyst_audit,
+        }
         candidates, llm_review_audit = _apply_llm_top3_review(
             today=today,
             radar_pool=radar_pool,

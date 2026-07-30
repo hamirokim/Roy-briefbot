@@ -143,12 +143,14 @@ scout:
   # SCOUT v3 Top3 선발 — 탈락 감사관이 아니라 브리핑 슬롯 선발 규칙
   top3_selection:
     enabled: true
-    max_picks: 3
+    max_picks: 2
     watchlist_size: 5
     risk_catalyst_review_pool: true    # RISK_CATALYST는 Top3 제외, 리뷰풀로만 기록
     production_gate:
       enabled: true                    # 실전 추천은 확실 후보만 허용. 0개가 정상 결과일 수 있음
       allowed_tiers: ["A"]             # B/C/D는 추천하지 않고 WATCHLIST로만 기록
+      allowed_primary_lanes: ["left_side"]  # TradingView 돌파 경로 완성 전에는 좌측진입만 발송
+      allowed_lane_statuses: ["STAGE2_PASS", "STAGE2_STRONG_PASS"]
       quality_statuses: ["QUALITY_SUPPORT", "STRONG_QUALITY"]
       excluded_quality_flags: ["overextended_20d", "low_liquidity_buffer"]
       excluded_factor_negatives: ["volatility_extreme", "chasing_extreme", "chasing_hot"]
@@ -177,7 +179,10 @@ scout:
       allowed_sector_quadrants: ["LEADING", "IMPROVING"]
       mapped_theme_statuses: ["GROUP_SUPPORT"]
       allow_unmapped_theme: true       # 테마 비대상 일반기업은 섹터 근거로 평가
-      require_production_gate: true
+      quality_statuses: ["QUALITY_SUPPORT", "STRONG_QUALITY"]
+      excluded_factor_negatives: ["volatility_extreme", "chasing_extreme", "chasing_hot"]
+      risk_catalyst_excluded: true
+      require_production_gate: false    # 기존 Tier A 게이트와 독립된 좌측진입 대안 정책으로 측정
       backfill: false
     tier_order: ["A", "B", "C", "D"]
     hierarchy:
