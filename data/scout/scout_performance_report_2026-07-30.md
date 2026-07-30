@@ -1,11 +1,11 @@
 # SCOUT Performance Report
 
 - date: 2026-07-30
-- evaluated candidates: 129 / 130
+- evaluated candidates: 129 / 129
 - actually bought: 0
-- avg D20 return: -4.36
-- avg alpha: {'d5': 0.12, 'd10': -0.66, 'd20': 0.87}
-- positive alpha rate: {'d5': 0.528, 'd10': 0.54, 'd20': 0.535}
+- avg D20 return: -5.01
+- avg alpha: {'d5': 0.12, 'd10': -0.66, 'd20': 0.56}
+- positive alpha rate: {'d5': 0.528, 'd10': 0.54, 'd20': 0.529}
 - verdicts: {'FAILED_FAST': 74, 'WINNER': 42, 'NEUTRAL': 6, 'PENDING': 4, 'WATCH': 3}
 - execution: first executable session open; no same-day close entry
 - benchmark: stored lane benchmark, with country fallback
@@ -13,12 +13,12 @@
 ## Aggregates
 
 ### by_lane
-- strength: n=62, avgD20=-2.91, avgAlphaD20=0.19, winner=0.339, failed_fast=0.516, bought=0
+- strength: n=62, avgD20=-4.02, avgAlphaD20=-0.31, winner=0.339, failed_fast=0.516, bought=0
 - pullback: n=41, avgD20=-8.04, avgAlphaD20=1.93, winner=0.244, failed_fast=0.707, bought=0
 - left_side: n=26, avgD20=-3.03, avgAlphaD20=1.71, winner=0.423, failed_fast=0.5, bought=0
 
 ### by_lane_status
-- STRONG_PASS: n=79, avgD20=-3.1, avgAlphaD20=1.14, winner=0.329, failed_fast=0.544, bought=0
+- STRONG_PASS: n=79, avgD20=-3.99, avgAlphaD20=0.72, winner=0.329, failed_fast=0.544, bought=0
 - PASS: n=23, avgD20=-12.98, avgAlphaD20=-1.54, winner=0.217, failed_fast=0.739, bought=0
 - STAGE2_PASS: n=19, avgD20=-2.17, avgAlphaD20=5.5, winner=0.421, failed_fast=0.526, bought=0
 - STAGE2_STRONG_PASS: n=6, avgD20=-4.55, avgAlphaD20=-4.91, winner=0.5, failed_fast=0.333, bought=0
@@ -27,7 +27,7 @@
 
 ### by_theme_industry
 - SUPPORT: n=61, avgD20=1.7, avgAlphaD20=1.86, winner=0.492, failed_fast=0.361, bought=0
-- NO_MAPPING: n=37, avgD20=-15.27, avgAlphaD20=1.5, winner=0.027, failed_fast=0.973, bought=0
+- NO_MAPPING: n=37, avgD20=-16.96, avgAlphaD20=0.48, winner=0.027, failed_fast=0.973, bought=0
 - STRONG_SUPPORT: n=19, avgD20=-3.99, avgAlphaD20=-3.46, winner=0.316, failed_fast=0.632, bought=0
 - SECTOR_UNSUPPORTED: n=10, avgD20=-1.14, avgAlphaD20=-1.37, winner=0.4, failed_fast=0.4, bought=0
 - SECTOR_NEUTRAL: n=2, avgD20=None, avgAlphaD20=None, winner=0.5, failed_fast=0.0, bought=0
@@ -36,24 +36,24 @@
 - STRONG_QUALITY: n=51, avgD20=0.74, avgAlphaD20=2.55, winner=0.392, failed_fast=0.471, bought=0
 - QUALITY_SUPPORT: n=37, avgD20=-8.58, avgAlphaD20=-3.06, winner=0.297, failed_fast=0.649, bought=0
 - not_checked: n=25, avgD20=-2.08, avgAlphaD20=2.61, winner=0.4, failed_fast=0.44, bought=0
-- NEUTRAL: n=13, avgD20=-13.47, avgAlphaD20=2.24, winner=0.077, failed_fast=0.923, bought=0
+- NEUTRAL: n=13, avgD20=-18.22, avgAlphaD20=-0.59, winner=0.077, failed_fast=0.923, bought=0
 - DATA_LIGHT: n=3, avgD20=-16.79, avgAlphaD20=1.54, winner=0.0, failed_fast=1.0, bought=0
 
 ### by_catalyst
 - unknown: n=53, avgD20=-2.34, avgAlphaD20=2.01, winner=0.396, failed_fast=0.491, bought=0
-- POSITIVE_REVALUATION: n=39, avgD20=-4.87, avgAlphaD20=-3.86, winner=0.308, failed_fast=0.513, bought=0
+- POSITIVE_REVALUATION: n=39, avgD20=-6.95, avgAlphaD20=-4.68, winner=0.308, failed_fast=0.513, bought=0
 - NOISE: n=32, avgD20=-6.12, avgAlphaD20=2.08, winner=0.281, failed_fast=0.719, bought=0
 - NO_DATA: n=5, avgD20=-9.49, avgAlphaD20=12.75, winner=0.0, failed_fast=1.0, bought=0
 
 ### by_market_regime
 - BULL: n=71, avgD20=-3.75, avgAlphaD20=2.58, winner=0.31, failed_fast=0.592, bought=0
-- MIXED: n=53, avgD20=-2.49, avgAlphaD20=-1.71, winner=0.377, failed_fast=0.509, bought=0
+- MIXED: n=53, avgD20=-4.51, avgAlphaD20=-2.55, winner=0.377, failed_fast=0.509, bought=0
 - BEAR: n=5, avgD20=-25.52, avgAlphaD20=-4.11, winner=0.0, failed_fast=1.0, bought=0
 
 ## LLM Override Comparison
-- counts: dropped=7, added=19, kept=111
+- counts: dropped=7, added=19, kept=110
 - avg D5: dropped=-1.26, added=-1.81, kept=-0.92
-- avg D20: dropped=-9.89, added=-4.08, kept=-4.42
+- avg D20: dropped=-9.89, added=-4.08, kept=-5.22
 
 ### Dropped by LLM
 - 2026-05-28 IRDM FAILED_FAST D5=1.32 D20=-15.31 MFE=4.75 MAE=-21.0 lane=strength:STRONG_PASS
@@ -83,34 +83,33 @@
 - 2026-06-27 003230.KS FAILED_FAST D5=-2.14 D20=5.44 MFE=11.05 MAE=-8.29 lane=left_side:STAGE2_PASS
 - 2026-07-02 IBM FAILED_FAST D5=1.56 D20=None MFE=10.12 MAE=-29.65 lane=pullback:WAIT
 - 2026-07-10 088350.KS FAILED_FAST D5=0.47 D20=None MFE=11.29 MAE=-8.5 lane=left_side:WAIT_CONFIRM
-- 2026-07-15 426030.KS FAILED_FAST D5=-4.29 D20=None MFE=0.03 MAE=-18.28 lane=pullback:PASS
+- 2026-07-15 426030.KS FAILED_FAST D5=-4.29 D20=None MFE=0.03 MAE=-19.98 lane=pullback:PASS
 
 ## Outcome Memory Comparison
 - evidence status: COLLECTING_UNTOUCHED_WINDOW
 - counterfactual proven: False
 - winner declared: False
-- NONE: n=129/130, alpha={'d5': 0.12, 'd10': -0.66, 'd20': 0.87}, positiveAlpha={'d5': 0.528, 'd10': 0.54, 'd20': 0.535}
+- NONE: n=129/129, alpha={'d5': 0.12, 'd10': -0.66, 'd20': 0.56}, positiveAlpha={'d5': 0.528, 'd10': 0.54, 'd20': 0.529}
 
 ## Precision Shadow Comparison
-- us_precision_v1: n=17/18, avgD5=1.63, avgD10=None, avgD20=None, alphaD20=None
+- us_precision_v1: n=17/17, avgD5=1.63, avgD10=None, avgD20=None, alphaD20=None
 
 ## Policy Comparison
 - evidence status: COLLECTING_FORWARD_EVIDENCE
 - winner declared: False
 - reason: 정책별 동일 기간의 만기 초과수익 표본을 축적 중이며 자동 승자 선언은 하지 않음
-- baseline:radar_top3_not_selected: n=162/165, alpha={'d5': 0.93, 'd10': 0.99, 'd20': 6.5}, positiveAlpha={'d5': 0.592, 'd10': 0.611, 'd20': 0.609}
-- production:integrity_v1: n=0/1, alpha={'d5': None, 'd10': None, 'd20': None}, positiveAlpha={'d5': None, 'd10': None, 'd20': None}
+- baseline:radar_top3_not_selected: n=162/165, alpha={'d5': 0.97, 'd10': 0.99, 'd20': 6.5}, positiveAlpha={'d5': 0.594, 'd10': 0.611, 'd20': 0.609}
 - production:integrity_v1_unversioned: n=3/3, alpha={'d5': None, 'd10': None, 'd20': None}, positiveAlpha={'d5': None, 'd10': None, 'd20': None}
-- production:legacy_recorded: n=126/126, alpha={'d5': 0.12, 'd10': -0.66, 'd20': 0.87}, positiveAlpha={'d5': 0.528, 'd10': 0.54, 'd20': 0.535}
-- shadow:us_precision_v1: n=17/18, alpha={'d5': 3.71, 'd10': None, 'd20': None}, positiveAlpha={'d5': 0.8, 'd10': None, 'd20': None}
+- production:legacy_recorded: n=126/126, alpha={'d5': 0.12, 'd10': -0.66, 'd20': 0.56}, positiveAlpha={'d5': 0.528, 'd10': 0.54, 'd20': 0.529}
+- shadow:us_precision_v1: n=17/17, alpha={'d5': 3.71, 'd10': None, 'd20': None}, positiveAlpha={'d5': 0.8, 'd10': None, 'd20': None}
 
 ## Decision And Abstention Audit
 - snapshots: 55
-- abstentions: {'MISSED_OPPORTUNITY': 6, 'PENDING': 5}
-- D20 selected nonpositive alpha: 40
-- D20 rejected positive alpha: 309
-- avg D20 opportunity cost: 10.26
-- avg D20 ex-post upper-bound gap: 27.84
+- abstentions: {'MISSED_OPPORTUNITY': 6, 'PENDING': 6}
+- D20 selected nonpositive alpha: 41
+- D20 rejected positive alpha: 314
+- avg D20 opportunity cost: 11.05
+- avg D20 ex-post upper-bound gap: 28.84
 
 ## Recent Candidate Records
 - 2026-05-28 AMZN FAILED_FAST D20=-14.54 alphaD20=-11.71 MFE=0.91 MAE=-17.16 bought=False lane=strength catalyst=POSITIVE_REVALUATION
@@ -197,10 +196,10 @@
 - 2026-06-29 AMD FAILED_FAST D20=-13.05 alphaD20=-13.64 MFE=11.84 MAE=-15.41 bought=False lane=strength catalyst=
 - 2026-06-29 ASML FAILED_FAST D20=-12.01 alphaD20=-12.6 MFE=11.17 MAE=-13.64 bought=False lane=strength catalyst=
 - 2026-06-29 FTNT WINNER D20=-1.95 alphaD20=-2.54 MFE=11.36 MAE=-4.48 bought=False lane=strength catalyst=NOISE
-- 2026-06-30 TSM FAILED_FAST D20=-17.77 alphaD20=-16.17 MFE=5.13 MAE=-18.02 bought=False lane=strength catalyst=NOISE
+- 2026-06-30 TSM FAILED_FAST D20=-17.77 alphaD20=-16.17 MFE=5.13 MAE=-18.19 bought=False lane=strength catalyst=NOISE
 - 2026-06-30 CRWD WINNER D20=-2.58 alphaD20=-0.98 MFE=18.13 MAE=-5.42 bought=False lane=strength catalyst=POSITIVE_REVALUATION
 - 2026-06-30 PENG FAILED_FAST D20=-35.68 alphaD20=-34.08 MFE=32.26 MAE=-35.81 bought=False lane=strength catalyst=POSITIVE_REVALUATION
-- 2026-07-01 009150.KS FAILED_FAST D20=None alphaD20=None MFE=1.87 MAE=-58.84 bought=False lane=strength catalyst=POSITIVE_REVALUATION
+- 2026-07-01 009150.KS FAILED_FAST D20=-60.93 alphaD20=-26.04 MFE=1.87 MAE=-61.56 bought=False lane=strength catalyst=POSITIVE_REVALUATION
 - 2026-07-01 TIGO WINNER D20=None alphaD20=None MFE=12.76 MAE=-1.51 bought=False lane=strength catalyst=
 - 2026-07-01 MRVL FAILED_FAST D20=None alphaD20=None MFE=3.55 MAE=-42.33 bought=False lane=strength catalyst=NOISE
 - 2026-07-02 F WINNER D20=None alphaD20=None MFE=17.87 MAE=-4.34 bought=False lane=pullback catalyst=NOISE
@@ -211,7 +210,7 @@
 - 2026-07-03 PANW FAILED_FAST D20=None alphaD20=None MFE=8.8 MAE=-8.97 bought=False lane=strength catalyst=POSITIVE_REVALUATION
 - 2026-07-04 001800.KS WINNER D20=None alphaD20=None MFE=10.87 MAE=-4.74 bought=False lane=pullback catalyst=
 - 2026-07-04 A WINNER D20=None alphaD20=None MFE=9.55 MAE=-3.85 bought=False lane=left_side catalyst=POSITIVE_REVALUATION
-- 2026-07-04 069960.KS FAILED_FAST D20=None alphaD20=None MFE=2.74 MAE=-35.55 bought=False lane=strength catalyst=NOISE
+- 2026-07-04 069960.KS FAILED_FAST D20=None alphaD20=None MFE=2.74 MAE=-38.75 bought=False lane=strength catalyst=NOISE
 - 2026-07-06 003230.KS FAILED_FAST D20=None alphaD20=None MFE=17.72 MAE=-8.37 bought=False lane=left_side catalyst=NOISE
 - 2026-07-06 PUK WINNER D20=None alphaD20=None MFE=9.11 MAE=-2.38 bought=False lane=left_side catalyst=NOISE
 - 2026-07-06 029780.KS FAILED_FAST D20=None alphaD20=None MFE=3.19 MAE=-7.78 bought=False lane=left_side catalyst=NOISE
@@ -219,7 +218,7 @@
 - 2026-07-07 F WINNER D20=None alphaD20=None MFE=18.47 MAE=-3.71 bought=False lane=pullback catalyst=POSITIVE_REVALUATION
 - 2026-07-07 FLEX FAILED_FAST D20=None alphaD20=None MFE=9.38 MAE=-25.15 bought=False lane=pullback catalyst=
 - 2026-07-08 EQT FAILED_FAST D20=None alphaD20=None MFE=5.65 MAE=-7.59 bought=False lane=left_side catalyst=POSITIVE_REVALUATION
-- 2026-07-08 326030.KS FAILED_FAST D20=None alphaD20=None MFE=0.59 MAE=-13.41 bought=False lane=left_side catalyst=NOISE
+- 2026-07-08 326030.KS FAILED_FAST D20=None alphaD20=None MFE=0.59 MAE=-14.12 bought=False lane=left_side catalyst=NOISE
 - 2026-07-08 000240.KS FAILED_FAST D20=None alphaD20=None MFE=0.57 MAE=-9.14 bought=False lane=pullback catalyst=
 - 2026-07-09 XPO WINNER D20=None alphaD20=None MFE=8.94 MAE=-2.5 bought=False lane=pullback catalyst=
 - 2026-07-09 A WINNER D20=None alphaD20=None MFE=10.24 MAE=-3.24 bought=False lane=left_side catalyst=POSITIVE_REVALUATION
@@ -238,8 +237,7 @@
 - 2026-07-14 FOXA WINNER D20=None alphaD20=None MFE=7.46 MAE=-0.93 bought=False lane=left_side catalyst=
 - 2026-07-15 GOOG FAILED_FAST D20=None alphaD20=None MFE=5.15 MAE=-11.55 bought=False lane=pullback catalyst=
 - 2026-07-15 HWM WATCH D20=None alphaD20=None MFE=5.96 MAE=-4.63 bought=False lane=pullback catalyst=POSITIVE_REVALUATION
-- 2026-07-15 426030.KS FAILED_FAST D20=None alphaD20=None MFE=0.03 MAE=-18.28 bought=False lane=pullback catalyst=
-- 2026-07-29 SLGN PENDING D20=None alphaD20=None MFE=1.47 MAE=-9.98 bought=False lane=strength catalyst=POSITIVE_REVALUATION
-- 2026-07-29 KTB PENDING D20=None alphaD20=None MFE=0.54 MAE=-2.0 bought=False lane=strength catalyst=POSITIVE_REVALUATION
-- 2026-07-29 SNOW PENDING D20=None alphaD20=None MFE=6.01 MAE=0.33 bought=False lane=strength catalyst=
-- 2026-07-30 LVS PENDING D20=None alphaD20=None MFE=None MAE=None bought=False lane=left_side catalyst=
+- 2026-07-15 426030.KS FAILED_FAST D20=None alphaD20=None MFE=0.03 MAE=-19.98 bought=False lane=pullback catalyst=
+- 2026-07-29 SLGN PENDING D20=None alphaD20=None MFE=1.49 MAE=-10.02 bought=False lane=strength catalyst=POSITIVE_REVALUATION
+- 2026-07-29 KTB PENDING D20=None alphaD20=None MFE=0.84 MAE=-2.03 bought=False lane=strength catalyst=POSITIVE_REVALUATION
+- 2026-07-29 SNOW PENDING D20=None alphaD20=None MFE=6.02 MAE=0.0 bought=False lane=strength catalyst=
