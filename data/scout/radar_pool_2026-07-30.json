@@ -227,7 +227,7 @@
           "allow_signal_count_at_least": 4
         },
         "brief_rejected_after_radar": 47,
-        "brief_excluded_risk_catalyst": 9,
+        "brief_excluded_risk_catalyst": 3,
         "brief_picks": 0,
         "watchlist_picks": 5
       },
@@ -235,19 +235,19 @@
         "enabled": true,
         "eval_limit": 20,
         "evaluated": 20,
-        "found": 7,
-        "risk": 9,
-        "none": 4,
+        "found": 10,
+        "risk": 3,
+        "none": 7,
         "non_us": 0,
         "no_key": 0,
         "error": 0,
-        "positive_revaluation": 7,
-        "risk_catalyst": 9,
-        "noise": 4,
+        "positive_revaluation": 10,
+        "risk_catalyst": 3,
+        "noise": 7,
         "fresh_3d": 18,
         "recent_14d": 1,
         "price_volume_confirmed": 1,
-        "top3_excluded_risk": 9,
+        "top3_excluded_risk": 3,
         "llm_enabled": true,
         "llm_evaluated": 8,
         "llm_ok": 8,
@@ -271,20 +271,20 @@
           "backfill": false,
           "eligible": 0,
           "rejection_counts": {
-            "tier_not_allowed": 38
+            "tier_not_allowed": 44
           },
           "no_signal": true
         },
         "selected": 0,
         "tier_counts": {
-          "REVIEW": 9,
-          "C": 20,
-          "D": 15,
-          "B": 3
+          "C": 24,
+          "REVIEW": 3,
+          "D": 16,
+          "B": 4
         },
         "selected_tiers": [],
         "selected_lanes": [],
-        "review_pool_risk_catalyst": 9,
+        "review_pool_risk_catalyst": 3,
         "duplicate_ticker_drops": 0,
         "hierarchy": [
           "lane_strength",
@@ -371,16 +371,17 @@
           "max_picks": 2,
           "llm_additions_allowed": false,
           "evaluated": 20,
-          "eligible_before_cap": 10,
+          "eligible_before_cap": 11,
           "selected": 2,
           "selected_tickers": [
-            "HIG",
-            "ZTS"
+            "TW",
+            "HSY"
           ],
           "no_signal": false,
           "rejection_counts": {
-            "risk_catalyst": 7,
-            "sector": 3
+            "risk_catalyst": 5,
+            "sector": 3,
+            "quality_flag": 1
           },
           "criteria": {
             "allowed_countries": [
@@ -408,6 +409,14 @@
               "chasing_extreme",
               "chasing_hot",
               "volatility_extreme"
+            ],
+            "excluded_quality_flags": [
+              "near_52w_high",
+              "overextended_20d"
+            ],
+            "excluded_lane_review_flags": [
+              "extreme_drawdown_needs_review",
+              "market_weak_wait_confirm"
             ],
             "risk_catalyst_excluded": true,
             "require_production_gate": false,
@@ -443,18 +452,18 @@
               "eval_limit": 20,
               "evaluated": 20,
               "found": 7,
-              "risk": 9,
-              "none": 4,
+              "risk": 6,
+              "none": 7,
               "non_us": 0,
               "no_key": 0,
               "error": 0,
               "positive_revaluation": 7,
-              "risk_catalyst": 9,
-              "noise": 4,
+              "risk_catalyst": 6,
+              "noise": 7,
               "fresh_3d": 20,
               "recent_14d": 0,
               "price_volume_confirmed": 3,
-              "top3_excluded_risk": 9,
+              "top3_excluded_risk": 6,
               "llm_enabled": true,
               "llm_evaluated": 8,
               "llm_ok": 8,
@@ -475,7 +484,7 @@
       "reason_code": "PRODUCTION_GATE_NO_PASS",
       "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
       "blockers": {
-        "tier_not_allowed": 38
+        "tier_not_allowed": 44
       }
     }
   },
@@ -613,37 +622,32 @@
         "volume_ratio_3d_20d": 1.093
       },
       "catalyst_context": {
-        "status": "risk",
-        "classification": "RISK_CATALYST",
-        "score": -0.0,
-        "positive_hits": [],
-        "risk_hits": [
+        "status": "found",
+        "classification": "POSITIVE_REVALUATION",
+        "score": 0.0,
+        "positive_hits": [
           {
             "headline": "Meta tanks nearly 9%, Microsoft jumps 8% as the AI trade splits Big Tech",
-            "reason": "keyword_risk_guard",
-            "confidence": 0.89,
-            "classifier": "keyword",
+            "reason": "Describes strong Azure/Copilot growth and market reaction implying AI-driven upside.",
+            "confidence": 0.87,
+            "classifier": "llm",
             "keywords": [
-              "miss",
-              "plunge"
-            ]
-          },
-          {
-            "headline": "AMG National Trust Bank Purchases 11,168 Shares of Microsoft Corporation $MSFT",
-            "reason": "keyword_risk_guard",
-            "confidence": 0.98,
-            "classifier": "keyword",
-            "keywords": [
-              "fine",
-              "miss"
+              "guidance"
             ]
           }
         ],
+        "risk_hits": [],
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 4.63",
-            "reason": "Earnings item has no actual reported result or surprise.",
+            "reason": "Earnings item has no actual result or surprise provided.",
             "confidence": 0.96,
+            "classifier": "llm"
+          },
+          {
+            "headline": "AMG National Trust Bank Purchases 11,168 Shares of Microsoft Corporation $MSFT",
+            "reason": "Routine institutional share purchase filing, not a company-specific catalyst.",
+            "confidence": 0.93,
             "classifier": "llm"
           }
         ],
@@ -675,7 +679,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Earnings item has no actual reported result or surprise.",
+            "classification_reason": "Earnings item has no actual result or surprise provided.",
             "classification_confidence": 0.96,
             "classifier": "llm",
             "keywords_positive": [
@@ -690,17 +694,14 @@
             "datetime": 1785387219,
             "url": "https://www.cnbc.com/2026/07/30/microsoft-msft-meta-stock-today-earnings.html",
             "event_type": "news",
-            "classification": "RISK_CATALYST",
-            "classification_reason": "keyword_risk_guard",
-            "classification_confidence": 0.89,
-            "classifier": "keyword",
+            "classification": "POSITIVE_REVALUATION",
+            "classification_reason": "Describes strong Azure/Copilot growth and market reaction implying AI-driven upside.",
+            "classification_confidence": 0.87,
+            "classifier": "llm",
             "keywords_positive": [
               "guidance"
             ],
-            "keywords_risk": [
-              "miss",
-              "plunge"
-            ]
+            "keywords_risk": []
           },
           {
             "headline": "AMG National Trust Bank Purchases 11,168 Shares of Microsoft Corporation $MSFT",
@@ -709,20 +710,17 @@
             "datetime": 1785384813,
             "url": "https://www.defenseworld.net/2026/07/30/amg-national-trust-bank-purchases-11168-shares-of-microsoft-corporation-msft.html",
             "event_type": "news",
-            "classification": "RISK_CATALYST",
-            "classification_reason": "keyword_risk_guard",
-            "classification_confidence": 0.98,
-            "classifier": "keyword",
+            "classification": "NOISE",
+            "classification_reason": "Routine institutional share purchase filing, not a company-specific catalyst.",
+            "classification_confidence": 0.93,
+            "classifier": "llm",
             "keywords_positive": [],
-            "keywords_risk": [
-              "fine",
-              "miss"
-            ]
+            "keywords_risk": []
           }
         ],
-        "top3_eligible": false,
-        "review_pool": true,
-        "top3_excluded_reason": "RISK_CATALYST",
+        "top3_eligible": true,
+        "review_pool": false,
+        "top3_excluded_reason": "",
         "reject_authority": false
       },
       "quality_auditor": {
@@ -904,29 +902,34 @@
       },
       "catalyst_score": 0.0,
       "top3_selection": {
-        "tier": "REVIEW",
-        "tier_rank": 0,
+        "tier": "C",
+        "tier_rank": 2,
         "primary_lane": "left_side",
         "primary_lane_status": "STAGE1_WAIT",
         "lane_rank": 1,
-        "catalyst_freshness_rank": -1,
-        "support_count": 3,
+        "catalyst_freshness_rank": 4,
+        "support_count": 4,
         "support_reasons": [
           "theme:STRONG_SUPPORT",
           "quality:QUALITY_SUPPORT",
+          "catalyst:POSITIVE_REVALUATION",
           "theme_peer_confirmation"
         ],
-        "opportunity_score": 2.547,
-        "excluded": true,
-        "exclude_reason": "RISK_CATALYST",
-        "selection_rank": null
+        "opportunity_score": 3.147,
+        "excluded": false,
+        "exclude_reason": "",
+        "selection_rank": null,
+        "production_gate_passed": false,
+        "production_gate_rejection_reason": "tier_not_allowed"
       },
-      "selection_tier": "REVIEW",
+      "selection_tier": "C",
       "selection_rank": null,
       "selection_lane": "left_side",
       "selection_lane_status": "STAGE1_WAIT",
-      "selection_opportunity_score": 2.547,
-      "review_pool_reason": "RISK_CATALYST"
+      "selection_opportunity_score": 3.147,
+      "review_pool_reason": "",
+      "production_gate_passed": false,
+      "production_gate_rejection_reason": "tier_not_allowed"
     },
     {
       "ticker": "ZS",
@@ -1068,19 +1071,18 @@
         "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.09",
-            "reason": "Earnings reported with no actual value shown versus estimate, implying a possible miss/negative surprise.",
-            "confidence": 0.78,
+            "reason": "Earnings item shows actual missing versus estimate, implying an earnings miss/negative surprise.",
+            "confidence": 0.86,
             "classifier": "llm",
             "keywords": []
           },
           {
             "headline": "Zscaler, Inc. $ZS Shares Sold by Bank of Nova Scotia",
             "reason": "keyword_risk_guard",
-            "confidence": 0.91,
+            "confidence": 0.93,
             "classifier": "keyword",
             "keywords": [
-              "cut",
-              "miss"
+              "cut"
             ]
           }
         ],
@@ -1088,7 +1090,7 @@
           {
             "headline": "Zscaler (ZS) Surpasses Market Returns: Some Facts Worth Knowing",
             "reason": "Generic market-performance commentary with no new fundamental information.",
-            "confidence": 0.96,
+            "confidence": 0.98,
             "classifier": "llm"
           }
         ],
@@ -1120,8 +1122,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings reported with no actual value shown versus estimate, implying a possible miss/negative surprise.",
-            "classification_confidence": 0.78,
+            "classification_reason": "Earnings item shows actual missing versus estimate, implying an earnings miss/negative surprise.",
+            "classification_confidence": 0.86,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1137,12 +1139,11 @@
             "event_type": "news",
             "classification": "RISK_CATALYST",
             "classification_reason": "keyword_risk_guard",
-            "classification_confidence": 0.91,
+            "classification_confidence": 0.93,
             "classifier": "keyword",
             "keywords_positive": [],
             "keywords_risk": [
-              "cut",
-              "miss"
+              "cut"
             ]
           },
           {
@@ -1154,7 +1155,7 @@
             "event_type": "news",
             "classification": "NOISE",
             "classification_reason": "Generic market-performance commentary with no new fundamental information.",
-            "classification_confidence": 0.96,
+            "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1485,25 +1486,23 @@
           {
             "headline": "DDOG's Multi-Year Contracts Grow: Is Revenue Growth More Predictable?",
             "reason": "Rising multi-year contracts and higher revenue visibility can support valuation.",
-            "confidence": 0.88,
+            "confidence": 0.86,
             "classifier": "llm",
-            "keywords": [
-              "contract"
-            ]
+            "keywords": []
           }
         ],
         "risk_hits": [],
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.583",
-            "reason": "Incomplete earnings item with no actual result or surprise shown.",
+            "reason": "Earnings item lacks actual result or surprise direction.",
             "confidence": 0.92,
             "classifier": "llm"
           },
           {
             "headline": "Cloudaware and Datadog Partner to Close Cloud Log Coverage Gaps with LogSight",
-            "reason": "Routine partnership/integration announcement without clear material financial impact.",
-            "confidence": 0.84,
+            "reason": "Partnership/integration appears routine and not clearly material.",
+            "confidence": 0.78,
             "classifier": "llm"
           }
         ],
@@ -1535,7 +1534,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Incomplete earnings item with no actual result or surprise shown.",
+            "classification_reason": "Earnings item lacks actual result or surprise direction.",
             "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
@@ -1551,8 +1550,8 @@
             "url": "https://www.businesswire.com/news/home/20260729322132/en/Cloudaware-and-Datadog-Partner-to-Close-Cloud-Log-Coverage-Gaps-with-LogSight/",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Routine partnership/integration announcement without clear material financial impact.",
-            "classification_confidence": 0.84,
+            "classification_reason": "Partnership/integration appears routine and not clearly material.",
+            "classification_confidence": 0.78,
             "classifier": "llm",
             "keywords_positive": [
               "partnership"
@@ -1568,11 +1567,9 @@
             "event_type": "news",
             "classification": "POSITIVE_REVALUATION",
             "classification_reason": "Rising multi-year contracts and higher revenue visibility can support valuation.",
-            "classification_confidence": 0.88,
+            "classification_confidence": 0.86,
             "classifier": "llm",
-            "keywords_positive": [
-              "contract"
-            ],
+            "keywords_positive": [],
             "keywords_risk": []
           }
         ],
@@ -1913,30 +1910,28 @@
         "volume_ratio_3d_20d": 1.002
       },
       "catalyst_context": {
-        "status": "risk",
-        "classification": "RISK_CATALYST",
-        "score": -0.0,
+        "status": "none",
+        "classification": "NOISE",
+        "score": 0.0,
         "positive_hits": [],
-        "risk_hits": [
-          {
-            "headline": "Earnings reported: actual None, estimate 3.6",
-            "reason": "Earnings event with no actual reported value suggests a miss/failed report signal.",
-            "confidence": 0.72,
-            "classifier": "llm",
-            "keywords": []
-          }
-        ],
+        "risk_hits": [],
         "noise_hits": [
           {
+            "headline": "Earnings reported: actual None, estimate 3.6",
+            "reason": "No actual earnings result provided; incomplete event.",
+            "confidence": 0.95,
+            "classifier": "llm"
+          },
+          {
             "headline": "AbbVie Inc. $ABBV Position Increased by Arkadios Wealth Advisors",
-            "reason": "Routine 13F position increase by one holder; not material enough to re-rate.",
+            "reason": "Routine 13F position increase by one holder, not company-specific catalyst.",
             "confidence": 0.93,
             "classifier": "llm"
           },
           {
             "headline": "Meet the Stock That's Obliterating Eli Lilly, Johnson & Johnson, and AbbVie Right Now",
-            "reason": "Generic comparative commentary with no company-specific actionable catalyst.",
-            "confidence": 0.96,
+            "reason": "Generic comparative commentary, not a concrete company event.",
+            "confidence": 0.98,
             "classifier": "llm"
           }
         ],
@@ -1967,9 +1962,9 @@
             "datetime": 1785456000,
             "url": "",
             "event_type": "earnings",
-            "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings event with no actual reported value suggests a miss/failed report signal.",
-            "classification_confidence": 0.72,
+            "classification": "NOISE",
+            "classification_reason": "No actual earnings result provided; incomplete event.",
+            "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1984,7 +1979,7 @@
             "url": "https://www.defenseworld.net/2026/07/30/abbvie-inc-abbv-position-increased-by-arkadios-wealth-advisors.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Routine 13F position increase by one holder; not material enough to re-rate.",
+            "classification_reason": "Routine 13F position increase by one holder, not company-specific catalyst.",
             "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [],
@@ -1998,16 +1993,16 @@
             "url": "https://www.fool.com/investing/2026/07/29/meet-the-stock-thats-obliterating-eli-lilly-johnso/",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic comparative commentary with no company-specific actionable catalyst.",
-            "classification_confidence": 0.96,
+            "classification_reason": "Generic comparative commentary, not a concrete company event.",
+            "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
           }
         ],
-        "top3_eligible": false,
-        "review_pool": true,
-        "top3_excluded_reason": "RISK_CATALYST",
+        "top3_eligible": true,
+        "review_pool": false,
+        "top3_excluded_reason": "",
         "reject_authority": false
       },
       "quality_auditor": {
@@ -2111,27 +2106,31 @@
       },
       "catalyst_score": 0.0,
       "top3_selection": {
-        "tier": "REVIEW",
-        "tier_rank": 0,
+        "tier": "D",
+        "tier_rank": 1,
         "primary_lane": "pullback",
         "primary_lane_status": "WAIT",
         "lane_rank": 1,
-        "catalyst_freshness_rank": -1,
+        "catalyst_freshness_rank": 0,
         "support_count": 1,
         "support_reasons": [
           "theme:SUPPORT"
         ],
         "opportunity_score": 0.15,
-        "excluded": true,
-        "exclude_reason": "RISK_CATALYST",
-        "selection_rank": null
+        "excluded": false,
+        "exclude_reason": "",
+        "selection_rank": null,
+        "production_gate_passed": false,
+        "production_gate_rejection_reason": "tier_not_allowed"
       },
-      "selection_tier": "REVIEW",
+      "selection_tier": "D",
       "selection_rank": null,
       "selection_lane": "pullback",
       "selection_lane_status": "WAIT",
       "selection_opportunity_score": 0.15,
-      "review_pool_reason": "RISK_CATALYST"
+      "review_pool_reason": "",
+      "production_gate_passed": false,
+      "production_gate_rejection_reason": "tier_not_allowed"
     },
     {
       "ticker": "RIO",
@@ -2266,8 +2265,8 @@
         "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 3.88",
-            "reason": "Earnings item shows actual missing versus estimate, implying a negative/failed report rather than a beat.",
-            "confidence": 0.87,
+            "reason": "Earnings item shows no actual reported value versus estimate, implying a miss/negative uncertainty.",
+            "confidence": 0.78,
             "classifier": "llm",
             "keywords": []
           }
@@ -2275,14 +2274,14 @@
         "noise_hits": [
           {
             "headline": "Contrasting Paladin Energy (OTCMKTS:PALAF) & Rio Tinto (NYSE:RIO)",
-            "reason": "Generic comparison article with no new company-specific catalyst or event.",
-            "confidence": 0.98,
+            "reason": "Generic comparison article without a specific new catalyst or company event.",
+            "confidence": 0.95,
             "classifier": "llm"
           },
           {
             "headline": "ALB vs. RIO: Which Lithium Producer Deserves a Spot in Your Portfolio?",
-            "reason": "Portfolio comparison and thematic commentary on lithium strategy, not a concrete new catalyst.",
-            "confidence": 0.84,
+            "reason": "Sector/portfolio comparison and strategy discussion, not a concrete Rio Tinto event or result.",
+            "confidence": 0.9,
             "classifier": "llm"
           }
         ],
@@ -2314,8 +2313,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings item shows actual missing versus estimate, implying a negative/failed report rather than a beat.",
-            "classification_confidence": 0.87,
+            "classification_reason": "Earnings item shows no actual reported value versus estimate, implying a miss/negative uncertainty.",
+            "classification_confidence": 0.78,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2330,13 +2329,10 @@
             "url": "https://www.defenseworld.net/2026/07/30/contrasting-paladin-energy-otcmktspalaf-rio-tinto-nyserio.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic comparison article with no new company-specific catalyst or event.",
-            "classification_confidence": 0.98,
+            "classification_reason": "Generic comparison article without a specific new catalyst or company event.",
+            "classification_confidence": 0.95,
             "classifier": "llm",
-            "keywords_positive": [
-              "dividend",
-              "profit"
-            ],
+            "keywords_positive": [],
             "keywords_risk": []
           },
           {
@@ -2347,8 +2343,8 @@
             "url": "https://www.zacks.com/stock/news/2963377/alb-vs-rio-which-lithium-producer-deserves-a-spot-in-your-portfolio?cid=CS-STOCKNEWSAPI-FT-analyst_blog|most_popular_stocks-2963377",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Portfolio comparison and thematic commentary on lithium strategy, not a concrete new catalyst.",
-            "classification_confidence": 0.84,
+            "classification_reason": "Sector/portfolio comparison and strategy discussion, not a concrete Rio Tinto event or result.",
+            "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [
               "expansion"
@@ -2385,9 +2381,9 @@
               "valuation_reasonable"
             ],
             "metrics": {
-              "pe": 12.870344387617767,
+              "pe": 12.876639973082103,
               "forward_pe": null,
-              "peg": 0.7406298179420048
+              "peg": 0.7409921002691798
             }
           },
           "flow": {
@@ -2625,12 +2621,10 @@
           {
             "headline": "SPGI Q2 Earnings Call Highlights AI Growth and Buybacks",
             "reason": "Mentions AI growth and higher buybacks, which can support valuation.",
-            "confidence": 0.74,
+            "confidence": 0.72,
             "classifier": "llm",
             "keywords": [
-              "buyback",
-              "earnings",
-              "profit"
+              "earnings"
             ]
           }
         ],
@@ -2639,12 +2633,12 @@
           {
             "headline": "Earnings reported: actual None, estimate 4.54",
             "reason": "No actual earnings result is provided; incomplete data.",
-            "confidence": 0.93,
+            "confidence": 0.94,
             "classifier": "llm"
           },
           {
             "headline": "Five9 Set to Join S&P SmallCap 600",
-            "reason": "Index membership change for another company, not SPGI-specific.",
+            "reason": "Index reconstitution news about another company, not SPGI-specific.",
             "confidence": 0.98,
             "classifier": "llm"
           }
@@ -2678,7 +2672,7 @@
             "event_type": "earnings",
             "classification": "NOISE",
             "classification_reason": "No actual earnings result is provided; incomplete data.",
-            "classification_confidence": 0.93,
+            "classification_confidence": 0.94,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2693,7 +2687,7 @@
             "url": "https://www.prnewswire.com/news-releases/five9-set-to-join-sp-smallcap-600-302838329.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Index membership change for another company, not SPGI-specific.",
+            "classification_reason": "Index reconstitution news about another company, not SPGI-specific.",
             "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [
@@ -2710,12 +2704,10 @@
             "event_type": "news",
             "classification": "POSITIVE_REVALUATION",
             "classification_reason": "Mentions AI growth and higher buybacks, which can support valuation.",
-            "classification_confidence": 0.74,
+            "classification_confidence": 0.72,
             "classifier": "llm",
             "keywords_positive": [
-              "buyback",
-              "earnings",
-              "profit"
+              "earnings"
             ],
             "keywords_risk": []
           }
@@ -3003,20 +2995,20 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 3.31",
-            "reason": "Scheduled earnings item with no actual result provided.",
-            "confidence": 0.97,
+            "reason": "Earnings item has no actual result, only an estimate.",
+            "confidence": 0.98,
             "classifier": "llm"
           },
           {
             "headline": "Earnings reported: actual None, estimate 3.95",
-            "reason": "Scheduled earnings item with no actual result provided.",
-            "confidence": 0.97,
+            "reason": "Earnings item has no actual result, only an estimate.",
+            "confidence": 0.98,
             "classifier": "llm"
           },
           {
             "headline": "Earnings reported: actual None, estimate 4.21",
-            "reason": "Scheduled earnings item with no actual result provided.",
-            "confidence": 0.97,
+            "reason": "Earnings item has no actual result, only an estimate.",
+            "confidence": 0.98,
             "classifier": "llm"
           }
         ],
@@ -3048,8 +3040,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Scheduled earnings item with no actual result provided.",
-            "classification_confidence": 0.97,
+            "classification_reason": "Earnings item has no actual result, only an estimate.",
+            "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -3064,8 +3056,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Scheduled earnings item with no actual result provided.",
-            "classification_confidence": 0.97,
+            "classification_reason": "Earnings item has no actual result, only an estimate.",
+            "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -3080,8 +3072,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Scheduled earnings item with no actual result provided.",
-            "classification_confidence": 0.97,
+            "classification_reason": "Earnings item has no actual result, only an estimate.",
+            "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -3350,31 +3342,27 @@
         "volume_ratio_3d_20d": 0.811
       },
       "catalyst_context": {
-        "status": "risk",
-        "classification": "RISK_CATALYST",
-        "score": -0.0,
+        "status": "none",
+        "classification": "NOISE",
+        "score": 0.0,
         "positive_hits": [],
-        "risk_hits": [
-          {
-            "headline": "Amundi Has $360.83 Million Stake in The PNC Financial Services Group, Inc $PNC",
-            "reason": "keyword_risk_guard",
-            "confidence": 0.95,
-            "classifier": "keyword",
-            "keywords": [
-              "miss"
-            ]
-          }
-        ],
+        "risk_hits": [],
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 4.95",
-            "reason": "Incomplete earnings item with no actual result or surprise shown.",
+            "reason": "Incomplete earnings item with no actual result or surprise direction.",
             "confidence": 0.92,
             "classifier": "llm"
           },
           {
+            "headline": "Amundi Has $360.83 Million Stake in The PNC Financial Services Group, Inc $PNC",
+            "reason": "Routine 13F stake update; minor ownership change, not a catalyst.",
+            "confidence": 0.95,
+            "classifier": "llm"
+          },
+          {
             "headline": "Why The PNC Financial Services Group, Inc (PNC) is a Top Dividend Stock for Your Portfolio",
-            "reason": "Generic dividend-stock commentary without new company-specific development.",
+            "reason": "Generic dividend-stock commentary without new company-specific event.",
             "confidence": 0.97,
             "classifier": "llm"
           }
@@ -3407,7 +3395,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Incomplete earnings item with no actual result or surprise shown.",
+            "classification_reason": "Incomplete earnings item with no actual result or surprise direction.",
             "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
@@ -3422,14 +3410,12 @@
             "datetime": 1785383859,
             "url": "https://www.defenseworld.net/2026/07/30/amundi-has-360-83-million-stake-in-the-pnc-financial-services-group-inc-pnc.html",
             "event_type": "news",
-            "classification": "RISK_CATALYST",
-            "classification_reason": "keyword_risk_guard",
+            "classification": "NOISE",
+            "classification_reason": "Routine 13F stake update; minor ownership change, not a catalyst.",
             "classification_confidence": 0.95,
-            "classifier": "keyword",
+            "classifier": "llm",
             "keywords_positive": [],
-            "keywords_risk": [
-              "miss"
-            ]
+            "keywords_risk": []
           },
           {
             "headline": "Why The PNC Financial Services Group, Inc (PNC) is a Top Dividend Stock for Your Portfolio",
@@ -3439,7 +3425,7 @@
             "url": "https://www.zacks.com/stock/news/2962338/why-the-pnc-financial-services-group-inc-pnc-is-a-top-dividend-stock-for-your-portfolio?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|yseop_template_5-2962338",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic dividend-stock commentary without new company-specific development.",
+            "classification_reason": "Generic dividend-stock commentary without new company-specific event.",
             "classification_confidence": 0.97,
             "classifier": "llm",
             "keywords_positive": [
@@ -3448,9 +3434,9 @@
             "keywords_risk": []
           }
         ],
-        "top3_eligible": false,
-        "review_pool": true,
-        "top3_excluded_reason": "RISK_CATALYST",
+        "top3_eligible": true,
+        "review_pool": false,
+        "top3_excluded_reason": "",
         "reject_authority": false
       },
       "quality_auditor": {
@@ -3556,28 +3542,32 @@
       },
       "catalyst_score": 0.0,
       "top3_selection": {
-        "tier": "REVIEW",
-        "tier_rank": 0,
+        "tier": "C",
+        "tier_rank": 2,
         "primary_lane": "pullback",
         "primary_lane_status": "WAIT",
         "lane_rank": 1,
-        "catalyst_freshness_rank": -1,
+        "catalyst_freshness_rank": 0,
         "support_count": 2,
         "support_reasons": [
           "theme:SUPPORT",
           "quality:QUALITY_SUPPORT"
         ],
         "opportunity_score": 0.15,
-        "excluded": true,
-        "exclude_reason": "RISK_CATALYST",
-        "selection_rank": null
+        "excluded": false,
+        "exclude_reason": "",
+        "selection_rank": null,
+        "production_gate_passed": false,
+        "production_gate_rejection_reason": "tier_not_allowed"
       },
-      "selection_tier": "REVIEW",
+      "selection_tier": "C",
       "selection_rank": null,
       "selection_lane": "pullback",
       "selection_lane_status": "WAIT",
       "selection_opportunity_score": 0.15,
-      "review_pool_reason": "RISK_CATALYST"
+      "review_pool_reason": "",
+      "production_gate_passed": false,
+      "production_gate_rejection_reason": "tier_not_allowed"
     },
     {
       "ticker": "MELI",
@@ -4069,9 +4059,7 @@
             "confidence": 0.55,
             "classifier": "keyword",
             "keywords": [
-              "beat",
               "buyback",
-              "launch",
               "profit"
             ]
           },
@@ -4126,9 +4114,7 @@
             "classification_confidence": 0.55,
             "classifier": "keyword",
             "keywords_positive": [
-              "beat",
               "buyback",
-              "launch",
               "profit"
             ],
             "keywords_risk": []
@@ -4197,9 +4183,9 @@
               "valuation_reasonable"
             ],
             "metrics": {
-              "pe": 14.651612903225807,
+              "pe": 14.600000000000003,
               "forward_pe": null,
-              "peg": 0.6259328505595784
+              "peg": 0.6237278911564624
             }
           },
           "flow": {
@@ -5876,34 +5862,30 @@
         "volume_ratio_3d_20d": 0.88
       },
       "catalyst_context": {
-        "status": "risk",
-        "classification": "RISK_CATALYST",
-        "score": -0.0,
-        "positive_hits": [],
-        "risk_hits": [
+        "status": "found",
+        "classification": "POSITIVE_REVALUATION",
+        "score": 0.0,
+        "positive_hits": [
           {
             "headline": "Fifth Third Bancorp $FITB Stock Position Raised by Bank of Nova Scotia",
             "reason": "keyword",
             "confidence": 0.55,
             "classifier": "keyword",
             "keywords": [
-              "fine"
-            ]
-          },
-          {
-            "headline": "Cetera Investment Advisers Buys 43,848 Shares of Fifth Third Bancorp $FITB",
-            "reason": "keyword",
-            "confidence": 0.55,
-            "classifier": "keyword",
-            "keywords": [
-              "fine",
-              "miss"
+              "raised"
             ]
           }
         ],
+        "risk_hits": [],
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.07",
+            "reason": "keyword",
+            "confidence": 0.4,
+            "classifier": "keyword"
+          },
+          {
+            "headline": "Cetera Investment Advisers Buys 43,848 Shares of Fifth Third Bancorp $FITB",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
@@ -5952,16 +5934,14 @@
             "datetime": 1785210656,
             "url": "https://www.defenseworld.net/2026/07/28/fifth-third-bancorp-fitb-stock-position-raised-by-bank-of-nova-scotia.html",
             "event_type": "news",
-            "classification": "RISK_CATALYST",
+            "classification": "POSITIVE_REVALUATION",
             "classification_reason": "keyword",
             "classification_confidence": 0.55,
             "classifier": "keyword",
             "keywords_positive": [
               "raised"
             ],
-            "keywords_risk": [
-              "fine"
-            ]
+            "keywords_risk": []
           },
           {
             "headline": "Cetera Investment Advisers Buys 43,848 Shares of Fifth Third Bancorp $FITB",
@@ -5970,20 +5950,17 @@
             "datetime": 1785208446,
             "url": "https://www.defenseworld.net/2026/07/28/cetera-investment-advisers-buys-43848-shares-of-fifth-third-bancorp-fitb.html",
             "event_type": "news",
-            "classification": "RISK_CATALYST",
+            "classification": "NOISE",
             "classification_reason": "keyword",
-            "classification_confidence": 0.55,
+            "classification_confidence": 0.4,
             "classifier": "keyword",
             "keywords_positive": [],
-            "keywords_risk": [
-              "fine",
-              "miss"
-            ]
+            "keywords_risk": []
           }
         ],
-        "top3_eligible": false,
-        "review_pool": true,
-        "top3_excluded_reason": "RISK_CATALYST",
+        "top3_eligible": true,
+        "review_pool": false,
+        "top3_excluded_reason": "",
         "reject_authority": false
       },
       "quality_auditor": {
@@ -6088,28 +6065,33 @@
       },
       "catalyst_score": 0.0,
       "top3_selection": {
-        "tier": "REVIEW",
-        "tier_rank": 0,
+        "tier": "C",
+        "tier_rank": 2,
         "primary_lane": "pullback",
         "primary_lane_status": "WAIT",
         "lane_rank": 1,
-        "catalyst_freshness_rank": -1,
-        "support_count": 2,
+        "catalyst_freshness_rank": 4,
+        "support_count": 3,
         "support_reasons": [
           "theme:SUPPORT",
-          "quality:QUALITY_SUPPORT"
+          "quality:QUALITY_SUPPORT",
+          "catalyst:POSITIVE_REVALUATION"
         ],
-        "opportunity_score": 0.15,
-        "excluded": true,
-        "exclude_reason": "RISK_CATALYST",
-        "selection_rank": null
+        "opportunity_score": 0.75,
+        "excluded": false,
+        "exclude_reason": "",
+        "selection_rank": null,
+        "production_gate_passed": false,
+        "production_gate_rejection_reason": "tier_not_allowed"
       },
-      "selection_tier": "REVIEW",
+      "selection_tier": "C",
       "selection_rank": null,
       "selection_lane": "pullback",
       "selection_lane_status": "WAIT",
-      "selection_opportunity_score": 0.15,
-      "review_pool_reason": "RISK_CATALYST"
+      "selection_opportunity_score": 0.75,
+      "review_pool_reason": "",
+      "production_gate_passed": false,
+      "production_gate_rejection_reason": "tier_not_allowed"
     },
     {
       "ticker": "ON",
@@ -6600,18 +6582,8 @@
       "catalyst_context": {
         "status": "risk",
         "classification": "RISK_CATALYST",
-        "score": 0.0,
-        "positive_hits": [
-          {
-            "headline": "American Tower or Crown Castle? Wall Street's Clear Pick Between Beaten-Down Tower REITs",
-            "reason": "keyword",
-            "confidence": 0.55,
-            "classifier": "keyword",
-            "keywords": [
-              "beat"
-            ]
-          }
-        ],
+        "score": -0.0,
+        "positive_hits": [],
         "risk_hits": [
           {
             "headline": "Crown Castle (NYSE:CCI) Sets New 1-Year Low After Analyst Downgrade",
@@ -6626,6 +6598,12 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.69",
+            "reason": "keyword",
+            "confidence": 0.4,
+            "classifier": "keyword"
+          },
+          {
+            "headline": "American Tower or Crown Castle? Wall Street's Clear Pick Between Beaten-Down Tower REITs",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
@@ -6674,13 +6652,11 @@
             "datetime": 1785318013,
             "url": "https://247wallst.com/investing/2026/07/29/american-tower-or-crown-castle-wall-streets-clear-pick-between-beaten-down-tower-reits/",
             "event_type": "news",
-            "classification": "POSITIVE_REVALUATION",
+            "classification": "NOISE",
             "classification_reason": "keyword",
-            "classification_confidence": 0.55,
+            "classification_confidence": 0.4,
             "classifier": "keyword",
-            "keywords_positive": [
-              "beat"
-            ],
+            "keywords_positive": [],
             "keywords_risk": []
           },
           {
@@ -6978,21 +6954,11 @@
         "volume_ratio_3d_20d": 1.245
       },
       "catalyst_context": {
-        "status": "risk",
-        "classification": "RISK_CATALYST",
-        "score": -0.0,
+        "status": "none",
+        "classification": "NOISE",
+        "score": 0.0,
         "positive_hits": [],
-        "risk_hits": [
-          {
-            "headline": "Dimensional Fund Advisors LP Grows Stock Holdings in Waste Connections, Inc. $WCN",
-            "reason": "keyword",
-            "confidence": 0.55,
-            "classifier": "keyword",
-            "keywords": [
-              "miss"
-            ]
-          }
-        ],
+        "risk_hits": [],
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.51",
@@ -7002,6 +6968,12 @@
           },
           {
             "headline": "Waste Connections: Turning Moderate Growth Into Exceptional Shareholder Returns",
+            "reason": "keyword",
+            "confidence": 0.4,
+            "classifier": "keyword"
+          },
+          {
+            "headline": "Dimensional Fund Advisors LP Grows Stock Holdings in Waste Connections, Inc. $WCN",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
@@ -7064,19 +7036,17 @@
             "datetime": 1785208678,
             "url": "https://www.defenseworld.net/2026/07/28/dimensional-fund-advisors-lp-grows-stock-holdings-in-waste-connections-inc-wcn.html",
             "event_type": "news",
-            "classification": "RISK_CATALYST",
+            "classification": "NOISE",
             "classification_reason": "keyword",
-            "classification_confidence": 0.55,
+            "classification_confidence": 0.4,
             "classifier": "keyword",
             "keywords_positive": [],
-            "keywords_risk": [
-              "miss"
-            ]
+            "keywords_risk": []
           }
         ],
-        "top3_eligible": false,
-        "review_pool": true,
-        "top3_excluded_reason": "RISK_CATALYST",
+        "top3_eligible": true,
+        "review_pool": false,
+        "top3_excluded_reason": "",
         "reject_authority": false
       },
       "quality_auditor": {
@@ -7181,28 +7151,32 @@
       },
       "catalyst_score": 0.0,
       "top3_selection": {
-        "tier": "REVIEW",
-        "tier_rank": 0,
+        "tier": "C",
+        "tier_rank": 2,
         "primary_lane": "pullback",
         "primary_lane_status": "WAIT",
         "lane_rank": 1,
-        "catalyst_freshness_rank": -1,
+        "catalyst_freshness_rank": 0,
         "support_count": 2,
         "support_reasons": [
           "theme:SUPPORT",
           "quality:QUALITY_SUPPORT"
         ],
         "opportunity_score": 2.15,
-        "excluded": true,
-        "exclude_reason": "RISK_CATALYST",
-        "selection_rank": null
+        "excluded": false,
+        "exclude_reason": "",
+        "selection_rank": null,
+        "production_gate_passed": false,
+        "production_gate_rejection_reason": "tier_not_allowed"
       },
-      "selection_tier": "REVIEW",
+      "selection_tier": "C",
       "selection_rank": null,
       "selection_lane": "pullback",
       "selection_lane_status": "WAIT",
       "selection_opportunity_score": 2.15,
-      "review_pool_reason": "RISK_CATALYST"
+      "review_pool_reason": "",
+      "production_gate_passed": false,
+      "production_gate_rejection_reason": "tier_not_allowed"
     },
     {
       "ticker": "RVMD",
@@ -7695,19 +7669,17 @@
         "volume_ratio_3d_20d": 0.858
       },
       "catalyst_context": {
-        "status": "risk",
-        "classification": "RISK_CATALYST",
-        "score": -0.0,
-        "positive_hits": [],
-        "risk_hits": [
+        "status": "found",
+        "classification": "POSITIVE_REVALUATION",
+        "score": 0.0,
+        "positive_hits": [
           {
             "headline": "Beaconlight Capital LLC Raises Position in Natera, Inc. $NTRA",
             "reason": "keyword",
             "confidence": 0.55,
             "classifier": "keyword",
             "keywords": [
-              "fine",
-              "miss"
+              "raises"
             ]
           },
           {
@@ -7716,11 +7688,12 @@
             "confidence": 0.55,
             "classifier": "keyword",
             "keywords": [
-              "fine",
-              "miss"
+              "partnership",
+              "raised"
             ]
           }
         ],
+        "risk_hits": [],
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate -0.49394",
@@ -7772,17 +7745,14 @@
             "datetime": 1784954618,
             "url": "https://www.defenseworld.net/2026/07/25/beaconlight-capital-llc-raises-position-in-natera-inc-ntra.html",
             "event_type": "news",
-            "classification": "RISK_CATALYST",
+            "classification": "POSITIVE_REVALUATION",
             "classification_reason": "keyword",
             "classification_confidence": 0.55,
             "classifier": "keyword",
             "keywords_positive": [
               "raises"
             ],
-            "keywords_risk": [
-              "fine",
-              "miss"
-            ]
+            "keywords_risk": []
           },
           {
             "headline": "Natera, Inc. $NTRA Shares Purchased by Arrowstreet Capital Limited Partnership",
@@ -7791,7 +7761,7 @@
             "datetime": 1784954610,
             "url": "https://www.defenseworld.net/2026/07/25/natera-inc-ntra-shares-purchased-by-arrowstreet-capital-limited-partnership.html",
             "event_type": "news",
-            "classification": "RISK_CATALYST",
+            "classification": "POSITIVE_REVALUATION",
             "classification_reason": "keyword",
             "classification_confidence": 0.55,
             "classifier": "keyword",
@@ -7799,15 +7769,12 @@
               "partnership",
               "raised"
             ],
-            "keywords_risk": [
-              "fine",
-              "miss"
-            ]
+            "keywords_risk": []
           }
         ],
-        "top3_eligible": false,
-        "review_pool": true,
-        "top3_excluded_reason": "RISK_CATALYST",
+        "top3_eligible": true,
+        "review_pool": false,
+        "top3_excluded_reason": "",
         "reject_authority": false
       },
       "quality_auditor": {
@@ -7913,28 +7880,33 @@
       },
       "catalyst_score": 0.0,
       "top3_selection": {
-        "tier": "REVIEW",
-        "tier_rank": 0,
+        "tier": "B",
+        "tier_rank": 3,
         "primary_lane": "pullback",
         "primary_lane_status": "PASS",
         "lane_rank": 4,
-        "catalyst_freshness_rank": -1,
-        "support_count": 2,
+        "catalyst_freshness_rank": 3,
+        "support_count": 3,
         "support_reasons": [
           "theme:SUPPORT",
-          "quality:QUALITY_SUPPORT"
+          "quality:QUALITY_SUPPORT",
+          "catalyst:POSITIVE_REVALUATION"
         ],
-        "opportunity_score": 3.95,
-        "excluded": true,
-        "exclude_reason": "RISK_CATALYST",
-        "selection_rank": null
+        "opportunity_score": 4.55,
+        "excluded": false,
+        "exclude_reason": "",
+        "selection_rank": null,
+        "production_gate_passed": false,
+        "production_gate_rejection_reason": "tier_not_allowed"
       },
-      "selection_tier": "REVIEW",
+      "selection_tier": "B",
       "selection_rank": null,
       "selection_lane": "pullback",
       "selection_lane_status": "PASS",
-      "selection_opportunity_score": 3.95,
-      "review_pool_reason": "RISK_CATALYST"
+      "selection_opportunity_score": 4.55,
+      "review_pool_reason": "",
+      "production_gate_passed": false,
+      "production_gate_rejection_reason": "tier_not_allowed"
     },
     {
       "ticker": "CRCL",
@@ -8645,9 +8617,9 @@
               "valuation_reasonable"
             ],
             "metrics": {
-              "pe": 14.380517364409586,
+              "pe": 14.360585065724068,
               "forward_pe": null,
-              "peg": 0.5790533699427994
+              "peg": 0.5782507656670227
             }
           },
           "flow": {
@@ -9832,11 +9804,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 243,
-          "avg_volume_value": 45496385720.0,
+          "avg_volume_value": 46756575320.0,
           "liquidity_min_value": 2000000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "KRW",
-          "liquidity_buffer_multiple": 22.748,
+          "liquidity_buffer_multiple": 23.378,
           "ret_20d": 0.1796,
           "drawdown_from_high": -0.1884,
           "atr_pct": 0.0506
@@ -9863,7 +9835,7 @@
           "market_cap_usd": 4664309993.2,
           "latest_date": "2026-07-30",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 45496385720.0,
+          "avg_traded_value_20d": 46756575320.0,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.1261
         }
@@ -9895,7 +9867,7 @@
             "ma50": 114464.0,
             "ma200": 126200.0,
             "drawdown_from_252d_high": -0.1884,
-            "volume_ratio_5d_20d": 1.2718
+            "volume_ratio_5d_20d": 1.3394
           }
         },
         "left_side": {
@@ -9938,12 +9910,12 @@
         "ma50": 114464.0,
         "ma200": 126200.0,
         "drawdown_from_high": -0.1884,
-        "avg_volume_value": 45496385720.0,
+        "avg_volume_value": 46756575320.0,
         "liquidity_min_value": 2000000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "KRW",
-        "liquidity_buffer_multiple": 22.748,
-        "volume_ratio_3d_20d": 1.506
+        "liquidity_buffer_multiple": 23.378,
+        "volume_ratio_3d_20d": 1.634
       },
       "catalyst_context": {
         "status": "not_checked",
@@ -10511,7 +10483,7 @@
               "valuation_reasonable"
             ],
             "metrics": {
-              "pe": 8.591333741206656,
+              "pe": 8.599714041037721,
               "forward_pe": null,
               "peg": null
             }
@@ -11460,11 +11432,11 @@
         ],
         "metrics": {
           "close_days": 243,
-          "avg_volume_value": 40732019516.0,
+          "avg_volume_value": 40720898291.0,
           "liquidity_min_value": 2000000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "KRW",
-          "liquidity_buffer_multiple": 20.366,
+          "liquidity_buffer_multiple": 20.36,
           "ret_20d": -0.6127,
           "drawdown_from_high": -0.7773,
           "atr_pct": 0.3047
@@ -11493,7 +11465,7 @@
           "market_cap_usd": 1885180149.56,
           "latest_date": "2026-07-30",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 40732019516.0,
+          "avg_traded_value_20d": 40720898291.0,
           "zero_volume_days_20d": 0,
           "ret_5d": -0.3851
         }
@@ -11514,7 +11486,7 @@
             "rs_63d": -0.2499,
             "rs_126d": 0.2606,
             "drawdown_from_252d_high": -0.7773,
-            "volume_ratio_5d_20d": 0.512
+            "volume_ratio_5d_20d": 0.5104
           }
         },
         "pullback": {
@@ -11527,7 +11499,7 @@
             "ma50": 30660.0,
             "ma200": 23709.955,
             "drawdown_from_252d_high": -0.7773,
-            "volume_ratio_5d_20d": 0.512
+            "volume_ratio_5d_20d": 0.5104
           }
         },
         "left_side": {
@@ -11562,9 +11534,9 @@
       ],
       "signals": {
         "volume_compression": {
-          "short_avg": 1069004,
-          "long_avg": 2088079,
-          "ratio": 0.512,
+          "short_avg": 1065250,
+          "long_avg": 2087141,
+          "ratio": 0.51,
           "threshold": 0.6,
           "label_ko": "거래량 압축",
           "phase": "建仓 진행 중"
@@ -11583,12 +11555,12 @@
         "ma50": 30660.0,
         "ma200": 23709.955,
         "drawdown_from_high": -0.7773,
-        "avg_volume_value": 40732019516.0,
+        "avg_volume_value": 40720898291.0,
         "liquidity_min_value": 2000000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "KRW",
-        "liquidity_buffer_multiple": 20.366,
-        "volume_ratio_3d_20d": 0.599
+        "liquidity_buffer_multiple": 20.36,
+        "volume_ratio_3d_20d": 0.596
       },
       "catalyst_context": {
         "status": "not_checked",
@@ -11881,11 +11853,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 243,
-          "avg_volume_value": 6038852315.0,
+          "avg_volume_value": 6031271885.0,
           "liquidity_min_value": 2000000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "KRW",
-          "liquidity_buffer_multiple": 3.019,
+          "liquidity_buffer_multiple": 3.016,
           "ret_20d": 0.06,
           "drawdown_from_high": -0.3536,
           "atr_pct": 0.0606
@@ -11912,7 +11884,7 @@
           "market_cap_usd": 1064106050.31,
           "latest_date": "2026-07-30",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 6038852315.0,
+          "avg_traded_value_20d": 6031271885.0,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0129
         }
@@ -11944,7 +11916,7 @@
             "ma50": 124264.0,
             "ma200": 151900.0,
             "drawdown_from_252d_high": -0.3536,
-            "volume_ratio_5d_20d": 0.5273
+            "volume_ratio_5d_20d": 0.5228
           }
         },
         "left_side": {
@@ -11972,9 +11944,9 @@
       ],
       "signals": {
         "volume_compression": {
-          "short_avg": 24747,
-          "long_avg": 46931,
-          "ratio": 0.527,
+          "short_avg": 24505,
+          "long_avg": 46870,
+          "ratio": 0.523,
           "threshold": 0.6,
           "label_ko": "거래량 압축",
           "phase": "建仓 진행 중"
@@ -11995,12 +11967,12 @@
         "ma50": 124264.0,
         "ma200": 151900.0,
         "drawdown_from_high": -0.3536,
-        "avg_volume_value": 6038852315.0,
+        "avg_volume_value": 6031271885.0,
         "liquidity_min_value": 2000000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "KRW",
-        "liquidity_buffer_multiple": 3.019,
-        "volume_ratio_3d_20d": 0.542
+        "liquidity_buffer_multiple": 3.016,
+        "volume_ratio_3d_20d": 0.534
       },
       "catalyst_context": {
         "status": "not_checked",

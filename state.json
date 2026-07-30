@@ -1,6 +1,6 @@
 {
   "last_run_date": "2026-07-30",
-  "last_run_at": "2026-07-30T18:41:37.817987+09:00",
+  "last_run_at": "2026-07-30T19:06:23.436977+09:00",
   "last_run_status": "OK",
   "last_error_count": 0,
   "last_errors": [],
@@ -11856,6 +11856,6 @@
   "prev_day": {
     "candidates": [],
     "alerts_count": 1,
-    "vix": 19.51
+    "vix": 19.5
   }
 }
