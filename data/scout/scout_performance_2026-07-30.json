@@ -4220,6 +4220,76 @@
       }
     },
     "shadow_policy_comparison": {
+      "left_side_context_v1": {
+        "count": 2,
+        "evaluated_count": 0,
+        "avg_d5_return_pct": null,
+        "avg_d10_return_pct": null,
+        "avg_d20_return_pct": null,
+        "avg_d5_alpha_pct": null,
+        "avg_d10_alpha_pct": null,
+        "avg_d20_alpha_pct": null,
+        "tickers": [
+          "HIG",
+          "ZTS"
+        ],
+        "records": [
+          {
+            "snapshot_date": "2026-07-30",
+            "ticker": "HIG",
+            "bucket": "shadow:left_side_context_v1",
+            "status": "NO_EXECUTABLE_SESSION",
+            "final_verdict": "PENDING",
+            "rule_selection_rank": null,
+            "selection_rank": null,
+            "selection_tier": "A",
+            "primary_lane": "left_side",
+            "primary_lane_status": "STAGE2_STRONG_PASS",
+            "llm_reason": "",
+            "llm_risk": "",
+            "llm_drop_reason": "",
+            "d1_return_pct": null,
+            "d3_return_pct": null,
+            "d5_return_pct": null,
+            "d10_return_pct": null,
+            "d20_return_pct": null,
+            "d5_alpha_pct": null,
+            "d10_alpha_pct": null,
+            "d20_alpha_pct": null,
+            "benchmark_ticker": null,
+            "market_regime": null,
+            "mfe_pct": null,
+            "mae_pct": null
+          },
+          {
+            "snapshot_date": "2026-07-30",
+            "ticker": "ZTS",
+            "bucket": "shadow:left_side_context_v1",
+            "status": "NO_EXECUTABLE_SESSION",
+            "final_verdict": "PENDING",
+            "rule_selection_rank": null,
+            "selection_rank": null,
+            "selection_tier": "A",
+            "primary_lane": "left_side",
+            "primary_lane_status": "STAGE2_STRONG_PASS",
+            "llm_reason": "",
+            "llm_risk": "",
+            "llm_drop_reason": "",
+            "d1_return_pct": null,
+            "d3_return_pct": null,
+            "d5_return_pct": null,
+            "d10_return_pct": null,
+            "d20_return_pct": null,
+            "d5_alpha_pct": null,
+            "d10_alpha_pct": null,
+            "d20_alpha_pct": null,
+            "benchmark_ticker": null,
+            "market_regime": null,
+            "mfe_pct": null,
+            "mae_pct": null
+          }
+        ]
+      },
       "us_precision_v1": {
         "count": 17,
         "evaluated_count": 17,
@@ -4876,6 +4946,28 @@
             "d5": 0.528,
             "d10": 0.54,
             "d20": 0.529
+          }
+        },
+        "shadow:left_side_context_v1": {
+          "count": 2,
+          "evaluated_count": 0,
+          "snapshot_dates": [
+            "2026-07-30"
+          ],
+          "avg_return_pct": {
+            "d5": null,
+            "d10": null,
+            "d20": null
+          },
+          "avg_alpha_pct": {
+            "d5": null,
+            "d10": null,
+            "d20": null
+          },
+          "positive_alpha_rate": {
+            "d5": null,
+            "d10": null,
+            "d20": null
           }
         },
         "shadow:us_precision_v1": {
@@ -7633,7 +7725,7 @@
           "reason_code": "PRODUCTION_GATE_NO_PASS",
           "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
           "blockers": {
-            "tier_not_allowed": 40
+            "tier_not_allowed": 38
           }
         },
         "abstention_status": "PENDING",
@@ -228790,12 +228882,12 @@
         "higher_low": false,
         "higher_high": false,
         "ma50_recover": false,
-        "volume_breakout": false,
+        "volume_breakout": true,
         "higher_low_date": "",
         "higher_high_date": "",
         "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
+        "volume_breakout_date": "2026-07-30",
+        "event_count": 1
       },
       "final_verdict": "FAILED_FAST",
       "benchmark": {
@@ -239141,12 +239233,12 @@
         "higher_low": false,
         "higher_high": false,
         "ma50_recover": false,
-        "volume_breakout": false,
+        "volume_breakout": true,
         "higher_low_date": "",
         "higher_high_date": "",
         "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
+        "volume_breakout_date": "2026-07-30",
+        "event_count": 1
       },
       "final_verdict": "FAILED_FAST",
       "benchmark": {
@@ -243573,12 +243665,12 @@
         "higher_low": false,
         "higher_high": false,
         "ma50_recover": false,
-        "volume_breakout": false,
+        "volume_breakout": true,
         "higher_low_date": "",
         "higher_high_date": "",
         "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
+        "volume_breakout_date": "2026-07-30",
+        "event_count": 1
       },
       "final_verdict": "FAILED_FAST",
       "benchmark": {
@@ -247963,12 +248055,12 @@
         "higher_low": false,
         "higher_high": false,
         "ma50_recover": false,
-        "volume_breakout": false,
+        "volume_breakout": true,
         "higher_low_date": "",
         "higher_high_date": "",
         "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
+        "volume_breakout_date": "2026-07-30",
+        "event_count": 1
       },
       "final_verdict": "FAILED_FAST",
       "benchmark": {
@@ -253092,12 +253184,12 @@
         "higher_low": false,
         "higher_high": false,
         "ma50_recover": false,
-        "volume_breakout": false,
+        "volume_breakout": true,
         "higher_low_date": "",
         "higher_high_date": "",
         "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
+        "volume_breakout_date": "2026-07-30",
+        "event_count": 1
       },
       "final_verdict": "WINNER",
       "benchmark": {
@@ -266580,12 +266672,12 @@
         "higher_low": false,
         "higher_high": false,
         "ma50_recover": false,
-        "volume_breakout": false,
+        "volume_breakout": true,
         "higher_low_date": "",
         "higher_high_date": "",
         "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
+        "volume_breakout_date": "2026-07-30",
+        "event_count": 1
       },
       "final_verdict": "PENDING",
       "benchmark": {
@@ -272005,12 +272097,12 @@
         "higher_low": false,
         "higher_high": false,
         "ma50_recover": false,
-        "volume_breakout": false,
+        "volume_breakout": true,
         "higher_low_date": "",
         "higher_high_date": "",
         "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
+        "volume_breakout_date": "2026-07-30",
+        "event_count": 1
       },
       "final_verdict": "PENDING",
       "benchmark": {
@@ -277592,12 +277684,12 @@
         "higher_low": false,
         "higher_high": false,
         "ma50_recover": false,
-        "volume_breakout": false,
+        "volume_breakout": true,
         "higher_low_date": "",
         "higher_high_date": "",
         "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
+        "volume_breakout_date": "2026-07-30",
+        "event_count": 1
       },
       "final_verdict": "PENDING",
       "benchmark": {
@@ -282283,12 +282375,12 @@
         "higher_low": false,
         "higher_high": false,
         "ma50_recover": false,
-        "volume_breakout": false,
+        "volume_breakout": true,
         "higher_low_date": "",
         "higher_high_date": "",
         "ma50_recover_date": "",
-        "volume_breakout_date": "",
-        "event_count": 0
+        "volume_breakout_date": "2026-07-30",
+        "event_count": 1
       },
       "final_verdict": "PENDING",
       "benchmark": {
@@ -292700,7 +292792,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -292710,7 +292802,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -292720,18 +292812,17 @@
       "country": "US",
       "sector": "Technology",
       "score": 2.2,
-      "selection_tier": "C",
+      "selection_tier": "REVIEW",
       "selection_rank": null,
       "rule_selection_rank": null,
       "selection_lane_rank": 1,
-      "selection_support_count": 4,
+      "selection_support_count": 3,
       "selection_support_reasons": [
         "theme:STRONG_SUPPORT",
         "quality:QUALITY_SUPPORT",
-        "catalyst:POSITIVE_REVALUATION",
         "theme_peer_confirmation"
       ],
-      "selection_catalyst_freshness_rank": 4,
+      "selection_catalyst_freshness_rank": -1,
       "llm_selected": false,
       "llm_override": false,
       "llm_reason": "",
@@ -292740,7 +292831,7 @@
       "llm_drop_reason": "",
       "outcome_memory_effect": "NONE",
       "outcome_memory_evidence_refs": [],
-      "opportunity_score": 3.147,
+      "opportunity_score": 2.547,
       "drawdown_from_high": -0.2795,
       "factor_ret_20d": 0.047,
       "factor_atr_pct": 0.0305,
@@ -292796,7 +292887,7 @@
         "cloud_software"
       ],
       "quality_auditor_status": "QUALITY_SUPPORT",
-      "catalyst_classification": "POSITIVE_REVALUATION",
+      "catalyst_classification": "RISK_CATALYST",
       "catalyst_freshness": "FRESH_3D",
       "catalyst_event_types": [
         "earnings",
@@ -292825,7 +292916,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -292835,7 +292926,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -292949,7 +293040,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -292959,7 +293050,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -293065,7 +293156,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -293075,7 +293166,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -293085,7 +293176,7 @@
       "country": "US",
       "sector": "Healthcare",
       "score": 1.4,
-      "selection_tier": "D",
+      "selection_tier": "REVIEW",
       "selection_rank": null,
       "rule_selection_rank": null,
       "selection_lane_rank": 1,
@@ -293093,7 +293184,7 @@
       "selection_support_reasons": [
         "theme:SUPPORT"
       ],
-      "selection_catalyst_freshness_rank": 0,
+      "selection_catalyst_freshness_rank": -1,
       "llm_selected": false,
       "llm_override": false,
       "llm_reason": "",
@@ -293147,7 +293238,7 @@
       "sector_rrg_quadrant": "LEADING",
       "theme_keys": [],
       "quality_auditor_status": "NEUTRAL",
-      "catalyst_classification": "NOISE",
+      "catalyst_classification": "RISK_CATALYST",
       "catalyst_freshness": "FRESH_3D",
       "catalyst_event_types": [
         "earnings",
@@ -293176,7 +293267,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -293186,7 +293277,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -293284,7 +293375,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -293294,7 +293385,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -293407,7 +293498,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -293417,7 +293508,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -293520,7 +293611,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -293530,7 +293621,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -293632,7 +293723,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -293642,7 +293733,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -293741,7 +293832,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -293751,7 +293842,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -293854,7 +293945,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -293864,7 +293955,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -293977,7 +294068,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -293987,7 +294078,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -294100,7 +294191,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -294110,7 +294201,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -294216,7 +294307,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -294226,7 +294317,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -294338,7 +294429,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -294348,7 +294439,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -294451,7 +294542,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -294461,7 +294552,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -294572,7 +294663,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -294582,7 +294673,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -294695,7 +294786,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -294705,7 +294796,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -294814,7 +294905,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -294824,7 +294915,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -294926,7 +295017,7 @@
     },
     {
       "snapshot_date": "2026-07-30",
-      "generated_at": "2026-07-30T17:31:36+09:00",
+      "generated_at": "2026-07-30T18:30:50+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -294936,7 +295027,7 @@
         "reason_code": "PRODUCTION_GATE_NO_PASS",
         "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
         "blockers": {
-          "tier_not_allowed": 40
+          "tier_not_allowed": 38
         }
       },
       "bucket": "radar_top",
@@ -295031,6 +295122,265 @@
       "currently_open": false,
       "position_id": "",
       "lane_key": "pullback",
+      "benchmark_ticker": "SPY",
+      "status": "NO_EXECUTABLE_SESSION",
+      "execution_policy": {
+        "status": "NO_EXECUTABLE_SESSION",
+        "timing_basis": "generated_at_market_clock",
+        "earliest_date": "2026-07-30"
+      },
+      "final_verdict": "PENDING"
+    },
+    {
+      "snapshot_date": "2026-07-30",
+      "generated_at": "2026-07-30T18:30:50+09:00",
+      "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
+      "production_policy_id": "integrity_v1",
+      "snapshot_candidate_count": 0,
+      "snapshot_decision_health": {
+        "status": "HEALTHY_ABSTENTION",
+        "label": "정상 관망",
+        "reason_code": "PRODUCTION_GATE_NO_PASS",
+        "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
+        "blockers": {
+          "tier_not_allowed": 38
+        }
+      },
+      "bucket": "shadow:left_side_context_v1",
+      "rank": 1,
+      "ticker": "HIG",
+      "name": "Hartford Insurance Group Inc",
+      "country": "US",
+      "sector": "Financial",
+      "score": 0.2,
+      "selection_tier": "A",
+      "selection_rank": null,
+      "rule_selection_rank": null,
+      "selection_lane_rank": 5,
+      "selection_support_count": 4,
+      "selection_support_reasons": [
+        "theme:SUPPORT",
+        "quality:STRONG_QUALITY",
+        "catalyst:POSITIVE_REVALUATION",
+        "reaction:CONFIRMED_UP"
+      ],
+      "selection_catalyst_freshness_rank": 5,
+      "llm_selected": false,
+      "llm_override": false,
+      "llm_reason": "",
+      "llm_risk": "",
+      "llm_dropped": false,
+      "llm_drop_reason": "",
+      "outcome_memory_effect": "NONE",
+      "outcome_memory_evidence_refs": [],
+      "opportunity_score": 2.6,
+      "drawdown_from_high": 0.0,
+      "factor_ret_20d": 0.0993,
+      "factor_atr_pct": 0.0211,
+      "factor_positives": [
+        "liquidity_good",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [],
+      "liquidity_buffer_multiple": 24.219,
+      "avg_traded_value_20d": 242192272.2,
+      "primary_lane": "left_side",
+      "primary_lane_status": "STAGE2_STRONG_PASS",
+      "primary_lane_reasons": [
+        "low_zone",
+        "down_days_decreasing",
+        "upper_range_closes",
+        "higher_low",
+        "higher_high_bonus"
+      ],
+      "primary_lane_review_flags": [],
+      "primary_lane_metrics": {
+        "drawdown_from_252d_high": 0.0,
+        "distance_from_252d_low": 0.1906,
+        "atr_ratio_10d_20d": 1.0588,
+        "down_day_ratio_10d": 0.3,
+        "down_day_ratio_prev20d": 0.5,
+        "upper_close_days_5d": 4,
+        "deceleration_count": 2,
+        "recent_10d_low": 136.65,
+        "prev_10d_low": 133.89
+      },
+      "strength_lane_status": "FAIL",
+      "strength_lane_metrics": {},
+      "pullback_lane_status": "WAIT",
+      "pullback_lane_metrics": {
+        "ma50": 134.3854,
+        "ma200": 134.6147,
+        "drawdown_from_252d_high": 0.0,
+        "volume_ratio_5d_20d": 1.2163
+      },
+      "left_side_lane_status": "STAGE2_STRONG_PASS",
+      "left_side_stage": "STAGE2",
+      "left_side_lane_metrics": {
+        "drawdown_from_252d_high": 0.0,
+        "distance_from_252d_low": 0.1906,
+        "atr_ratio_10d_20d": 1.0588,
+        "down_day_ratio_10d": 0.3,
+        "down_day_ratio_prev20d": 0.5,
+        "upper_close_days_5d": 4,
+        "deceleration_count": 2,
+        "recent_10d_low": 136.65,
+        "prev_10d_low": 133.89
+      },
+      "signal_keys": [],
+      "theme_industry_status": "SUPPORT",
+      "sector_rrg_quadrant": "LEADING",
+      "theme_keys": [],
+      "quality_auditor_status": "STRONG_QUALITY",
+      "catalyst_classification": "POSITIVE_REVALUATION",
+      "catalyst_freshness": "FRESH_3D",
+      "catalyst_event_types": [
+        "analyst_rating",
+        "earnings",
+        "news"
+      ],
+      "catalyst_has_upcoming": true,
+      "decision_context": {
+        "market_regime": {
+          "status": "UNKNOWN",
+          "reason": "benchmark_regime_missing"
+        },
+        "benchmark_ticker": "SPY"
+      },
+      "actually_bought": false,
+      "currently_open": false,
+      "position_id": "",
+      "lane_key": "left_side",
+      "benchmark_ticker": "SPY",
+      "status": "NO_EXECUTABLE_SESSION",
+      "execution_policy": {
+        "status": "NO_EXECUTABLE_SESSION",
+        "timing_basis": "generated_at_market_clock",
+        "earliest_date": "2026-07-30"
+      },
+      "final_verdict": "PENDING"
+    },
+    {
+      "snapshot_date": "2026-07-30",
+      "generated_at": "2026-07-30T18:30:50+09:00",
+      "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
+      "production_policy_id": "integrity_v1",
+      "snapshot_candidate_count": 0,
+      "snapshot_decision_health": {
+        "status": "HEALTHY_ABSTENTION",
+        "label": "정상 관망",
+        "reason_code": "PRODUCTION_GATE_NO_PASS",
+        "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
+        "blockers": {
+          "tier_not_allowed": 38
+        }
+      },
+      "bucket": "shadow:left_side_context_v1",
+      "rank": 2,
+      "ticker": "ZTS",
+      "name": "Zoetis Inc",
+      "country": "US",
+      "sector": "Healthcare",
+      "score": 0.2,
+      "selection_tier": "A",
+      "selection_rank": null,
+      "rule_selection_rank": null,
+      "selection_lane_rank": 5,
+      "selection_support_count": 3,
+      "selection_support_reasons": [
+        "theme:SUPPORT",
+        "quality:STRONG_QUALITY",
+        "catalyst:POSITIVE_REVALUATION"
+      ],
+      "selection_catalyst_freshness_rank": 4,
+      "llm_selected": false,
+      "llm_override": false,
+      "llm_reason": "",
+      "llm_risk": "",
+      "llm_dropped": false,
+      "llm_drop_reason": "",
+      "outcome_memory_effect": "NONE",
+      "outcome_memory_evidence_refs": [],
+      "opportunity_score": 5.114,
+      "drawdown_from_high": -0.5029,
+      "factor_ret_20d": 0.0845,
+      "factor_atr_pct": 0.0315,
+      "factor_positives": [
+        "liquidity_good",
+        "not_chasing",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [],
+      "liquidity_buffer_multiple": 42.111,
+      "avg_traded_value_20d": 421106453.92,
+      "primary_lane": "left_side",
+      "primary_lane_status": "STAGE2_STRONG_PASS",
+      "primary_lane_reasons": [
+        "low_zone",
+        "down_days_decreasing",
+        "upper_range_closes",
+        "higher_low",
+        "higher_high_bonus"
+      ],
+      "primary_lane_review_flags": [
+        "extreme_drawdown_needs_review"
+      ],
+      "primary_lane_metrics": {
+        "drawdown_from_252d_high": -0.5029,
+        "distance_from_252d_low": 0.0845,
+        "atr_ratio_10d_20d": 0.9397,
+        "down_day_ratio_10d": 0.4,
+        "down_day_ratio_prev20d": 0.55,
+        "upper_close_days_5d": 3,
+        "deceleration_count": 2,
+        "recent_10d_low": 74.19,
+        "prev_10d_low": 72.45
+      },
+      "strength_lane_status": "FAIL",
+      "strength_lane_metrics": {},
+      "pullback_lane_status": "FAIL",
+      "pullback_lane_metrics": {
+        "ma50": 77.2508,
+        "ma200": 111.1159,
+        "drawdown_from_252d_high": -0.5029,
+        "volume_ratio_5d_20d": 0.9521
+      },
+      "left_side_lane_status": "STAGE2_STRONG_PASS",
+      "left_side_stage": "STAGE2",
+      "left_side_lane_metrics": {
+        "drawdown_from_252d_high": -0.5029,
+        "distance_from_252d_low": 0.0845,
+        "atr_ratio_10d_20d": 0.9397,
+        "down_day_ratio_10d": 0.4,
+        "down_day_ratio_prev20d": 0.55,
+        "upper_close_days_5d": 3,
+        "deceleration_count": 2,
+        "recent_10d_low": 74.19,
+        "prev_10d_low": 72.45
+      },
+      "signal_keys": [],
+      "theme_industry_status": "SUPPORT",
+      "sector_rrg_quadrant": "LEADING",
+      "theme_keys": [],
+      "quality_auditor_status": "STRONG_QUALITY",
+      "catalyst_classification": "POSITIVE_REVALUATION",
+      "catalyst_freshness": "FRESH_3D",
+      "catalyst_event_types": [
+        "earnings",
+        "news"
+      ],
+      "catalyst_has_upcoming": true,
+      "decision_context": {
+        "market_regime": {
+          "status": "UNKNOWN",
+          "reason": "benchmark_regime_missing"
+        },
+        "benchmark_ticker": "SPY"
+      },
+      "actually_bought": false,
+      "currently_open": false,
+      "position_id": "",
+      "lane_key": "left_side",
       "benchmark_ticker": "SPY",
       "status": "NO_EXECUTABLE_SESSION",
       "execution_policy": {

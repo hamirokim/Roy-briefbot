@@ -92,6 +92,7 @@
 - NONE: n=129/129, alpha={'d5': 0.12, 'd10': -0.66, 'd20': 0.56}, positiveAlpha={'d5': 0.528, 'd10': 0.54, 'd20': 0.529}
 
 ## Precision Shadow Comparison
+- left_side_context_v1: n=0/2, avgD5=None, avgD10=None, avgD20=None, alphaD20=None
 - us_precision_v1: n=17/17, avgD5=1.63, avgD10=None, avgD20=None, alphaD20=None
 
 ## Policy Comparison
@@ -101,6 +102,7 @@
 - baseline:radar_top3_not_selected: n=162/165, alpha={'d5': 0.97, 'd10': 0.99, 'd20': 6.5}, positiveAlpha={'d5': 0.594, 'd10': 0.611, 'd20': 0.609}
 - production:integrity_v1_unversioned: n=3/3, alpha={'d5': None, 'd10': None, 'd20': None}, positiveAlpha={'d5': None, 'd10': None, 'd20': None}
 - production:legacy_recorded: n=126/126, alpha={'d5': 0.12, 'd10': -0.66, 'd20': 0.56}, positiveAlpha={'d5': 0.528, 'd10': 0.54, 'd20': 0.529}
+- shadow:left_side_context_v1: n=0/2, alpha={'d5': None, 'd10': None, 'd20': None}, positiveAlpha={'d5': None, 'd10': None, 'd20': None}
 - shadow:us_precision_v1: n=17/17, alpha={'d5': 3.71, 'd10': None, 'd20': None}, positiveAlpha={'d5': 0.8, 'd10': None, 'd20': None}
 
 ## Decision And Abstention Audit
