@@ -20,6 +20,7 @@ Q2 (Roy 지시): Daily 통일.
 import json
 import logging
 import os
+import re
 import time
 from collections import Counter
 from copy import deepcopy
@@ -1527,6 +1528,7 @@ CATALYST_RISK_KEYWORDS = {
     "bankruptcy", "cuts", "cut", "downgrade", "downgraded", "fraud", "lawsuit",
     "miss", "misses", "probe", "recall", "investigation", "warning", "slump",
     "plunge", "decline", "halts", "sanction", "fine", "layoff",
+    "class action", "lead plaintiff", "securities fraud",
     "소송", "횡령", "배임", "상장폐지", "관리종목", "감사의견", "영업정지",
     "투자주의", "불성실공시", "실적악화", "적자전환", "감자", "유상증자",
     "전환사채", "신주인수권부사채", "cb", "bw",
@@ -1713,8 +1715,19 @@ def _price_volume_reaction(item: dict, catalyst_cfg: dict) -> dict:
 
 def _keyword_classify_news_item(item: dict) -> dict:
     text = f"{item.get('headline', '')} {item.get('summary', '')}".lower()
-    pos = sorted({kw for kw in CATALYST_POSITIVE_KEYWORDS if kw in text})
-    risk = sorted({kw for kw in CATALYST_RISK_KEYWORDS if kw in text})
+
+    def _matches(keyword: str) -> bool:
+        if keyword.isascii():
+            return bool(
+                re.search(
+                    rf"(?<![a-z0-9]){re.escape(keyword)}(?![a-z0-9])",
+                    text,
+                )
+            )
+        return keyword in text
+
+    pos = sorted({kw for kw in CATALYST_POSITIVE_KEYWORDS if _matches(kw)})
+    risk = sorted({kw for kw in CATALYST_RISK_KEYWORDS if _matches(kw)})
     event_type = str(item.get("event_type", "") or "").lower()
 
     if risk:
@@ -3069,6 +3082,20 @@ def _select_left_side_context_shadow_candidates(
             or ["volatility_extreme", "chasing_extreme", "chasing_hot"]
         )
     }
+    excluded_quality_flags = {
+        str(value).lower()
+        for value in (
+            cfg.get("excluded_quality_flags")
+            or ["near_52w_high", "overextended_20d"]
+        )
+    }
+    excluded_lane_review_flags = {
+        str(value).lower()
+        for value in (
+            cfg.get("excluded_lane_review_flags")
+            or ["extreme_drawdown_needs_review", "market_weak_wait_confirm"]
+        )
+    }
     risk_catalyst_excluded = bool(cfg.get("risk_catalyst_excluded", True))
     require_production_gate = bool(cfg.get("require_production_gate", False))
 
@@ -3093,6 +3120,8 @@ def _select_left_side_context_shadow_candidates(
             "allow_unmapped_theme": allow_unmapped_theme,
             "quality_statuses": sorted(quality_statuses),
             "excluded_factor_negatives": sorted(excluded_factor_negatives),
+            "excluded_quality_flags": sorted(excluded_quality_flags),
+            "excluded_lane_review_flags": sorted(excluded_lane_review_flags),
             "risk_catalyst_excluded": risk_catalyst_excluded,
             "require_production_gate": require_production_gate,
             "backfill": False,
@@ -3116,6 +3145,21 @@ def _select_left_side_context_shadow_candidates(
         factor_negatives = {
             str(value).lower()
             for value in ((item.get("factor_context") or {}).get("negatives") or [])
+        }
+        quality_flags = {
+            str(value).lower()
+            for value in (item.get("quality_flags") or [])
+        }
+        lane_review_flags = {
+            str(value).lower()
+            for value in (
+                (
+                    (item.get("price_lanes") or {})
+                    .get(required_lane, {})
+                    .get("review_flags", [])
+                )
+                or []
+            )
         }
         sector_quadrant = str(
             ((theme_industry.get("sector") or {}).get("quadrant", "")) or ""
@@ -3170,6 +3214,12 @@ def _select_left_side_context_shadow_candidates(
             continue
         if factor_negatives & excluded_factor_negatives:
             rejection_counts["factor_extreme"] += 1
+            continue
+        if quality_flags & excluded_quality_flags:
+            rejection_counts["quality_flag"] += 1
+            continue
+        if lane_review_flags & excluded_lane_review_flags:
+            rejection_counts["lane_review"] += 1
             continue
         eligible.append(item)
 

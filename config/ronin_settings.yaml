@@ -181,6 +181,8 @@ scout:
       allow_unmapped_theme: true       # 테마 비대상 일반기업은 섹터 근거로 평가
       quality_statuses: ["QUALITY_SUPPORT", "STRONG_QUALITY"]
       excluded_factor_negatives: ["volatility_extreme", "chasing_extreme", "chasing_hot"]
+      excluded_quality_flags: ["near_52w_high", "overextended_20d"]
+      excluded_lane_review_flags: ["extreme_drawdown_needs_review", "market_weak_wait_confirm"]
       risk_catalyst_excluded: true
       require_production_gate: false    # 기존 Tier A 게이트와 독립된 좌측진입 대안 정책으로 측정
       backfill: false

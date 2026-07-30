@@ -17,6 +17,8 @@ def _item(
     quality_status: str = "QUALITY_SUPPORT",
     risk_catalyst: bool = False,
     opportunity: float = 1.0,
+    quality_flags: list[str] | None = None,
+    lane_review_flags: list[str] | None = None,
 ) -> dict:
     themes = []
     if theme_status is not None:
@@ -43,6 +45,13 @@ def _item(
             "top3_excluded_reason": "RISK_CATALYST" if risk_catalyst else "",
         },
         "factor_context": {"negatives": []},
+        "quality_flags": quality_flags or [],
+        "price_lanes": {
+            "left_side": {
+                "status": lane_status,
+                "review_flags": lane_review_flags or [],
+            },
+        },
         "top3_selection": {
             "tier": "A",
             "tier_rank": 4,
@@ -81,6 +90,11 @@ def _config() -> dict:
                 "volatility_extreme",
                 "chasing_extreme",
                 "chasing_hot",
+            ],
+            "excluded_quality_flags": ["near_52w_high", "overextended_20d"],
+            "excluded_lane_review_flags": [
+                "extreme_drawdown_needs_review",
+                "market_weak_wait_confirm",
             ],
             "risk_catalyst_excluded": True,
             "require_production_gate": False,
@@ -126,6 +140,11 @@ class LeftSideContextShadowTests(unittest.TestCase):
             _item("WAIT", lane_status="WAIT_CONFIRM"),
             _item("LAGGING", sector_quadrant="LAGGING"),
             _item("ONE_ETF", theme_status="PARENT_SUPPORT"),
+            _item("AT_HIGH", quality_flags=["near_52w_high"]),
+            _item(
+                "EXTREME_DROP",
+                lane_review_flags=["extreme_drawdown_needs_review"],
+            ),
         ]
         selected, audit = scout._select_left_side_context_shadow_candidates(radar, _config())
 
@@ -136,6 +155,32 @@ class LeftSideContextShadowTests(unittest.TestCase):
         self.assertEqual(audit["rejection_counts"]["lane_status"], 1)
         self.assertEqual(audit["rejection_counts"]["sector"], 1)
         self.assertEqual(audit["rejection_counts"]["mapped_theme"], 1)
+        self.assertEqual(audit["rejection_counts"]["quality_flag"], 1)
+        self.assertEqual(audit["rejection_counts"]["lane_review"], 1)
+
+    def test_keyword_matching_does_not_read_marketbeat_as_an_earnings_beat(self):
+        result = scout._keyword_classify_news_item(
+            {
+                "headline": "Average Rating of Hold by Brokerages",
+                "summary": "MarketBeat.com reports the consensus rating is Hold.",
+                "event_type": "news",
+            }
+        )
+
+        self.assertEqual(result["classification"], scout.CATALYST_CLASS_NOISE)
+        self.assertNotIn("beat", result["keywords_positive"])
+
+    def test_class_action_deadline_is_a_risk_catalyst(self):
+        result = scout._keyword_classify_news_item(
+            {
+                "headline": "Lead plaintiff deadline in securities class action",
+                "summary": "",
+                "event_type": "news",
+            }
+        )
+
+        self.assertEqual(result["classification"], scout.CATALYST_CLASS_RISK)
+        self.assertIn("class action", result["keywords_risk"])
 
     def test_allows_unmapped_company_when_sector_supports_it(self):
         selected, audit = scout._select_left_side_context_shadow_candidates(
