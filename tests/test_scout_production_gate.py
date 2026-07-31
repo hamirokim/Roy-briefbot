@@ -327,10 +327,12 @@ class DigestContractTests(unittest.TestCase):
             },
         )
 
-        self.assertIn("1. 시장 판단:", message)
-        self.assertIn("2. 환전: 대기", message)
-        self.assertIn("3. TradingView 확인", message)
-        self.assertIn("없음 · 정상 관망", message)
+        self.assertIn("오늘 결론 |", message)
+        self.assertIn("환전 | 대기", message)
+        self.assertIn("TradingView에서 열 종목 | 0개", message)
+        self.assertIn("판정: 정상 관망", message)
+        self.assertIn("0개인 이유: Tier A 확실 후보 없음", message)
+        self.assertIn("TradingView 확인 목록 아님", message)
         self.assertIn("Tier A 확실 후보 없음", message)
         self.assertNotIn("관찰 레이더", message)
         self.assertNotIn("HWM", message)
@@ -412,13 +414,13 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"radar_pool_count": 58}},
         )
 
-        self.assertIn("3. TradingView 확인", message)
+        self.assertIn("TradingView에서 열 종목 | 2개", message)
         self.assertIn("1. 🇺🇸 <b>AAA</b> [좌측진입 강함]", message)
         self.assertIn("2. 🇺🇸 <b>BBB</b> [좌측진입 준비]", message)
         self.assertNotIn("CCC", message)
         self.assertIn("TradingView RONIN 인디케이터의 실제 진입 신호", message)
         self.assertIn("무효: 지지 구간 이탈 시 무효", message)
-        self.assertIn("4. 보유 경보", message)
+        self.assertIn("보유 변화", message)
         self.assertIn("<b>HELD</b>", message)
         self.assertNotIn("후순위", message)
 
@@ -443,8 +445,67 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
         )
 
-        self.assertIn("FRED 0/6", message)
-        self.assertIn("매크로 확신도 하향", message)
+        self.assertIn("데이터 한계", message)
+        self.assertIn("금리·물가 원자료 수집 실패", message)
+        self.assertIn("시장 가격 반응은 정상 수집", message)
+        self.assertNotIn("FRED 0/6", message)
+
+    def test_macro_jargon_is_translated_for_telegram(self):
+        agent = self._digest_agent()
+        message = agent._build_telegram(
+            [],
+            {},
+            {
+                "macro": {"yesterday_announced": [{"name": "FOMC"}]},
+                "interpretation": {
+                    "announcements_interpretation": (
+                        "긴축 잔존으로 해석했습니다. DXY는 보합이고 "
+                        "USDKRW는 1435.86원입니다."
+                    )
+                },
+            },
+            scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
+        )
+
+        self.assertIn("높은 금리가 더 오래 갈 가능성", message)
+        self.assertIn("달러지수(DXY)", message)
+        self.assertIn("원/달러는 1435.86원", message)
+        self.assertNotIn("긴축 잔존", message)
+
+    def test_holding_alert_separates_structure_news_and_unverified_thesis(self):
+        agent = self._digest_agent()
+        message = agent._build_telegram(
+            [],
+            {
+                "alerts": [{
+                    "ticker": "NOW",
+                    "price": {"daily_pct": 4.7},
+                    "technical_structure": {
+                        "status": "BREAKOUT_HOLD",
+                        "label": "소고점 돌파 구조 유지",
+                        "breakout_level": 104.2,
+                        "support": 103.8,
+                        "resistance": 118.0,
+                        "up_streak": 4,
+                        "extension_atr": 1.7,
+                        "pause_watch": True,
+                    },
+                    "news": [{"ko_summary": "NOW 관련 뉴스 영향은 중립"}],
+                    "thesis_impact": {
+                        "status": "UNVERIFIED",
+                        "label": "투자 근거 영향 판정 불가",
+                    },
+                }],
+            },
+            {},
+            scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
+        )
+
+        self.assertIn("구조: 소고점 돌파 구조 유지", message)
+        self.assertIn("연속 상승 4일", message)
+        self.assertIn("뉴스: NOW 관련 뉴스 영향은 중립", message)
+        self.assertIn("투자 근거 영향: 판정 불가 · 등록 기준 없음", message)
+        self.assertNotIn("기존 투자 근거를 바꿀 새 정보 없음", message)
 
     def test_theme_label_without_two_supportive_etfs_cannot_drive_opportunity(self):
         agent = self._digest_agent()
@@ -475,8 +536,8 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
         )
 
-        self.assertIn("시장 판단: 선별 관찰", message)
-        self.assertNotIn("테마: AI·반도체", message)
+        self.assertIn("오늘 결론 | 선별 관찰", message)
+        self.assertNotIn("우호 테마: AI·반도체", message)
 
     def test_malformed_earnings_placeholder_is_not_displayed(self):
         candidate = {

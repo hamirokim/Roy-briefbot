@@ -231,6 +231,51 @@ def _theme_counts_text(counts: dict) -> str:
     )
 
 
+def _clip_complete_sentence(text: str, max_chars: int) -> str:
+    """Keep Telegram summaries short without cutting a number or sentence in half."""
+    cleaned = " ".join(str(text or "").split())
+    if len(cleaned) <= max_chars:
+        return cleaned
+    clipped = cleaned[:max_chars]
+    sentence_end = max(clipped.rfind("."), clipped.rfind("다."), clipped.rfind("요."))
+    if sentence_end >= max_chars // 2:
+        return clipped[:sentence_end + 1].strip()
+    word_end = clipped.rfind(" ")
+    if word_end >= max_chars // 2:
+        return clipped[:word_end].rstrip(" ,·")
+    return clipped.rstrip(" ,·")
+
+
+def _humanize_macro_text(text: str) -> str:
+    replacements = {
+        "긴축 잔존": "금리 인하 기대가 약해지고 높은 금리가 더 오래 갈 가능성",
+        "DXY": "달러지수(DXY)",
+        "USDKRW": "원/달러",
+    }
+    result = str(text or "")
+    for source, target in replacements.items():
+        result = result.replace(source, target)
+    return result
+
+
+def _event_result_text(events: list[dict]) -> str:
+    """Use an explicit event result only when the collector supplied one."""
+    parts = []
+    for event in events[:2]:
+        name = str(event.get("name", "") or "").strip()
+        result = next(
+            (
+                str(event.get(key, "") or "").strip()
+                for key in ("result", "actual", "decision", "outcome")
+                if str(event.get(key, "") or "").strip()
+            ),
+            "",
+        )
+        if result:
+            parts.append(f"{name}: {result}" if name else result)
+    return " · ".join(parts)
+
+
 def _rrg_labels(by_quadrant: dict, quadrant: str, limit: int = 4) -> list[str]:
     return [
         str(item.get("label") or item.get("ticker") or "").strip()
@@ -337,7 +382,14 @@ def _fx_action(fx: dict) -> dict:
     else:
         label = "분할"
     if isinstance(percentile, (int, float)):
-        reason = f"{current}원 · 최근 90일 분포 {round(float(percentile))}%"
+        rounded = round(float(percentile))
+        if rounded <= 5:
+            location = f"최근 90일 최저권 ({rounded}백분위)"
+        elif rounded >= 95:
+            location = f"최근 90일 최고권 ({rounded}백분위)"
+        else:
+            location = f"최근 90일 중 하위 {rounded}% 위치"
+        reason = f"{current}원 · {location} · 52주 비교는 아직 미수집"
     else:
         reason = f"{current}원 · {fx.get('label', '분포 확인 필요')}"
     return {"label": label, "reason": reason}
@@ -1052,14 +1104,25 @@ class DigestAgent(BaseAgent):
         macro = regime_out.get("macro", {}) or {}
         lines = [f"<b>RONIN BRIEF — {date_str}{mode_badge}</b>", ""]
 
-        lines.append(f"<b>1. 시장 판단: {market_view['label']}</b>")
-        lines.append(f"근거: {market_view['reason']}")
+        lines.append(f"<b>오늘 결론 | {market_view['label']}</b>")
+        lines.append(f"판단 근거: {market_view['reason']}")
+        lines.append(
+            f"차트 확인: {len(ordered_candidates)}개"
+            + (" · 아래 후보만 확인" if ordered_candidates else " · 새로 열 종목 없음")
+        )
+        lines.append("")
+
+        lines.append("<b>시장 지도 | 배경 정보</b>")
         if market_view["strong_sectors"]:
-            lines.append(f"기회: {', '.join(market_view['strong_sectors'][:5])}")
+            lines.append(f"우호 섹터: {', '.join(market_view['strong_sectors'][:5])}")
         if market_view["strong_themes"]:
-            lines.append(f"테마: {', '.join(market_view['strong_themes'])}")
+            lines.append(f"우호 테마: {', '.join(market_view['strong_themes'])}")
         if market_view["weak_sectors"]:
-            lines.append(f"주의: {', '.join(market_view['weak_sectors'][:5])}")
+            lines.append(f"위험 섹터: {', '.join(market_view['weak_sectors'][:5])}")
+        lines.append("용도: 시장 방향 판단용 · TradingView 확인 목록 아님")
+        if period_summary:
+            lines.append(f"기간 흐름: {_clip_complete_sentence(period_summary, 220)}")
+        lines.append("")
 
         yesterday = macro.get("yesterday_announced", []) or []
         announcement_text = str(
@@ -1068,6 +1131,9 @@ class DigestAgent(BaseAgent):
             )
             or ""
         ).strip()
+        upcoming = macro.get("upcoming", []) or []
+        if yesterday or upcoming or announcement_text or macro_interp:
+            lines.append("<b>이벤트</b>")
         if yesterday:
             event_names = ", ".join(
                 str(event.get("name", "") or "").strip()
@@ -1075,13 +1141,24 @@ class DigestAgent(BaseAgent):
                 if str(event.get("name", "") or "").strip()
             )
             if event_names:
-                lines.append(f"과거 변화: {event_names}")
+                lines.append(f"발표: {event_names}")
+            result_text = _event_result_text(yesterday)
+            lines.append(
+                f"결정 내용: {result_text}"
+                if result_text
+                else "결정 내용: 실제 수치·결정문 미수집 · 시장 반응만 확인"
+            )
         if announcement_text:
-            lines.append(f"반응: {announcement_text[:180]}")
+            lines.append(
+                f"시장 반응: "
+                f"{_clip_complete_sentence(_humanize_macro_text(announcement_text), 300)}"
+            )
         elif macro_interp:
-            lines.append(f"흐름: {macro_interp[:180]}")
+            lines.append(
+                f"시장 반응: "
+                f"{_clip_complete_sentence(_humanize_macro_text(macro_interp), 300)}"
+            )
 
-        upcoming = macro.get("upcoming", []) or []
         if upcoming:
             future = " · ".join(
                 f"{event.get('date')} {event.get('name')}"
@@ -1089,16 +1166,15 @@ class DigestAgent(BaseAgent):
                 if event.get("name")
             )
             if future:
-                lines.append(f"앞으로: {future}")
-        if period_summary:
-            lines.append(f"기간 흐름: {period_summary[:220]}")
+                lines.append(f"다음 일정: {future}")
+        if yesterday or upcoming or announcement_text or macro_interp:
+            lines.append("")
+
+        lines.append(f"<b>환전 | {fx_view['label']}</b>")
+        lines.append(f"현재 위치: {fx_view['reason']}")
         lines.append("")
 
-        lines.append(f"<b>2. 환전: {fx_view['label']}</b>")
-        lines.append(f"근거: {fx_view['reason']}")
-        lines.append("")
-
-        lines.append("<b>3. TradingView 확인</b>")
+        lines.append(f"<b>TradingView에서 열 종목 | {len(ordered_candidates)}개</b>")
         if ordered_candidates:
             for rank, candidate in enumerate(ordered_candidates, 1):
                 flag = _COUNTRY_FLAG.get(candidate.get("country", ""), "·")
@@ -1140,36 +1216,67 @@ class DigestAgent(BaseAgent):
                 or decision_health.get("reason")
                 or "좌측진입 Stage 2와 품질 기준을 함께 통과한 후보 없음"
             )
-            lines.append(f"<b>없음 · {health_label}</b>")
-            lines.append(f"이유: {reason}")
+            lines.append(f"판정: {health_label}")
+            lines.append(f"0개인 이유: {reason}")
+            lines.append("시장 지도와 개별 종목 통과 기준은 별개임")
         lines.append("")
 
         alerts = guard_out.get("alerts", []) or []
         if alerts:
-            lines.append("<b>4. 보유 경보</b>")
+            lines.append("<b>보유 변화</b>")
             for alert in alerts[:3]:
                 price = alert.get("price", {}) or {}
                 pct = price.get("daily_pct")
                 pct_text = f" {float(pct):+.1f}%" if isinstance(pct, (int, float)) else ""
                 lines.append(f"• <b>{alert.get('ticker')}</b>{pct_text}")
+                structure = alert.get("technical_structure", {}) or {}
+                if structure:
+                    detail = structure.get("label", "기술 구조 판정 불가")
+                    breakout = structure.get("breakout_level")
+                    support = structure.get("support")
+                    resistance = structure.get("resistance")
+                    parts = [str(detail)]
+                    if breakout is not None:
+                        parts.append(f"돌파선 {breakout}")
+                    if support is not None:
+                        parts.append(f"지지 {support}")
+                    if resistance is not None:
+                        parts.append(f"상단 저항 {resistance}")
+                    lines.append(f"  구조: {' · '.join(parts)}")
+                    if structure.get("pause_watch"):
+                        streak = int(structure.get("up_streak", 0) or 0)
+                        extension = structure.get("extension_atr")
+                        caution = f"연속 상승 {streak}일" if streak else "20일선 이격 확대"
+                        if extension is not None:
+                            caution += f" · 20일선 대비 {float(extension):+.1f}ATR"
+                        lines.append(f"  주의: {caution}, 지지 유지 확인")
                 news = alert.get("news", []) or []
                 if news:
                     summary = str(
                         news[0].get("ko_summary") or news[0].get("headline") or ""
                     ).strip()
                     if summary:
-                        lines.append(f"  {summary[:120]}")
+                        lines.append(f"  뉴스: {summary[:120]}")
+                thesis = alert.get("thesis_impact", {}) or {}
+                if thesis.get("status") == "UNVERIFIED":
+                    lines.append("  투자 근거 영향: 판정 불가 · 등록 기준 없음")
             lines.append("")
 
         coverage = macro.get("source_coverage", {}) or {}
         if coverage.get("status") == "DEGRADED":
-            lines.append("<b>데이터 주의</b>")
-            lines.append(
-                f"FRED {coverage.get('fred_collected', 0)}/"
-                f"{coverage.get('fred_requested', 0)}, 시장반응 "
-                f"{coverage.get('market_collected', 0)}/"
-                f"{coverage.get('market_requested', 0)} 수집 · 매크로 확신도 하향"
-            )
+            fred_ok = int(coverage.get("fred_collected", 0) or 0)
+            fred_total = int(coverage.get("fred_requested", 0) or 0)
+            market_ok = int(coverage.get("market_collected", 0) or 0)
+            market_total = int(coverage.get("market_requested", 0) or 0)
+            lines.append("<b>데이터 한계</b>")
+            if fred_ok < fred_total:
+                lines.append(
+                    "금리·물가 원자료 수집 실패 · 이벤트의 실제 결정 수치는 확인하지 못함"
+                )
+            if market_ok < market_total:
+                lines.append("시장 가격 반응도 일부 누락 · 오늘 시장 판단 신뢰도 낮춤")
+            else:
+                lines.append("시장 가격 반응은 정상 수집 · 원자료가 없어 해석 확신도만 낮춤")
 
         text = "\n".join(lines).strip()
         if len(text) > max_chars:
@@ -2168,6 +2275,26 @@ class DigestAgent(BaseAgent):
                 memo = a.get("memo", "")
                 if memo:
                     lines.append(f"      메모   : {memo}")
+                structure = a.get("technical_structure", {}) or {}
+                if structure:
+                    lines.append(f"      구조   : {structure.get('label', '판정 불가')}")
+                    if structure.get("breakout_level") is not None:
+                        lines.append(
+                            f"               돌파선 {structure.get('breakout_level')} | "
+                            f"지지 {structure.get('support')} | "
+                            f"상단 저항 {structure.get('resistance') or '미확인'}"
+                        )
+                    if structure.get("pause_watch"):
+                        lines.append(
+                            f"      주의   : 연속 상승 {structure.get('up_streak', 0)}일 | "
+                            f"20일선 이격 {structure.get('extension_atr')}ATR"
+                        )
+                thesis = a.get("thesis_impact", {}) or {}
+                if thesis:
+                    lines.append(
+                        f"      근거 영향: {thesis.get('label', '판정 불가')} "
+                        f"({thesis.get('reason', '기준 없음')})"
+                    )
                 lines.append("")
 
         # ── Quiet 종목 풀 노출 (D87 신규: 변동 X여도 뉴스/가격 정보 노출) ──

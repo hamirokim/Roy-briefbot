@@ -94,10 +94,192 @@ def _normalize_ticker_for_yf(ticker: str) -> str:
     return t.upper()
 
 
-def _fetch_price_change(ticker: str) -> Optional[dict]:
+def _confirmed_pivots(values: list[float], span: int, *, high: bool) -> list[tuple[int, float]]:
+    """Return confirmed local pivots using the same left/right span convention as Pine."""
+    if span < 1 or len(values) < (span * 2) + 1:
+        return []
+    pivots: list[tuple[int, float]] = []
+    for idx in range(span, len(values) - span):
+        value = values[idx]
+        window = values[idx - span:idx + span + 1]
+        extreme = max(window) if high else min(window)
+        if value == extreme and window.count(value) == 1:
+            pivots.append((idx, value))
+    return pivots
+
+
+def _assess_position_structure(
+    df,
+    structure_cfg: dict,
+    sl_price: Optional[float] = None,
+) -> dict:
+    """Diagnose daily breakout/support structure without claiming TradingView parity."""
+    required = {"High", "Low", "Close"}
+    if df is None or df.empty or not required.issubset(set(df.columns)):
+        return {"status": "DATA_UNAVAILABLE", "label": "기술 구조 판정 불가"}
+
+    clean = df[["High", "Low", "Close"]].dropna().copy()
+    if len(clean) < 40:
+        return {
+            "status": "DATA_SHORT",
+            "label": "기술 구조 자료 부족",
+            "bars": int(len(clean)),
+        }
+
+    highs = [float(v) for v in clean["High"].values]
+    lows = [float(v) for v in clean["Low"].values]
+    closes = [float(v) for v in clean["Close"].values]
+    span = max(2, int(structure_cfg.get("pivot_span", 3)))
+    scan_bars = max(40, int(structure_cfg.get("pivot_scan_bars", 90)))
+    breakout_lookback = max(5, int(structure_cfg.get("breakout_lookback_bars", 20)))
+    start_idx = max(0, len(closes) - scan_bars)
+
+    pivot_highs = [
+        (idx, value)
+        for idx, value in _confirmed_pivots(highs, span, high=True)
+        if idx >= start_idx
+    ]
+    pivot_lows = [
+        (idx, value)
+        for idx, value in _confirmed_pivots(lows, span, high=False)
+        if idx >= start_idx
+    ]
+
+    breakout = None
+    search_from = max(1, len(closes) - breakout_lookback)
+    for bar_idx in range(search_from, len(closes)):
+        prior_highs = [(idx, value) for idx, value in pivot_highs if idx < bar_idx]
+        if not prior_highs:
+            continue
+        pivot_idx, level = prior_highs[-1]
+        if closes[bar_idx - 1] <= level < closes[bar_idx]:
+            breakout = {
+                "bar_idx": bar_idx,
+                "pivot_idx": pivot_idx,
+                "level": level,
+            }
+
+    last = closes[-1]
+    previous = closes[-2]
+    up_streak = 0
+    for idx in range(len(closes) - 1, 0, -1):
+        if closes[idx] > closes[idx - 1]:
+            up_streak += 1
+        else:
+            break
+
+    true_ranges = []
+    for idx in range(1, len(closes)):
+        true_ranges.append(
+            max(
+                highs[idx] - lows[idx],
+                abs(highs[idx] - closes[idx - 1]),
+                abs(lows[idx] - closes[idx - 1]),
+            )
+        )
+    atr14 = sum(true_ranges[-14:]) / min(14, len(true_ranges)) if true_ranges else 0.0
+    ma20 = sum(closes[-20:]) / min(20, len(closes))
+    extension_atr = ((last - ma20) / atr14) if atr14 else None
+    extension_streak = max(2, int(structure_cfg.get("extension_up_streak", 3)))
+    extension_atr_limit = float(structure_cfg.get("extension_atr_multiple", 1.5))
+
+    base = {
+        "timeframe": "1D",
+        "source": "yfinance_daily_approximation",
+        "close": round(last, 2),
+        "up_streak": up_streak,
+        "ma20": round(ma20, 2),
+        "atr14": round(atr14, 2),
+        "extension_atr": round(extension_atr, 2) if extension_atr is not None else None,
+        "pause_watch": bool(
+            up_streak >= extension_streak
+            or (extension_atr is not None and extension_atr >= extension_atr_limit)
+        ),
+        "sl_price": round(float(sl_price), 2) if sl_price else None,
+        "previous_close": round(previous, 2),
+    }
+
+    if breakout is None:
+        support_candidates = [(idx, value) for idx, value in pivot_lows if value < last]
+        support = support_candidates[-1][1] if support_candidates else None
+        return {
+            **base,
+            "status": "NO_RECENT_BREAKOUT",
+            "label": "최근 소고점 돌파 미확인",
+            "support": round(support, 2) if support is not None else None,
+        }
+
+    breakout_level = float(breakout["level"])
+    breakout_bar = int(breakout["bar_idx"])
+    post_breakout_lows = [
+        value
+        for idx, value in pivot_lows
+        if breakout_bar <= idx < len(closes) and value < last
+    ]
+    earlier_lows = [
+        value
+        for idx, value in pivot_lows
+        if idx < breakout_bar and value < breakout_level
+    ]
+    support_floor = (
+        max(post_breakout_lows)
+        if post_breakout_lows
+        else (earlier_lows[-1] if earlier_lows else None)
+    )
+    overhead = [
+        value
+        for idx, value in pivot_highs
+        if idx < breakout["pivot_idx"] and value > last
+    ]
+    resistance = min(overhead) if overhead else None
+    days_since_breakout = len(closes) - 1 - breakout_bar
+
+    if last >= breakout_level and (not sl_price or last >= float(sl_price)):
+        status = "BREAKOUT_HOLD"
+        label = "소고점 돌파 구조 유지"
+        support = max([breakout_level, *post_breakout_lows])
+    elif (
+        support_floor is not None
+        and last >= support_floor
+        and (not sl_price or last >= float(sl_price))
+    ):
+        status = "SUPPORT_WATCH"
+        label = "돌파선·지지 재확인"
+        support = support_floor
+    else:
+        status = "STRUCTURE_BREAK"
+        label = "기술 구조 훼손 주의"
+        support = support_floor if support_floor is not None else breakout_level
+
+    support_distance_pct = ((last - support) / last) * 100 if last else None
+    resistance_room_pct = ((resistance - last) / last) * 100 if resistance and last else None
+
+    return {
+        **base,
+        "status": status,
+        "label": label,
+        "breakout_level": round(breakout_level, 2),
+        "days_since_breakout": days_since_breakout,
+        "support": round(support, 2),
+        "support_distance_pct": (
+            round(support_distance_pct, 1) if support_distance_pct is not None else None
+        ),
+        "resistance": round(resistance, 2) if resistance is not None else None,
+        "resistance_room_pct": (
+            round(resistance_room_pct, 1) if resistance_room_pct is not None else None
+        ),
+    }
+
+
+def _fetch_price_change(
+    ticker: str,
+    structure_cfg: Optional[dict] = None,
+    sl_price: Optional[float] = None,
+) -> Optional[dict]:
     """일간/주간 변동률 — yfinance period 방식 (D89 시간대 버그 근본 해결).
 
-    end 파라미터 폐기. period="1mo" 사용 → 시간대 무관, 자동 최신까지.
+    end 파라미터 폐기. period 방식 사용 → 시간대 무관, 자동 최신까지.
+    기술 구조 진단이 켜지면 설정된 장기 구간을 함께 수집한다.
     GitHub Actions UTC + KST 07:10 + end exclusive 3중 충돌 해결.
     """
     try:
@@ -105,11 +287,14 @@ def _fetch_price_change(ticker: str) -> Optional[dict]:
 
         yf_ticker = _normalize_ticker_for_yf(ticker)
 
+        structure_cfg = structure_cfg or {}
+        structure_enabled = bool(structure_cfg.get("enabled", False))
+        period = str(structure_cfg.get("history_period", "6mo")) if structure_enabled else "1mo"
+
         # D89 근본 해결: period 사용 → start/end 시간대 신경 X
-        # weekly_pct는 6 거래일 필요 → "1mo" (~22 거래일) 충분
         df = yf.download(
             yf_ticker,
-            period="1mo",
+            period=period,
             progress=False,
             auto_adjust=False,
         )
@@ -135,12 +320,19 @@ def _fetch_price_change(ticker: str) -> Optional[dict]:
         w_idx = max(0, len(closes) - 6)
         weekly_pct = ((last - float(closes[w_idx])) / float(closes[w_idx])) * 100 if closes[w_idx] else 0
 
-        return {
+        result = {
             "close": round(last, 2),
             "prev_close": round(prev, 2),
             "daily_pct": round(daily_pct, 2),
             "weekly_pct": round(weekly_pct, 2),
         }
+        if structure_enabled:
+            result["technical_structure"] = _assess_position_structure(
+                df,
+                structure_cfg,
+                sl_price=sl_price,
+            )
+        return result
     except Exception as e:
         logger.warning("[guard yf] %s 실패: %s", ticker, e)
         return None
@@ -211,6 +403,7 @@ class GuardAgent(BaseAgent):
         threshold_pct = guard_cfg["daily_change_threshold_pct"]
         news_lookback = guard_cfg["news_lookback_hours"]
         max_news = guard_cfg["max_news_per_ticker"]
+        structure_cfg = guard_cfg.get("technical_structure", {}) or {}
 
         # 1. 보유 종목 로드
         positions = _load_positions_from_sheets()
@@ -248,15 +441,25 @@ class GuardAgent(BaseAgent):
                 "memo": pos.get("memo", ""),
             }
 
-            price = _fetch_price_change(ticker)
+            price = _fetch_price_change(
+                ticker,
+                structure_cfg=structure_cfg,
+                sl_price=pos.get("sl_price"),
+            )
             if price:
                 entry["price"] = price
+                entry["technical_structure"] = price.get("technical_structure", {})
             time.sleep(0.3)
 
             # 변동 여부와 무관하게 뉴스 fetch (D87)
             news = _fetch_company_news(ticker, news_lookback, max_news)
             time.sleep(0.5)
             entry["news"] = news
+            entry["thesis_impact"] = {
+                "status": "UNVERIFIED",
+                "label": "투자 근거 영향 판정 불가",
+                "reason": "구조화된 보유 근거 기준 없음",
+            }
 
             is_significant = (
                 price is not None
@@ -404,6 +607,15 @@ class GuardAgent(BaseAgent):
 
                 if a.get("memo"):
                     lines.append(f"  메모: {a['memo']}")
+                structure = a.get("technical_structure", {}) or {}
+                if structure:
+                    lines.append(f"  기술 구조: {structure.get('label', '판정 불가')}")
+                thesis = a.get("thesis_impact", {}) or {}
+                if thesis:
+                    lines.append(
+                        f"  투자 근거 영향: {thesis.get('label')} "
+                        f"({thesis.get('reason')})"
+                    )
             lines.append("")
 
         if quiet:

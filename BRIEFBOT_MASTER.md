@@ -1,6 +1,6 @@
 # Roy-briefbot Master
 
-Last updated: 2026-07-15
+Last updated: 2026-07-30
 
 This is the single source of truth for Roy-briefbot. Codex and Claude should read this file before changing the bot.
 
@@ -119,6 +119,36 @@ Status as of 2026-07-29:
   the reason across recent/current/upcoming context, FX as `적극/분할/대기`, only candidates worth
   opening in TradingView, holding alerts, and degraded-data warnings. Detailed RRG tables, theme
   tables, WATCHLIST, SCOUT statistics, quiet news, and learning notes remain in Sheets/snapshots.
+- Market operating language is derived only from collected REGIME evidence. The bot must not present
+  Roy's discretionary view as an operating mode. No manual market-view input or override is planned;
+  Roy compares the bot's independent conclusion with his own judgment outside the bot.
+- GUARD separates deterministic daily-chart structure from news tone. Structure is diagnostic and
+  never claims TradingView parity. News tone must not be converted into `hold`, `sell`, or
+  `investment thesis unchanged`. Until a structured thesis contract exists, thesis impact is
+  explicitly `UNVERIFIED`.
+
+## TradingView Validation Lab
+
+The first TradingView integration step is a bounded validation experiment, not a global alert rollout.
+
+- Ground truth signal: `Entry50` and `Entry100`. They are separate event types but neither receives a
+  higher quality label by number alone.
+- Decision context recorded separately: core-filter pass/block, Gate progression, nearby
+  support/resistance, volume-profile context, and market regime.
+- Initial cohort: 16 symbols frozen for 20 trading days.
+  - 4 current holdings.
+  - 4 highest signal-readiness SCOUT cases.
+  - 4 matched low-readiness controls.
+  - 4 market representatives covering broad market, weak/risk sector, defensive sector, and an
+    active theme.
+- Sector/theme watchboards remain market context and are not all alert targets.
+- Phase 1 compares historical TradingView chart markers with briefbot calculations. Webhook ingestion
+  is considered only after Phase 1 shows useful recall, tolerable false positives, and stable lead
+  time.
+- Required comparison fields: symbol, timeframe, preset signature, bar date, Entry type, briefbot
+  readiness state, lead bars, filter result, Gate stage dates, and later outcome.
+- This lab is shadow-only. It cannot change Telegram candidates, cooldown, Sheets candidates, or
+  production recommendation policy until separately approved.
 
 ## SCOUT Candidate Pipeline
 

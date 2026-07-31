@@ -312,6 +312,15 @@ guard:
   daily_change_threshold_pct: 2.0      # ±2% 이상 변동 시 뉴스 매칭
   news_lookback_hours: 24
   max_news_per_ticker: 3
+  technical_structure:
+    enabled: true
+    shadow_only: true                  # TradingView parity 검증 전 매매/추천 권한 없음
+    history_period: "6mo"
+    pivot_span: 3                      # Pine Gate 기본 pivot length와 같은 진단 시작값
+    breakout_lookback_bars: 20
+    pivot_scan_bars: 90
+    extension_up_streak: 3             # 연속 상승 주의 문구용 임시값, 성과 검증 후 조정
+    extension_atr_multiple: 1.5        # 20일선 이격 주의 문구용 임시값
 
 # ── REGIME 매크로 ──
 regime:
