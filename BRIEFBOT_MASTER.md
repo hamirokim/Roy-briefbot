@@ -119,6 +119,13 @@ Status as of 2026-07-29:
   the reason across recent/current/upcoming context, FX as `적극/분할/대기`, only candidates worth
   opening in TradingView, holding alerts, and degraded-data warnings. Detailed RRG tables, theme
   tables, WATCHLIST, SCOUT statistics, quiet news, and learning notes remain in Sheets/snapshots.
+- FX action uses both the recent 90-day and 52-week USD/KRW distributions. `적극` or `대기`
+  requires both windows to agree; mixed windows return `분할`. Telegram also shows the 52-week
+  range and distance from its median.
+- Core ETF valuation is display-only. `VTI`, `IXUS`, `AVUV`, `AVDV`, `QQQM`, and `VT` compare
+  P/E, P/B, P/S, and P/CF with their Yahoo fund category. The result is labeled relative low,
+  mixed, or relative high and is never presented as intrinsic fair value. `SCHP` and `IAUM`
+  remain `판정 보류` until asset-appropriate real-yield evidence is connected.
 - Market operating language is derived only from collected REGIME evidence. The bot must not present
   Roy's discretionary view as an operating mode. No manual market-view input or override is planned;
   Roy compares the bot's independent conclusion with his own judgment outside the bot.
@@ -661,16 +668,22 @@ Sheets record.
 
 ## Current Next Work Order
 
-Priority 1: Deploy Left-side Context Shadow v1 and audit one untouched scheduled brief.
+Priority 1: Validate the 52-week FX and core ETF valuation runtime output on one untouched brief.
 
-- Do not trigger a duplicate Telegram message solely for the shadow policy.
+- Confirm both FX windows are present and mixed windows cannot produce `적극`.
+- Confirm all eight core ETFs are listed, partial Yahoo failures fail closed per ticker, and the
+  valuation section does not change SCOUT, REGIME operating mode, or DCA decisions.
+- Do not trigger a duplicate Telegram message solely for this validation.
+
+Priority 2: Accumulate untouched Left-side Context Shadow outcomes.
+
 - Confirm the new snapshot stores `shadow_policies.left_side_context_v1`.
 - Confirm the policy returns 0 to 2 candidates, never backfills, and does not alter Telegram,
   Sheets, cooldown, or final Top3.
 - Confirm every selected row passed the production gate, is `left_side` Stage 2, and has supportive
   sector RRG plus group breadth when a theme is mapped.
 
-Priority 2: Accumulate untouched future outcomes.
+Priority 3: Accumulate untouched future outcomes.
 
 - Historical replay currently has no mature D5/D10 sample for this policy; do not infer performance
   from the two recent `LVS` selections.
@@ -678,7 +691,7 @@ Priority 2: Accumulate untouched future outcomes.
   zero-recommendation dates.
 - Keep Outcome Memory advisory and do not let it override a current hard gate.
 
-Priority 3: Propose a live left-side-only switch only after forward evidence is useful.
+Priority 4: Propose a live left-side-only switch only after forward evidence is useful.
 
 - The agreed target is 0 to 2 executable left-side candidates, with strength/breakout candidates
   remaining internal until TradingView gains a separately validated breakout route.

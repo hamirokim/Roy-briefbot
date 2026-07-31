@@ -472,6 +472,32 @@ class DigestContractTests(unittest.TestCase):
         self.assertIn("원/달러는 1435.86원", message)
         self.assertNotIn("긴축 잔존", message)
 
+    def test_fx_output_shows_both_windows_and_52w_context(self):
+        agent = self._digest_agent()
+        message = agent._build_telegram(
+            [],
+            {},
+            {
+                "fx": {
+                    "current": 1431.18,
+                    "action": "적극",
+                    "percentile_90d": 0.0,
+                    "percentile_52w": 18.0,
+                    "median_52w": 1478.2,
+                    "median_diff_pct_52w": -3.18,
+                    "min_52w": 1395.4,
+                    "max_52w": 1518.6,
+                }
+            },
+            scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
+        )
+
+        self.assertIn("환전 | 적극", message)
+        self.assertIn("90일 0백분위 · 52주 18백분위", message)
+        self.assertIn("52주 범위 1395.40~1518.60원", message)
+        self.assertIn("중앙값 1478.20원보다 3.2% 낮음", message)
+        self.assertNotIn("52주 비교는 아직 미수집", message)
+
     def test_holding_alert_separates_structure_news_and_unverified_thesis(self):
         agent = self._digest_agent()
         message = agent._build_telegram(
@@ -562,6 +588,46 @@ class DigestContractTests(unittest.TestCase):
         })
         self.assertIn("실패 56 (조기 56 / 20일 무진전 0)", text)
         self.assertNotIn("FALSE_POSITIVE 0", text)
+
+
+class FxWindowTests(unittest.TestCase):
+    @staticmethod
+    def _agent():
+        return regime.RegimeAgent.__new__(regime.RegimeAgent)
+
+    def test_aggressive_requires_low_90d_and_low_52w(self):
+        short = list(range(1400, 1461)) + [1390.0]
+        year = list(range(1350, 1601)) + [1390.0]
+        cfg = {
+            "history_range_90d": "3mo",
+            "history_range_52w": "1y",
+            "percentile_high_pct": 70,
+            "percentile_low_pct": 30,
+        }
+
+        with patch.object(regime, "_fetch_fx_history", side_effect=[short, year]):
+            result = self._agent()._compute_fx(cfg)
+
+        self.assertEqual(result["action"], "적극")
+        self.assertLessEqual(result["percentile_90d"], 30)
+        self.assertLessEqual(result["percentile_52w"], 30)
+
+    def test_mixed_windows_are_split_not_aggressive(self):
+        short = list(range(1400, 1461)) + [1390.0]
+        year = list(range(1200, 1451)) + [1390.0]
+        cfg = {
+            "history_range_90d": "3mo",
+            "history_range_52w": "1y",
+            "percentile_high_pct": 70,
+            "percentile_low_pct": 30,
+        }
+
+        with patch.object(regime, "_fetch_fx_history", side_effect=[short, year]):
+            result = self._agent()._compute_fx(cfg)
+
+        self.assertEqual(result["action"], "분할")
+        self.assertLessEqual(result["percentile_90d"], 30)
+        self.assertGreater(result["percentile_52w"], 30)
 
 
 class IntegrityResetTests(unittest.TestCase):

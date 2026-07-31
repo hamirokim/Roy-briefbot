@@ -368,31 +368,70 @@ def _market_operating_view(regime_out: dict) -> dict:
 def _fx_action(fx: dict) -> dict:
     current = fx.get("current")
     if current is None:
-        return {"label": "대기", "reason": "환율 데이터 수집 실패"}
+        return {"label": "대기", "reason": "환율 데이터 수집 실패", "detail": ""}
+    explicit_action = str(fx.get("action", "") or "")
     judgment = str(fx.get("judgment", "") or "")
-    percentile = fx.get("percentile")
-    if "적정" in judgment:
+    percentile_90d = fx.get("percentile_90d", fx.get("percentile"))
+    percentile_52w = fx.get("percentile_52w")
+    if explicit_action in {"적극", "분할", "대기"}:
+        label = explicit_action
+    elif "적정" in judgment:
         label = "적극"
     elif "보류" in judgment:
         label = "대기"
     elif judgment:
         label = "분할"
-    elif isinstance(percentile, (int, float)):
-        label = "적극" if percentile <= 30 else ("대기" if percentile >= 70 else "분할")
+    elif isinstance(percentile_90d, (int, float)):
+        label = (
+            "적극"
+            if percentile_90d <= 30
+            else ("대기" if percentile_90d >= 70 else "분할")
+        )
     else:
         label = "분할"
-    if isinstance(percentile, (int, float)):
-        rounded = round(float(percentile))
-        if rounded <= 5:
-            location = f"최근 90일 최저권 ({rounded}백분위)"
-        elif rounded >= 95:
-            location = f"최근 90일 최고권 ({rounded}백분위)"
+    if isinstance(percentile_90d, (int, float)):
+        reason = f"{current}원 · 90일 {round(float(percentile_90d))}백분위"
+        if isinstance(percentile_52w, (int, float)):
+            reason += f" · 52주 {round(float(percentile_52w))}백분위"
         else:
-            location = f"최근 90일 중 하위 {rounded}% 위치"
-        reason = f"{current}원 · {location} · 52주 비교는 아직 미수집"
+            reason += " · 52주 수집 실패"
     else:
         reason = f"{current}원 · {fx.get('label', '분포 확인 필요')}"
-    return {"label": label, "reason": reason}
+    detail = ""
+    median_52w = fx.get("median_52w")
+    median_diff = fx.get("median_diff_pct_52w")
+    min_52w = fx.get("min_52w")
+    max_52w = fx.get("max_52w")
+    if all(isinstance(value, (int, float)) for value in (min_52w, max_52w)):
+        detail = f"52주 범위 {float(min_52w):.2f}~{float(max_52w):.2f}원"
+        if isinstance(median_52w, (int, float)) and isinstance(median_diff, (int, float)):
+            direction = "높음" if float(median_diff) > 0 else "낮음"
+            detail += (
+                f" · 중앙값 {float(median_52w):.2f}원보다 "
+                f"{abs(float(median_diff)):.1f}% {direction}"
+            )
+    return {"label": label, "reason": reason, "detail": detail}
+
+
+def _core_valuation_groups(core_valuation: dict) -> list[tuple[str, list[str]]]:
+    grouped = [
+        ("상대 낮음", []),
+        ("혼재", []),
+        ("상대 높음", []),
+        ("판정 보류", []),
+    ]
+    buckets = {label: items for label, items in grouped}
+    for item in core_valuation.get("items", []) or []:
+        label = str(item.get("label", "판정 보류") or "판정 보류")
+        if label not in buckets:
+            label = "판정 보류"
+        ticker = str(item.get("ticker", "?") or "?")
+        if label == "판정 보류":
+            asset_type = str(item.get("asset_type", "") or "")
+            suffix = "물가채" if asset_type == "tips_bond" else ("금" if asset_type == "gold" else "수집 실패")
+            ticker = f"{ticker}({suffix})"
+        buckets[label].append(ticker)
+    return [(label, items) for label, items in grouped if items]
 
 
 def _candidate_judgment(candidate: dict) -> dict:
@@ -1172,7 +1211,19 @@ class DigestAgent(BaseAgent):
 
         lines.append(f"<b>환전 | {fx_view['label']}</b>")
         lines.append(f"현재 위치: {fx_view['reason']}")
+        if fx_view.get("detail"):
+            lines.append(f"52주 기준: {fx_view['detail']}")
         lines.append("")
+
+        core_valuation = regime_out.get("core_valuation", {}) or {}
+        if core_valuation.get("enabled"):
+            total = int(core_valuation.get("total_count", 0) or 0)
+            complete = int(core_valuation.get("complete_count", 0) or 0)
+            lines.append(f"<b>메인포트 估值 | {complete}/{total} 판정</b>")
+            for label, tickers in _core_valuation_groups(core_valuation):
+                lines.append(f"{label}: {', '.join(tickers)}")
+            lines.append("기준: 주식 ETF 카테고리 배수 비교 · 절대 적정가 아님")
+            lines.append("")
 
         lines.append(f"<b>TradingView에서 열 종목 | {len(ordered_candidates)}개</b>")
         if ordered_candidates:
@@ -1723,6 +1774,24 @@ class DigestAgent(BaseAgent):
             label_part = f" — {label}" if label else ""
             judg_part = f" / {judgment}" if judgment else ""
             lines.append(f"  • 원/달러 {fx['current']}원{label_part}{judg_part}")
+
+        core_valuation = regime_out.get("core_valuation", {}) or {}
+        if core_valuation.get("enabled"):
+            lines.append("")
+            lines.append("  • 메인포트 ETF 상대 估值:")
+            for item in core_valuation.get("items", []) or []:
+                ticker = item.get("ticker", "?")
+                label = item.get("label", "판정 보류")
+                reason = item.get("reason", "")
+                lines.append(f"      {ticker}: {label} — {reason}")
+                metrics = item.get("metrics", {}) or {}
+                if metrics:
+                    metric_text = ", ".join(
+                        f"{metric.get('label')} {metric.get('fund')} vs {metric.get('category')}"
+                        for metric in metrics.values()
+                    )
+                    lines.append(f"        배수(ETF vs 카테고리): {metric_text}")
+            lines.append("      주의: 상대 비교이며 절대 적정가 판정이 아님")
 
         # 섹터 RRG (4분면)
         rrg = regime_out.get("rrg", {}) or {}

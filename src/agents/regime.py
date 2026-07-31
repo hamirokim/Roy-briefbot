@@ -27,6 +27,7 @@ from typing import Any, Optional
 import requests
 
 from src.agents.base import BaseAgent
+from src.collectors.core_etf_valuation import collect_core_etf_valuations
 from src.utils import today_kst_str
 
 logger = logging.getLogger(__name__)
@@ -44,12 +45,17 @@ def _load_settings() -> dict:
 
 
 # ═══════════════════════════════════════════════════════════
-# 환율 90일 분위수
+# 환율 90일 + 52주 분포
 # ═══════════════════════════════════════════════════════════
 
-def _fetch_fx_history(days: int = 90) -> Optional[list[float]]:
-    """USD/KRW 90일 종가 히스토리."""
-    url = "https://query1.finance.yahoo.com/v8/finance/chart/USDKRW%3DX?range=3mo&interval=1d"
+def _fetch_fx_history(range_str: str) -> Optional[list[float]]:
+    """Fetch USD/KRW daily closes for one supported Yahoo range."""
+    if range_str not in {"3mo", "1y"}:
+        raise ValueError(f"unsupported FX history range: {range_str}")
+    url = (
+        "https://query1.finance.yahoo.com/v8/finance/chart/"
+        f"USDKRW%3DX?range={range_str}&interval=1d"
+    )
     try:
         resp = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
         if resp.status_code != 200:
@@ -66,23 +72,42 @@ def _fetch_fx_history(days: int = 90) -> Optional[list[float]]:
         return None
 
 
-def _compute_fx_percentile(history: list[float], current: float) -> dict:
-    """현재 환율의 90일 분포 내 위치."""
+def _compute_fx_distribution(history: list[float], current: float) -> dict:
+    """Compute comparable location statistics for one FX history window."""
     import bisect
+    import statistics
+
     sorted_hist = sorted(history)
     pos = bisect.bisect_left(sorted_hist, current)
     pct = (pos / len(sorted_hist)) * 100
 
     avg = sum(history) / len(history)
     avg_diff_pct = ((current - avg) / avg) * 100 if avg else 0
+    median = statistics.median(history)
+    median_diff_pct = ((current - median) / median) * 100 if median else 0
 
     return {
-        "current": round(current, 2),
         "percentile": round(pct, 1),
-        "avg_90d": round(avg, 2),
+        "average": round(avg, 2),
+        "median": round(median, 2),
         "avg_diff_pct": round(avg_diff_pct, 2),
-        "min_90d": round(min(history), 2),
-        "max_90d": round(max(history), 2),
+        "median_diff_pct": round(median_diff_pct, 2),
+        "minimum": round(min(history), 2),
+        "maximum": round(max(history), 2),
+        "observations": len(history),
+    }
+
+
+def _compute_fx_percentile(history: list[float], current: float) -> dict:
+    """Backward-compatible 90-day field names for existing consumers."""
+    stat = _compute_fx_distribution(history, current)
+    return {
+        "current": round(current, 2),
+        "percentile": stat["percentile"],
+        "avg_90d": stat["average"],
+        "avg_diff_pct": stat["avg_diff_pct"],
+        "min_90d": stat["minimum"],
+        "max_90d": stat["maximum"],
     }
 
 
@@ -257,15 +282,20 @@ class RegimeAgent(BaseAgent):
         # ── 3. 환율 90일 분위수 ──
         fx_data = self._compute_fx(regime_cfg["fx"])
 
-        # ── 4. 매크로 캘린더 — 어제 발표 + 이번 주 예정 ──
+        # ── 4. 메인포트 ETF 상대 估值 (표시 전용) ──
+        core_valuation = collect_core_etf_valuations(
+            regime_cfg.get("core_valuation", {})
+        )
+
+        # ── 5. 매크로 캘린더 — 어제 발표 + 이번 주 예정 ──
         macro_data = self._fetch_macro_events(regime_cfg["macro_calendar"])
 
-        # ── 5. LLM 해석 호출 ──
+        # ── 6. LLM 해석 호출 ──
         interpretation = self._interpret_with_llm(
             vix_data, rrg_data, fx_data, macro_data, regime_cfg
         )
 
-        # ── 6. context_text (DIGEST 입력용) ──
+        # ── 7. context_text (DIGEST 입력용) ──
         context = self._build_context(vix_data, rrg_data, fx_data, macro_data, interpretation)
 
         return {
@@ -274,6 +304,7 @@ class RegimeAgent(BaseAgent):
             "vix_data": vix_data,
             "rrg": rrg_data,
             "fx": fx_data,
+            "core_valuation": core_valuation,
             "macro": macro_data,
             "interpretation": interpretation,
             "context_text": context,
@@ -330,33 +361,69 @@ class RegimeAgent(BaseAgent):
     # 환율
     # ─────────────────────────────────────────────
     def _compute_fx(self, cfg: dict) -> dict:
-        history = _fetch_fx_history(days=cfg["history_days"])
-        if not history or len(history) < 30:
+        history_90d = _fetch_fx_history(cfg.get("history_range_90d", "3mo"))
+        history_52w = _fetch_fx_history(cfg.get("history_range_52w", "1y"))
+        if not history_90d or len(history_90d) < 30:
             return {"current": None, "label": "수집 실패"}
 
-        current = history[-1]
-        stat = _compute_fx_percentile(history[:-1], current)
+        current = history_90d[-1]
+        stat_90d = _compute_fx_distribution(history_90d[:-1], current)
+        stat_52w = (
+            _compute_fx_distribution(history_52w[:-1], current)
+            if history_52w and len(history_52w) >= 120
+            else None
+        )
 
-        # 라벨링
-        pct = stat["percentile"]
+        pct_90d = stat_90d["percentile"]
         high_pct = cfg["percentile_high_pct"]
         low_pct = cfg["percentile_low_pct"]
 
-        if pct >= high_pct:
-            label = f"평균 위 (90일 분포 상위 {round(100 - pct)}%)"
+        if stat_52w:
+            pct_52w = stat_52w["percentile"]
+            if pct_90d <= low_pct and pct_52w <= low_pct:
+                action = "적극"
+                label = "90일·52주 모두 낮은 구간"
+                judgment = "달러 매수 적정 구간"
+            elif pct_90d >= high_pct and pct_52w >= high_pct:
+                action = "대기"
+                label = "90일·52주 모두 높은 구간"
+                judgment = "달러 매수 보류 권장"
+            else:
+                action = "분할"
+                label = "단기·장기 환율 위치가 엇갈림"
+                judgment = "분할 매수 가능"
+        elif pct_90d >= high_pct:
+            action = "대기"
+            label = f"평균 위 (90일 분포 {round(pct_90d)}백분위)"
             judgment = "달러 매수 보류 권장"
-        elif pct <= low_pct:
-            label = f"평균 아래 (90일 분포 하위 {round(pct)}%)"
-            judgment = "달러 매수 적정 구간"
         else:
-            label = f"평균 근처 (90일 분포 {round(pct)}%)"
+            action = "분할"
+            label = "52주 확인 불가"
             judgment = "분할 매수 가능"
 
-        return {
-            **stat,
+        result = {
+            "current": round(current, 2),
+            "action": action,
+            "percentile": pct_90d,
+            "percentile_90d": pct_90d,
+            "avg_90d": stat_90d["average"],
+            "median_90d": stat_90d["median"],
+            "min_90d": stat_90d["minimum"],
+            "max_90d": stat_90d["maximum"],
             "label": label,
             "judgment": judgment,
         }
+        if stat_52w:
+            result.update({
+                "percentile_52w": stat_52w["percentile"],
+                "avg_52w": stat_52w["average"],
+                "median_52w": stat_52w["median"],
+                "median_diff_pct_52w": stat_52w["median_diff_pct"],
+                "min_52w": stat_52w["minimum"],
+                "max_52w": stat_52w["maximum"],
+                "observations_52w": stat_52w["observations"],
+            })
+        return result
 
     # ─────────────────────────────────────────────
     # 매크로 캘린더
