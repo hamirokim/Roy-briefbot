@@ -1,6 +1,6 @@
 {
   "date": "2026-08-01",
-  "generated_at": "2026-08-01T13:17:47+09:00",
+  "generated_at": "2026-08-01T13:32:48+09:00",
   "timezone": "Asia/Seoul",
   "data_as_of": {
     "decision_date": "2026-08-01",
@@ -528,20 +528,20 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.2684",
-            "reason": "Earnings item lacks actual result or surprise; no beat/miss shown.",
+            "reason": "Earnings line lacks actual result or surprise direction.",
             "confidence": 0.94,
             "classifier": "llm"
           },
           {
             "headline": "Cloudflare, Inc. $NET Shares Purchased by Altshuler Shaham Ltd",
-            "reason": "13F stake increase is routine ownership disclosure, not a direct company catalyst.",
-            "confidence": 0.9,
+            "reason": "Routine 13F ownership update, not a company-specific catalyst.",
+            "confidence": 0.93,
             "classifier": "llm"
           },
           {
             "headline": "3 Top Cloud Computing Stocks Worth Buying Before August",
-            "reason": "Generic bullish commentary/listicle without new company-specific event or data.",
-            "confidence": 0.88,
+            "reason": "Generic bullish commentary without new company-specific event.",
+            "confidence": 0.9,
             "classifier": "llm"
           }
         ],
@@ -573,7 +573,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Earnings item lacks actual result or surprise; no beat/miss shown.",
+            "classification_reason": "Earnings line lacks actual result or surprise direction.",
             "classification_confidence": 0.94,
             "classifier": "llm",
             "keywords_positive": [
@@ -589,8 +589,8 @@
             "url": "https://www.defenseworld.net/2026/07/29/cloudflare-inc-net-shares-purchased-by-altshuler-shaham-ltd.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "13F stake increase is routine ownership disclosure, not a direct company catalyst.",
-            "classification_confidence": 0.9,
+            "classification_reason": "Routine 13F ownership update, not a company-specific catalyst.",
+            "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -603,8 +603,8 @@
             "url": "https://www.zacks.com/stock/news/2961698/3-top-cloud-computing-stocks-worth-buying-before-august?cid=CS-STOCKNEWSAPI-FT-analyst_blog|investment_ideas-2961698",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic bullish commentary/listicle without new company-specific event or data.",
-            "classification_confidence": 0.88,
+            "classification_reason": "Generic bullish commentary without new company-specific event.",
+            "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -993,20 +993,20 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate -0.31713",
-            "reason": "Earnings item lacks actual result or surprise direction.",
-            "confidence": 0.93,
+            "reason": "Earnings line lacks actual result or surprise direction.",
+            "confidence": 0.92,
             "classifier": "llm"
           },
           {
             "headline": "Viasat Sets August 4, 2026, for First Quarter Fiscal Year 2027 Financial Results Conference Call and Webcast",
-            "reason": "Only announces a scheduled future results call; no outcome yet.",
+            "reason": "Scheduled results announcement only, no financial outcome yet.",
             "confidence": 0.98,
             "classifier": "llm"
           },
           {
             "headline": "Viasat Inc (VSAT) Stock Up 6.0% but GF Value Says Overvalued -- GF Score: 59/100",
             "reason": "Market commentary on price move and valuation, not a new catalyst.",
-            "confidence": 0.9,
+            "confidence": 0.95,
             "classifier": "llm"
           }
         ],
@@ -1038,8 +1038,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Earnings item lacks actual result or surprise direction.",
-            "classification_confidence": 0.93,
+            "classification_reason": "Earnings line lacks actual result or surprise direction.",
+            "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1054,7 +1054,7 @@
             "url": "https://www.globenewswire.com/news-release/2026/07/29/3335164/0/en/Viasat-Sets-August-4-2026-for-First-Quarter-Fiscal-Year-2027-Financial-Results-Conference-Call-and-Webcast.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Only announces a scheduled future results call; no outcome yet.",
+            "classification_reason": "Scheduled results announcement only, no financial outcome yet.",
             "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
@@ -1069,7 +1069,7 @@
             "event_type": "news",
             "classification": "NOISE",
             "classification_reason": "Market commentary on price move and valuation, not a new catalyst.",
-            "classification_confidence": 0.9,
+            "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1361,8 +1361,8 @@
         "positive_hits": [
           {
             "headline": "Bitcoin Hits 3-Week Low As Strategy Plans $5 Billion Sale",
-            "reason": "Plans a $5 billion sale implies a major financing/capital action that could affect valuation.",
-            "confidence": 0.61,
+            "reason": "Planned $5 billion sale implies major financing/capital action that could affect valuation.",
+            "confidence": 0.62,
             "classifier": "llm",
             "keywords": []
           }
@@ -1370,14 +1370,14 @@
         "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 10.28",
-            "reason": "Earnings actual missing versus estimate suggests a likely miss or incomplete negative report.",
-            "confidence": 0.72,
+            "reason": "Earnings actual missing versus estimate suggests a negative earnings event.",
+            "confidence": 0.86,
             "classifier": "llm",
             "keywords": []
           },
           {
             "headline": "Strategy Reports Earnings: What the Bitcoin Bet Looks Like Now",
-            "reason": "Reports a very large quarterly net loss driven by bitcoin markdown, which can pressure valuation.",
+            "reason": "Large quarterly net loss driven by bitcoin markdown is valuation-negative.",
             "confidence": 0.95,
             "classifier": "llm",
             "keywords": []
@@ -1412,8 +1412,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings actual missing versus estimate suggests a likely miss or incomplete negative report.",
-            "classification_confidence": 0.72,
+            "classification_reason": "Earnings actual missing versus estimate suggests a negative earnings event.",
+            "classification_confidence": 0.86,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1428,7 +1428,7 @@
             "url": "https://247wallst.com/investing/2026/07/31/strategy-reports-earnings-what-the-bitcoin-bet-looks-like-now/",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Reports a very large quarterly net loss driven by bitcoin markdown, which can pressure valuation.",
+            "classification_reason": "Large quarterly net loss driven by bitcoin markdown is valuation-negative.",
             "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [
@@ -1444,8 +1444,8 @@
             "url": "https://www.forbes.com/sites/tylerroush/2026/07/31/bitcoin-hits-3-week-low-as-strategy-plans-5-billion-sale/",
             "event_type": "news",
             "classification": "POSITIVE_REVALUATION",
-            "classification_reason": "Plans a $5 billion sale implies a major financing/capital action that could affect valuation.",
-            "classification_confidence": 0.61,
+            "classification_reason": "Planned $5 billion sale implies major financing/capital action that could affect valuation.",
+            "classification_confidence": 0.62,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1670,7 +1670,7 @@
         "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 4.63",
-            "reason": "Earnings event with missing actual result versus estimate suggests a negative/failed report.",
+            "reason": "Earnings reported with no actual value shown versus estimate, implying a likely miss or incomplete negative earnings result.",
             "confidence": 0.74,
             "classifier": "llm",
             "keywords": []
@@ -1679,13 +1679,13 @@
         "noise_hits": [
           {
             "headline": "Wall Street Analysts Believe TD SYNNEX (SNX) Could Rally 31.32%: Here's is How to Trade",
-            "reason": "Analyst price-target commentary without a new rating action or company event.",
+            "reason": "Analyst price-target commentary and trade idea, not a concrete company event.",
             "confidence": 0.86,
             "classifier": "llm"
           },
           {
             "headline": "Despite Fast-paced Momentum, TD SYNNEX (SNX) Is Still a Bargain Stock",
-            "reason": "Generic valuation/momentum commentary, not a concrete catalyst.",
+            "reason": "Generic valuation/momentum commentary without new fundamental catalyst.",
             "confidence": 0.93,
             "classifier": "llm"
           }
@@ -1718,7 +1718,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings event with missing actual result versus estimate suggests a negative/failed report.",
+            "classification_reason": "Earnings reported with no actual value shown versus estimate, implying a likely miss or incomplete negative earnings result.",
             "classification_confidence": 0.74,
             "classifier": "llm",
             "keywords_positive": [
@@ -1734,7 +1734,7 @@
             "url": "https://www.zacks.com/stock/news/2965742/wall-street-analysts-believe-td-synnex-snx-could-rally-31-32-here-s-is-how-to-trade?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|consensus_price_target-2965742",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Analyst price-target commentary without a new rating action or company event.",
+            "classification_reason": "Analyst price-target commentary and trade idea, not a concrete company event.",
             "classification_confidence": 0.86,
             "classifier": "llm",
             "keywords_positive": [
@@ -1750,7 +1750,7 @@
             "url": "https://www.zacks.com/stock/news/2965457/despite-fast-paced-momentum-td-synnex-snx-is-still-a-bargain-stock?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|fast_paced_momentum_at_a_bargain-2965457",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic valuation/momentum commentary, not a concrete catalyst.",
+            "classification_reason": "Generic valuation/momentum commentary without new fundamental catalyst.",
             "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [],
@@ -1972,19 +1972,19 @@
           {
             "headline": "Earnings reported: actual None, estimate 1.46",
             "reason": "No actual earnings result is provided, so no clear beat or miss.",
-            "confidence": 0.92,
+            "confidence": 0.86,
             "classifier": "llm"
           },
           {
             "headline": "Here's Why Jack Henry (JKHY) is a Strong Growth Stock",
-            "reason": "Generic bullish commentary from a research article, not a specific new catalyst.",
+            "reason": "Generic bullish commentary without a specific new catalyst.",
             "confidence": 0.95,
             "classifier": "llm"
           },
           {
             "headline": "Conestoga SMid Cap Composite Q2 2026 Portfolio Review",
-            "reason": "Portfolio review mention is indirect and does not provide company-specific new information.",
-            "confidence": 0.9,
+            "reason": "Portfolio review snippet with no clear company-specific catalyst for JKHY.",
+            "confidence": 0.92,
             "classifier": "llm"
           }
         ],
@@ -2017,7 +2017,7 @@
             "event_type": "earnings",
             "classification": "NOISE",
             "classification_reason": "No actual earnings result is provided, so no clear beat or miss.",
-            "classification_confidence": 0.92,
+            "classification_confidence": 0.86,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2032,7 +2032,7 @@
             "url": "https://www.zacks.com/stock/news/2965687/here-s-why-jack-henry-jkhy-is-a-strong-growth-stock?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|zacks_education_growth_score-2965687",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic bullish commentary from a research article, not a specific new catalyst.",
+            "classification_reason": "Generic bullish commentary without a specific new catalyst.",
             "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [],
@@ -2046,8 +2046,8 @@
             "url": "https://seekingalpha.com/article/4928595-conestoga-smid-cap-composite-q2-2026-portfolio-review",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Portfolio review mention is indirect and does not provide company-specific new information.",
-            "classification_confidence": 0.9,
+            "classification_reason": "Portfolio review snippet with no clear company-specific catalyst for JKHY.",
+            "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -2276,8 +2276,8 @@
         "risk_hits": [
           {
             "headline": "Chime Cuts 10% of Workforce in AI Pivot",
-            "reason": "Workforce cut signals cost pressure or restructuring risk.",
-            "confidence": 0.9,
+            "reason": "Workforce reduction suggests cost pressure or restructuring risk, potentially negative for valuation.",
+            "confidence": 0.73,
             "classifier": "llm",
             "keywords": [
               "cuts"
@@ -2285,8 +2285,8 @@
           },
           {
             "headline": "Chime to cut 10% of total workforce, or about 140 jobs, source says",
-            "reason": "Confirmed 10% workforce reduction is a negative operating signal.",
-            "confidence": 0.9,
+            "reason": "Confirmed 10% workforce cut is a negative operational signal and may weigh on sentiment.",
+            "confidence": 0.74,
             "classifier": "llm",
             "keywords": [
               "cut"
@@ -2297,7 +2297,7 @@
           {
             "headline": "Earnings reported: actual None, estimate 0.00134",
             "reason": "No actual earnings result provided; only estimate shown.",
-            "confidence": 0.98,
+            "confidence": 0.93,
             "classifier": "llm"
           }
         ],
@@ -2330,7 +2330,7 @@
             "event_type": "earnings",
             "classification": "NOISE",
             "classification_reason": "No actual earnings result provided; only estimate shown.",
-            "classification_confidence": 0.98,
+            "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2345,8 +2345,8 @@
             "url": "https://www.pymnts.com/news/banking/2026/chime-cuts-10percent-of-workforce-in-ai-pivot/",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Workforce cut signals cost pressure or restructuring risk.",
-            "classification_confidence": 0.9,
+            "classification_reason": "Workforce reduction suggests cost pressure or restructuring risk, potentially negative for valuation.",
+            "classification_confidence": 0.73,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": [
@@ -2361,8 +2361,8 @@
             "url": "https://www.reuters.com/business/world-at-work/chime-cut-10-total-workforce-or-about-140-jobs-source-says-2026-07-31/",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Confirmed 10% workforce reduction is a negative operating signal.",
-            "classification_confidence": 0.9,
+            "classification_reason": "Confirmed 10% workforce cut is a negative operational signal and may weigh on sentiment.",
+            "classification_confidence": 0.74,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": [
@@ -2587,20 +2587,20 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.295",
-            "reason": "No actual earnings result provided; only estimate shown.",
-            "confidence": 0.94,
+            "reason": "No actual earnings result provided; estimate only.",
+            "confidence": 0.93,
             "classifier": "llm"
           },
           {
             "headline": "Are Computer and Technology Stocks Lagging ACI Worldwide (ACIW) This Year?",
             "reason": "Relative performance commentary, not a new catalyst.",
-            "confidence": 0.98,
+            "confidence": 0.96,
             "classifier": "llm"
           },
           {
             "headline": "Dimensional Fund Advisors LP Buys 344,358 Shares of ACI Worldwide, Inc. $ACIW",
-            "reason": "Routine institutional ownership filing, not material by itself.",
-            "confidence": 0.93,
+            "reason": "Institutional ownership update without clear valuation impact.",
+            "confidence": 0.9,
             "classifier": "llm"
           }
         ],
@@ -2632,8 +2632,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "No actual earnings result provided; only estimate shown.",
-            "classification_confidence": 0.94,
+            "classification_reason": "No actual earnings result provided; estimate only.",
+            "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2649,7 +2649,7 @@
             "event_type": "news",
             "classification": "NOISE",
             "classification_reason": "Relative performance commentary, not a new catalyst.",
-            "classification_confidence": 0.98,
+            "classification_confidence": 0.96,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -2662,8 +2662,8 @@
             "url": "https://www.defenseworld.net/2026/07/29/dimensional-fund-advisors-lp-buys-344358-shares-of-aci-worldwide-inc-aciw.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Routine institutional ownership filing, not material by itself.",
-            "classification_confidence": 0.93,
+            "classification_reason": "Institutional ownership update without clear valuation impact.",
+            "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [
               "raised"
@@ -2961,8 +2961,8 @@
         "risk_hits": [
           {
             "headline": "OLED Q2 Earnings Beat Estimates on Royalty Growth, Material Sales Lag",
-            "reason": "Earnings beat but revenue miss, material sales lag, and guidance toward low end indicate mixed-to-negative valuation pressure.",
-            "confidence": 0.84,
+            "reason": "Earnings beat on EPS but revenue miss and guidance toward low end signal mixed-to-negative valuation impact.",
+            "confidence": 0.78,
             "classifier": "llm",
             "keywords": [
               "misses"
@@ -2972,13 +2972,13 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.11",
-            "reason": "Incomplete earnings data without result; no beat/miss stated.",
+            "reason": "Incomplete earnings item with no actual result; no clear surprise.",
             "confidence": 0.92,
             "classifier": "llm"
           },
           {
             "headline": "Analyst maintain: Buy -> Buy (Needham)",
-            "reason": "Rating maintained at Buy with no change or new information.",
+            "reason": "Analyst rating unchanged at Buy; routine maintenance.",
             "confidence": 0.98,
             "classifier": "llm"
           }
@@ -3011,7 +3011,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Incomplete earnings data without result; no beat/miss stated.",
+            "classification_reason": "Incomplete earnings item with no actual result; no clear surprise.",
             "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
@@ -3027,8 +3027,8 @@
             "url": "https://www.zacks.com/stock/news/2965550/oled-q2-earnings-beat-estimates-on-royalty-growth-material-sales-lag?cid=CS-STOCKNEWSAPI-FT-analyst_blog|earnings_article-2965550",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings beat but revenue miss, material sales lag, and guidance toward low end indicate mixed-to-negative valuation pressure.",
-            "classification_confidence": 0.84,
+            "classification_reason": "Earnings beat on EPS but revenue miss and guidance toward low end signal mixed-to-negative valuation impact.",
+            "classification_confidence": 0.78,
             "classifier": "llm",
             "keywords_positive": [
               "beat",
@@ -3048,7 +3048,7 @@
             "url": "",
             "event_type": "analyst_rating",
             "classification": "NOISE",
-            "classification_reason": "Rating maintained at Buy with no change or new information.",
+            "classification_reason": "Analyst rating unchanged at Buy; routine maintenance.",
             "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
