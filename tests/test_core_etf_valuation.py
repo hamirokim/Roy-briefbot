@@ -128,6 +128,32 @@ class CoreEtfValuationTests(unittest.TestCase):
         self.assertIn("좌측진입 단계 미달 14개", message)
         self.assertIn("절대 적정가 아님", message)
 
+    def test_journal_detail_accepts_non_equity_scalar_metrics(self):
+        agent = DigestAgent.__new__(DigestAgent)
+        lines = agent._build_journal_regime({
+            "core_valuation": {
+                "enabled": True,
+                "items": [
+                    {
+                        "ticker": "VTI",
+                        "label": "상대 높음",
+                        "reason": "VT 대비",
+                        "peer_ticker": "VT",
+                        "metrics": {"pe": {"label": "P/E", "fund": 25.0}},
+                    },
+                    {
+                        "ticker": "SCHP",
+                        "label": "실질금리 기회 높음",
+                        "reason": "10년 실질금리 2.0%",
+                        "metrics": {"price": 26.0, "real_yield": {"value": 2.0}},
+                    },
+                ],
+            }
+        })
+        text = "\n".join(lines)
+        self.assertIn("ETF 배수: P/E 25.0 · 비교 기준 VT", text)
+        self.assertIn("SCHP: 실질금리 기회 높음", text)
+
 
 if __name__ == "__main__":
     unittest.main()

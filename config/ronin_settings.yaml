@@ -357,7 +357,7 @@ regime:
     percentile_low_pct: 30             # 자산별 위치 문구용, 매매 게이트 아님
     percentile_high_pct: 70
     min_comparable_metrics: 3           # P/E·P/B·P/S·P/CF 중 최소 수집 개수
-    max_workers: 4
+    max_workers: 1                       # Yahoo fund 인증 충돌 방지, 6개 순차 수집
 
   macro_calendar:
     lookahead_days: 7

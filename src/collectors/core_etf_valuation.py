@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import logging
 import math
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Any
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -101,25 +102,32 @@ def classify_equity_metrics(
 
 
 def _collect_equity_ticker(ticker: str) -> dict:
-    try:
-        import yfinance as yf
+    import yfinance as yf
 
-        table = yf.Ticker(ticker).funds_data.equity_holdings
-        metrics = extract_equity_metrics(table, ticker)
-        return {
-            "ticker": ticker,
-            "asset_type": "equity_etf",
-            "source": "yfinance_funds_data",
-            "metrics": metrics,
-        }
-    except Exception as exc:
-        logger.warning("[core valuation] %s 수집 실패: %s", ticker, exc)
-        return {
-            "ticker": ticker,
-            "asset_type": "equity_etf",
-            "source": "yfinance_funds_data",
-            "metrics": {},
-        }
+    last_error: Optional[Exception] = None
+    for attempt in range(3):
+        try:
+            table = yf.Ticker(ticker).funds_data.equity_holdings
+            metrics = extract_equity_metrics(table, ticker)
+            if metrics:
+                return {
+                    "ticker": ticker,
+                    "asset_type": "equity_etf",
+                    "source": "yfinance_funds_data",
+                    "metrics": metrics,
+                }
+        except Exception as exc:
+            last_error = exc
+        if attempt < 2:
+            time.sleep(0.75 * (attempt + 1))
+
+    logger.warning("[core valuation] %s 수집 실패(3회): %s", ticker, last_error or "empty metrics")
+    return {
+        "ticker": ticker,
+        "asset_type": "equity_etf",
+        "source": "yfinance_funds_data",
+        "metrics": {},
+    }
 
 
 def _percentile(values: list[float], current: float) -> float | None:

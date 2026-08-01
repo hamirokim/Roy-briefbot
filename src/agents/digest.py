@@ -1818,13 +1818,19 @@ class DigestAgent(BaseAgent):
                 reason = item.get("reason", "")
                 lines.append(f"      {ticker}: {label} — {reason}")
                 metrics = item.get("metrics", {}) or {}
-                if metrics:
+                equity_metrics = [
+                    metric for metric in metrics.values()
+                    if isinstance(metric, dict) and metric.get("fund") is not None
+                ]
+                if equity_metrics:
                     metric_text = ", ".join(
-                        f"{metric.get('label')} {metric.get('fund')} vs {metric.get('category')}"
-                        for metric in metrics.values()
+                        f"{metric.get('label')} {metric.get('fund')}"
+                        for metric in equity_metrics
                     )
-                    lines.append(f"        배수(ETF vs 카테고리): {metric_text}")
-            lines.append("      주의: 상대 비교이며 절대 적정가 판정이 아님")
+                    peer = item.get("peer_ticker")
+                    peer_text = f" · 비교 기준 {peer}" if peer else ""
+                    lines.append(f"        ETF 배수: {metric_text}{peer_text}")
+            lines.append("      주의: 주식은 포트 역할 비교, 물가채·금은 자산별 기준이며 절대 적정가 판정이 아님")
 
         # 섹터 RRG (4분면)
         rrg = regime_out.get("rrg", {}) or {}
