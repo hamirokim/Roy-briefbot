@@ -312,6 +312,11 @@ guard:
   daily_change_threshold_pct: 2.0      # ±2% 이상 변동 시 뉴스 매칭
   news_lookback_hours: 24
   max_news_per_ticker: 3
+  company_aliases:                     # 헤드라인 직접 언급만 통과, roundup 오염 차단
+    NOW: ["ServiceNow"]
+    NKE: ["Nike"]
+    CLX: ["Clorox"]
+    EPRT: ["Essential Properties", "Essential Properties Realty Trust"]
   technical_structure:
     enabled: true
     shadow_only: true                  # TradingView parity 검증 전 매매/추천 권한 없음
@@ -343,6 +348,14 @@ regime:
     non_equity:
       SCHP: "tips_bond"
       IAUM: "gold"
+    equity_peers:                       # 로이 포트 안의 역할별 상대 비교
+      VTI: "VT"
+      IXUS: "VT"
+      AVUV: "VTI"
+      AVDV: "IXUS"
+      QQQM: "VTI"
+    percentile_low_pct: 30             # 자산별 위치 문구용, 매매 게이트 아님
+    percentile_high_pct: 70
     min_comparable_metrics: 3           # P/E·P/B·P/S·P/CF 중 최소 수집 개수
     max_workers: 4
 

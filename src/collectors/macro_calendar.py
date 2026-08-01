@@ -8,8 +8,7 @@ src/collectors/macro_calendar.py — 매크로 캘린더 + 결과 자동 수집
   - REGIME 에이전트의 LLM 해석 입력으로 사용
 
 데이터 소스:
-  - FRED API (https://fred.stlouisfed.org/docs/api/fred/) — 무료, 키 필요 없음 (rate limit 있음)
-    ※ 키 발급 시 더 안정적: https://fred.stlouisfed.org/docs/api/api_key.html
+  - FRED API (키 설정 시) 또는 공식 graph CSV (키 없는 기본 경로)
   - Yahoo Finance chart API — 시장 반응 (SPY, ^TNX, USD/KRW)
   - config/calendar_2026.json — 예정 이벤트 마스터
 
@@ -17,6 +16,8 @@ src/collectors/macro_calendar.py — 매크로 캘린더 + 결과 자동 수집
 Q3 (Roy): "발표 후 해석 없음" 문제 해결 — 결과 데이터 + LLM 해석 가이드
 """
 
+import csv
+import io
 import json
 import logging
 import os
@@ -116,26 +117,45 @@ def fetch_fred_series(series_id: str, lookback_days: int = 30) -> Optional[list[
     end = datetime.now()
     start = end - timedelta(days=lookback_days)
 
-    params = {
-        "series_id": series_id,
-        "file_type": "json",
-        "observation_start": start.strftime("%Y-%m-%d"),
-        "observation_end": end.strftime("%Y-%m-%d"),
-        "sort_order": "desc",
-    }
-    if FRED_API_KEY:
-        params["api_key"] = FRED_API_KEY
-
     try:
-        resp = requests.get(FRED_BASE, params=params, headers=HEADERS, timeout=TIMEOUT)
+        if FRED_API_KEY:
+            params = {
+                "series_id": series_id,
+                "file_type": "json",
+                "observation_start": start.strftime("%Y-%m-%d"),
+                "observation_end": end.strftime("%Y-%m-%d"),
+                "sort_order": "desc",
+                "api_key": FRED_API_KEY,
+            }
+            resp = requests.get(FRED_BASE, params=params, headers=HEADERS, timeout=TIMEOUT)
+            if resp.status_code != 200:
+                logger.warning("[fred] %s API HTTP %d", series_id, resp.status_code)
+                return None
+            obs = resp.json().get("observations", [])
+            return [o for o in obs if o.get("value", ".") != "."]
+
+        # FRED JSON API는 키가 필요하다. 공식 graph CSV는 키 없이 같은
+        # 관측값을 제공하므로 예약 실행의 기본 경로로 사용한다.
+        resp = requests.get(
+            "https://fred.stlouisfed.org/graph/fredgraph.csv",
+            params={
+                "id": series_id,
+                "cosd": start.strftime("%Y-%m-%d"),
+                "coed": end.strftime("%Y-%m-%d"),
+            },
+            headers=HEADERS,
+            timeout=TIMEOUT,
+        )
         if resp.status_code != 200:
-            logger.warning("[fred] %s HTTP %d", series_id, resp.status_code)
+            logger.warning("[fred] %s CSV HTTP %d", series_id, resp.status_code)
             return None
-        data = resp.json()
-        obs = data.get("observations", [])
-        # 결측치(.) 제거
-        clean = [o for o in obs if o.get("value", ".") != "."]
-        return clean
+        rows = []
+        for row in csv.DictReader(io.StringIO(resp.text)):
+            value = row.get(series_id, ".")
+            if value in {None, "", "."}:
+                continue
+            rows.append({"date": row.get("observation_date", ""), "value": value})
+        return list(reversed(rows))
     except Exception as e:
         logger.warning("[fred] %s 실패: %s", series_id, e)
         return None

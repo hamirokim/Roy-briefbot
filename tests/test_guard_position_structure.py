@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 import pandas as pd
 
@@ -40,6 +41,9 @@ class PositionStructureTests(unittest.TestCase):
         self.assertEqual(result["status"], "BREAKOUT_HOLD")
         self.assertEqual(result["label"], "소고점 돌파 구조 유지")
         self.assertIsNotNone(result["breakout_level"])
+        if result.get("resistance") is not None:
+            self.assertGreater(result["resistance"], result["close"])
+            self.assertGreater(result["resistance"], result["breakout_level"])
         self.assertGreaterEqual(result["up_streak"], 3)
         self.assertTrue(result["pause_watch"])
 
@@ -60,6 +64,17 @@ class PositionStructureTests(unittest.TestCase):
         self.assertEqual(result["status"], "SUPPORT_WATCH")
         self.assertLess(result["close"], result["breakout_level"])
         self.assertGreater(result["close"], result["support"])
+
+    @patch("src.agents.guard._confirmed_pivots")
+    def test_resistance_must_be_above_both_close_and_breakout(self, pivots_mock):
+        pivots_mock.side_effect = lambda values, span, high: (
+            [(5, 120.0), (10, 109.5), (30, 110.0)]
+            if high else [(35, 105.0), (43, 106.0)]
+        )
+        closes = [100.0] * 40 + [109.0, 111.0, 112.0, 108.0, 107.0, 109.0]
+        result = _assess_position_structure(_frame(closes), self.cfg)
+        self.assertEqual(result["breakout_level"], 110.0)
+        self.assertEqual(result["resistance"], 120.0)
 
     def test_short_history_fails_closed(self):
         result = _assess_position_structure(_frame([100.0] * 20), self.cfg)

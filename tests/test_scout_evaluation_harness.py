@@ -176,6 +176,15 @@ class DecisionAuditTests(unittest.TestCase):
         self.assertFalse(comparison["winner_declared"])
         self.assertEqual(comparison["evidence_status"], "COLLECTING_FORWARD_EVIDENCE")
 
+    def test_policy_comparison_separates_production_lanes(self):
+        left = _alpha_record("2026-07-02", "LEFT", "candidate", 1.0)
+        left.update({"primary_lane": "left_side", "primary_lane_status": "STAGE2_PASS"})
+        strength = _alpha_record("2026-07-02", "STRONG", "candidate", -1.0)
+        strength.update({"primary_lane": "strength", "primary_lane_status": "PASS"})
+        cohorts = scout_performance._policy_comparison([left, strength])["cohorts"]
+        self.assertEqual(cohorts["production_lane:integrity_v1:left_side"]["count"], 1)
+        self.assertEqual(cohorts["production_lane:integrity_v1:strength"]["count"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

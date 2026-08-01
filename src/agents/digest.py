@@ -418,20 +418,47 @@ def _core_valuation_groups(core_valuation: dict) -> list[tuple[str, list[str]]]:
         ("상대 낮음", []),
         ("혼재", []),
         ("상대 높음", []),
+        ("글로벌 기준", []),
         ("판정 보류", []),
     ]
     buckets = {label: items for label, items in grouped}
     for item in core_valuation.get("items", []) or []:
         label = str(item.get("label", "판정 보류") or "판정 보류")
+        if item.get("asset_type") in {"tips_bond", "gold"}:
+            continue
         if label not in buckets:
             label = "판정 보류"
         ticker = str(item.get("ticker", "?") or "?")
+        peer = str(item.get("peer_ticker", "") or "")
+        if peer and label in {"상대 낮음", "혼재", "상대 높음"}:
+            ticker = f"{ticker}({peer} 대비)"
         if label == "판정 보류":
             asset_type = str(item.get("asset_type", "") or "")
             suffix = "물가채" if asset_type == "tips_bond" else ("금" if asset_type == "gold" else "수집 실패")
             ticker = f"{ticker}({suffix})"
         buckets[label].append(ticker)
     return [(label, items) for label, items in grouped if items]
+
+
+def _candidate_blocker_text(decision_health: dict) -> str:
+    blockers = decision_health.get("blockers", {}) or {}
+    labels = {
+        "tier_not_allowed": "품질·근거 Tier 미달",
+        "lane_not_allowed": "좌측진입 단계 미달",
+        "quality_not_allowed": "품질 검사 미달",
+        "risk_flags": "위험 신호 우선",
+        "data_unavailable": "필수 데이터 부족",
+    }
+    parts = [
+        f"{labels[key]} {int(value)}개"
+        for key, value in sorted(
+            blockers.items(),
+            key=lambda item: int(item[1] or 0),
+            reverse=True,
+        )
+        if key in labels and int(value or 0) > 0
+    ]
+    return " · ".join(parts[:3])
 
 
 def _candidate_judgment(candidate: dict) -> dict:
@@ -1219,10 +1246,15 @@ class DigestAgent(BaseAgent):
         if core_valuation.get("enabled"):
             total = int(core_valuation.get("total_count", 0) or 0)
             complete = int(core_valuation.get("complete_count", 0) or 0)
-            lines.append(f"<b>메인포트 估值 | {complete}/{total} 판정</b>")
+            lines.append(f"<b>메인포트 가격·估值 상태 | {complete}/{total} 판정</b>")
             for label, tickers in _core_valuation_groups(core_valuation):
                 lines.append(f"{label}: {', '.join(tickers)}")
-            lines.append("기준: 주식 ETF 카테고리 배수 비교 · 절대 적정가 아님")
+            for item in core_valuation.get("items", []) or []:
+                if item.get("asset_type") in {"tips_bond", "gold"}:
+                    lines.append(
+                        f"{item.get('ticker')}: {item.get('label')} · {item.get('reason')}"
+                    )
+            lines.append("기준: 주식 ETF는 포트 역할 비교 · 물가채·금은 자산별 기준 · 절대 적정가 아님")
             lines.append("")
 
         lines.append(f"<b>TradingView에서 열 종목 | {len(ordered_candidates)}개</b>")
@@ -1262,7 +1294,8 @@ class DigestAgent(BaseAgent):
                 lines.append(f"   무효: {_candidate_invalidation(candidate)}")
         else:
             health_label = str(decision_health.get("label", "") or "정상 관망")
-            reason = str(
+            blocker_text = _candidate_blocker_text(decision_health)
+            reason = blocker_text or str(
                 radar_summary.get("no_candidate_reason")
                 or decision_health.get("reason")
                 or "좌측진입 Stage 2와 품질 기준을 함께 통과한 후보 없음"

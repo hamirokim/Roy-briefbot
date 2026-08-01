@@ -871,6 +871,10 @@ def _policy_comparison(records: list[dict]) -> dict:
         if bucket == "candidate":
             policy_id = str(record.get("production_policy_id", "") or LEGACY_POLICY_ID)
             cohorts[f"production:{policy_id}"].append(record)
+            lane = str(record.get("primary_lane", "") or "unknown")
+            lane_status = str(record.get("primary_lane_status", "") or "unknown")
+            cohorts[f"production_lane:{policy_id}:{lane}"].append(record)
+            cohorts[f"production_lane_status:{policy_id}:{lane}:{lane_status}"].append(record)
             selected_by_date[date_key].add(str(record.get("ticker", "") or ""))
         elif bucket.startswith("shadow:"):
             cohorts[bucket].append(record)

@@ -22,6 +22,7 @@ v2 변경 (2026-04-21):
 
 import logging
 import os
+import re
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -229,7 +230,7 @@ def _assess_position_structure(
     overhead = [
         value
         for idx, value in pivot_highs
-        if idx < breakout["pivot_idx"] and value > last
+        if idx < breakout["pivot_idx"] and value > max(last, breakout_level)
     ]
     resistance = min(overhead) if overhead else None
     days_since_breakout = len(closes) - 1 - breakout_bar
@@ -346,7 +347,26 @@ FINNHUB_KEY = os.environ.get("FINNHUB_API_KEY", "")
 FINNHUB_BASE = "https://finnhub.io/api/v1"
 
 
-def _fetch_company_news(ticker: str, lookback_hours: int = 24, max_items: int = 3) -> list[dict]:
+def _is_direct_company_news(item: dict, ticker: str, aliases: list[str]) -> bool:
+    """Keep precision-first headlines that name the held company directly."""
+    headline = str(item.get("headline", "") or "").strip()
+    if not headline:
+        return False
+    lowered = headline.casefold()
+    if any(alias.casefold() in lowered for alias in aliases if alias):
+        return True
+    symbol = _normalize_ticker_for_yf(ticker).split(".")[0].upper()
+    if symbol in {"NOW", "IT", "ON", "ALL"}:
+        return False
+    return bool(re.search(rf"(?<![A-Z0-9]){re.escape(symbol)}(?![A-Z0-9])", headline.upper()))
+
+
+def _fetch_company_news(
+    ticker: str,
+    lookback_hours: int = 24,
+    max_items: int = 3,
+    aliases: Optional[list[str]] = None,
+) -> list[dict]:
     """Finnhub /company-news. ticker는 'NVO' 같은 raw 형식."""
     if not FINNHUB_KEY:
         return []
@@ -380,6 +400,10 @@ def _fetch_company_news(ticker: str, lookback_hours: int = 24, max_items: int = 
             for it in items
             if it.get("datetime", 0) >= cutoff
         ]
+        recent = [
+            item for item in recent
+            if _is_direct_company_news(item, ticker, aliases or [])
+        ]
         recent.sort(key=lambda x: x["datetime"], reverse=True)
         return recent[:max_items]
     except Exception as e:
@@ -403,6 +427,7 @@ class GuardAgent(BaseAgent):
         threshold_pct = guard_cfg["daily_change_threshold_pct"]
         news_lookback = guard_cfg["news_lookback_hours"]
         max_news = guard_cfg["max_news_per_ticker"]
+        company_aliases = guard_cfg.get("company_aliases", {}) or {}
         structure_cfg = guard_cfg.get("technical_structure", {}) or {}
 
         # 1. 보유 종목 로드
@@ -452,7 +477,12 @@ class GuardAgent(BaseAgent):
             time.sleep(0.3)
 
             # 변동 여부와 무관하게 뉴스 fetch (D87)
-            news = _fetch_company_news(ticker, news_lookback, max_news)
+            news = _fetch_company_news(
+                ticker,
+                news_lookback,
+                max_news,
+                aliases=[str(value) for value in company_aliases.get(ticker.upper(), [])],
+            )
             time.sleep(0.5)
             entry["news"] = news
             entry["thesis_impact"] = {
