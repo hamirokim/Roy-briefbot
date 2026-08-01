@@ -4235,7 +4235,7 @@
           "TW",
           "QRVO",
           "LOGI",
-          "ORLY"
+          "PAAS"
         ],
         "records": [
           {
@@ -4375,7 +4375,7 @@
           },
           {
             "snapshot_date": "2026-08-01",
-            "ticker": "ORLY",
+            "ticker": "PAAS",
             "bucket": "shadow:left_side_context_v1",
             "status": "NO_EXECUTABLE_SESSION",
             "final_verdict": "PENDING",
@@ -305090,7 +305090,7 @@
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -305219,13 +305219,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -305353,13 +305353,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -305498,13 +305498,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -305627,13 +305627,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -305753,13 +305753,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -305882,13 +305882,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -306014,13 +306014,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -306147,13 +306147,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -306273,13 +306273,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -306408,13 +306408,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -306541,13 +306541,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -306668,13 +306668,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -306813,13 +306813,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -306943,13 +306943,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -307079,13 +307079,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -307210,13 +307210,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -307341,13 +307341,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -307475,13 +307475,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -307609,13 +307609,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -307742,13 +307742,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -307883,13 +307883,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -307905,22 +307905,21 @@
       },
       "bucket": "shadow:left_side_context_v1",
       "rank": 2,
-      "ticker": "ORLY",
-      "name": "O'Reilly Automotive Inc",
+      "ticker": "PAAS",
+      "name": "Pan American Silver Corp",
       "country": "US",
-      "sector": "Consumer Cyclical",
+      "sector": "Basic Materials",
       "score": 0.2,
       "selection_tier": "B",
       "selection_rank": null,
       "rule_selection_rank": null,
       "selection_lane_rank": 4,
-      "selection_support_count": 3,
+      "selection_support_count": 2,
       "selection_support_reasons": [
         "theme:SUPPORT",
-        "quality:QUALITY_SUPPORT",
-        "catalyst:POSITIVE_REVALUATION"
+        "quality:STRONG_QUALITY"
       ],
-      "selection_catalyst_freshness_rank": 4,
+      "selection_catalyst_freshness_rank": 0,
       "llm_selected": false,
       "llm_override": false,
       "llm_reason": "",
@@ -307929,85 +307928,81 @@
       "llm_drop_reason": "",
       "outcome_memory_effect": "NONE",
       "outcome_memory_evidence_refs": [],
-      "opportunity_score": 4.256,
-      "drawdown_from_high": -0.1713,
-      "factor_ret_20d": -0.01,
-      "factor_atr_pct": 0.0317,
+      "opportunity_score": 3.663,
+      "drawdown_from_high": -0.3725,
+      "factor_ret_20d": -0.0687,
+      "factor_atr_pct": 0.0478,
       "factor_positives": [
         "liquidity_good",
         "not_chasing",
         "volatility_healthy"
       ],
       "factor_negatives": [],
-      "liquidity_buffer_multiple": 76.731,
-      "avg_traded_value_20d": 767314879.45,
+      "liquidity_buffer_multiple": 16.661,
+      "avg_traded_value_20d": 166610162.4,
       "primary_lane": "left_side",
       "primary_lane_status": "STAGE2_PASS",
       "primary_lane_reasons": [
         "low_zone",
-        "downside_speed_slowing",
         "short_return_improving",
+        "down_days_decreasing",
         "upper_range_closes",
         "higher_low"
       ],
       "primary_lane_review_flags": [],
       "primary_lane_metrics": {
-        "drawdown_from_252d_high": -0.1713,
-        "distance_from_252d_low": 0.08,
-        "atr_ratio_10d_20d": 1.004,
+        "drawdown_from_252d_high": -0.3725,
+        "distance_from_252d_low": 0.5955,
+        "atr_ratio_10d_20d": 0.9259,
         "down_day_ratio_10d": 0.5,
-        "down_day_ratio_prev20d": 0.45,
+        "down_day_ratio_prev20d": 0.65,
         "upper_close_days_5d": 3,
         "deceleration_count": 3,
-        "recent_10d_low": 84.53,
-        "prev_10d_low": 82.73,
+        "recent_10d_low": 42.19,
+        "prev_10d_low": 41.77,
         "benchmark_above_ma200": true,
         "benchmark_ret_20d": 0.003
       },
       "strength_lane_status": "FAIL",
       "strength_lane_metrics": {
-        "ret_20d": -0.01,
-        "ret_63d": -0.1011,
-        "ret_126d": -0.0961,
-        "rs_20d": -0.013,
-        "rs_63d": -0.1406,
-        "rs_126d": -0.1725
+        "ret_20d": -0.0687,
+        "ret_63d": -0.1756,
+        "ret_126d": -0.3188,
+        "rs_20d": -0.0717,
+        "rs_63d": -0.215,
+        "rs_126d": -0.3952
       },
       "pullback_lane_status": "FAIL",
       "pullback_lane_metrics": {
-        "ma50": 88.323,
-        "ma200": 93.1155,
-        "drawdown_from_252d_high": -0.1713,
-        "volume_ratio_5d_20d": 1.1944
+        "ma50": 47.2646,
+        "ma200": 50.6183,
+        "drawdown_from_252d_high": -0.3725,
+        "volume_ratio_5d_20d": 0.8826
       },
       "left_side_lane_status": "STAGE2_PASS",
       "left_side_stage": "STAGE2",
       "left_side_lane_metrics": {
-        "drawdown_from_252d_high": -0.1713,
-        "distance_from_252d_low": 0.08,
-        "atr_ratio_10d_20d": 1.004,
+        "drawdown_from_252d_high": -0.3725,
+        "distance_from_252d_low": 0.5955,
+        "atr_ratio_10d_20d": 0.9259,
         "down_day_ratio_10d": 0.5,
-        "down_day_ratio_prev20d": 0.45,
+        "down_day_ratio_prev20d": 0.65,
         "upper_close_days_5d": 3,
         "deceleration_count": 3,
-        "recent_10d_low": 84.53,
-        "prev_10d_low": 82.73,
+        "recent_10d_low": 42.19,
+        "prev_10d_low": 41.77,
         "benchmark_above_ma200": true,
         "benchmark_ret_20d": 0.003
       },
       "signal_keys": [],
       "theme_industry_status": "SUPPORT",
-      "sector_rrg_quadrant": "LEADING",
+      "sector_rrg_quadrant": "IMPROVING",
       "theme_keys": [],
-      "quality_auditor_status": "QUALITY_SUPPORT",
-      "catalyst_classification": "POSITIVE_REVALUATION",
-      "catalyst_freshness": "FRESH_3D",
-      "catalyst_event_types": [
-        "analyst_rating",
-        "earnings",
-        "news"
-      ],
-      "catalyst_has_upcoming": true,
+      "quality_auditor_status": "STRONG_QUALITY",
+      "catalyst_classification": "",
+      "catalyst_freshness": "",
+      "catalyst_event_types": [],
+      "catalyst_has_upcoming": false,
       "decision_context": {
         "market_regime": {
           "status": "BULL",
@@ -308027,13 +308022,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -308159,13 +308154,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -308291,13 +308286,13 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     },
     {
       "snapshot_date": "2026-08-01",
-      "generated_at": "2026-08-01T13:32:48+09:00",
+      "generated_at": "2026-08-01T22:47:03+09:00",
       "snapshot_schema_version": "scout_recommendation_snapshot_v0_4",
       "production_policy_id": "integrity_v1",
       "snapshot_candidate_count": 0,
@@ -308423,7 +308418,7 @@
       "execution_policy": {
         "status": "NO_EXECUTABLE_SESSION",
         "timing_basis": "generated_at_market_clock",
-        "earliest_date": "2026-08-01"
+        "earliest_date": "2026-08-02"
       },
       "final_verdict": "PENDING"
     }

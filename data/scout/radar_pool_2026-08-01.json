@@ -386,7 +386,7 @@
           "selected": 2,
           "selected_tickers": [
             "LOGI",
-            "ORLY"
+            "PAAS"
           ],
           "no_signal": false,
           "rejection_counts": {
@@ -466,18 +466,18 @@
               "eval_limit": 20,
               "evaluated": 20,
               "found": 11,
-              "risk": 7,
-              "none": 2,
+              "risk": 6,
+              "none": 3,
               "non_us": 0,
               "no_key": 0,
               "error": 0,
               "positive_revaluation": 11,
-              "risk_catalyst": 7,
-              "noise": 2,
-              "fresh_3d": 18,
-              "recent_14d": 2,
+              "risk_catalyst": 6,
+              "noise": 3,
+              "fresh_3d": 19,
+              "recent_14d": 1,
               "price_volume_confirmed": 2,
-              "top3_excluded_risk": 7,
+              "top3_excluded_risk": 6,
               "llm_enabled": true,
               "llm_evaluated": 8,
               "llm_ok": 8,
@@ -661,19 +661,19 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.2684",
-            "reason": "Earnings line lacks actual result or surprise direction.",
-            "confidence": 0.94,
-            "classifier": "llm"
-          },
-          {
-            "headline": "Cloudflare, Inc. $NET Shares Purchased by Altshuler Shaham Ltd",
-            "reason": "Routine 13F ownership update, not a company-specific catalyst.",
+            "reason": "Earnings data is incomplete and shows no actual result or surprise.",
             "confidence": 0.93,
             "classifier": "llm"
           },
           {
+            "headline": "Cloudflare, Inc. $NET Shares Purchased by Altshuler Shaham Ltd",
+            "reason": "Routine 13F ownership update from a fund, not a company-specific catalyst.",
+            "confidence": 0.96,
+            "classifier": "llm"
+          },
+          {
             "headline": "3 Top Cloud Computing Stocks Worth Buying Before August",
-            "reason": "Generic bullish commentary without new company-specific event.",
+            "reason": "Generic bullish commentary and watchlist article without new company-specific event.",
             "confidence": 0.9,
             "classifier": "llm"
           }
@@ -706,8 +706,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Earnings line lacks actual result or surprise direction.",
-            "classification_confidence": 0.94,
+            "classification_reason": "Earnings data is incomplete and shows no actual result or surprise.",
+            "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -722,8 +722,8 @@
             "url": "https://www.defenseworld.net/2026/07/29/cloudflare-inc-net-shares-purchased-by-altshuler-shaham-ltd.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Routine 13F ownership update, not a company-specific catalyst.",
-            "classification_confidence": 0.93,
+            "classification_reason": "Routine 13F ownership update from a fund, not a company-specific catalyst.",
+            "classification_confidence": 0.96,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -736,7 +736,7 @@
             "url": "https://www.zacks.com/stock/news/2961698/3-top-cloud-computing-stocks-worth-buying-before-august?cid=CS-STOCKNEWSAPI-FT-analyst_blog|investment_ideas-2961698",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic bullish commentary without new company-specific event.",
+            "classification_reason": "Generic bullish commentary and watchlist article without new company-specific event.",
             "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [],
@@ -1126,19 +1126,19 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate -0.31713",
-            "reason": "Earnings line lacks actual result or surprise direction.",
+            "reason": "Earnings item lacks actual result; no beat/miss shown.",
             "confidence": 0.92,
             "classifier": "llm"
           },
           {
             "headline": "Viasat Sets August 4, 2026, for First Quarter Fiscal Year 2027 Financial Results Conference Call and Webcast",
-            "reason": "Scheduled results announcement only, no financial outcome yet.",
+            "reason": "Only announces a future earnings call date; no results yet.",
             "confidence": 0.98,
             "classifier": "llm"
           },
           {
             "headline": "Viasat Inc (VSAT) Stock Up 6.0% but GF Value Says Overvalued -- GF Score: 59/100",
-            "reason": "Market commentary on price move and valuation, not a new catalyst.",
+            "reason": "Market commentary about price and valuation, not a new catalyst.",
             "confidence": 0.95,
             "classifier": "llm"
           }
@@ -1171,7 +1171,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Earnings line lacks actual result or surprise direction.",
+            "classification_reason": "Earnings item lacks actual result; no beat/miss shown.",
             "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
@@ -1187,7 +1187,7 @@
             "url": "https://www.globenewswire.com/news-release/2026/07/29/3335164/0/en/Viasat-Sets-August-4-2026-for-First-Quarter-Fiscal-Year-2027-Financial-Results-Conference-Call-and-Webcast.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Scheduled results announcement only, no financial outcome yet.",
+            "classification_reason": "Only announces a future earnings call date; no results yet.",
             "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
@@ -1201,7 +1201,7 @@
             "url": "https://www.gurufocus.com/news/8970389/viasat-inc-vsat-stock-up-60-but-gf-value-says-overvalued-gf-score-59100",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Market commentary on price move and valuation, not a new catalyst.",
+            "classification_reason": "Market commentary about price and valuation, not a new catalyst.",
             "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [],
@@ -1490,28 +1490,27 @@
       "catalyst_context": {
         "status": "risk",
         "classification": "RISK_CATALYST",
-        "score": 0.0,
-        "positive_hits": [
-          {
-            "headline": "Bitcoin Hits 3-Week Low As Strategy Plans $5 Billion Sale",
-            "reason": "Planned $5 billion sale implies major financing/capital action that could affect valuation.",
-            "confidence": 0.62,
-            "classifier": "llm",
-            "keywords": []
-          }
-        ],
+        "score": -0.0,
+        "positive_hits": [],
         "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 10.28",
             "reason": "Earnings actual missing versus estimate suggests a negative earnings event.",
-            "confidence": 0.86,
+            "confidence": 0.78,
             "classifier": "llm",
             "keywords": []
           },
           {
             "headline": "Strategy Reports Earnings: What the Bitcoin Bet Looks Like Now",
-            "reason": "Large quarterly net loss driven by bitcoin markdown is valuation-negative.",
+            "reason": "Reports a very large quarterly net loss driven by bitcoin markdowns.",
             "confidence": 0.95,
+            "classifier": "llm",
+            "keywords": []
+          },
+          {
+            "headline": "Bitcoin Hits 3-Week Low As Strategy Plans $5 Billion Sale",
+            "reason": "Plans a $5 billion sale amid bitcoin weakness, which can pressure valuation.",
+            "confidence": 0.72,
             "classifier": "llm",
             "keywords": []
           }
@@ -1546,7 +1545,7 @@
             "event_type": "earnings",
             "classification": "RISK_CATALYST",
             "classification_reason": "Earnings actual missing versus estimate suggests a negative earnings event.",
-            "classification_confidence": 0.86,
+            "classification_confidence": 0.78,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1561,7 +1560,7 @@
             "url": "https://247wallst.com/investing/2026/07/31/strategy-reports-earnings-what-the-bitcoin-bet-looks-like-now/",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Large quarterly net loss driven by bitcoin markdown is valuation-negative.",
+            "classification_reason": "Reports a very large quarterly net loss driven by bitcoin markdowns.",
             "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [
@@ -1576,9 +1575,9 @@
             "datetime": 1785501030,
             "url": "https://www.forbes.com/sites/tylerroush/2026/07/31/bitcoin-hits-3-week-low-as-strategy-plans-5-billion-sale/",
             "event_type": "news",
-            "classification": "POSITIVE_REVALUATION",
-            "classification_reason": "Planned $5 billion sale implies major financing/capital action that could affect valuation.",
-            "classification_confidence": 0.62,
+            "classification": "RISK_CATALYST",
+            "classification_reason": "Plans a $5 billion sale amid bitcoin weakness, which can pressure valuation.",
+            "classification_confidence": 0.72,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1803,8 +1802,8 @@
         "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 4.63",
-            "reason": "Earnings reported with no actual value shown versus estimate, implying a likely miss or incomplete negative earnings result.",
-            "confidence": 0.74,
+            "reason": "Earnings result is missing/failed to report versus an estimate, which can signal a negative earnings event.",
+            "confidence": 0.86,
             "classifier": "llm",
             "keywords": []
           }
@@ -1812,13 +1811,13 @@
         "noise_hits": [
           {
             "headline": "Wall Street Analysts Believe TD SYNNEX (SNX) Could Rally 31.32%: Here's is How to Trade",
-            "reason": "Analyst price-target commentary and trade idea, not a concrete company event.",
-            "confidence": 0.86,
+            "reason": "Analyst price-target commentary and trading article, not a concrete new catalyst.",
+            "confidence": 0.74,
             "classifier": "llm"
           },
           {
             "headline": "Despite Fast-paced Momentum, TD SYNNEX (SNX) Is Still a Bargain Stock",
-            "reason": "Generic valuation/momentum commentary without new fundamental catalyst.",
+            "reason": "Generic valuation/momentum commentary without a specific new event or change.",
             "confidence": 0.93,
             "classifier": "llm"
           }
@@ -1851,8 +1850,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings reported with no actual value shown versus estimate, implying a likely miss or incomplete negative earnings result.",
-            "classification_confidence": 0.74,
+            "classification_reason": "Earnings result is missing/failed to report versus an estimate, which can signal a negative earnings event.",
+            "classification_confidence": 0.86,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1867,8 +1866,8 @@
             "url": "https://www.zacks.com/stock/news/2965742/wall-street-analysts-believe-td-synnex-snx-could-rally-31-32-here-s-is-how-to-trade?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|consensus_price_target-2965742",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Analyst price-target commentary and trade idea, not a concrete company event.",
-            "classification_confidence": 0.86,
+            "classification_reason": "Analyst price-target commentary and trading article, not a concrete new catalyst.",
+            "classification_confidence": 0.74,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1883,7 +1882,7 @@
             "url": "https://www.zacks.com/stock/news/2965457/despite-fast-paced-momentum-td-synnex-snx-is-still-a-bargain-stock?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|fast_paced_momentum_at_a_bargain-2965457",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic valuation/momentum commentary without new fundamental catalyst.",
+            "classification_reason": "Generic valuation/momentum commentary without a specific new event or change.",
             "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [],
@@ -2104,20 +2103,20 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.46",
-            "reason": "No actual earnings result is provided, so no clear beat or miss.",
-            "confidence": 0.86,
+            "reason": "No actual earnings result is provided, so no actionable surprise can be inferred.",
+            "confidence": 0.92,
             "classifier": "llm"
           },
           {
             "headline": "Here's Why Jack Henry (JKHY) is a Strong Growth Stock",
-            "reason": "Generic bullish commentary without a specific new catalyst.",
+            "reason": "Generic bullish commentary from a stock-picking article, not a specific catalyst.",
             "confidence": 0.95,
             "classifier": "llm"
           },
           {
             "headline": "Conestoga SMid Cap Composite Q2 2026 Portfolio Review",
-            "reason": "Portfolio review snippet with no clear company-specific catalyst for JKHY.",
-            "confidence": 0.92,
+            "reason": "Portfolio review mention is indirect and does not provide company-specific new information for JKHY.",
+            "confidence": 0.9,
             "classifier": "llm"
           }
         ],
@@ -2149,8 +2148,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "No actual earnings result is provided, so no clear beat or miss.",
-            "classification_confidence": 0.86,
+            "classification_reason": "No actual earnings result is provided, so no actionable surprise can be inferred.",
+            "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2165,7 +2164,7 @@
             "url": "https://www.zacks.com/stock/news/2965687/here-s-why-jack-henry-jkhy-is-a-strong-growth-stock?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|zacks_education_growth_score-2965687",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic bullish commentary without a specific new catalyst.",
+            "classification_reason": "Generic bullish commentary from a stock-picking article, not a specific catalyst.",
             "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [],
@@ -2179,8 +2178,8 @@
             "url": "https://seekingalpha.com/article/4928595-conestoga-smid-cap-composite-q2-2026-portfolio-review",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Portfolio review snippet with no clear company-specific catalyst for JKHY.",
-            "classification_confidence": 0.92,
+            "classification_reason": "Portfolio review mention is indirect and does not provide company-specific new information for JKHY.",
+            "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -2410,7 +2409,7 @@
           {
             "headline": "Chime Cuts 10% of Workforce in AI Pivot",
             "reason": "Workforce reduction suggests cost pressure or restructuring risk, potentially negative for valuation.",
-            "confidence": 0.73,
+            "confidence": 0.84,
             "classifier": "llm",
             "keywords": [
               "cuts"
@@ -2418,8 +2417,8 @@
           },
           {
             "headline": "Chime to cut 10% of total workforce, or about 140 jobs, source says",
-            "reason": "Confirmed 10% workforce cut is a negative operational signal and may weigh on sentiment.",
-            "confidence": 0.74,
+            "reason": "Confirms 10% workforce cut, a negative operational signal.",
+            "confidence": 0.84,
             "classifier": "llm",
             "keywords": [
               "cut"
@@ -2429,8 +2428,8 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.00134",
-            "reason": "No actual earnings result provided; only estimate shown.",
-            "confidence": 0.93,
+            "reason": "Reported earnings item lacks actual result; no beat/miss signal.",
+            "confidence": 0.92,
             "classifier": "llm"
           }
         ],
@@ -2462,8 +2461,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "No actual earnings result provided; only estimate shown.",
-            "classification_confidence": 0.93,
+            "classification_reason": "Reported earnings item lacks actual result; no beat/miss signal.",
+            "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2479,7 +2478,7 @@
             "event_type": "news",
             "classification": "RISK_CATALYST",
             "classification_reason": "Workforce reduction suggests cost pressure or restructuring risk, potentially negative for valuation.",
-            "classification_confidence": 0.73,
+            "classification_confidence": 0.84,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": [
@@ -2494,8 +2493,8 @@
             "url": "https://www.reuters.com/business/world-at-work/chime-cut-10-total-workforce-or-about-140-jobs-source-says-2026-07-31/",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Confirmed 10% workforce cut is a negative operational signal and may weigh on sentiment.",
-            "classification_confidence": 0.74,
+            "classification_reason": "Confirms 10% workforce cut, a negative operational signal.",
+            "classification_confidence": 0.84,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": [
@@ -2720,20 +2719,20 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.295",
-            "reason": "No actual earnings result provided; estimate only.",
-            "confidence": 0.93,
+            "reason": "No actual earnings result provided; only missing data versus estimate.",
+            "confidence": 0.92,
             "classifier": "llm"
           },
           {
             "headline": "Are Computer and Technology Stocks Lagging ACI Worldwide (ACIW) This Year?",
-            "reason": "Relative performance commentary, not a new catalyst.",
-            "confidence": 0.96,
+            "reason": "Relative performance commentary, not a catalyst.",
+            "confidence": 0.97,
             "classifier": "llm"
           },
           {
             "headline": "Dimensional Fund Advisors LP Buys 344,358 Shares of ACI Worldwide, Inc. $ACIW",
-            "reason": "Institutional ownership update without clear valuation impact.",
-            "confidence": 0.9,
+            "reason": "Routine institutional ownership filing, not material by itself.",
+            "confidence": 0.88,
             "classifier": "llm"
           }
         ],
@@ -2765,8 +2764,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "No actual earnings result provided; estimate only.",
-            "classification_confidence": 0.93,
+            "classification_reason": "No actual earnings result provided; only missing data versus estimate.",
+            "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2781,8 +2780,8 @@
             "url": "https://www.zacks.com/stock/news/2963078/are-computer-and-technology-stocks-lagging-aci-worldwide-aciw-this-year?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|yseop_template_1-2963078",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Relative performance commentary, not a new catalyst.",
-            "classification_confidence": 0.96,
+            "classification_reason": "Relative performance commentary, not a catalyst.",
+            "classification_confidence": 0.97,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -2795,8 +2794,8 @@
             "url": "https://www.defenseworld.net/2026/07/29/dimensional-fund-advisors-lp-buys-344358-shares-of-aci-worldwide-inc-aciw.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Institutional ownership update without clear valuation impact.",
-            "classification_confidence": 0.9,
+            "classification_reason": "Routine institutional ownership filing, not material by itself.",
+            "classification_confidence": 0.88,
             "classifier": "llm",
             "keywords_positive": [
               "raised"
@@ -3094,8 +3093,8 @@
         "risk_hits": [
           {
             "headline": "OLED Q2 Earnings Beat Estimates on Royalty Growth, Material Sales Lag",
-            "reason": "Earnings beat on EPS but revenue miss and guidance toward low end signal mixed-to-negative valuation impact.",
-            "confidence": 0.78,
+            "reason": "Earnings beat but revenue miss and guidance toward low end signal downside risk.",
+            "confidence": 0.84,
             "classifier": "llm",
             "keywords": [
               "misses"
@@ -3105,13 +3104,13 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.11",
-            "reason": "Incomplete earnings item with no actual result; no clear surprise.",
-            "confidence": 0.92,
+            "reason": "Incomplete earnings data with no reported result.",
+            "confidence": 0.91,
             "classifier": "llm"
           },
           {
-            "headline": "Analyst maintain: Buy -> Buy (Needham)",
-            "reason": "Analyst rating unchanged at Buy; routine maintenance.",
+            "headline": "Analyst maintain: Outperform -> Outperform (Oppenheimer)",
+            "reason": "Rating unchanged, no new catalyst.",
             "confidence": 0.98,
             "classifier": "llm"
           }
@@ -3144,8 +3143,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Incomplete earnings item with no actual result; no clear surprise.",
-            "classification_confidence": 0.92,
+            "classification_reason": "Incomplete earnings data with no reported result.",
+            "classification_confidence": 0.91,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -3160,8 +3159,8 @@
             "url": "https://www.zacks.com/stock/news/2965550/oled-q2-earnings-beat-estimates-on-royalty-growth-material-sales-lag?cid=CS-STOCKNEWSAPI-FT-analyst_blog|earnings_article-2965550",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings beat on EPS but revenue miss and guidance toward low end signal mixed-to-negative valuation impact.",
-            "classification_confidence": 0.78,
+            "classification_reason": "Earnings beat but revenue miss and guidance toward low end signal downside risk.",
+            "classification_confidence": 0.84,
             "classifier": "llm",
             "keywords_positive": [
               "beat",
@@ -3174,14 +3173,14 @@
             ]
           },
           {
-            "headline": "Analyst maintain: Buy -> Buy (Needham)",
+            "headline": "Analyst maintain: Outperform -> Outperform (Oppenheimer)",
             "summary": "",
             "source": "FMP:upgrades_downgrades",
             "datetime": 1785456000,
             "url": "",
             "event_type": "analyst_rating",
             "classification": "NOISE",
-            "classification_reason": "Analyst rating unchanged at Buy; routine maintenance.",
+            "classification_reason": "Rating unchanged, no new catalyst.",
             "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
@@ -4660,13 +4659,13 @@
             "classifier": "keyword"
           },
           {
-            "headline": "Ondas to Report Second Quarter 2026 Financial Results on August 13, 2026 at 8:30 AM ET",
+            "headline": "Benzinga's 'Stock Whisper' Index: 5 Stocks Investors Secretly Monitor But Don't Talk About Yet",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
           },
           {
-            "headline": "5 Best-Performing Leveraged ETFs of Last Week",
+            "headline": "Ondas to Report Second Quarter 2026 Financial Results on August 13, 2026 at 8:30 AM ET",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
@@ -4674,7 +4673,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 2,
+          "min_age_days": 0,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -4709,11 +4708,11 @@
             "keywords_risk": []
           },
           {
-            "headline": "Ondas to Report Second Quarter 2026 Financial Results on August 13, 2026 at 8:30 AM ET",
-            "summary": "WEST PALM BEACH, FL / ACCESS Newswire / July 30, 2026 / Ondas Inc. (Nasdaq:ONDS) (\"Ondas\" or the \"Company\"), a leading provider of advanced autonomous systems and next-generation defense and security technologies and services, today announced the Company will hold a conference call on Thursday, Augu",
-            "source": "FMP:Accesswire",
-            "datetime": 1785400200,
-            "url": "https://www.accessnewswire.com/newsroom/en/computers-technology-and-internet/ondas-to-report-second-quarter-2026-financial-results-on-august-1-1198327",
+            "headline": "Benzinga's 'Stock Whisper' Index: 5 Stocks Investors Secretly Monitor But Don't Talk About Yet",
+            "summary": "Each week, Benzinga's Stock Whisper Index uses a combination of proprietary data and pattern recognition to showcase five stocks that are just under the surface and deserve attention.",
+            "source": "FMP:Benzinga",
+            "datetime": 1785574822,
+            "url": "https://www.benzinga.com/trading-ideas/long-ideas/26/08/60859935/benzingas-stock-whisper-index-5-stocks-investors-secretly-monitor-but-dont-talk-about-yet-120",
             "event_type": "news",
             "classification": "NOISE",
             "classification_reason": "keyword",
@@ -4723,11 +4722,11 @@
             "keywords_risk": []
           },
           {
-            "headline": "5 Best-Performing Leveraged ETFs of Last Week",
-            "summary": "Leveraged ETFs posted huge gains last week despite a weak market, driven by rallies in crypto, AI infrastructure, defense and energy-related stocks.",
-            "source": "FMP:Zacks Investment Research",
-            "datetime": 1785229277,
-            "url": "https://www.zacks.com/stock/news/2961672/5-best-performing-leveraged-etfs-of-last-week?cid=CS-STOCKNEWSAPI-FT-etf_news_and_commentary-2961672",
+            "headline": "Ondas to Report Second Quarter 2026 Financial Results on August 13, 2026 at 8:30 AM ET",
+            "summary": "WEST PALM BEACH, FL / ACCESS Newswire / July 30, 2026 / Ondas Inc. (Nasdaq:ONDS) (\"Ondas\" or the \"Company\"), a leading provider of advanced autonomous systems and next-generation defense and security technologies and services, today announced the Company will hold a conference call on Thursday, Augu",
+            "source": "FMP:Accesswire",
+            "datetime": 1785400200,
+            "url": "https://www.accessnewswire.com/newsroom/en/computers-technology-and-internet/ondas-to-report-second-quarter-2026-financial-results-on-august-1-1198327",
             "event_type": "news",
             "classification": "NOISE",
             "classification_reason": "keyword",
@@ -4977,7 +4976,7 @@
             "classifier": "keyword"
           },
           {
-            "headline": "Nobody's Talking About It, But This Business Could Make Nvidia a $10 Trillion Company",
+            "headline": "Nvidia Isn't the Most Valuable Company in the World Anymore. Is More Bad News Coming?",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
@@ -5020,6 +5019,20 @@
             "keywords_risk": []
           },
           {
+            "headline": "Nvidia Isn't the Most Valuable Company in the World Anymore. Is More Bad News Coming?",
+            "summary": "Chip stocks are down on market worries about AI spending. Nvidia should enjoy the fruits of AI spending, since its products are the gold standard for AI development.",
+            "source": "FMP:The Motley Fool",
+            "datetime": 1785561900,
+            "url": "https://www.fool.com/investing/2026/08/01/nvidia-isnt-the-most-valuable-company-in-the-world/",
+            "event_type": "news",
+            "classification": "NOISE",
+            "classification_reason": "keyword",
+            "classification_confidence": 0.4,
+            "classifier": "keyword",
+            "keywords_positive": [],
+            "keywords_risk": []
+          },
+          {
             "headline": "Nvidia's Shareholder Meeting Is Aug. 26. Here's What Investors Should Be Looking Out For.",
             "summary": "The AI boom is still in its early innings. Nvidia's next earnings release should provide updates on key catalysts.",
             "source": "FMP:The Motley Fool",
@@ -5033,20 +5046,6 @@
             "keywords_positive": [
               "earnings"
             ],
-            "keywords_risk": []
-          },
-          {
-            "headline": "Nobody's Talking About It, But This Business Could Make Nvidia a $10 Trillion Company",
-            "summary": "Nvidia shares have surged on the generative AI revolution. A similar transformation seems to be brewing in robotics and automobiles.",
-            "source": "FMP:The Motley Fool",
-            "datetime": 1785524400,
-            "url": "https://www.fool.com/investing/2026/07/31/nobodys-talking-about-it-but-this-business-could-m/",
-            "event_type": "news",
-            "classification": "NOISE",
-            "classification_reason": "keyword",
-            "classification_confidence": 0.4,
-            "classifier": "keyword",
-            "keywords_positive": [],
             "keywords_risk": []
           }
         ],
@@ -5402,27 +5401,25 @@
         "score": 0.0,
         "positive_hits": [
           {
-            "headline": "Beyond the Mag 7: Rising Q3 Estimates Signal a Market-Wide Earnings Expansion",
+            "headline": "The Real AI Cost Question That Defines The Next Quarter of Alphabet Vs. Microsoft",
             "reason": "keyword",
             "confidence": 0.55,
             "classifier": "keyword",
             "keywords": [
-              "earnings",
-              "expansion",
-              "order"
+              "earnings"
             ]
           }
         ],
         "risk_hits": [],
         "noise_hits": [
           {
-            "headline": "Earnings reported: actual None, estimate 4.64",
+            "headline": "Earnings reported: actual None, estimate 4.67",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
           },
           {
-            "headline": "Microsoft Stock is Soaring: Is it Too Late to Buy?",
+            "headline": "MSFT DEADLINE: ROSEN, LEADING INVESTOR COUNSEL, Encourages Microsoft Corporation Investors with Losses in Excess of $100K to Secure Counsel Before Important August 11 Deadline in S",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
@@ -5430,7 +5427,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 1,
+          "min_age_days": 0,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -5449,7 +5446,7 @@
         "llm_status": "disabled",
         "news": [
           {
-            "headline": "Earnings reported: actual None, estimate 4.64",
+            "headline": "Earnings reported: actual None, estimate 4.67",
             "summary": "",
             "source": "FMP:earnings_surprise",
             "datetime": 1793145600,
@@ -5465,35 +5462,33 @@
             "keywords_risk": []
           },
           {
-            "headline": "Microsoft Stock is Soaring: Is it Too Late to Buy?",
-            "summary": "Microsoft (MSFT +3.02%) provided investors with an exciting update.",
-            "source": "FMP:The Motley Fool",
-            "datetime": 1785540179,
-            "url": "https://www.fool.com/investing/2026/07/31/microsoft-stock-is-soaring-is-it-too-late-to-buy/",
-            "event_type": "news",
-            "classification": "NOISE",
-            "classification_reason": "keyword",
-            "classification_confidence": 0.4,
-            "classifier": "keyword",
-            "keywords_positive": [],
-            "keywords_risk": []
-          },
-          {
-            "headline": "Beyond the Mag 7: Rising Q3 Estimates Signal a Market-Wide Earnings Expansion",
-            "summary": "Companies that have reported in the Q2 cycle are offering encouraging reads on order trends, margin resilience, and full-year demand. This fundamental health is filtering directly into analyst models, driving a steady stream of upward revisions for Q3 and beyond.",
-            "source": "FMP:Zacks Investment Research",
-            "datetime": 1785531664,
-            "url": "https://www.zacks.com/commentary/2966184/beyond-the-mag-7-rising-q3-estimates-signal-a-market-wide-earnings-expansion?cid=CS-STOCKNEWSAPI-FT-earnings_preview-2966184",
+            "headline": "The Real AI Cost Question That Defines The Next Quarter of Alphabet Vs. Microsoft",
+            "summary": "Alphabet (NASDAQ:GOOGL | GOOGL Price Prediction) and Microsoft (NASDAQ:MSFT) closed out two of the most watched earnings reports of the summer.",
+            "source": "FMP:24/7 Wall Street",
+            "datetime": 1785577880,
+            "url": "https://247wallst.com/investing/2026/08/01/the-real-ai-cost-question-that-defines-the-next-quarter-of-alphabet-vs-microsoft/",
             "event_type": "news",
             "classification": "POSITIVE_REVALUATION",
             "classification_reason": "keyword",
             "classification_confidence": 0.55,
             "classifier": "keyword",
             "keywords_positive": [
-              "earnings",
-              "expansion",
-              "order"
+              "earnings"
             ],
+            "keywords_risk": []
+          },
+          {
+            "headline": "MSFT DEADLINE: ROSEN, LEADING INVESTOR COUNSEL, Encourages Microsoft Corporation Investors with Losses in Excess of $100K to Secure Counsel Before Important August 11 Deadline in S",
+            "summary": "New York, New York--(Newsfile Corp. - August 1, 2026) - WHY: Rosen Law Firm, a global investor rights law firm, reminds purchasers of common stock of Microsoft Corporation (NASDAQ: MSFT) between May 1, 2025 and January 28, 2026, inclusive (the \"Class Period\"), of the important August 11, 2026 lead p",
+            "source": "FMP:Newsfile Corp",
+            "datetime": 1785575700,
+            "url": "https://www.newsfilecorp.com/release/307580/MSFT-DEADLINE-ROSEN-LEADING-INVESTOR-COUNSEL-Encourages-Microsoft-Corporation-Investors-with-Losses-in-Excess-of-100K-to-Secure-Counsel-Before-Important-August-11-Deadline-in-Securities-Class-Action-MSFT",
+            "event_type": "news",
+            "classification": "NOISE",
+            "classification_reason": "keyword",
+            "classification_confidence": 0.4,
+            "classifier": "keyword",
+            "keywords_positive": [],
             "keywords_risk": []
           }
         ],
@@ -5821,7 +5816,7 @@
             "classifier": "keyword"
           },
           {
-            "headline": "1 AI Stock I'd Buy Before It Hits Another All-Time High",
+            "headline": "Arete Wealth Advisors LLC Has $4.51 Million Stake in Taiwan Semiconductor Manufacturing Company Ltd. $TSM",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
@@ -5829,7 +5824,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 1,
+          "min_age_days": 0,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -5864,6 +5859,20 @@
             "keywords_risk": []
           },
           {
+            "headline": "Arete Wealth Advisors LLC Has $4.51 Million Stake in Taiwan Semiconductor Manufacturing Company Ltd. $TSM",
+            "summary": "Arete Wealth Advisors LLC trimmed its holdings in shares of Taiwan Semiconductor Manufacturing Company Ltd. (NYSE: TSM) by 27.6% in the first quarter, according to the company in its most recent Form 13F filing with the Securities and Exchange Commission (SEC). The fund owned 13,364 shares of the se",
+            "source": "FMP:Defense World",
+            "datetime": 1785556191,
+            "url": "https://www.defenseworld.net/2026/08/01/arete-wealth-advisors-llc-has-4-51-million-stake-in-taiwan-semiconductor-manufacturing-company-ltd-tsm.html",
+            "event_type": "news",
+            "classification": "NOISE",
+            "classification_reason": "keyword",
+            "classification_confidence": 0.4,
+            "classifier": "keyword",
+            "keywords_positive": [],
+            "keywords_risk": []
+          },
+          {
             "headline": "Semiconductor ETFs Draw Cash This Week as Chip Stocks Rally",
             "summary": "Chip stocks rallied this week on a wave of strong tech earnings, and investors rewarded semiconductor ETFs with a rush of new cash. Three funds tracking the chip sector ranked among those pulling in the most new money, according to FactSet flow data.",
             "source": "FMP:ETF Trends",
@@ -5877,20 +5886,6 @@
             "keywords_positive": [
               "earnings"
             ],
-            "keywords_risk": []
-          },
-          {
-            "headline": "1 AI Stock I'd Buy Before It Hits Another All-Time High",
-            "summary": "Taiwan Semiconductor (NYSE:TSM | TSM Price Prediction) posted Q2 2026 revenue of $40.20 billion, up 36% year over year, with net income jumping 77.41%.",
-            "source": "FMP:24/7 Wall Street",
-            "datetime": 1785506413,
-            "url": "https://247wallst.com/investing/2026/07/31/1-ai-stock-id-buy-before-it-hits-another-all-time-high/",
-            "event_type": "news",
-            "classification": "NOISE",
-            "classification_reason": "keyword",
-            "classification_confidence": 0.4,
-            "classifier": "keyword",
-            "keywords_positive": [],
             "keywords_risk": []
           }
         ],
@@ -7456,16 +7451,7 @@
         "score": 0.0,
         "positive_hits": [
           {
-            "headline": "Semiconductor ETFs Draw Cash This Week as Chip Stocks Rally",
-            "reason": "keyword",
-            "confidence": 0.55,
-            "classifier": "keyword",
-            "keywords": [
-              "earnings"
-            ]
-          },
-          {
-            "headline": "How Much Upside is Left in Broadcom Inc. (AVGO)? Wall Street Analysts Think 33.73%",
+            "headline": "3 Semiconductor Stocks to Buy Before AI Demand Explodes in August",
             "reason": "keyword",
             "confidence": 0.55,
             "classifier": "keyword",
@@ -7481,11 +7467,17 @@
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
+          },
+          {
+            "headline": "Broadcom Inc. $AVGO is Argent Capital Management LLC’s 8th Largest Position",
+            "reason": "keyword",
+            "confidence": 0.4,
+            "classifier": "keyword"
           }
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 1,
+          "min_age_days": 0,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -7520,11 +7512,11 @@
             "keywords_risk": []
           },
           {
-            "headline": "Semiconductor ETFs Draw Cash This Week as Chip Stocks Rally",
-            "summary": "Chip stocks rallied this week on a wave of strong tech earnings, and investors rewarded semiconductor ETFs with a rush of new cash. Three funds tracking the chip sector ranked among those pulling in the most new money, according to FactSet flow data.",
-            "source": "FMP:ETF Trends",
-            "datetime": 1785511427,
-            "url": "https://www.etftrends.com/equity-etf-content-hub/semiconductor-etfs-draw-cash-chip-stocks-rally/",
+            "headline": "3 Semiconductor Stocks to Buy Before AI Demand Explodes in August",
+            "summary": "August 2026 lands with Q2 earnings season already confirming what the market has been signaling for months: AI capex is accelerating.",
+            "source": "FMP:24/7 Wall Street",
+            "datetime": 1785567621,
+            "url": "https://247wallst.com/investing/2026/08/01/3-semiconductor-stocks-to-buy-before-ai-demand-explodes-in-august/",
             "event_type": "news",
             "classification": "POSITIVE_REVALUATION",
             "classification_reason": "keyword",
@@ -7536,19 +7528,17 @@
             "keywords_risk": []
           },
           {
-            "headline": "How Much Upside is Left in Broadcom Inc. (AVGO)? Wall Street Analysts Think 33.73%",
-            "summary": "The consensus price target hints at a 33.7% upside potential for Broadcom Inc. (AVGO). While empirical research shows that this sought-after metric is hardly effective, an upward trend in earnings estimate revisions could mean that the stock will witness an upside in the near term.",
-            "source": "FMP:Zacks Investment Research",
-            "datetime": 1785495369,
-            "url": "https://www.zacks.com/stock/news/2965740/how-much-upside-is-left-in-broadcom-inc-avgo-wall-street-analysts-think-33-73?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|consensus_price_target-2965740",
+            "headline": "Broadcom Inc. $AVGO is Argent Capital Management LLC’s 8th Largest Position",
+            "summary": "Argent Capital Management LLC reduced its stake in Broadcom Inc. (NASDAQ: AVGO) by 8.1% during the first quarter, according to the company in its most recent 13F filing with the SEC. The firm owned 313,580 shares of the semiconductor manufacturer's stock after selling 27,823 shares during the quarte",
+            "source": "FMP:Defense World",
+            "datetime": 1785558551,
+            "url": "https://www.defenseworld.net/2026/08/01/broadcom-inc-avgo-is-argent-capital-management-llcs-8th-largest-position.html",
             "event_type": "news",
-            "classification": "POSITIVE_REVALUATION",
+            "classification": "NOISE",
             "classification_reason": "keyword",
-            "classification_confidence": 0.55,
+            "classification_confidence": 0.4,
             "classifier": "keyword",
-            "keywords_positive": [
-              "earnings"
-            ],
+            "keywords_positive": [],
             "keywords_risk": []
           }
         ],
