@@ -1,6 +1,6 @@
 {
   "date": "2026-08-01",
-  "generated_at": "2026-08-01T08:14:09+09:00",
+  "generated_at": "2026-08-01T13:17:47+09:00",
   "timezone": "Asia/Seoul",
   "data_as_of": {
     "decision_date": "2026-08-01",
@@ -12,7 +12,7 @@
       "KR": "2026-07-31"
     },
     "theme_snapshot_dates": [
-      "2026-07-31"
+      "2026-08-01"
     ],
     "source_policy": "latest_available_at_generation"
   },
@@ -31,8 +31,8 @@
       "reason_code": "PRODUCTION_GATE_NO_PASS",
       "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
       "blockers": {
-        "lane_not_allowed": 14,
-        "tier_not_allowed": 80
+        "lane_not_allowed": 12,
+        "tier_not_allowed": 84
       }
     },
     "shadow_policy_counts": {
@@ -48,12 +48,13 @@
         "NOT_EVALUATED": 1097
       },
       "fail_reasons": {
-        "unsupported_country": 667,
-        "data_short": 11,
+        "unsupported_country": 666,
+        "data_short": 10,
         "price_below_min": 6,
         "traded_value_below_min": 13,
-        "data_stale": 4,
-        "zero_volume_too_many": 6
+        "data_stale": 3,
+        "zero_volume_too_many": 5,
+        "ohlcv_missing": 1
       },
       "review_flags": {
         "sharp_drop_needs_news_review": 5
@@ -66,18 +67,18 @@
     "price_lane_audit": {
       "enabled": true,
       "status_counts": {
-        "strength:FAIL": 859,
+        "strength:FAIL": 861,
         "pullback:PASS": 87,
         "left_side:FAIL": 484,
         "pullback:FAIL": 648,
         "strength:PASS": 56,
-        "pullback:WAIT": 340,
-        "left_side:WAIT_CONFIRM": 275,
-        "left_side:STAGE1_WAIT": 281,
-        "strength:STRONG_PASS": 162,
-        "left_side:STAGE2_PASS": 31,
-        "pullback:STRONG_PASS": 2,
-        "left_side:STAGE2_STRONG_PASS": 6
+        "pullback:WAIT": 341,
+        "left_side:WAIT_CONFIRM": 274,
+        "left_side:STAGE1_WAIT": 282,
+        "strength:STRONG_PASS": 160,
+        "left_side:STAGE2_PASS": 30,
+        "left_side:STAGE2_STRONG_PASS": 7,
+        "pullback:STRONG_PASS": 1
       }
     },
     "theme_industry_audit": {
@@ -94,8 +95,8 @@
     "quality_audit": {
       "enabled": true,
       "eval_limit": 30,
-      "evaluated": 41,
-      "fmp": 40,
+      "evaluated": 39,
+      "fmp": 38,
       "finviz": 0,
       "dart": 1,
       "kr_missing": 0,
@@ -103,11 +104,11 @@
       "non_us": 0,
       "status_counts": {
         "QUALITY_SUPPORT": 19,
-        "STRONG_QUALITY": 22
+        "STRONG_QUALITY": 20
       },
       "reject_authority": false,
-      "production_required": 41,
-      "production_required_evaluated": 41,
+      "production_required": 39,
+      "production_required_evaluated": 39,
       "production_required_missing": 0,
       "production_required_source_missing": 0,
       "production_coverage_complete": true,
@@ -117,19 +118,19 @@
       "enabled": true,
       "eval_limit": 20,
       "evaluated": 20,
-      "found": 5,
-      "risk": 6,
+      "found": 7,
+      "risk": 4,
       "none": 9,
       "non_us": 0,
       "no_key": 0,
       "error": 0,
-      "positive_revaluation": 5,
-      "risk_catalyst": 6,
+      "positive_revaluation": 7,
+      "risk_catalyst": 4,
       "noise": 9,
       "fresh_3d": 20,
       "recent_14d": 0,
       "price_volume_confirmed": 1,
-      "top3_excluded_risk": 6,
+      "top3_excluded_risk": 4,
       "llm_enabled": true,
       "llm_evaluated": 8,
       "llm_ok": 8,
@@ -153,22 +154,22 @@
         "backfill": false,
         "eligible": 0,
         "rejection_counts": {
-          "lane_not_allowed": 14,
-          "tier_not_allowed": 80
+          "lane_not_allowed": 12,
+          "tier_not_allowed": 84
         },
         "no_signal": true
       },
       "selected": 0,
       "tier_counts": {
-        "A": 14,
-        "B": 13,
-        "REVIEW": 6,
-        "C": 28,
-        "D": 39
+        "A": 12,
+        "B": 14,
+        "REVIEW": 4,
+        "D": 42,
+        "C": 28
       },
       "selected_tiers": [],
       "selected_lanes": [],
-      "review_pool_risk_catalyst": 6,
+      "review_pool_risk_catalyst": 4,
       "duplicate_ticker_drops": 0,
       "hierarchy": [
         "lane_strength",
@@ -216,7 +217,7 @@
         "max_picks": 3,
         "llm_additions_allowed": false,
         "evaluated": 100,
-        "eligible_before_cap": 13,
+        "eligible_before_cap": 7,
         "selected": 3,
         "selected_tickers": [
           "FTNT",
@@ -225,7 +226,8 @@
         ],
         "no_signal": false,
         "rejection_counts": {
-          "tier": 82,
+          "tier": 84,
+          "theme": 4,
           "country": 5
         },
         "criteria": {
@@ -259,19 +261,19 @@
         "max_picks": 2,
         "llm_additions_allowed": false,
         "evaluated": 37,
-        "eligible_before_cap": 16,
+        "eligible_before_cap": 4,
         "selected": 2,
         "selected_tickers": [
-          "EXR",
-          "TW"
+          "LOGI",
+          "ORLY"
         ],
         "no_signal": false,
         "rejection_counts": {
-          "risk_catalyst": 8,
-          "sector": 2,
+          "sector": 19,
+          "risk_catalyst": 2,
           "lane_review": 1,
           "primary_lane": 2,
-          "quality": 8
+          "quality": 9
         },
         "criteria": {
           "allowed_countries": [
@@ -343,18 +345,18 @@
             "eval_limit": 20,
             "evaluated": 20,
             "found": 11,
-            "risk": 8,
-            "none": 1,
+            "risk": 7,
+            "none": 2,
             "non_us": 0,
             "no_key": 0,
             "error": 0,
             "positive_revaluation": 11,
-            "risk_catalyst": 8,
-            "noise": 1,
-            "fresh_3d": 19,
-            "recent_14d": 1,
+            "risk_catalyst": 7,
+            "noise": 2,
+            "fresh_3d": 18,
+            "recent_14d": 2,
             "price_volume_confirmed": 2,
-            "top3_excluded_risk": 8,
+            "top3_excluded_risk": 7,
             "llm_enabled": true,
             "llm_evaluated": 8,
             "llm_ok": 8,
@@ -390,11 +392,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 827182797.32,
+          "avg_volume_value": 827189464.94,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 82.718,
+          "liquidity_buffer_multiple": 82.719,
           "ret_20d": 0.1509,
           "drawdown_from_high": -0.0156,
           "atr_pct": 0.0503
@@ -421,7 +423,7 @@
           "market_cap_usd": 74270000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 827182797.32,
+          "avg_traded_value_20d": 827189464.94,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0642
         }
@@ -510,11 +512,11 @@
         "ma50": 249.157,
         "ma200": 213.29,
         "drawdown_from_high": -0.0156,
-        "avg_volume_value": 827182797.32,
+        "avg_volume_value": 827189464.94,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 82.718,
+        "liquidity_buffer_multiple": 82.719,
         "volume_ratio_3d_20d": 1.109
       },
       "catalyst_context": {
@@ -526,26 +528,26 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.2684",
-            "reason": "Reported earnings item lacks actual result or surprise data.",
-            "confidence": 0.92,
+            "reason": "Earnings item lacks actual result or surprise; no beat/miss shown.",
+            "confidence": 0.94,
             "classifier": "llm"
           },
           {
             "headline": "Cloudflare, Inc. $NET Shares Purchased by Altshuler Shaham Ltd",
-            "reason": "13F ownership update is routine and not a direct valuation catalyst.",
-            "confidence": 0.95,
+            "reason": "13F stake increase is routine ownership disclosure, not a direct company catalyst.",
+            "confidence": 0.9,
             "classifier": "llm"
           },
           {
             "headline": "3 Top Cloud Computing Stocks Worth Buying Before August",
-            "reason": "Generic bullish commentary/article without a new company-specific event.",
-            "confidence": 0.9,
+            "reason": "Generic bullish commentary/listicle without new company-specific event or data.",
+            "confidence": 0.88,
             "classifier": "llm"
           }
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 2,
+          "min_age_days": 3,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -571,8 +573,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Reported earnings item lacks actual result or surprise data.",
-            "classification_confidence": 0.92,
+            "classification_reason": "Earnings item lacks actual result or surprise; no beat/miss shown.",
+            "classification_confidence": 0.94,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -587,8 +589,8 @@
             "url": "https://www.defenseworld.net/2026/07/29/cloudflare-inc-net-shares-purchased-by-altshuler-shaham-ltd.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "13F ownership update is routine and not a direct valuation catalyst.",
-            "classification_confidence": 0.95,
+            "classification_reason": "13F stake increase is routine ownership disclosure, not a direct company catalyst.",
+            "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -601,8 +603,8 @@
             "url": "https://www.zacks.com/stock/news/2961698/3-top-cloud-computing-stocks-worth-buying-before-august?cid=CS-STOCKNEWSAPI-FT-analyst_blog|investment_ideas-2961698",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic bullish commentary/article without a new company-specific event.",
-            "classification_confidence": 0.9,
+            "classification_reason": "Generic bullish commentary/listicle without new company-specific event or data.",
+            "classification_confidence": 0.88,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -699,11 +701,11 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [
           {
@@ -730,15 +732,15 @@
                 "etf": "HACK",
                 "label": "사이버보안 (ETFMG)",
                 "quadrant": "LEADING",
-                "ratio": 107.53,
-                "momentum": 101.15
+                "ratio": 107.62,
+                "momentum": 100.43
               },
               {
                 "etf": "CIBR",
                 "label": "사이버보안 (First Trust)",
                 "quadrant": "LEADING",
-                "ratio": 105.91,
-                "momentum": 102.14
+                "ratio": 106.84,
+                "momentum": 102.75
               }
             ],
             "caution_etfs": [],
@@ -746,7 +748,7 @@
             "status": "GROUP_SUPPORT"
           }
         ],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 6,
           "active_peer_count": 4,
@@ -855,7 +857,7 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 151289529.57,
+          "avg_volume_value": 151290998.93,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
@@ -886,7 +888,7 @@
           "market_cap_usd": 10220000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 151289529.57,
+          "avg_traded_value_20d": 151290998.93,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0729
         }
@@ -975,7 +977,7 @@
         "ma50": 72.23,
         "ma200": 52.227,
         "drawdown_from_high": -0.1434,
-        "avg_volume_value": 151289529.57,
+        "avg_volume_value": 151290998.93,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
@@ -991,26 +993,26 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate -0.31713",
-            "reason": "Earnings line lacks actual result; no beat/miss can be inferred.",
-            "confidence": 0.86,
+            "reason": "Earnings item lacks actual result or surprise direction.",
+            "confidence": 0.93,
             "classifier": "llm"
           },
           {
             "headline": "Viasat Sets August 4, 2026, for First Quarter Fiscal Year 2027 Financial Results Conference Call and Webcast",
-            "reason": "Scheduled earnings call announcement only; no results yet.",
+            "reason": "Only announces a scheduled future results call; no outcome yet.",
             "confidence": 0.98,
             "classifier": "llm"
           },
           {
             "headline": "Viasat Inc (VSAT) Stock Up 6.0% but GF Value Says Overvalued -- GF Score: 59/100",
             "reason": "Market commentary on price move and valuation, not a new catalyst.",
-            "confidence": 0.93,
+            "confidence": 0.9,
             "classifier": "llm"
           }
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 2,
+          "min_age_days": 3,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -1036,8 +1038,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Earnings line lacks actual result; no beat/miss can be inferred.",
-            "classification_confidence": 0.86,
+            "classification_reason": "Earnings item lacks actual result or surprise direction.",
+            "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1052,7 +1054,7 @@
             "url": "https://www.globenewswire.com/news-release/2026/07/29/3335164/0/en/Viasat-Sets-August-4-2026-for-First-Quarter-Fiscal-Year-2027-Financial-Results-Conference-Call-and-Webcast.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Scheduled earnings call announcement only; no results yet.",
+            "classification_reason": "Only announces a scheduled future results call; no outcome yet.",
             "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
@@ -1067,7 +1069,7 @@
             "event_type": "news",
             "classification": "NOISE",
             "classification_reason": "Market commentary on price move and valuation, not a new catalyst.",
-            "classification_confidence": 0.93,
+            "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1095,11 +1097,11 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [
           {
@@ -1126,15 +1128,15 @@
                 "etf": "ITA",
                 "label": "항공우주 & 방산",
                 "quadrant": "WEAKENING",
-                "ratio": 102.71,
-                "momentum": 99.48
+                "ratio": 102.55,
+                "momentum": 98.72
               }
             ],
             "unsupported_etfs": [],
             "status": "GROUP_CAUTION"
           }
         ],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 5,
           "active_peer_count": 0,
@@ -1215,11 +1217,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 1552833009.92,
+          "avg_volume_value": 1553490512.65,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 155.283,
+          "liquidity_buffer_multiple": 155.349,
           "ret_20d": -0.0743,
           "drawdown_from_high": -0.768,
           "atr_pct": 0.0809
@@ -1246,7 +1248,7 @@
           "market_cap_usd": 58110000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 1552833009.92,
+          "avg_traded_value_20d": 1553490512.65,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0176
         }
@@ -1278,7 +1280,7 @@
             "ma50": 112.68,
             "ma200": 157.8378,
             "drawdown_from_252d_high": -0.768,
-            "volume_ratio_5d_20d": 0.9827
+            "volume_ratio_5d_20d": 0.984
           }
         },
         "left_side": {
@@ -1345,45 +1347,46 @@
         "ma50": 112.68,
         "ma200": 157.838,
         "drawdown_from_high": -0.768,
-        "avg_volume_value": 1552833009.92,
+        "avg_volume_value": 1553490512.65,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 155.283,
-        "volume_ratio_3d_20d": 0.997
+        "liquidity_buffer_multiple": 155.349,
+        "volume_ratio_3d_20d": 0.999
       },
       "catalyst_context": {
         "status": "risk",
         "classification": "RISK_CATALYST",
-        "score": -0.0,
-        "positive_hits": [],
+        "score": 0.0,
+        "positive_hits": [
+          {
+            "headline": "Bitcoin Hits 3-Week Low As Strategy Plans $5 Billion Sale",
+            "reason": "Plans a $5 billion sale implies a major financing/capital action that could affect valuation.",
+            "confidence": 0.61,
+            "classifier": "llm",
+            "keywords": []
+          }
+        ],
         "risk_hits": [
           {
-            "headline": "Strategy Reports Earnings: What the Bitcoin Bet Looks Like Now",
-            "reason": "Large quarterly net loss driven by bitcoin markdown.",
-            "confidence": 0.98,
+            "headline": "Earnings reported: actual None, estimate 10.28",
+            "reason": "Earnings actual missing versus estimate suggests a likely miss or incomplete negative report.",
+            "confidence": 0.72,
             "classifier": "llm",
             "keywords": []
           },
           {
-            "headline": "Bitcoin Hits 3-Week Low As Strategy Plans $5 Billion Sale",
-            "reason": "Bitcoin weakness and planned $5B sale suggest financing pressure.",
-            "confidence": 0.86,
+            "headline": "Strategy Reports Earnings: What the Bitcoin Bet Looks Like Now",
+            "reason": "Reports a very large quarterly net loss driven by bitcoin markdown, which can pressure valuation.",
+            "confidence": 0.95,
             "classifier": "llm",
             "keywords": []
           }
         ],
-        "noise_hits": [
-          {
-            "headline": "Earnings reported: actual None, estimate 10.27",
-            "reason": "Earnings placeholder with no actual result provided.",
-            "confidence": 0.95,
-            "classifier": "llm"
-          }
-        ],
+        "noise_hits": [],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -1392,7 +1395,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": -0.03,
           "ret_5d": 0.0176,
-          "volume_ratio_3d_20d": 0.997,
+          "volume_ratio_3d_20d": 0.999,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -1402,15 +1405,15 @@
         "llm_status": "ok",
         "news": [
           {
-            "headline": "Earnings reported: actual None, estimate 10.27",
+            "headline": "Earnings reported: actual None, estimate 10.28",
             "summary": "",
             "source": "FMP:earnings_surprise",
             "datetime": 1793232000,
             "url": "",
             "event_type": "earnings",
-            "classification": "NOISE",
-            "classification_reason": "Earnings placeholder with no actual result provided.",
-            "classification_confidence": 0.95,
+            "classification": "RISK_CATALYST",
+            "classification_reason": "Earnings actual missing versus estimate suggests a likely miss or incomplete negative report.",
+            "classification_confidence": 0.72,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1425,8 +1428,8 @@
             "url": "https://247wallst.com/investing/2026/07/31/strategy-reports-earnings-what-the-bitcoin-bet-looks-like-now/",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Large quarterly net loss driven by bitcoin markdown.",
-            "classification_confidence": 0.98,
+            "classification_reason": "Reports a very large quarterly net loss driven by bitcoin markdown, which can pressure valuation.",
+            "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1440,9 +1443,9 @@
             "datetime": 1785501030,
             "url": "https://www.forbes.com/sites/tylerroush/2026/07/31/bitcoin-hits-3-week-low-as-strategy-plans-5-billion-sale/",
             "event_type": "news",
-            "classification": "RISK_CATALYST",
-            "classification_reason": "Bitcoin weakness and planned $5B sale suggest financing pressure.",
-            "classification_confidence": 0.86,
+            "classification": "POSITIVE_REVALUATION",
+            "classification_reason": "Plans a $5 billion sale implies a major financing/capital action that could affect valuation.",
+            "classification_confidence": 0.61,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1468,14 +1471,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -1532,11 +1535,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 200353178.93,
+          "avg_volume_value": 202012428.99,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 20.035,
+          "liquidity_buffer_multiple": 20.201,
           "ret_20d": 0.0452,
           "drawdown_from_high": -0.1187,
           "atr_pct": 0.0372
@@ -1563,7 +1566,7 @@
           "market_cap_usd": 18540000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 200353178.93,
+          "avg_traded_value_20d": 202012428.99,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0526
         }
@@ -1585,7 +1588,7 @@
             "rs_63d": 0.0811,
             "rs_126d": 0.5044,
             "drawdown_from_252d_high": -0.1187,
-            "volume_ratio_5d_20d": 1.0359
+            "volume_ratio_5d_20d": 1.0593
           }
         },
         "pullback": {
@@ -1601,7 +1604,7 @@
             "ma50": 259.1974,
             "ma200": 191.9264,
             "drawdown_from_252d_high": -0.1187,
-            "volume_ratio_5d_20d": 1.0359
+            "volume_ratio_5d_20d": 1.0593
           }
         },
         "left_side": {
@@ -1652,12 +1655,12 @@
         "ma50": 259.197,
         "ma200": 191.926,
         "drawdown_from_high": -0.1187,
-        "avg_volume_value": 200353178.93,
+        "avg_volume_value": 202012428.99,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 20.035,
-        "volume_ratio_3d_20d": 0.959
+        "liquidity_buffer_multiple": 20.201,
+        "volume_ratio_3d_20d": 1.004
       },
       "catalyst_context": {
         "status": "risk",
@@ -1667,8 +1670,8 @@
         "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 4.63",
-            "reason": "Earnings item shows no actual reported result versus estimate, implying an earnings miss/unclear negative outcome.",
-            "confidence": 0.78,
+            "reason": "Earnings event with missing actual result versus estimate suggests a negative/failed report.",
+            "confidence": 0.74,
             "classifier": "llm",
             "keywords": []
           }
@@ -1676,20 +1679,20 @@
         "noise_hits": [
           {
             "headline": "Wall Street Analysts Believe TD SYNNEX (SNX) Could Rally 31.32%: Here's is How to Trade",
-            "reason": "Analyst upside commentary and price-target aggregation are routine and not a new fundamental event.",
-            "confidence": 0.67,
+            "reason": "Analyst price-target commentary without a new rating action or company event.",
+            "confidence": 0.86,
             "classifier": "llm"
           },
           {
             "headline": "Despite Fast-paced Momentum, TD SYNNEX (SNX) Is Still a Bargain Stock",
-            "reason": "Generic valuation/momentum commentary without a concrete catalyst or new information.",
+            "reason": "Generic valuation/momentum commentary, not a concrete catalyst.",
             "confidence": 0.93,
             "classifier": "llm"
           }
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -1698,7 +1701,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": 0.0345,
           "ret_5d": 0.0526,
-          "volume_ratio_3d_20d": 0.959,
+          "volume_ratio_3d_20d": 1.004,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -1715,8 +1718,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings item shows no actual reported result versus estimate, implying an earnings miss/unclear negative outcome.",
-            "classification_confidence": 0.78,
+            "classification_reason": "Earnings event with missing actual result versus estimate suggests a negative/failed report.",
+            "classification_confidence": 0.74,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1731,8 +1734,8 @@
             "url": "https://www.zacks.com/stock/news/2965742/wall-street-analysts-believe-td-synnex-snx-could-rally-31-32-here-s-is-how-to-trade?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|consensus_price_target-2965742",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Analyst upside commentary and price-target aggregation are routine and not a new fundamental event.",
-            "classification_confidence": 0.67,
+            "classification_reason": "Analyst price-target commentary without a new rating action or company event.",
+            "classification_confidence": 0.86,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1747,7 +1750,7 @@
             "url": "https://www.zacks.com/stock/news/2965457/despite-fast-paced-momentum-td-synnex-snx-is-still-a-bargain-stock?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|fast_paced_momentum_at_a_bargain-2965457",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic valuation/momentum commentary without a concrete catalyst or new information.",
+            "classification_reason": "Generic valuation/momentum commentary, not a concrete catalyst.",
             "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [],
@@ -1774,14 +1777,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -1838,11 +1841,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 173972189.32,
+          "avg_volume_value": 175340272.41,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 17.397,
+          "liquidity_buffer_multiple": 17.534,
           "ret_20d": 0.0488,
           "drawdown_from_high": -0.2002,
           "atr_pct": 0.0318
@@ -1869,7 +1872,7 @@
           "market_cap_usd": 9930000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 173972189.32,
+          "avg_traded_value_20d": 175340272.41,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.023
         }
@@ -1901,7 +1904,7 @@
             "ma50": 140.0734,
             "ma200": 159.3838,
             "drawdown_from_252d_high": -0.2002,
-            "volume_ratio_5d_20d": 0.7365
+            "volume_ratio_5d_20d": 0.7614
           }
         },
         "left_side": {
@@ -1952,44 +1955,42 @@
         "ma50": 140.073,
         "ma200": 159.384,
         "drawdown_from_high": -0.2002,
-        "avg_volume_value": 173972189.32,
+        "avg_volume_value": 175340272.41,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 17.397,
-        "volume_ratio_3d_20d": 0.757
+        "liquidity_buffer_multiple": 17.534,
+        "volume_ratio_3d_20d": 0.802
       },
       "catalyst_context": {
-        "status": "risk",
-        "classification": "RISK_CATALYST",
-        "score": -0.0,
+        "status": "none",
+        "classification": "NOISE",
+        "score": 0.0,
         "positive_hits": [],
-        "risk_hits": [
+        "risk_hits": [],
+        "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.46",
-            "reason": "Earnings event with missing actual result versus estimate suggests a negative/uncertain earnings release.",
-            "confidence": 0.72,
-            "classifier": "llm",
-            "keywords": []
-          }
-        ],
-        "noise_hits": [
+            "reason": "No actual earnings result is provided, so no clear beat or miss.",
+            "confidence": 0.92,
+            "classifier": "llm"
+          },
           {
             "headline": "Here's Why Jack Henry (JKHY) is a Strong Growth Stock",
             "reason": "Generic bullish commentary from a research article, not a specific new catalyst.",
-            "confidence": 0.93,
+            "confidence": 0.95,
             "classifier": "llm"
           },
           {
             "headline": "Conestoga SMid Cap Composite Q2 2026 Portfolio Review",
-            "reason": "Portfolio review mentions the stock in passing without a company-specific catalyst.",
-            "confidence": 0.96,
+            "reason": "Portfolio review mention is indirect and does not provide company-specific new information.",
+            "confidence": 0.9,
             "classifier": "llm"
           }
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -1998,7 +1999,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": -0.0215,
           "ret_5d": 0.023,
-          "volume_ratio_3d_20d": 0.757,
+          "volume_ratio_3d_20d": 0.802,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -2014,9 +2015,9 @@
             "datetime": 1787011200,
             "url": "",
             "event_type": "earnings",
-            "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings event with missing actual result versus estimate suggests a negative/uncertain earnings release.",
-            "classification_confidence": 0.72,
+            "classification": "NOISE",
+            "classification_reason": "No actual earnings result is provided, so no clear beat or miss.",
+            "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2032,7 +2033,7 @@
             "event_type": "news",
             "classification": "NOISE",
             "classification_reason": "Generic bullish commentary from a research article, not a specific new catalyst.",
-            "classification_confidence": 0.93,
+            "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -2045,16 +2046,16 @@
             "url": "https://seekingalpha.com/article/4928595-conestoga-smid-cap-composite-q2-2026-portfolio-review",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Portfolio review mentions the stock in passing without a company-specific catalyst.",
-            "classification_confidence": 0.96,
+            "classification_reason": "Portfolio review mention is indirect and does not provide company-specific new information.",
+            "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
           }
         ],
-        "top3_eligible": false,
-        "review_pool": true,
-        "top3_excluded_reason": "RISK_CATALYST",
+        "top3_eligible": true,
+        "review_pool": false,
+        "top3_excluded_reason": "",
         "reject_authority": false
       },
       "quality_auditor": {
@@ -2072,14 +2073,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -2092,27 +2093,31 @@
       },
       "catalyst_score": 0.0,
       "top3_selection": {
-        "tier": "REVIEW",
-        "tier_rank": 0,
+        "tier": "D",
+        "tier_rank": 1,
         "primary_lane": "strength",
         "primary_lane_status": "FAIL",
         "lane_rank": 0,
-        "catalyst_freshness_rank": -1,
+        "catalyst_freshness_rank": 0,
         "support_count": 1,
         "support_reasons": [
           "theme:SUPPORT"
         ],
         "opportunity_score": 0.0,
-        "excluded": true,
-        "exclude_reason": "RISK_CATALYST",
-        "selection_rank": null
+        "excluded": false,
+        "exclude_reason": "",
+        "selection_rank": null,
+        "production_gate_passed": false,
+        "production_gate_rejection_reason": "tier_not_allowed"
       },
-      "selection_tier": "REVIEW",
+      "selection_tier": "D",
       "selection_rank": null,
       "selection_lane": "strength",
       "selection_lane_status": "FAIL",
       "selection_opportunity_score": 0.0,
-      "review_pool_reason": "RISK_CATALYST"
+      "review_pool_reason": "",
+      "production_gate_passed": false,
+      "production_gate_rejection_reason": "tier_not_allowed"
     },
     {
       "ticker": "CHYM",
@@ -2136,14 +2141,14 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 111276117.17,
+          "avg_volume_value": 111587125.88,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 11.128,
+          "liquidity_buffer_multiple": 11.159,
           "ret_20d": 0.1016,
           "drawdown_from_high": -0.3215,
-          "atr_pct": 0.0488
+          "atr_pct": 0.0489
         }
       },
       "decision_context": {
@@ -2167,7 +2172,7 @@
           "market_cap_usd": 6730000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 111276117.17,
+          "avg_traded_value_20d": 111587125.88,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.1112
         }
@@ -2199,7 +2204,7 @@
             "ma50": 19.5488,
             "ma200": 21.184,
             "drawdown_from_252d_high": -0.3215,
-            "volume_ratio_5d_20d": 1.1388
+            "volume_ratio_5d_20d": 1.1464
           }
         },
         "left_side": {
@@ -2256,12 +2261,12 @@
         "ma50": 19.549,
         "ma200": 21.184,
         "drawdown_from_high": -0.3215,
-        "avg_volume_value": 111276117.17,
+        "avg_volume_value": 111587125.88,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 11.128,
-        "volume_ratio_3d_20d": 1.075
+        "liquidity_buffer_multiple": 11.159,
+        "volume_ratio_3d_20d": 1.09
       },
       "catalyst_context": {
         "status": "risk",
@@ -2271,8 +2276,8 @@
         "risk_hits": [
           {
             "headline": "Chime Cuts 10% of Workforce in AI Pivot",
-            "reason": "Workforce cuts can signal cost pressure or restructuring risk, potentially weighing on valuation.",
-            "confidence": 0.72,
+            "reason": "Workforce cut signals cost pressure or restructuring risk.",
+            "confidence": 0.9,
             "classifier": "llm",
             "keywords": [
               "cuts"
@@ -2280,8 +2285,8 @@
           },
           {
             "headline": "Chime to cut 10% of total workforce, or about 140 jobs, source says",
-            "reason": "Reported 10% workforce reduction is a negative operating signal and may reflect pressure on the business.",
-            "confidence": 0.7,
+            "reason": "Confirmed 10% workforce reduction is a negative operating signal.",
+            "confidence": 0.9,
             "classifier": "llm",
             "keywords": [
               "cut"
@@ -2292,13 +2297,13 @@
           {
             "headline": "Earnings reported: actual None, estimate 0.00134",
             "reason": "No actual earnings result provided; only estimate shown.",
-            "confidence": 0.95,
+            "confidence": 0.98,
             "classifier": "llm"
           }
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -2307,7 +2312,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": 0.0277,
           "ret_5d": 0.1112,
-          "volume_ratio_3d_20d": 1.075,
+          "volume_ratio_3d_20d": 1.09,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -2325,7 +2330,7 @@
             "event_type": "earnings",
             "classification": "NOISE",
             "classification_reason": "No actual earnings result provided; only estimate shown.",
-            "classification_confidence": 0.95,
+            "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2340,8 +2345,8 @@
             "url": "https://www.pymnts.com/news/banking/2026/chime-cuts-10percent-of-workforce-in-ai-pivot/",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Workforce cuts can signal cost pressure or restructuring risk, potentially weighing on valuation.",
-            "classification_confidence": 0.72,
+            "classification_reason": "Workforce cut signals cost pressure or restructuring risk.",
+            "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": [
@@ -2356,8 +2361,8 @@
             "url": "https://www.reuters.com/business/world-at-work/chime-cut-10-total-workforce-or-about-140-jobs-source-says-2026-07-31/",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Reported 10% workforce reduction is a negative operating signal and may reflect pressure on the business.",
-            "classification_confidence": 0.7,
+            "classification_reason": "Confirmed 10% workforce reduction is a negative operating signal.",
+            "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": [
@@ -2385,14 +2390,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -2448,14 +2453,14 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 57021264.39,
+          "avg_volume_value": 57052099.33,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 5.702,
+          "liquidity_buffer_multiple": 5.705,
           "ret_20d": 0.0446,
           "drawdown_from_high": -0.0474,
-          "atr_pct": 0.0328
+          "atr_pct": 0.0329
         }
       },
       "decision_context": {
@@ -2479,7 +2484,7 @@
           "market_cap_usd": 4400000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 57021264.39,
+          "avg_traded_value_20d": 57052099.33,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0181
         }
@@ -2502,7 +2507,7 @@
             "rs_63d": 0.287,
             "rs_126d": 0.2507,
             "drawdown_from_252d_high": -0.0474,
-            "volume_ratio_5d_20d": 0.8106
+            "volume_ratio_5d_20d": 0.8123
           }
         },
         "pullback": {
@@ -2515,7 +2520,7 @@
             "ma50": 49.7516,
             "ma200": 45.6729,
             "drawdown_from_252d_high": -0.0474,
-            "volume_ratio_5d_20d": 0.8106
+            "volume_ratio_5d_20d": 0.8123
           }
         },
         "left_side": {
@@ -2566,12 +2571,12 @@
         "ma50": 49.752,
         "ma200": 45.673,
         "drawdown_from_high": -0.0474,
-        "avg_volume_value": 57021264.39,
+        "avg_volume_value": 57052099.33,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 5.702,
-        "volume_ratio_3d_20d": 0.823
+        "liquidity_buffer_multiple": 5.705,
+        "volume_ratio_3d_20d": 0.826
       },
       "catalyst_context": {
         "status": "none",
@@ -2582,26 +2587,26 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.295",
-            "reason": "Incomplete earnings item with no actual result or surprise direction.",
-            "confidence": 0.92,
+            "reason": "No actual earnings result provided; only estimate shown.",
+            "confidence": 0.94,
             "classifier": "llm"
           },
           {
             "headline": "Are Computer and Technology Stocks Lagging ACI Worldwide (ACIW) This Year?",
-            "reason": "Relative performance commentary, not a company-specific catalyst.",
-            "confidence": 0.97,
+            "reason": "Relative performance commentary, not a new catalyst.",
+            "confidence": 0.98,
             "classifier": "llm"
           },
           {
             "headline": "Dimensional Fund Advisors LP Buys 344,358 Shares of ACI Worldwide, Inc. $ACIW",
-            "reason": "Institutional ownership update, usually not a direct revaluation catalyst.",
-            "confidence": 0.88,
+            "reason": "Routine institutional ownership filing, not material by itself.",
+            "confidence": 0.93,
             "classifier": "llm"
           }
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 2,
+          "min_age_days": 3,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -2610,7 +2615,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": -0.044,
           "ret_5d": 0.0181,
-          "volume_ratio_3d_20d": 0.823,
+          "volume_ratio_3d_20d": 0.826,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -2627,8 +2632,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Incomplete earnings item with no actual result or surprise direction.",
-            "classification_confidence": 0.92,
+            "classification_reason": "No actual earnings result provided; only estimate shown.",
+            "classification_confidence": 0.94,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2643,8 +2648,8 @@
             "url": "https://www.zacks.com/stock/news/2963078/are-computer-and-technology-stocks-lagging-aci-worldwide-aciw-this-year?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|yseop_template_1-2963078",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Relative performance commentary, not a company-specific catalyst.",
-            "classification_confidence": 0.97,
+            "classification_reason": "Relative performance commentary, not a new catalyst.",
+            "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -2657,8 +2662,8 @@
             "url": "https://www.defenseworld.net/2026/07/29/dimensional-fund-advisors-lp-buys-344358-shares-of-aci-worldwide-inc-aciw.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Institutional ownership update, usually not a direct revaluation catalyst.",
-            "classification_confidence": 0.88,
+            "classification_reason": "Routine institutional ownership filing, not material by itself.",
+            "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [
               "raised"
@@ -2751,14 +2756,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -2819,14 +2824,14 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 61561923.56,
+          "avg_volume_value": 61673265.81,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 6.156,
+          "liquidity_buffer_multiple": 6.167,
           "ret_20d": 0.0186,
           "drawdown_from_high": -0.4705,
-          "atr_pct": 0.0414
+          "atr_pct": 0.0415
         }
       },
       "decision_context": {
@@ -2850,7 +2855,7 @@
           "market_cap_usd": 4240000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 61561923.56,
+          "avg_traded_value_20d": 61673265.81,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0112
         }
@@ -2882,7 +2887,7 @@
             "ma50": 85.7344,
             "ma200": 106.2242,
             "drawdown_from_252d_high": -0.4705,
-            "volume_ratio_5d_20d": 1.4118
+            "volume_ratio_5d_20d": 1.4165
           }
         },
         "left_side": {
@@ -2896,7 +2901,7 @@
           "metrics": {
             "drawdown_from_252d_high": -0.4705,
             "distance_from_252d_low": 0.0285,
-            "atr_ratio_10d_20d": 0.8986,
+            "atr_ratio_10d_20d": 0.8988,
             "down_day_ratio_10d": 0.5,
             "down_day_ratio_prev20d": 0.45,
             "upper_close_days_5d": 3,
@@ -2941,12 +2946,12 @@
         "ma50": 85.734,
         "ma200": 106.224,
         "drawdown_from_high": -0.4705,
-        "avg_volume_value": 61561923.56,
+        "avg_volume_value": 61673265.81,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 6.156,
-        "volume_ratio_3d_20d": 1.701
+        "liquidity_buffer_multiple": 6.167,
+        "volume_ratio_3d_20d": 1.71
       },
       "catalyst_context": {
         "status": "risk",
@@ -2955,16 +2960,9 @@
         "positive_hits": [],
         "risk_hits": [
           {
-            "headline": "Earnings reported: actual None, estimate 1.11",
-            "reason": "Earnings data is incomplete/negative versus estimate, suggesting a miss or reporting issue.",
-            "confidence": 0.72,
-            "classifier": "llm",
-            "keywords": []
-          },
-          {
             "headline": "OLED Q2 Earnings Beat Estimates on Royalty Growth, Material Sales Lag",
-            "reason": "Revenue missed and guidance skewed to the low end despite an earnings beat, implying weaker demand.",
-            "confidence": 0.88,
+            "reason": "Earnings beat but revenue miss, material sales lag, and guidance toward low end indicate mixed-to-negative valuation pressure.",
+            "confidence": 0.84,
             "classifier": "llm",
             "keywords": [
               "misses"
@@ -2973,15 +2971,21 @@
         ],
         "noise_hits": [
           {
+            "headline": "Earnings reported: actual None, estimate 1.11",
+            "reason": "Incomplete earnings data without result; no beat/miss stated.",
+            "confidence": 0.92,
+            "classifier": "llm"
+          },
+          {
             "headline": "Analyst maintain: Buy -> Buy (Needham)",
-            "reason": "Rating was maintained with no change in view.",
+            "reason": "Rating maintained at Buy with no change or new information.",
             "confidence": 0.98,
             "classifier": "llm"
           }
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -2990,7 +2994,7 @@
           "status": "VOLUME_ONLY",
           "ret_3d": -0.0259,
           "ret_5d": 0.0112,
-          "volume_ratio_3d_20d": 1.701,
+          "volume_ratio_3d_20d": 1.71,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -3006,9 +3010,9 @@
             "datetime": 1793836800,
             "url": "",
             "event_type": "earnings",
-            "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings data is incomplete/negative versus estimate, suggesting a miss or reporting issue.",
-            "classification_confidence": 0.72,
+            "classification": "NOISE",
+            "classification_reason": "Incomplete earnings data without result; no beat/miss stated.",
+            "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -3023,8 +3027,8 @@
             "url": "https://www.zacks.com/stock/news/2965550/oled-q2-earnings-beat-estimates-on-royalty-growth-material-sales-lag?cid=CS-STOCKNEWSAPI-FT-analyst_blog|earnings_article-2965550",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Revenue missed and guidance skewed to the low end despite an earnings beat, implying weaker demand.",
-            "classification_confidence": 0.88,
+            "classification_reason": "Earnings beat but revenue miss, material sales lag, and guidance toward low end indicate mixed-to-negative valuation pressure.",
+            "classification_confidence": 0.84,
             "classifier": "llm",
             "keywords_positive": [
               "beat",
@@ -3044,7 +3048,7 @@
             "url": "",
             "event_type": "analyst_rating",
             "classification": "NOISE",
-            "classification_reason": "Rating was maintained with no change in view.",
+            "classification_reason": "Rating maintained at Buy with no change or new information.",
             "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
@@ -3071,14 +3075,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -3136,7 +3140,7 @@
         ],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 28013678.11,
+          "avg_volume_value": 28013794.23,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
@@ -3167,7 +3171,7 @@
           "market_cap_usd": 3520000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 28013678.11,
+          "avg_traded_value_20d": 28013794.23,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0407
         }
@@ -3252,7 +3256,7 @@
         "ma50": 13.275,
         "ma200": 13.407,
         "drawdown_from_high": -0.0474,
-        "avg_volume_value": 28013678.11,
+        "avg_volume_value": 28013794.23,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
@@ -3291,7 +3295,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -3376,14 +3380,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -3444,11 +3448,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 63192713.12,
+          "avg_volume_value": 63208351.93,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 6.319,
+          "liquidity_buffer_multiple": 6.321,
           "ret_20d": 0.0914,
           "drawdown_from_high": -0.3928,
           "atr_pct": 0.0538
@@ -3475,7 +3479,7 @@
           "market_cap_usd": 2690000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 63192713.12,
+          "avg_traded_value_20d": 63208351.93,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0464
         }
@@ -3496,7 +3500,7 @@
             "rs_63d": 0.1227,
             "rs_126d": -0.2676,
             "drawdown_from_252d_high": -0.3928,
-            "volume_ratio_5d_20d": 1.1488
+            "volume_ratio_5d_20d": 1.1495
           }
         },
         "pullback": {
@@ -3509,7 +3513,7 @@
             "ma50": 5.2144,
             "ma200": 6.3643,
             "drawdown_from_252d_high": -0.3928,
-            "volume_ratio_5d_20d": 1.1488
+            "volume_ratio_5d_20d": 1.1495
           }
         },
         "left_side": {
@@ -3566,12 +3570,12 @@
         "ma50": 5.214,
         "ma200": 6.364,
         "drawdown_from_high": -0.3928,
-        "avg_volume_value": 63192713.12,
+        "avg_volume_value": 63208351.93,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 6.319,
-        "volume_ratio_3d_20d": 1.295
+        "liquidity_buffer_multiple": 6.321,
+        "volume_ratio_3d_20d": 1.297
       },
       "catalyst_context": {
         "status": "found",
@@ -3605,7 +3609,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -3614,7 +3618,7 @@
           "status": "VOLUME_ONLY",
           "ret_3d": -0.0049,
           "ret_5d": 0.0464,
-          "volume_ratio_3d_20d": 1.295,
+          "volume_ratio_3d_20d": 1.297,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -3690,14 +3694,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -3760,11 +3764,11 @@
         ],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 16580844.71,
+          "avg_volume_value": 16712125.16,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 1.658,
+          "liquidity_buffer_multiple": 1.671,
           "ret_20d": 0.1306,
           "drawdown_from_high": -0.3946,
           "atr_pct": 0.0506
@@ -3791,7 +3795,7 @@
           "market_cap_usd": 2530000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 16580844.71,
+          "avg_traded_value_20d": 16712125.16,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0391
         }
@@ -3823,7 +3827,7 @@
             "ma50": 9.489,
             "ma200": 12.325,
             "drawdown_from_252d_high": -0.3946,
-            "volume_ratio_5d_20d": 1.0796
+            "volume_ratio_5d_20d": 1.1023
           }
         },
         "left_side": {
@@ -3881,12 +3885,12 @@
         "ma50": 9.489,
         "ma200": 12.325,
         "drawdown_from_high": -0.3946,
-        "avg_volume_value": 16580844.71,
+        "avg_volume_value": 16712125.16,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 1.658,
-        "volume_ratio_3d_20d": 0.945
+        "liquidity_buffer_multiple": 1.671,
+        "volume_ratio_3d_20d": 0.989
       },
       "catalyst_context": {
         "status": "none",
@@ -3916,7 +3920,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 1,
+          "min_age_days": 2,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -3925,7 +3929,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": -0.0453,
           "ret_5d": 0.0391,
-          "volume_ratio_3d_20d": 0.945,
+          "volume_ratio_3d_20d": 0.989,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -3999,14 +4003,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -4068,11 +4072,11 @@
         ],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 28917035.24,
+          "avg_volume_value": 28957142.88,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 2.892,
+          "liquidity_buffer_multiple": 2.896,
           "ret_20d": 0.137,
           "drawdown_from_high": -0.2915,
           "atr_pct": 0.04
@@ -4099,7 +4103,7 @@
           "market_cap_usd": 2190000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 28917035.24,
+          "avg_traded_value_20d": 28957142.88,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0645
         }
@@ -4120,7 +4124,7 @@
             "rs_63d": 0.2969,
             "rs_126d": 0.0168,
             "drawdown_from_252d_high": -0.2915,
-            "volume_ratio_5d_20d": 1.0289
+            "volume_ratio_5d_20d": 1.0329
           }
         },
         "pullback": {
@@ -4133,7 +4137,7 @@
             "ma50": 11.5106,
             "ma200": 11.7571,
             "drawdown_from_252d_high": -0.2915,
-            "volume_ratio_5d_20d": 1.0289
+            "volume_ratio_5d_20d": 1.0329
           }
         },
         "left_side": {
@@ -4186,12 +4190,12 @@
         "ma50": 11.511,
         "ma200": 11.757,
         "drawdown_from_high": -0.2915,
-        "avg_volume_value": 28917035.24,
+        "avg_volume_value": 28957142.88,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 2.892,
-        "volume_ratio_3d_20d": 0.773
+        "liquidity_buffer_multiple": 2.896,
+        "volume_ratio_3d_20d": 0.781
       },
       "catalyst_context": {
         "status": "none",
@@ -4221,7 +4225,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 1,
+          "min_age_days": 2,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -4230,7 +4234,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": 0.0093,
           "ret_5d": 0.0645,
-          "volume_ratio_3d_20d": 0.773,
+          "volume_ratio_3d_20d": 0.781,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -4304,14 +4308,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -4373,11 +4377,11 @@
         ],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 791421583.21,
+          "avg_volume_value": 791651919.05,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 79.142,
+          "liquidity_buffer_multiple": 79.165,
           "ret_20d": 0.0108,
           "drawdown_from_high": -0.4654,
           "atr_pct": 0.0983
@@ -4404,7 +4408,7 @@
           "market_cap_usd": 4640000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 791421583.21,
+          "avg_traded_value_20d": 791651919.05,
           "zero_volume_days_20d": 0,
           "ret_5d": -0.0397
         }
@@ -4436,7 +4440,7 @@
             "ma50": 8.8314,
             "ma200": 9.3137,
             "drawdown_from_252d_high": -0.4654,
-            "volume_ratio_5d_20d": 0.5603
+            "volume_ratio_5d_20d": 0.5613
           }
         },
         "left_side": {
@@ -4479,9 +4483,9 @@
           "phase": "拉离 (메인자금 회전 시작)"
         },
         "volume_compression": {
-          "short_avg": 60325110,
-          "long_avg": 107657732,
-          "ratio": 0.56,
+          "short_avg": 60448120,
+          "long_avg": 107688485,
+          "ratio": 0.561,
           "threshold": 0.6,
           "label_ko": "거래량 압축",
           "phase": "建仓 진행 중"
@@ -4502,12 +4506,12 @@
         "ma50": 8.831,
         "ma200": 9.314,
         "drawdown_from_high": -0.4654,
-        "avg_volume_value": 791421583.21,
+        "avg_volume_value": 791651919.05,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 79.142,
-        "volume_ratio_3d_20d": 0.536
+        "liquidity_buffer_multiple": 79.165,
+        "volume_ratio_3d_20d": 0.538
       },
       "catalyst_context": {
         "status": "none",
@@ -4537,7 +4541,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 1,
+          "min_age_days": 2,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -4546,7 +4550,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": -0.0471,
           "ret_5d": -0.0397,
-          "volume_ratio_3d_20d": 0.536,
+          "volume_ratio_3d_20d": 0.538,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -4620,14 +4624,14 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 0,
           "active_peer_count": 0,
@@ -4688,11 +4692,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 26039439837.86,
+          "avg_volume_value": 26043440122.88,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 2603.944,
+          "liquidity_buffer_multiple": 2604.344,
           "ret_20d": 0.0304,
           "drawdown_from_high": -0.1484,
           "atr_pct": 0.037
@@ -4719,7 +4723,7 @@
           "market_cap_usd": 5412560000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 26039439837.86,
+          "avg_traded_value_20d": 26043440122.88,
           "zero_volume_days_20d": 0,
           "ret_5d": -0.0294
         }
@@ -4754,7 +4758,7 @@
             "ma50": 206.1744,
             "ma200": 193.1124,
             "drawdown_from_252d_high": -0.1484,
-            "volume_ratio_5d_20d": 1.0991
+            "volume_ratio_5d_20d": 1.0995
           }
         },
         "left_side": {
@@ -4793,7 +4797,7 @@
           "zone_lo": 191.21,
           "zone_hi": 194.49,
           "distance": 0.46,
-          "margin": 3.736,
+          "margin": 3.737,
           "bar_age": 125,
           "label_ko": "RONIN 구조 지지 근접",
           "phase": "구조존 재진입"
@@ -4809,18 +4813,28 @@
         "ma50": 206.174,
         "ma200": 193.112,
         "drawdown_from_high": -0.1484,
-        "avg_volume_value": 26039439837.86,
+        "avg_volume_value": 26043440122.88,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 2603.944,
-        "volume_ratio_3d_20d": 1.082
+        "liquidity_buffer_multiple": 2604.344,
+        "volume_ratio_3d_20d": 1.083
       },
       "catalyst_context": {
-        "status": "none",
-        "classification": "NOISE",
+        "status": "found",
+        "classification": "POSITIVE_REVALUATION",
         "score": 0.0,
-        "positive_hits": [],
+        "positive_hits": [
+          {
+            "headline": "Nvidia's Shareholder Meeting Is Aug. 26. Here's What Investors Should Be Looking Out For.",
+            "reason": "keyword",
+            "confidence": 0.55,
+            "classifier": "keyword",
+            "keywords": [
+              "earnings"
+            ]
+          }
+        ],
         "risk_hits": [],
         "noise_hits": [
           {
@@ -4830,13 +4844,7 @@
             "classifier": "keyword"
           },
           {
-            "headline": "Did China build a top-tier AI model by itself? A new report suggests Nvidia chips played a role.",
-            "reason": "keyword",
-            "confidence": 0.4,
-            "classifier": "keyword"
-          },
-          {
-            "headline": "NVIDIA vs. Sandisk: Which AI Stock Could Deliver Bigger Returns?",
+            "headline": "Nobody's Talking About It, But This Business Could Make Nvidia a $10 Trillion Company",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
@@ -4853,7 +4861,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": 0.019,
           "ret_5d": -0.0294,
-          "volume_ratio_3d_20d": 1.082,
+          "volume_ratio_3d_20d": 1.083,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -4879,25 +4887,27 @@
             "keywords_risk": []
           },
           {
-            "headline": "Did China build a top-tier AI model by itself? A new report suggests Nvidia chips played a role.",
-            "summary": "Alibaba has an agreement for Moonshot to use its Nvidia H200s, according to Bloomberg — but the Chinese tech giant pushed back against the report.",
-            "source": "FMP:Market Watch",
-            "datetime": 1785514980,
-            "url": "https://www.marketwatch.com/story/did-china-build-a-top-tier-ai-model-by-itself-a-new-report-suggests-nvidia-chips-played-a-role-ad4644cd",
+            "headline": "Nvidia's Shareholder Meeting Is Aug. 26. Here's What Investors Should Be Looking Out For.",
+            "summary": "The AI boom is still in its early innings. Nvidia's next earnings release should provide updates on key catalysts.",
+            "source": "FMP:The Motley Fool",
+            "datetime": 1785542400,
+            "url": "https://www.fool.com/investing/2026/08/01/nvidias-shareholder-meeting-is-aug-26-heres-what-i/",
             "event_type": "news",
-            "classification": "NOISE",
+            "classification": "POSITIVE_REVALUATION",
             "classification_reason": "keyword",
-            "classification_confidence": 0.4,
+            "classification_confidence": 0.55,
             "classifier": "keyword",
-            "keywords_positive": [],
+            "keywords_positive": [
+              "earnings"
+            ],
             "keywords_risk": []
           },
           {
-            "headline": "NVIDIA vs. Sandisk: Which AI Stock Could Deliver Bigger Returns?",
-            "summary": "Sandisk is riding AI memory demand with strong revenue growth and bullish targets. See why it may offer more upside than NVIDIA.",
-            "source": "FMP:Zacks Investment Research",
-            "datetime": 1785513666,
-            "url": "https://www.zacks.com/stock/news/2966135/nvidia-vs-sandisk-which-ai-stock-could-deliver-bigger-returns?cid=CS-STOCKNEWSAPI-FT-analyst_blog|investment_ideas-2966135",
+            "headline": "Nobody's Talking About It, But This Business Could Make Nvidia a $10 Trillion Company",
+            "summary": "Nvidia shares have surged on the generative AI revolution. A similar transformation seems to be brewing in robotics and automobiles.",
+            "source": "FMP:The Motley Fool",
+            "datetime": 1785524400,
+            "url": "https://www.fool.com/investing/2026/07/31/nobodys-talking-about-it-but-this-business-could-m/",
             "event_type": "news",
             "classification": "NOISE",
             "classification_reason": "keyword",
@@ -4919,22 +4929,21 @@
       "theme_industry": {
         "enabled": true,
         "status": "STRONG_SUPPORT",
-        "confidence_delta": 1,
+        "confidence_delta": 4,
         "reasons": [
+          "theme_group_support",
           "sector_rrg_support",
           "active_theme_peers"
         ],
-        "warnings": [
-          "theme_or_sector_lagging"
-        ],
+        "warnings": [],
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [
           {
@@ -4959,45 +4968,46 @@
               "TSM"
             ],
             "parent_theme_etf": "AIQ",
-            "parent_quadrant": "LAGGING",
+            "parent_quadrant": "IMPROVING",
             "theme_group": "ai_semiconductor",
             "group_label": "AI·반도체",
-            "supporting_etfs": [],
+            "supporting_etfs": [
+              {
+                "etf": "AIQ",
+                "label": "AI & 빅데이터",
+                "quadrant": "IMPROVING",
+                "ratio": 93.73,
+                "momentum": 100.47
+              }
+            ],
             "caution_etfs": [],
             "unsupported_etfs": [
               {
                 "etf": "SMH",
                 "label": "반도체 (VanEck)",
                 "quadrant": "LAGGING",
-                "ratio": 92.1,
-                "momentum": 92.45
+                "ratio": 91.69,
+                "momentum": 95.27
               },
               {
                 "etf": "SOXX",
                 "label": "반도체 (iShares)",
                 "quadrant": "LAGGING",
-                "ratio": 91.25,
-                "momentum": 91.09
-              },
-              {
-                "etf": "AIQ",
-                "label": "AI & 빅데이터",
-                "quadrant": "LAGGING",
-                "ratio": 94.1,
-                "momentum": 98.45
+                "ratio": 90.6,
+                "momentum": 94.76
               },
               {
                 "etf": "ARTY",
                 "label": "Future AI & Tech",
                 "quadrant": "LAGGING",
-                "ratio": 94.19,
-                "momentum": 95.33
+                "ratio": 94.03,
+                "momentum": 98.83
               }
             ],
-            "status": "GROUP_UNSUPPORTED"
+            "status": "PARENT_SUPPORT"
           }
         ],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 12,
           "active_peer_count": 8,
@@ -5092,13 +5102,14 @@
         "primary_lane": "pullback",
         "primary_lane_status": "PASS",
         "lane_rank": 4,
-        "catalyst_freshness_rank": 0,
-        "support_count": 2,
+        "catalyst_freshness_rank": 4,
+        "support_count": 3,
         "support_reasons": [
           "theme:STRONG_SUPPORT",
+          "catalyst:POSITIVE_REVALUATION",
           "theme_peer_confirmation"
         ],
-        "opportunity_score": 4.15,
+        "opportunity_score": 4.75,
         "excluded": false,
         "exclude_reason": "",
         "selection_rank": null,
@@ -5109,7 +5120,7 @@
       "selection_rank": null,
       "selection_lane": "pullback",
       "selection_lane_status": "PASS",
-      "selection_opportunity_score": 4.15,
+      "selection_opportunity_score": 4.75,
       "review_pool_reason": "",
       "production_gate_passed": false,
       "production_gate_rejection_reason": "tier_not_allowed"
@@ -5136,11 +5147,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 14607061809.49,
+          "avg_volume_value": 14706494834.53,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 1460.706,
+          "liquidity_buffer_multiple": 1470.649,
           "ret_20d": 0.1901,
           "drawdown_from_high": -0.1427,
           "atr_pct": 0.032
@@ -5167,7 +5178,7 @@
           "market_cap_usd": 3127820000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 14607061809.49,
+          "avg_traded_value_20d": 14706494834.53,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.2175
         }
@@ -5190,7 +5201,7 @@
             "rs_63d": 0.1002,
             "rs_126d": -0.0043,
             "drawdown_from_252d_high": -0.1427,
-            "volume_ratio_5d_20d": 1.5214
+            "volume_ratio_5d_20d": 1.536
           }
         },
         "pullback": {
@@ -5203,7 +5214,7 @@
             "ma50": 399.405,
             "ma200": 433.5831,
             "drawdown_from_252d_high": -0.1427,
-            "volume_ratio_5d_20d": 1.5214
+            "volume_ratio_5d_20d": 1.536
           }
         },
         "left_side": {
@@ -5245,42 +5256,40 @@
         "ma50": 399.405,
         "ma200": 433.583,
         "drawdown_from_high": -0.1427,
-        "avg_volume_value": 14607061809.49,
+        "avg_volume_value": 14706494834.53,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 1460.706,
-        "volume_ratio_3d_20d": 1.978
+        "liquidity_buffer_multiple": 1470.649,
+        "volume_ratio_3d_20d": 2.006
       },
       "catalyst_context": {
-        "status": "risk",
-        "classification": "RISK_CATALYST",
+        "status": "found",
+        "classification": "POSITIVE_REVALUATION",
         "score": 0.0,
         "positive_hits": [
           {
-            "headline": "‘Investors Want to See the Receipts' on A.I. Investments",
+            "headline": "Beyond the Mag 7: Rising Q3 Estimates Signal a Market-Wide Earnings Expansion",
             "reason": "keyword",
             "confidence": 0.55,
             "classifier": "keyword",
             "keywords": [
-              "earnings"
+              "earnings",
+              "expansion",
+              "order"
             ]
           }
         ],
-        "risk_hits": [
-          {
-            "headline": "MSFT DEADLINE: ROSEN, TRUSTED INVESTOR COUNSEL, Encourages Microsoft Investors with Losses in Excess of $100K to Secure Counsel Before Important August 11 Deadline in Securities Cl",
-            "reason": "keyword",
-            "confidence": 0.55,
-            "classifier": "keyword",
-            "keywords": [
-              "lead plaintiff"
-            ]
-          }
-        ],
+        "risk_hits": [],
         "noise_hits": [
           {
-            "headline": "Earnings reported: actual None, estimate 4.71",
+            "headline": "Earnings reported: actual None, estimate 4.64",
+            "reason": "keyword",
+            "confidence": 0.4,
+            "classifier": "keyword"
+          },
+          {
+            "headline": "Microsoft Stock is Soaring: Is it Too Late to Buy?",
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
@@ -5288,7 +5297,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -5297,7 +5306,7 @@
           "status": "CONFIRMED_UP",
           "ret_3d": 0.1814,
           "ret_5d": 0.2175,
-          "volume_ratio_3d_20d": 1.978,
+          "volume_ratio_3d_20d": 2.006,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -5307,7 +5316,7 @@
         "llm_status": "disabled",
         "news": [
           {
-            "headline": "Earnings reported: actual None, estimate 4.71",
+            "headline": "Earnings reported: actual None, estimate 4.64",
             "summary": "",
             "source": "FMP:earnings_surprise",
             "datetime": 1793145600,
@@ -5323,41 +5332,41 @@
             "keywords_risk": []
           },
           {
-            "headline": "‘Investors Want to See the Receipts' on A.I. Investments",
-            "summary": "This earnings season is showing that investors want proof AI investments can generate meaningful returns, according to Stephanie Walter of HyperFrame Research. She says this explains the positive reaction to Microsoft (MSFT), Amazon (AMZN), and Alphabet (GOOGL), while Meta Platforms (META) has not s",
-            "source": "FMP:Schwab Network",
-            "datetime": 1785520807,
-            "url": "https://www.youtube.com/watch?v=c4DJ_TJAUTI",
+            "headline": "Microsoft Stock is Soaring: Is it Too Late to Buy?",
+            "summary": "Microsoft (MSFT +3.02%) provided investors with an exciting update.",
+            "source": "FMP:The Motley Fool",
+            "datetime": 1785540179,
+            "url": "https://www.fool.com/investing/2026/07/31/microsoft-stock-is-soaring-is-it-too-late-to-buy/",
+            "event_type": "news",
+            "classification": "NOISE",
+            "classification_reason": "keyword",
+            "classification_confidence": 0.4,
+            "classifier": "keyword",
+            "keywords_positive": [],
+            "keywords_risk": []
+          },
+          {
+            "headline": "Beyond the Mag 7: Rising Q3 Estimates Signal a Market-Wide Earnings Expansion",
+            "summary": "Companies that have reported in the Q2 cycle are offering encouraging reads on order trends, margin resilience, and full-year demand. This fundamental health is filtering directly into analyst models, driving a steady stream of upward revisions for Q3 and beyond.",
+            "source": "FMP:Zacks Investment Research",
+            "datetime": 1785531664,
+            "url": "https://www.zacks.com/commentary/2966184/beyond-the-mag-7-rising-q3-estimates-signal-a-market-wide-earnings-expansion?cid=CS-STOCKNEWSAPI-FT-earnings_preview-2966184",
             "event_type": "news",
             "classification": "POSITIVE_REVALUATION",
             "classification_reason": "keyword",
             "classification_confidence": 0.55,
             "classifier": "keyword",
             "keywords_positive": [
-              "earnings"
+              "earnings",
+              "expansion",
+              "order"
             ],
             "keywords_risk": []
-          },
-          {
-            "headline": "MSFT DEADLINE: ROSEN, TRUSTED INVESTOR COUNSEL, Encourages Microsoft Investors with Losses in Excess of $100K to Secure Counsel Before Important August 11 Deadline in Securities Cl",
-            "summary": "NEW YORK, July 31, 2026 (GLOBE NEWSWIRE) -- WHY: Rosen Law Firm, a global investor rights law firm, reminds purchasers of common stock of Microsoft Corporation (NASDAQ: MSFT) between May 1, 2025 and January 28, 2026, inclusive (the “Class Period”), of the important August 11, 2026 lead plaintiff dea",
-            "source": "FMP:GlobeNewsWire",
-            "datetime": 1785514860,
-            "url": "https://www.globenewswire.com/news-release/2026/07/31/3337053/673/en/MSFT-DEADLINE-ROSEN-TRUSTED-INVESTOR-COUNSEL-Encourages-Microsoft-Investors-with-Losses-in-Excess-of-100K-to-Secure-Counsel-Before-Important-August-11-Deadline-in-Securities-Class-.html",
-            "event_type": "news",
-            "classification": "RISK_CATALYST",
-            "classification_reason": "keyword",
-            "classification_confidence": 0.55,
-            "classifier": "keyword",
-            "keywords_positive": [],
-            "keywords_risk": [
-              "lead plaintiff"
-            ]
           }
         ],
-        "top3_eligible": false,
-        "review_pool": true,
-        "top3_excluded_reason": "RISK_CATALYST",
+        "top3_eligible": true,
+        "review_pool": false,
+        "top3_excluded_reason": "",
         "reject_authority": false
       },
       "quality_auditor": {
@@ -5377,11 +5386,11 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [
           {
@@ -5410,15 +5419,15 @@
                 "etf": "SKYY",
                 "label": "클라우드 컴퓨팅",
                 "quadrant": "LEADING",
-                "ratio": 104.31,
-                "momentum": 107.44
+                "ratio": 105.52,
+                "momentum": 107.19
               },
               {
                 "etf": "IGV",
                 "label": "소프트웨어",
                 "quadrant": "LEADING",
-                "ratio": 101.41,
-                "momentum": 106.62
+                "ratio": 101.93,
+                "momentum": 106.34
               }
             ],
             "caution_etfs": [],
@@ -5426,7 +5435,7 @@
             "status": "GROUP_SUPPORT"
           }
         ],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 8,
           "active_peer_count": 2,
@@ -5475,29 +5484,34 @@
       },
       "catalyst_score": 0.0,
       "top3_selection": {
-        "tier": "REVIEW",
-        "tier_rank": 0,
+        "tier": "B",
+        "tier_rank": 3,
         "primary_lane": "strength",
         "primary_lane_status": "PASS",
         "lane_rank": 4,
-        "catalyst_freshness_rank": -1,
-        "support_count": 3,
+        "catalyst_freshness_rank": 5,
+        "support_count": 4,
         "support_reasons": [
           "theme:STRONG_SUPPORT",
+          "catalyst:POSITIVE_REVALUATION",
           "reaction:CONFIRMED_UP",
           "theme_peer_confirmation"
         ],
-        "opportunity_score": 4.052,
-        "excluded": true,
-        "exclude_reason": "RISK_CATALYST",
-        "selection_rank": null
+        "opportunity_score": 4.652,
+        "excluded": false,
+        "exclude_reason": "",
+        "selection_rank": null,
+        "production_gate_passed": false,
+        "production_gate_rejection_reason": "tier_not_allowed"
       },
-      "selection_tier": "REVIEW",
+      "selection_tier": "B",
       "selection_rank": null,
       "selection_lane": "strength",
       "selection_lane_status": "PASS",
-      "selection_opportunity_score": 4.052,
-      "review_pool_reason": "RISK_CATALYST"
+      "selection_opportunity_score": 4.652,
+      "review_pool_reason": "",
+      "production_gate_passed": false,
+      "production_gate_rejection_reason": "tier_not_allowed"
     },
     {
       "ticker": "TSM",
@@ -5521,11 +5535,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 6220957199.0,
+          "avg_volume_value": 6221398316.6,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 622.096,
+          "liquidity_buffer_multiple": 622.14,
           "ret_20d": -0.0689,
           "drawdown_from_high": -0.1535,
           "atr_pct": 0.0463
@@ -5552,7 +5566,7 @@
           "market_cap_usd": 2083000000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 6220957199.0,
+          "avg_traded_value_20d": 6221398316.6,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0021
         }
@@ -5573,7 +5587,7 @@
             "rs_63d": -0.0188,
             "rs_126d": 0.1142,
             "drawdown_from_252d_high": -0.1535,
-            "volume_ratio_5d_20d": 1.1575
+            "volume_ratio_5d_20d": 1.1577
           }
         },
         "pullback": {
@@ -5588,7 +5602,7 @@
             "ma50": 425.3344,
             "ma200": 357.2864,
             "drawdown_from_252d_high": -0.1535,
-            "volume_ratio_5d_20d": 1.1575
+            "volume_ratio_5d_20d": 1.1577
           }
         },
         "left_side": {
@@ -5643,11 +5657,11 @@
         "ma50": 425.334,
         "ma200": 357.286,
         "drawdown_from_high": -0.1535,
-        "avg_volume_value": 6220957199.0,
+        "avg_volume_value": 6221398316.6,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 622.096,
+        "liquidity_buffer_multiple": 622.14,
         "volume_ratio_3d_20d": 1.129
       },
       "catalyst_context": {
@@ -5682,7 +5696,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -5759,22 +5773,21 @@
       "theme_industry": {
         "enabled": true,
         "status": "STRONG_SUPPORT",
-        "confidence_delta": 1,
+        "confidence_delta": 4,
         "reasons": [
+          "theme_group_support",
           "sector_rrg_support",
           "active_theme_peers"
         ],
-        "warnings": [
-          "theme_or_sector_lagging"
-        ],
+        "warnings": [],
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [
           {
@@ -5799,45 +5812,46 @@
               "NVDA"
             ],
             "parent_theme_etf": "AIQ",
-            "parent_quadrant": "LAGGING",
+            "parent_quadrant": "IMPROVING",
             "theme_group": "ai_semiconductor",
             "group_label": "AI·반도체",
-            "supporting_etfs": [],
+            "supporting_etfs": [
+              {
+                "etf": "AIQ",
+                "label": "AI & 빅데이터",
+                "quadrant": "IMPROVING",
+                "ratio": 93.73,
+                "momentum": 100.47
+              }
+            ],
             "caution_etfs": [],
             "unsupported_etfs": [
               {
                 "etf": "SMH",
                 "label": "반도체 (VanEck)",
                 "quadrant": "LAGGING",
-                "ratio": 92.1,
-                "momentum": 92.45
+                "ratio": 91.69,
+                "momentum": 95.27
               },
               {
                 "etf": "SOXX",
                 "label": "반도체 (iShares)",
                 "quadrant": "LAGGING",
-                "ratio": 91.25,
-                "momentum": 91.09
-              },
-              {
-                "etf": "AIQ",
-                "label": "AI & 빅데이터",
-                "quadrant": "LAGGING",
-                "ratio": 94.1,
-                "momentum": 98.45
+                "ratio": 90.6,
+                "momentum": 94.76
               },
               {
                 "etf": "ARTY",
                 "label": "Future AI & Tech",
                 "quadrant": "LAGGING",
-                "ratio": 94.19,
-                "momentum": 95.33
+                "ratio": 94.03,
+                "momentum": 98.83
               }
             ],
-            "status": "GROUP_UNSUPPORTED"
+            "status": "PARENT_SUPPORT"
           }
         ],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 12,
           "active_peer_count": 8,
@@ -5977,11 +5991,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 3485641851.47,
+          "avg_volume_value": 3485923912.82,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 348.564,
+          "liquidity_buffer_multiple": 348.592,
           "ret_20d": -0.0793,
           "drawdown_from_high": -0.1812,
           "atr_pct": 0.0529
@@ -6008,7 +6022,7 @@
           "market_cap_usd": 597450000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 3485641851.47,
+          "avg_traded_value_20d": 3485923912.82,
           "zero_volume_days_20d": 0,
           "ret_5d": -0.0729
         }
@@ -6029,7 +6043,7 @@
             "rs_63d": 0.0926,
             "rs_126d": 0.0431,
             "drawdown_from_252d_high": -0.1812,
-            "volume_ratio_5d_20d": 1.2541
+            "volume_ratio_5d_20d": 1.2543
           }
         },
         "pullback": {
@@ -6044,7 +6058,7 @@
             "ma50": 1751.1208,
             "ma200": 1392.0814,
             "drawdown_from_252d_high": -0.1812,
-            "volume_ratio_5d_20d": 1.2541
+            "volume_ratio_5d_20d": 1.2543
           }
         },
         "left_side": {
@@ -6086,11 +6100,11 @@
         "ma50": 1751.121,
         "ma200": 1392.081,
         "drawdown_from_high": -0.1812,
-        "avg_volume_value": 3485641851.47,
+        "avg_volume_value": 3485923912.82,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 348.564,
+        "liquidity_buffer_multiple": 348.592,
         "volume_ratio_3d_20d": 1.043
       },
       "catalyst_context": {
@@ -6106,16 +6120,6 @@
             "keywords": [
               "earnings"
             ]
-          },
-          {
-            "headline": "What Makes ASML (ASML) a New Strong Buy Stock",
-            "reason": "keyword",
-            "confidence": 0.55,
-            "classifier": "keyword",
-            "keywords": [
-              "earnings",
-              "upgrade"
-            ]
           }
         ],
         "risk_hits": [],
@@ -6125,11 +6129,17 @@
             "reason": "keyword",
             "confidence": 0.4,
             "classifier": "keyword"
+          },
+          {
+            "headline": "ASML Stock: Buy the Dip?",
+            "reason": "keyword",
+            "confidence": 0.4,
+            "classifier": "keyword"
           }
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -6164,6 +6174,20 @@
             "keywords_risk": []
           },
           {
+            "headline": "ASML Stock: Buy the Dip?",
+            "summary": "ASML (ASML -1.36%) stock is dropping due to rising risks from new competitors.",
+            "source": "FMP:The Motley Fool",
+            "datetime": 1785539575,
+            "url": "https://www.fool.com/investing/2026/07/31/asml-stock-buy-the-dip/",
+            "event_type": "news",
+            "classification": "NOISE",
+            "classification_reason": "keyword",
+            "classification_confidence": 0.4,
+            "classifier": "keyword",
+            "keywords_positive": [],
+            "keywords_risk": []
+          },
+          {
             "headline": "Semiconductor ETFs Draw Cash This Week as Chip Stocks Rally",
             "summary": "Chip stocks rallied this week on a wave of strong tech earnings, and investors rewarded semiconductor ETFs with a rush of new cash. Three funds tracking the chip sector ranked among those pulling in the most new money, according to FactSet flow data.",
             "source": "FMP:ETF Trends",
@@ -6176,23 +6200,6 @@
             "classifier": "keyword",
             "keywords_positive": [
               "earnings"
-            ],
-            "keywords_risk": []
-          },
-          {
-            "headline": "What Makes ASML (ASML) a New Strong Buy Stock",
-            "summary": "ASML (ASML) might move higher on growing optimism about its earnings prospects, which is reflected by its upgrade to a Zacks Rank #1 (Strong Buy).",
-            "source": "FMP:Zacks Investment Research",
-            "datetime": 1785502869,
-            "url": "https://www.zacks.com/stock/news/2965993/what-makes-asml-asml-a-new-strong-buy-stock?cid=CS-STOCKNEWSAPI-FT-tale_of_the_tape|yseop_template_12_zacks_rank_upgrade-2965993",
-            "event_type": "news",
-            "classification": "POSITIVE_REVALUATION",
-            "classification_reason": "keyword",
-            "classification_confidence": 0.55,
-            "classifier": "keyword",
-            "keywords_positive": [
-              "earnings",
-              "upgrade"
             ],
             "keywords_risk": []
           }
@@ -6209,22 +6216,21 @@
       "theme_industry": {
         "enabled": true,
         "status": "STRONG_SUPPORT",
-        "confidence_delta": 1,
+        "confidence_delta": 4,
         "reasons": [
+          "theme_group_support",
           "sector_rrg_support",
           "active_theme_peers"
         ],
-        "warnings": [
-          "theme_or_sector_lagging"
-        ],
+        "warnings": [],
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [
           {
@@ -6249,45 +6255,46 @@
               "TSM"
             ],
             "parent_theme_etf": "AIQ",
-            "parent_quadrant": "LAGGING",
+            "parent_quadrant": "IMPROVING",
             "theme_group": "ai_semiconductor",
             "group_label": "AI·반도체",
-            "supporting_etfs": [],
+            "supporting_etfs": [
+              {
+                "etf": "AIQ",
+                "label": "AI & 빅데이터",
+                "quadrant": "IMPROVING",
+                "ratio": 93.73,
+                "momentum": 100.47
+              }
+            ],
             "caution_etfs": [],
             "unsupported_etfs": [
               {
                 "etf": "SMH",
                 "label": "반도체 (VanEck)",
                 "quadrant": "LAGGING",
-                "ratio": 92.1,
-                "momentum": 92.45
+                "ratio": 91.69,
+                "momentum": 95.27
               },
               {
                 "etf": "SOXX",
                 "label": "반도체 (iShares)",
                 "quadrant": "LAGGING",
-                "ratio": 91.25,
-                "momentum": 91.09
-              },
-              {
-                "etf": "AIQ",
-                "label": "AI & 빅데이터",
-                "quadrant": "LAGGING",
-                "ratio": 94.1,
-                "momentum": 98.45
+                "ratio": 90.6,
+                "momentum": 94.76
               },
               {
                 "etf": "ARTY",
                 "label": "Future AI & Tech",
                 "quadrant": "LAGGING",
-                "ratio": 94.19,
-                "momentum": 95.33
+                "ratio": 94.03,
+                "momentum": 98.83
               }
             ],
-            "status": "GROUP_UNSUPPORTED"
+            "status": "PARENT_SUPPORT"
           }
         ],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 12,
           "active_peer_count": 8,
@@ -6427,11 +6434,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 2213634541.3,
+          "avg_volume_value": 2213652443.52,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 221.363,
+          "liquidity_buffer_multiple": 221.365,
           "ret_20d": -0.0466,
           "drawdown_from_high": -0.0749,
           "atr_pct": 0.0451
@@ -6458,7 +6465,7 @@
           "market_cap_usd": 201270000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 2213634541.3,
+          "avg_traded_value_20d": 2213652443.52,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0248
         }
@@ -6536,11 +6543,11 @@
         "ma50": 305.271,
         "ma200": 214.312,
         "drawdown_from_high": -0.0749,
-        "avg_volume_value": 2213634541.3,
+        "avg_volume_value": 2213652443.52,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 221.363,
+        "liquidity_buffer_multiple": 221.365,
         "volume_ratio_3d_20d": 0.923
       },
       "catalyst_context": {
@@ -6571,7 +6578,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 1,
+          "min_age_days": 2,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -6656,11 +6663,11 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [
           {
@@ -6687,15 +6694,15 @@
                 "etf": "HACK",
                 "label": "사이버보안 (ETFMG)",
                 "quadrant": "LEADING",
-                "ratio": 107.53,
-                "momentum": 101.15
+                "ratio": 107.62,
+                "momentum": 100.43
               },
               {
                 "etf": "CIBR",
                 "label": "사이버보안 (First Trust)",
                 "quadrant": "LEADING",
-                "ratio": 105.91,
-                "momentum": 102.14
+                "ratio": 106.84,
+                "momentum": 102.75
               }
             ],
             "caution_etfs": [],
@@ -6703,7 +6710,7 @@
             "status": "GROUP_SUPPORT"
           }
         ],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 6,
           "active_peer_count": 4,
@@ -6811,11 +6818,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 1627079276.44,
+          "avg_volume_value": 1632160752.18,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 162.708,
+          "liquidity_buffer_multiple": 163.216,
           "ret_20d": -0.0161,
           "drawdown_from_high": -0.0943,
           "atr_pct": 0.0487
@@ -6842,7 +6849,7 @@
           "market_cap_usd": 165480000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 1627079276.44,
+          "avg_traded_value_20d": 1632160752.18,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0414
         }
@@ -6865,7 +6872,7 @@
             "rs_63d": 0.6732,
             "rs_126d": 0.6407,
             "drawdown_from_252d_high": -0.0943,
-            "volume_ratio_5d_20d": 0.9156
+            "volume_ratio_5d_20d": 0.9254
           }
         },
         "pullback": {
@@ -6879,7 +6886,7 @@
             "ma50": 181.3985,
             "ma200": 132.6503,
             "drawdown_from_252d_high": -0.0943,
-            "volume_ratio_5d_20d": 0.9156
+            "volume_ratio_5d_20d": 0.9254
           }
         },
         "left_side": {
@@ -6921,12 +6928,12 @@
         "ma50": 181.399,
         "ma200": 132.65,
         "drawdown_from_high": -0.0943,
-        "avg_volume_value": 1627079276.44,
+        "avg_volume_value": 1632160752.18,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 162.708,
-        "volume_ratio_3d_20d": 0.929
+        "liquidity_buffer_multiple": 163.216,
+        "volume_ratio_3d_20d": 0.948
       },
       "catalyst_context": {
         "status": "none",
@@ -6956,7 +6963,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -6965,7 +6972,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": 0.0498,
           "ret_5d": 0.0414,
-          "volume_ratio_3d_20d": 0.929,
+          "volume_ratio_3d_20d": 0.948,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -7041,11 +7048,11 @@
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [
           {
@@ -7072,15 +7079,15 @@
                 "etf": "HACK",
                 "label": "사이버보안 (ETFMG)",
                 "quadrant": "LEADING",
-                "ratio": 107.53,
-                "momentum": 101.15
+                "ratio": 107.62,
+                "momentum": 100.43
               },
               {
                 "etf": "CIBR",
                 "label": "사이버보안 (First Trust)",
                 "quadrant": "LEADING",
-                "ratio": 105.91,
-                "momentum": 102.14
+                "ratio": 106.84,
+                "momentum": 102.75
               }
             ],
             "caution_etfs": [],
@@ -7088,7 +7095,7 @@
             "status": "GROUP_SUPPORT"
           }
         ],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 6,
           "active_peer_count": 4,
@@ -7196,11 +7203,11 @@
         "negatives": [],
         "metrics": {
           "close_days": 251,
-          "avg_volume_value": 7876621715.71,
+          "avg_volume_value": 7913122574.26,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 787.662,
+          "liquidity_buffer_multiple": 791.312,
           "ret_20d": 0.08,
           "drawdown_from_high": -0.1916,
           "atr_pct": 0.0432
@@ -7227,7 +7234,7 @@
           "market_cap_usd": 1977950000000.0,
           "latest_date": "2026-07-31",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 7876621715.71,
+          "avg_traded_value_20d": 7913122574.26,
           "zero_volume_days_20d": 0,
           "ret_5d": 0.0193
         }
@@ -7248,7 +7255,7 @@
             "rs_63d": -0.1069,
             "rs_126d": 0.1007,
             "drawdown_from_252d_high": -0.1916,
-            "volume_ratio_5d_20d": 0.9987
+            "volume_ratio_5d_20d": 1.0123
           }
         },
         "pullback": {
@@ -7261,7 +7268,7 @@
             "ma50": 395.3074,
             "ma200": 365.9454,
             "drawdown_from_252d_high": -0.1916,
-            "volume_ratio_5d_20d": 0.9987
+            "volume_ratio_5d_20d": 1.0123
           }
         },
         "left_side": {
@@ -7303,12 +7310,12 @@
         "ma50": 395.307,
         "ma200": 365.945,
         "drawdown_from_high": -0.1916,
-        "avg_volume_value": 7876621715.71,
+        "avg_volume_value": 7913122574.26,
         "liquidity_min_value": 10000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "USD",
-        "liquidity_buffer_multiple": 787.662,
-        "volume_ratio_3d_20d": 1.033
+        "liquidity_buffer_multiple": 791.312,
+        "volume_ratio_3d_20d": 1.059
       },
       "catalyst_context": {
         "status": "found",
@@ -7345,7 +7352,7 @@
         ],
         "freshness": {
           "status": "FRESH_3D",
-          "min_age_days": 0,
+          "min_age_days": 1,
           "has_upcoming": true,
           "fresh_days": 3,
           "stale_days": 14
@@ -7354,7 +7361,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": 0.022,
           "ret_5d": 0.0193,
-          "volume_ratio_3d_20d": 1.033,
+          "volume_ratio_3d_20d": 1.059,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -7424,22 +7431,21 @@
       "theme_industry": {
         "enabled": true,
         "status": "STRONG_SUPPORT",
-        "confidence_delta": 1,
+        "confidence_delta": 4,
         "reasons": [
+          "theme_group_support",
           "sector_rrg_support",
           "active_theme_peers"
         ],
-        "warnings": [
-          "theme_or_sector_lagging"
-        ],
+        "warnings": [],
         "sector": {
           "name": "Technology",
           "etf": "XLK",
-          "snapshot_date": "2026-07-31",
+          "snapshot_date": "2026-08-01",
           "quadrant": "IMPROVING",
           "support": "SUPPORT",
-          "ratio": 99.59,
-          "momentum": 100.46
+          "ratio": 98.88,
+          "momentum": 100.96
         },
         "themes": [
           {
@@ -7464,45 +7470,46 @@
               "TSM"
             ],
             "parent_theme_etf": "AIQ",
-            "parent_quadrant": "LAGGING",
+            "parent_quadrant": "IMPROVING",
             "theme_group": "ai_semiconductor",
             "group_label": "AI·반도체",
-            "supporting_etfs": [],
+            "supporting_etfs": [
+              {
+                "etf": "AIQ",
+                "label": "AI & 빅데이터",
+                "quadrant": "IMPROVING",
+                "ratio": 93.73,
+                "momentum": 100.47
+              }
+            ],
             "caution_etfs": [],
             "unsupported_etfs": [
               {
                 "etf": "SMH",
                 "label": "반도체 (VanEck)",
                 "quadrant": "LAGGING",
-                "ratio": 92.1,
-                "momentum": 92.45
+                "ratio": 91.69,
+                "momentum": 95.27
               },
               {
                 "etf": "SOXX",
                 "label": "반도체 (iShares)",
                 "quadrant": "LAGGING",
-                "ratio": 91.25,
-                "momentum": 91.09
-              },
-              {
-                "etf": "AIQ",
-                "label": "AI & 빅데이터",
-                "quadrant": "LAGGING",
-                "ratio": 94.1,
-                "momentum": 98.45
+                "ratio": 90.6,
+                "momentum": 94.76
               },
               {
                 "etf": "ARTY",
                 "label": "Future AI & Tech",
                 "quadrant": "LAGGING",
-                "ratio": 94.19,
-                "momentum": 95.33
+                "ratio": 94.03,
+                "momentum": 98.83
               }
             ],
-            "status": "GROUP_UNSUPPORTED"
+            "status": "PARENT_SUPPORT"
           }
         ],
-        "theme_snapshot_date": "2026-07-31",
+        "theme_snapshot_date": "2026-08-01",
         "peer_confirmation": {
           "static_peer_count": 12,
           "active_peer_count": 8,
@@ -7633,7 +7640,7 @@
         "max_picks": 3,
         "llm_additions_allowed": false,
         "evaluated": 100,
-        "eligible_before_cap": 13,
+        "eligible_before_cap": 7,
         "selected": 3,
         "selected_tickers": [
           "FTNT",
@@ -7642,7 +7649,8 @@
         ],
         "no_signal": false,
         "rejection_counts": {
-          "tier": 82,
+          "tier": 84,
+          "theme": 4,
           "country": 5
         },
         "criteria": {
@@ -7691,11 +7699,11 @@
             "negatives": [],
             "metrics": {
               "close_days": 251,
-              "avg_volume_value": 860509169.11,
+              "avg_volume_value": 860528546.43,
               "liquidity_min_value": 10000000.0,
               "liquidity_source": "common_gate_ohlcv",
               "liquidity_unit": "USD",
-              "liquidity_buffer_multiple": 86.051,
+              "liquidity_buffer_multiple": 86.053,
               "ret_20d": 0.0365,
               "drawdown_from_high": -0.0293,
               "atr_pct": 0.0428
@@ -7722,7 +7730,7 @@
               "market_cap_usd": 95240000000.0,
               "latest_date": "2026-07-31",
               "stale_trading_days": 0,
-              "avg_traded_value_20d": 860509169.11,
+              "avg_traded_value_20d": 860528546.43,
               "zero_volume_days_20d": 0,
               "ret_5d": 0.0629
             }
@@ -7746,7 +7754,7 @@
                 "rs_63d": 0.8814,
                 "rs_126d": 0.9105,
                 "drawdown_from_252d_high": -0.0293,
-                "volume_ratio_5d_20d": 1.4763
+                "volume_ratio_5d_20d": 1.4764
               }
             },
             "pullback": {
@@ -7759,7 +7767,7 @@
                 "ma50": 149.6714,
                 "ma200": 100.544,
                 "drawdown_from_252d_high": -0.0293,
-                "volume_ratio_5d_20d": 1.4763
+                "volume_ratio_5d_20d": 1.4764
               }
             },
             "left_side": {
@@ -7803,11 +7811,11 @@
             "ma50": 149.671,
             "ma200": 100.544,
             "drawdown_from_high": -0.0293,
-            "avg_volume_value": 860509169.11,
+            "avg_volume_value": 860528546.43,
             "liquidity_min_value": 10000000.0,
             "liquidity_source": "common_gate_ohlcv",
             "liquidity_unit": "USD",
-            "liquidity_buffer_multiple": 86.051,
+            "liquidity_buffer_multiple": 86.053,
             "volume_ratio_3d_20d": 1.8
           },
           "catalyst_context": {
@@ -7900,11 +7908,11 @@
             "sector": {
               "name": "Technology",
               "etf": "XLK",
-              "snapshot_date": "2026-07-31",
+              "snapshot_date": "2026-08-01",
               "quadrant": "IMPROVING",
               "support": "SUPPORT",
-              "ratio": 99.59,
-              "momentum": 100.46
+              "ratio": 98.88,
+              "momentum": 100.96
             },
             "themes": [
               {
@@ -7931,15 +7939,15 @@
                     "etf": "HACK",
                     "label": "사이버보안 (ETFMG)",
                     "quadrant": "LEADING",
-                    "ratio": 107.53,
-                    "momentum": 101.15
+                    "ratio": 107.62,
+                    "momentum": 100.43
                   },
                   {
                     "etf": "CIBR",
                     "label": "사이버보안 (First Trust)",
                     "quadrant": "LEADING",
-                    "ratio": 105.91,
-                    "momentum": 102.14
+                    "ratio": 106.84,
+                    "momentum": 102.75
                   }
                 ],
                 "caution_etfs": [],
@@ -7947,7 +7955,7 @@
                 "status": "GROUP_SUPPORT"
               }
             ],
-            "theme_snapshot_date": "2026-07-31",
+            "theme_snapshot_date": "2026-08-01",
             "peer_confirmation": {
               "static_peer_count": 6,
               "active_peer_count": 4,
@@ -8061,11 +8069,11 @@
             "negatives": [],
             "metrics": {
               "close_days": 251,
-              "avg_volume_value": 1082727272.58,
+              "avg_volume_value": 1084088118.03,
               "liquidity_min_value": 10000000.0,
               "liquidity_source": "common_gate_ohlcv",
               "liquidity_unit": "USD",
-              "liquidity_buffer_multiple": 108.273,
+              "liquidity_buffer_multiple": 108.409,
               "ret_20d": 0.0292,
               "drawdown_from_high": -0.0343,
               "atr_pct": 0.0483
@@ -8092,7 +8100,7 @@
               "market_cap_usd": 75580000000.0,
               "latest_date": "2026-07-31",
               "stale_trading_days": 0,
-              "avg_traded_value_20d": 1082727272.58,
+              "avg_traded_value_20d": 1084088118.03,
               "zero_volume_days_20d": 0,
               "ret_5d": 0.0855
             }
@@ -8115,7 +8123,7 @@
                 "rs_63d": 0.9877,
                 "rs_126d": 1.0142,
                 "drawdown_from_252d_high": -0.0343,
-                "volume_ratio_5d_20d": 1.1255
+                "volume_ratio_5d_20d": 1.129
               }
             },
             "pullback": {
@@ -8128,7 +8136,7 @@
                 "ma50": 244.8746,
                 "ma200": 167.2606,
                 "drawdown_from_252d_high": -0.0343,
-                "volume_ratio_5d_20d": 1.1255
+                "volume_ratio_5d_20d": 1.129
               }
             },
             "left_side": {
@@ -8170,12 +8178,12 @@
             "ma50": 244.875,
             "ma200": 167.261,
             "drawdown_from_high": -0.0343,
-            "avg_volume_value": 1082727272.58,
+            "avg_volume_value": 1084088118.03,
             "liquidity_min_value": 10000000.0,
             "liquidity_source": "common_gate_ohlcv",
             "liquidity_unit": "USD",
-            "liquidity_buffer_multiple": 108.273,
-            "volume_ratio_3d_20d": 1.296
+            "liquidity_buffer_multiple": 108.409,
+            "volume_ratio_3d_20d": 1.302
           },
           "catalyst_context": {
             "status": "not_checked",
@@ -8266,11 +8274,11 @@
             "sector": {
               "name": "Technology",
               "etf": "XLK",
-              "snapshot_date": "2026-07-31",
+              "snapshot_date": "2026-08-01",
               "quadrant": "IMPROVING",
               "support": "SUPPORT",
-              "ratio": 99.59,
-              "momentum": 100.46
+              "ratio": 98.88,
+              "momentum": 100.96
             },
             "themes": [
               {
@@ -8299,15 +8307,15 @@
                     "etf": "SKYY",
                     "label": "클라우드 컴퓨팅",
                     "quadrant": "LEADING",
-                    "ratio": 104.31,
-                    "momentum": 107.44
+                    "ratio": 105.52,
+                    "momentum": 107.19
                   },
                   {
                     "etf": "IGV",
                     "label": "소프트웨어",
                     "quadrant": "LEADING",
-                    "ratio": 101.41,
-                    "momentum": 106.62
+                    "ratio": 101.93,
+                    "momentum": 106.34
                   }
                 ],
                 "caution_etfs": [],
@@ -8315,7 +8323,7 @@
                 "status": "GROUP_SUPPORT"
               }
             ],
-            "theme_snapshot_date": "2026-07-31",
+            "theme_snapshot_date": "2026-08-01",
             "peer_confirmation": {
               "static_peer_count": 8,
               "active_peer_count": 3,
@@ -8425,7 +8433,7 @@
             "negatives": [],
             "metrics": {
               "close_days": 251,
-              "avg_volume_value": 134491011.39,
+              "avg_volume_value": 134493362.45,
               "liquidity_min_value": 10000000.0,
               "liquidity_source": "common_gate_ohlcv",
               "liquidity_unit": "USD",
@@ -8456,7 +8464,7 @@
               "market_cap_usd": 6140000000.0,
               "latest_date": "2026-07-31",
               "stale_trading_days": 0,
-              "avg_traded_value_20d": 134491011.39,
+              "avg_traded_value_20d": 134493362.45,
               "zero_volume_days_20d": 0,
               "ret_5d": 0.0507
             }
@@ -8479,7 +8487,7 @@
                 "rs_63d": 0.3066,
                 "rs_126d": 0.2783,
                 "drawdown_from_252d_high": -0.0432,
-                "volume_ratio_5d_20d": 0.719
+                "volume_ratio_5d_20d": 0.7191
               }
             },
             "pullback": {
@@ -8493,7 +8501,7 @@
                 "ma50": 17.2496,
                 "ma200": 15.49,
                 "drawdown_from_252d_high": -0.0432,
-                "volume_ratio_5d_20d": 0.719
+                "volume_ratio_5d_20d": 0.7191
               }
             },
             "left_side": {
@@ -8535,7 +8543,7 @@
             "ma50": 17.25,
             "ma200": 15.49,
             "drawdown_from_high": -0.0432,
-            "avg_volume_value": 134491011.39,
+            "avg_volume_value": 134493362.45,
             "liquidity_min_value": 10000000.0,
             "liquidity_source": "common_gate_ohlcv",
             "liquidity_unit": "USD",
@@ -8629,11 +8637,11 @@
             "sector": {
               "name": "Technology",
               "etf": "XLK",
-              "snapshot_date": "2026-07-31",
+              "snapshot_date": "2026-08-01",
               "quadrant": "IMPROVING",
               "support": "SUPPORT",
-              "ratio": 99.59,
-              "momentum": 100.46
+              "ratio": 98.88,
+              "momentum": 100.96
             },
             "themes": [
               {
@@ -8660,15 +8668,15 @@
                     "etf": "HACK",
                     "label": "사이버보안 (ETFMG)",
                     "quadrant": "LEADING",
-                    "ratio": 107.53,
-                    "momentum": 101.15
+                    "ratio": 107.62,
+                    "momentum": 100.43
                   },
                   {
                     "etf": "CIBR",
                     "label": "사이버보안 (First Trust)",
                     "quadrant": "LEADING",
-                    "ratio": 105.91,
-                    "momentum": 102.14
+                    "ratio": 106.84,
+                    "momentum": 102.75
                   }
                 ],
                 "caution_etfs": [],
@@ -8676,7 +8684,7 @@
                 "status": "GROUP_SUPPORT"
               }
             ],
-            "theme_snapshot_date": "2026-07-31",
+            "theme_snapshot_date": "2026-08-01",
             "peer_confirmation": {
               "static_peer_count": 6,
               "active_peer_count": 5,
@@ -8787,19 +8795,19 @@
         "max_picks": 2,
         "llm_additions_allowed": false,
         "evaluated": 37,
-        "eligible_before_cap": 16,
+        "eligible_before_cap": 4,
         "selected": 2,
         "selected_tickers": [
-          "EXR",
-          "TW"
+          "LOGI",
+          "ORLY"
         ],
         "no_signal": false,
         "rejection_counts": {
-          "risk_catalyst": 8,
-          "sector": 2,
+          "sector": 19,
+          "risk_catalyst": 2,
           "lane_review": 1,
           "primary_lane": 2,
-          "quality": 8
+          "quality": 9
         },
         "criteria": {
           "allowed_countries": [
@@ -8871,18 +8879,18 @@
             "eval_limit": 20,
             "evaluated": 20,
             "found": 11,
-            "risk": 8,
-            "none": 1,
+            "risk": 7,
+            "none": 2,
             "non_us": 0,
             "no_key": 0,
             "error": 0,
             "positive_revaluation": 11,
-            "risk_catalyst": 8,
-            "noise": 1,
-            "fresh_3d": 19,
-            "recent_14d": 1,
+            "risk_catalyst": 7,
+            "noise": 2,
+            "fresh_3d": 18,
+            "recent_14d": 2,
             "price_volume_confirmed": 2,
-            "top3_excluded_risk": 8,
+            "top3_excluded_risk": 7,
             "llm_enabled": true,
             "llm_evaluated": 8,
             "llm_ok": 8,
@@ -8895,14 +8903,14 @@
       },
       "candidates": [
         {
-          "ticker": "EXR",
-          "name": "Extra Space Storage Inc",
+          "ticker": "LOGI",
+          "name": "Logitech International SA",
           "country": "US",
-          "sector": "Real Estate",
-          "market_cap": 31390000000.0,
+          "sector": "Technology",
+          "market_cap": 14890000000.0,
           "avg_volume_value": 0.0,
-          "score": 0.2,
-          "signal_score": 0.0,
+          "score": 1.2,
+          "signal_score": 1.0,
           "theme_score": 0.0,
           "liquidity_score": 0.2,
           "factor_score": 0.0,
@@ -8916,14 +8924,14 @@
             "negatives": [],
             "metrics": {
               "close_days": 251,
-              "avg_volume_value": 181158733.49,
+              "avg_volume_value": 136412926.94,
               "liquidity_min_value": 10000000.0,
               "liquidity_source": "common_gate_ohlcv",
               "liquidity_unit": "USD",
-              "liquidity_buffer_multiple": 18.116,
-              "ret_20d": -0.0087,
-              "drawdown_from_high": -0.0315,
-              "atr_pct": 0.024
+              "liquidity_buffer_multiple": 13.641,
+              "ret_20d": 0.0902,
+              "drawdown_from_high": -0.1911,
+              "atr_pct": 0.0343
             }
           },
           "decision_context": {
@@ -8943,13 +8951,13 @@
             "metrics": {
               "country": "US",
               "close_days": 251,
-              "latest_close": 148.04,
-              "market_cap_usd": 31390000000.0,
+              "latest_close": 102.48,
+              "market_cap_usd": 14890000000.0,
               "latest_date": "2026-07-31",
               "stale_trading_days": 0,
-              "avg_traded_value_20d": 181158733.49,
+              "avg_traded_value_20d": 136412926.94,
               "zero_volume_days_20d": 0,
-              "ret_5d": 0.0022
+              "ret_5d": -0.0312
             }
           },
           "price_lanes": {
@@ -8961,28 +8969,29 @@
                 "relative_strength_fail"
               ],
               "metrics": {
-                "ret_20d": -0.0087,
-                "ret_63d": 0.0329,
-                "ret_126d": 0.066,
-                "rs_20d": -0.0117,
-                "rs_63d": -0.0066,
-                "rs_126d": -0.0103
+                "ret_20d": 0.0902,
+                "ret_63d": 0.0322,
+                "ret_126d": 0.1582,
+                "rs_20d": 0.0872,
+                "rs_63d": -0.0072,
+                "rs_126d": 0.0819
               }
             },
             "pullback": {
               "status": "WAIT",
               "reasons": [
                 "uptrend_intact",
-                "support_near"
+                "pullback_depth",
+                "ideal_pullback_depth"
               ],
               "review_flags": [
                 "sell_volume_needs_review"
               ],
               "metrics": {
-                "ma50": 146.3234,
-                "ma200": 140.7023,
-                "drawdown_from_252d_high": -0.0315,
-                "volume_ratio_5d_20d": 1.5077
+                "ma50": 106.2082,
+                "ma200": 102.467,
+                "drawdown_from_252d_high": -0.1911,
+                "volume_ratio_5d_20d": 1.6486
               }
             },
             "left_side": {
@@ -8990,378 +8999,6 @@
               "stage": "STAGE2",
               "reasons": [
                 "low_zone",
-                "downside_speed_slowing",
-                "short_return_improving",
-                "higher_low",
-                "volume_reversal_bonus"
-              ],
-              "review_flags": [],
-              "metrics": {
-                "drawdown_from_252d_high": -0.0315,
-                "distance_from_252d_low": 0.1685,
-                "atr_ratio_10d_20d": 1.0135,
-                "down_day_ratio_10d": 0.5,
-                "down_day_ratio_prev20d": 0.4,
-                "upper_close_days_5d": 2,
-                "deceleration_count": 2,
-                "recent_10d_low": 145.05,
-                "prev_10d_low": 142.68,
-                "benchmark_above_ma200": true,
-                "benchmark_ret_20d": 0.003
-              }
-            }
-          },
-          "signal_count": 0,
-          "signal_keys": [],
-          "signals": {},
-          "shadow_signal_count": 0,
-          "shadow_signal_keys": [],
-          "shadow_signals": {},
-          "quality_flags": [],
-          "quality_metrics": {
-            "last_close": 148.04,
-            "ret_20d": -0.0087,
-            "ret_1d": -0.0011,
-            "ret_3d": -0.0274,
-            "ret_5d": 0.0022,
-            "ma50": 146.323,
-            "ma200": 140.702,
-            "drawdown_from_high": -0.0315,
-            "avg_volume_value": 181158733.49,
-            "liquidity_min_value": 10000000.0,
-            "liquidity_source": "common_gate_ohlcv",
-            "liquidity_unit": "USD",
-            "liquidity_buffer_multiple": 18.116,
-            "volume_ratio_3d_20d": 1.569
-          },
-          "catalyst_context": {
-            "status": "found",
-            "classification": "POSITIVE_REVALUATION",
-            "score": 0.0,
-            "positive_hits": [
-              {
-                "headline": "Extra Space Storage (NYSE:EXR) Hits New 52-Week High on Strong Earnings",
-                "reason": "keyword",
-                "confidence": 0.55,
-                "classifier": "keyword",
-                "keywords": [
-                  "earnings"
-                ]
-              },
-              {
-                "headline": "Analyst maintain: Sector Perform -> Sector Perform (RBC Capital)",
-                "reason": "keyword",
-                "confidence": 0.55,
-                "classifier": "keyword",
-                "keywords": []
-              }
-            ],
-            "risk_hits": [],
-            "noise_hits": [
-              {
-                "headline": "Earnings reported: actual None, estimate 1.18",
-                "reason": "keyword",
-                "confidence": 0.4,
-                "classifier": "keyword"
-              }
-            ],
-            "freshness": {
-              "status": "FRESH_3D",
-              "min_age_days": 1,
-              "has_upcoming": true,
-              "fresh_days": 3,
-              "stale_days": 14
-            },
-            "price_volume_reaction": {
-              "status": "VOLUME_ONLY",
-              "ret_3d": -0.0274,
-              "ret_5d": 0.0022,
-              "volume_ratio_3d_20d": 1.569,
-              "thresholds": {
-                "ret_3d_up": 0.03,
-                "ret_3d_down": -0.05,
-                "volume_ratio": 1.2
-              }
-            },
-            "llm_status": "disabled",
-            "news": [
-              {
-                "headline": "Earnings reported: actual None, estimate 1.18",
-                "summary": "",
-                "source": "FMP:earnings_surprise",
-                "datetime": 1793750400,
-                "url": "",
-                "event_type": "earnings",
-                "classification": "NOISE",
-                "classification_reason": "keyword",
-                "classification_confidence": 0.4,
-                "classifier": "keyword",
-                "keywords_positive": [
-                  "earnings"
-                ],
-                "keywords_risk": []
-              },
-              {
-                "headline": "Extra Space Storage (NYSE:EXR) Hits New 52-Week High on Strong Earnings",
-                "summary": "Extra Space Storage Inc (NYSE: EXR - Get Free Report)'s share price hit a new 52-week high during mid-day trading on Wednesday following a better than expected earnings announcement. The company traded as high as $155.80 and last traded at $157.3390, with a volume of 13628 shares changing hands. The",
-                "source": "FMP:Defense World",
-                "datetime": 1785375692,
-                "url": "https://www.defenseworld.net/2026/07/30/extra-space-storage-nyseexr-hits-new-52-week-high-on-strong-earnings.html",
-                "event_type": "news",
-                "classification": "POSITIVE_REVALUATION",
-                "classification_reason": "keyword",
-                "classification_confidence": 0.55,
-                "classifier": "keyword",
-                "keywords_positive": [
-                  "earnings"
-                ],
-                "keywords_risk": []
-              },
-              {
-                "headline": "Analyst maintain: Sector Perform -> Sector Perform (RBC Capital)",
-                "summary": "",
-                "source": "FMP:upgrades_downgrades",
-                "datetime": 1785369600,
-                "url": "",
-                "event_type": "analyst_rating",
-                "classification": "POSITIVE_REVALUATION",
-                "classification_reason": "keyword",
-                "classification_confidence": 0.55,
-                "classifier": "keyword",
-                "keywords_positive": [],
-                "keywords_risk": []
-              }
-            ],
-            "top3_eligible": true,
-            "review_pool": false,
-            "top3_excluded_reason": "",
-            "reject_authority": false
-          },
-          "quality_auditor": {
-            "enabled": true,
-            "status": "QUALITY_SUPPORT",
-            "confidence_delta": 3,
-            "score": 3,
-            "source": "fmp",
-            "categories": {
-              "growth": {
-                "status": "NEUTRAL",
-                "score": 0,
-                "reasons": [],
-                "metrics": {
-                  "eps_growth_next_y": 13.89578163771711,
-                  "revenue_growth_pct": 1.1875116839789281,
-                  "free_cash_flow_growth_pct": -2.028050538963724
-                }
-              },
-              "valuation": {
-                "status": "SUPPORT",
-                "score": 1,
-                "reasons": [
-                  "valuation_reasonable"
-                ],
-                "metrics": {
-                  "pe": 32.67991169977925,
-                  "forward_pe": null,
-                  "peg": -12.663465783664535
-                }
-              },
-              "flow": {
-                "status": "NEUTRAL",
-                "score": 0,
-                "reasons": [],
-                "metrics": {
-                  "insider_trans": null,
-                  "inst_trans": null,
-                  "rating_score": 3.0
-                }
-              },
-              "short_risk": {
-                "status": "UNKNOWN",
-                "score": 0,
-                "reasons": [],
-                "metrics": {
-                  "short_float": null
-                }
-              },
-              "price_quality": {
-                "status": "SUPPORT",
-                "score": 2,
-                "reasons": [
-                  "lane_structure_support",
-                  "factor_positive"
-                ],
-                "metrics": {
-                  "primary_lane": "left_side",
-                  "primary_lane_status": "STAGE2_STRONG_PASS",
-                  "factor_positives": [
-                    "liquidity_good",
-                    "not_chasing",
-                    "volatility_healthy"
-                  ],
-                  "factor_negatives": [],
-                  "quality_flags": []
-                }
-              }
-            },
-            "data_missing_count": 1,
-            "reject_authority": false
-          },
-          "theme_industry": {
-            "enabled": true,
-            "status": "SUPPORT",
-            "confidence_delta": 1,
-            "reasons": [
-              "sector_rrg_support"
-            ],
-            "warnings": [],
-            "sector": {
-              "name": "Real Estate",
-              "etf": "XLRE",
-              "snapshot_date": "2026-07-31",
-              "quadrant": "LEADING",
-              "support": "SUPPORT",
-              "ratio": 100.33,
-              "momentum": 102.02
-            },
-            "themes": [],
-            "theme_snapshot_date": "2026-07-31",
-            "peer_confirmation": {
-              "static_peer_count": 0,
-              "active_peer_count": 0,
-              "active_peers": []
-            },
-            "reject_authority": false
-          },
-          "track_d": {
-            "is_theme_beneficiary": false
-          },
-          "catalyst_score": 0.0,
-          "top3_selection": {
-            "tier": "A",
-            "tier_rank": 4,
-            "primary_lane": "left_side",
-            "primary_lane_status": "STAGE2_STRONG_PASS",
-            "lane_rank": 5,
-            "catalyst_freshness_rank": 4,
-            "support_count": 3,
-            "support_reasons": [
-              "theme:SUPPORT",
-              "quality:QUALITY_SUPPORT",
-              "catalyst:POSITIVE_REVALUATION"
-            ],
-            "opportunity_score": 3.157,
-            "excluded": false,
-            "exclude_reason": "",
-            "selection_rank": null
-          },
-          "selection_tier": "A",
-          "selection_rank": null,
-          "selection_lane": "left_side",
-          "selection_lane_status": "STAGE2_STRONG_PASS",
-          "selection_opportunity_score": 3.157,
-          "review_pool_reason": "",
-          "shadow_selection": {
-            "policy_id": "left_side_context_v1",
-            "rank": 1,
-            "shadow_only": true,
-            "llm_additions_allowed": false
-          }
-        },
-        {
-          "ticker": "TW",
-          "name": "Tradeweb Markets Inc",
-          "country": "US",
-          "sector": "Financial",
-          "market_cap": 25190000000.0,
-          "avg_volume_value": 0.0,
-          "score": 0.2,
-          "signal_score": 0.0,
-          "theme_score": 0.0,
-          "liquidity_score": 0.2,
-          "factor_score": 0.0,
-          "factor_context": {
-            "score": 0.6,
-            "positives": [
-              "liquidity_good",
-              "not_chasing",
-              "volatility_healthy"
-            ],
-            "negatives": [],
-            "metrics": {
-              "close_days": 251,
-              "avg_volume_value": 174576515.94,
-              "liquidity_min_value": 10000000.0,
-              "liquidity_source": "common_gate_ohlcv",
-              "liquidity_unit": "USD",
-              "liquidity_buffer_multiple": 17.458,
-              "ret_20d": -0.0223,
-              "drawdown_from_high": -0.2875,
-              "atr_pct": 0.0381
-            }
-          },
-          "decision_context": {
-            "market_regime": {
-              "status": "BULL",
-              "reason": "above_ma200_and_positive_20d",
-              "as_of": "2026-07-31",
-              "ret_20d_pct": 0.3,
-              "close_vs_ma200_pct": 6.66
-            },
-            "benchmark_ticker": "SPY"
-          },
-          "common_gate": {
-            "status": "PASS",
-            "hard_fail_reasons": [],
-            "review_flags": [],
-            "metrics": {
-              "country": "US",
-              "close_days": 251,
-              "latest_close": 100.5,
-              "market_cap_usd": 25190000000.0,
-              "latest_date": "2026-07-31",
-              "stale_trading_days": 0,
-              "avg_traded_value_20d": 174576515.94,
-              "zero_volume_days_20d": 0,
-              "ret_5d": 0.0067
-            }
-          },
-          "price_lanes": {
-            "benchmark": "SPY",
-            "strength": {
-              "status": "FAIL",
-              "reasons": [],
-              "review_flags": [
-                "relative_strength_fail"
-              ],
-              "metrics": {
-                "ret_20d": -0.0223,
-                "ret_63d": -0.1126,
-                "ret_126d": -0.0256,
-                "rs_20d": -0.0253,
-                "rs_63d": -0.1521,
-                "rs_126d": -0.1019
-              }
-            },
-            "pullback": {
-              "status": "FAIL",
-              "reasons": [],
-              "review_flags": [
-                "trend_not_intact"
-              ],
-              "metrics": {
-                "ma50": 100.1584,
-                "ma200": 109.1191,
-                "drawdown_from_252d_high": -0.2875,
-                "volume_ratio_5d_20d": 1.708
-              }
-            },
-            "left_side": {
-              "status": "STAGE2_STRONG_PASS",
-              "stage": "STAGE2",
-              "reasons": [
-                "low_zone",
-                "short_return_improving",
                 "down_days_decreasing",
                 "upper_range_closes",
                 "higher_low",
@@ -9369,42 +9006,52 @@
               ],
               "review_flags": [],
               "metrics": {
-                "drawdown_from_252d_high": -0.2875,
-                "distance_from_252d_low": 0.0984,
-                "atr_ratio_10d_20d": 0.995,
-                "down_day_ratio_10d": 0.3,
-                "down_day_ratio_prev20d": 0.55,
-                "upper_close_days_5d": 4,
-                "deceleration_count": 3,
-                "recent_10d_low": 97.29,
-                "prev_10d_low": 97.12,
+                "drawdown_from_252d_high": -0.1911,
+                "distance_from_252d_low": 0.1938,
+                "atr_ratio_10d_20d": 0.9666,
+                "down_day_ratio_10d": 0.4,
+                "down_day_ratio_prev20d": 0.5,
+                "upper_close_days_5d": 3,
+                "deceleration_count": 2,
+                "recent_10d_low": 101.57,
+                "prev_10d_low": 97.11,
                 "benchmark_above_ma200": true,
                 "benchmark_ret_20d": 0.003
               }
             }
           },
-          "signal_count": 0,
-          "signal_keys": [],
-          "signals": {},
+          "signal_count": 1,
+          "signal_keys": [
+            "rrg_improving"
+          ],
+          "signals": {
+            "rrg_improving": {
+              "etf": "XLK",
+              "today_quadrant": "IMPROVING",
+              "transition_found": true,
+              "label_ko": "활성 섹터 진입 (회전)",
+              "phase": "拉离 (메인자금 회전 시작)"
+            }
+          },
           "shadow_signal_count": 0,
           "shadow_signal_keys": [],
           "shadow_signals": {},
           "quality_flags": [],
           "quality_metrics": {
-            "last_close": 100.5,
-            "ret_20d": -0.0223,
-            "ret_1d": 0.0276,
-            "ret_3d": -0.0362,
-            "ret_5d": 0.0067,
-            "ma50": 100.158,
-            "ma200": 109.119,
-            "drawdown_from_high": -0.2875,
-            "avg_volume_value": 174576515.94,
+            "last_close": 102.48,
+            "ret_20d": 0.0902,
+            "ret_1d": 0.009,
+            "ret_3d": -0.0822,
+            "ret_5d": -0.0312,
+            "ma50": 106.208,
+            "ma200": 102.467,
+            "drawdown_from_high": -0.1911,
+            "avg_volume_value": 136412926.94,
             "liquidity_min_value": 10000000.0,
             "liquidity_source": "common_gate_ohlcv",
             "liquidity_unit": "USD",
-            "liquidity_buffer_multiple": 17.458,
-            "volume_ratio_3d_20d": 2.509
+            "liquidity_buffer_multiple": 13.641,
+            "volume_ratio_3d_20d": 1.786
           },
           "catalyst_context": {
             "status": "not_checked",
@@ -9424,9 +9071,9 @@
                   "growth_positive"
                 ],
                 "metrics": {
-                  "eps_growth_next_y": 61.44067796610171,
-                  "revenue_growth_pct": 18.915970286491664,
-                  "free_cash_flow_growth_pct": 31.549835955745987
+                  "eps_growth_next_y": 16.306954436450834,
+                  "revenue_growth_pct": 6.735292190827461,
+                  "free_cash_flow_growth_pct": 24.06015037593985
                 }
               },
               "valuation": {
@@ -9436,9 +9083,9 @@
                   "valuation_reasonable"
                 ],
                 "metrics": {
-                  "pe": 23.928571428571427,
+                  "pe": 18.513599999999997,
                   "forward_pe": null,
-                  "peg": 0.39679023508137445
+                  "peg": 0.5677504000000001
                 }
               },
               "flow": {
@@ -9493,16 +9140,16 @@
             ],
             "warnings": [],
             "sector": {
-              "name": "Financial",
-              "etf": "XLF",
-              "snapshot_date": "2026-07-31",
-              "quadrant": "LEADING",
+              "name": "Technology",
+              "etf": "XLK",
+              "snapshot_date": "2026-08-01",
+              "quadrant": "IMPROVING",
               "support": "SUPPORT",
-              "ratio": 101.28,
-              "momentum": 100.84
+              "ratio": 98.88,
+              "momentum": 100.96
             },
             "themes": [],
-            "theme_snapshot_date": "2026-07-31",
+            "theme_snapshot_date": "2026-08-01",
             "peer_confirmation": {
               "static_peer_count": 0,
               "active_peer_count": 0,
@@ -9525,7 +9172,7 @@
               "theme:SUPPORT",
               "quality:STRONG_QUALITY"
             ],
-            "opportunity_score": 4.638,
+            "opportunity_score": 3.505,
             "excluded": false,
             "exclude_reason": "",
             "selection_rank": null
@@ -9534,7 +9181,378 @@
           "selection_rank": null,
           "selection_lane": "left_side",
           "selection_lane_status": "STAGE2_STRONG_PASS",
-          "selection_opportunity_score": 4.638,
+          "selection_opportunity_score": 3.505,
+          "review_pool_reason": "",
+          "shadow_selection": {
+            "policy_id": "left_side_context_v1",
+            "rank": 1,
+            "shadow_only": true,
+            "llm_additions_allowed": false
+          }
+        },
+        {
+          "ticker": "ORLY",
+          "name": "O'Reilly Automotive Inc",
+          "country": "US",
+          "sector": "Consumer Cyclical",
+          "market_cap": 76420000000.0,
+          "avg_volume_value": 0.0,
+          "score": 0.2,
+          "signal_score": 0.0,
+          "theme_score": 0.0,
+          "liquidity_score": 0.2,
+          "factor_score": 0.0,
+          "factor_context": {
+            "score": 0.6,
+            "positives": [
+              "liquidity_good",
+              "not_chasing",
+              "volatility_healthy"
+            ],
+            "negatives": [],
+            "metrics": {
+              "close_days": 251,
+              "avg_volume_value": 767314879.45,
+              "liquidity_min_value": 10000000.0,
+              "liquidity_source": "common_gate_ohlcv",
+              "liquidity_unit": "USD",
+              "liquidity_buffer_multiple": 76.731,
+              "ret_20d": -0.01,
+              "drawdown_from_high": -0.1713,
+              "atr_pct": 0.0317
+            }
+          },
+          "decision_context": {
+            "market_regime": {
+              "status": "BULL",
+              "reason": "above_ma200_and_positive_20d",
+              "as_of": "2026-07-31",
+              "ret_20d_pct": 0.3,
+              "close_vs_ma200_pct": 6.66
+            },
+            "benchmark_ticker": "SPY"
+          },
+          "common_gate": {
+            "status": "PASS",
+            "hard_fail_reasons": [],
+            "review_flags": [],
+            "metrics": {
+              "country": "US",
+              "close_days": 251,
+              "latest_close": 89.35,
+              "market_cap_usd": 76420000000.0,
+              "latest_date": "2026-07-31",
+              "stale_trading_days": 0,
+              "avg_traded_value_20d": 767314879.45,
+              "zero_volume_days_20d": 0,
+              "ret_5d": 0.0223
+            }
+          },
+          "price_lanes": {
+            "benchmark": "SPY",
+            "strength": {
+              "status": "FAIL",
+              "reasons": [],
+              "review_flags": [
+                "relative_strength_fail"
+              ],
+              "metrics": {
+                "ret_20d": -0.01,
+                "ret_63d": -0.1011,
+                "ret_126d": -0.0961,
+                "rs_20d": -0.013,
+                "rs_63d": -0.1406,
+                "rs_126d": -0.1725
+              }
+            },
+            "pullback": {
+              "status": "FAIL",
+              "reasons": [],
+              "review_flags": [
+                "trend_not_intact"
+              ],
+              "metrics": {
+                "ma50": 88.323,
+                "ma200": 93.1155,
+                "drawdown_from_252d_high": -0.1713,
+                "volume_ratio_5d_20d": 1.1944
+              }
+            },
+            "left_side": {
+              "status": "STAGE2_PASS",
+              "stage": "STAGE2",
+              "reasons": [
+                "low_zone",
+                "downside_speed_slowing",
+                "short_return_improving",
+                "upper_range_closes",
+                "higher_low"
+              ],
+              "review_flags": [],
+              "metrics": {
+                "drawdown_from_252d_high": -0.1713,
+                "distance_from_252d_low": 0.08,
+                "atr_ratio_10d_20d": 1.004,
+                "down_day_ratio_10d": 0.5,
+                "down_day_ratio_prev20d": 0.45,
+                "upper_close_days_5d": 3,
+                "deceleration_count": 3,
+                "recent_10d_low": 84.53,
+                "prev_10d_low": 82.73,
+                "benchmark_above_ma200": true,
+                "benchmark_ret_20d": 0.003
+              }
+            }
+          },
+          "signal_count": 0,
+          "signal_keys": [],
+          "signals": {},
+          "shadow_signal_count": 0,
+          "shadow_signal_keys": [],
+          "shadow_signals": {},
+          "quality_flags": [],
+          "quality_metrics": {
+            "last_close": 89.35,
+            "ret_20d": -0.01,
+            "ret_1d": 0.0228,
+            "ret_3d": -0.02,
+            "ret_5d": 0.0223,
+            "ma50": 88.323,
+            "ma200": 93.116,
+            "drawdown_from_high": -0.1713,
+            "avg_volume_value": 767314879.45,
+            "liquidity_min_value": 10000000.0,
+            "liquidity_source": "common_gate_ohlcv",
+            "liquidity_unit": "USD",
+            "liquidity_buffer_multiple": 76.731,
+            "volume_ratio_3d_20d": 1.038
+          },
+          "catalyst_context": {
+            "status": "found",
+            "classification": "POSITIVE_REVALUATION",
+            "score": 0.0,
+            "positive_hits": [
+              {
+                "headline": "Analyst maintain: Buy -> Buy (TD Cowen)",
+                "reason": "keyword",
+                "confidence": 0.55,
+                "classifier": "keyword",
+                "keywords": []
+              },
+              {
+                "headline": "O'Reilly Automotive, Inc. (ORLY) Q2 2026 Earnings Call Transcript",
+                "reason": "keyword",
+                "confidence": 0.55,
+                "classifier": "keyword",
+                "keywords": [
+                  "earnings"
+                ]
+              }
+            ],
+            "risk_hits": [],
+            "noise_hits": [
+              {
+                "headline": "Earnings reported: actual None, estimate 0.91",
+                "reason": "keyword",
+                "confidence": 0.4,
+                "classifier": "keyword"
+              }
+            ],
+            "freshness": {
+              "status": "FRESH_3D",
+              "min_age_days": 1,
+              "has_upcoming": true,
+              "fresh_days": 3,
+              "stale_days": 14
+            },
+            "price_volume_reaction": {
+              "status": "NO_CONFIRM",
+              "ret_3d": -0.02,
+              "ret_5d": 0.0223,
+              "volume_ratio_3d_20d": 1.038,
+              "thresholds": {
+                "ret_3d_up": 0.03,
+                "ret_3d_down": -0.05,
+                "volume_ratio": 1.2
+              }
+            },
+            "llm_status": "disabled",
+            "news": [
+              {
+                "headline": "Earnings reported: actual None, estimate 0.91",
+                "summary": "",
+                "source": "FMP:earnings_surprise",
+                "datetime": 1793145600,
+                "url": "",
+                "event_type": "earnings",
+                "classification": "NOISE",
+                "classification_reason": "keyword",
+                "classification_confidence": 0.4,
+                "classifier": "keyword",
+                "keywords_positive": [
+                  "earnings"
+                ],
+                "keywords_risk": []
+              },
+              {
+                "headline": "Analyst maintain: Buy -> Buy (TD Cowen)",
+                "summary": "",
+                "source": "FMP:upgrades_downgrades",
+                "datetime": 1785456000,
+                "url": "",
+                "event_type": "analyst_rating",
+                "classification": "POSITIVE_REVALUATION",
+                "classification_reason": "keyword",
+                "classification_confidence": 0.55,
+                "classifier": "keyword",
+                "keywords_positive": [],
+                "keywords_risk": []
+              },
+              {
+                "headline": "O'Reilly Automotive, Inc. (ORLY) Q2 2026 Earnings Call Transcript",
+                "summary": "O'Reilly Automotive, Inc. (ORLY) Q2 2026 Earnings Call Transcript",
+                "source": "FMP:Seeking Alpha",
+                "datetime": 1785422013,
+                "url": "https://seekingalpha.com/article/4927950-oreilly-automotive-inc-orly-q2-2026-earnings-call-transcript",
+                "event_type": "news",
+                "classification": "POSITIVE_REVALUATION",
+                "classification_reason": "keyword",
+                "classification_confidence": 0.55,
+                "classifier": "keyword",
+                "keywords_positive": [
+                  "earnings"
+                ],
+                "keywords_risk": []
+              }
+            ],
+            "top3_eligible": true,
+            "review_pool": false,
+            "top3_excluded_reason": "",
+            "reject_authority": false
+          },
+          "quality_auditor": {
+            "enabled": true,
+            "status": "QUALITY_SUPPORT",
+            "confidence_delta": 3,
+            "score": 3,
+            "source": "fmp",
+            "categories": {
+              "growth": {
+                "status": "NEUTRAL",
+                "score": 0,
+                "reasons": [],
+                "metrics": {
+                  "eps_growth_next_y": 9.157509157509157,
+                  "revenue_growth_pct": 6.424959447236341,
+                  "free_cash_flow_growth_pct": -21.370711221904767
+                }
+              },
+              "valuation": {
+                "status": "SUPPORT",
+                "score": 1,
+                "reasons": [
+                  "valuation_reasonable"
+                ],
+                "metrics": {
+                  "pe": 28.186119873817038,
+                  "forward_pe": null,
+                  "peg": 2.200083245706274
+                }
+              },
+              "flow": {
+                "status": "NEUTRAL",
+                "score": 0,
+                "reasons": [],
+                "metrics": {
+                  "insider_trans": null,
+                  "inst_trans": null,
+                  "rating_score": 2.0
+                }
+              },
+              "short_risk": {
+                "status": "UNKNOWN",
+                "score": 0,
+                "reasons": [],
+                "metrics": {
+                  "short_float": null
+                }
+              },
+              "price_quality": {
+                "status": "SUPPORT",
+                "score": 2,
+                "reasons": [
+                  "lane_structure_support",
+                  "factor_positive"
+                ],
+                "metrics": {
+                  "primary_lane": "left_side",
+                  "primary_lane_status": "STAGE2_PASS",
+                  "factor_positives": [
+                    "liquidity_good",
+                    "not_chasing",
+                    "volatility_healthy"
+                  ],
+                  "factor_negatives": [],
+                  "quality_flags": []
+                }
+              }
+            },
+            "data_missing_count": 1,
+            "reject_authority": false
+          },
+          "theme_industry": {
+            "enabled": true,
+            "status": "SUPPORT",
+            "confidence_delta": 1,
+            "reasons": [
+              "sector_rrg_support"
+            ],
+            "warnings": [],
+            "sector": {
+              "name": "Consumer Cyclical",
+              "etf": "XLY",
+              "snapshot_date": "2026-08-01",
+              "quadrant": "LEADING",
+              "support": "SUPPORT",
+              "ratio": 101.74,
+              "momentum": 102.67
+            },
+            "themes": [],
+            "theme_snapshot_date": "2026-08-01",
+            "peer_confirmation": {
+              "static_peer_count": 0,
+              "active_peer_count": 0,
+              "active_peers": []
+            },
+            "reject_authority": false
+          },
+          "track_d": {
+            "is_theme_beneficiary": false
+          },
+          "catalyst_score": 0.0,
+          "top3_selection": {
+            "tier": "B",
+            "tier_rank": 3,
+            "primary_lane": "left_side",
+            "primary_lane_status": "STAGE2_PASS",
+            "lane_rank": 4,
+            "catalyst_freshness_rank": 4,
+            "support_count": 3,
+            "support_reasons": [
+              "theme:SUPPORT",
+              "quality:QUALITY_SUPPORT",
+              "catalyst:POSITIVE_REVALUATION"
+            ],
+            "opportunity_score": 4.256,
+            "excluded": false,
+            "exclude_reason": "",
+            "selection_rank": null
+          },
+          "selection_tier": "B",
+          "selection_rank": null,
+          "selection_lane": "left_side",
+          "selection_lane_status": "STAGE2_PASS",
+          "selection_opportunity_score": 4.256,
           "review_pool_reason": "",
           "shadow_selection": {
             "policy_id": "left_side_context_v1",

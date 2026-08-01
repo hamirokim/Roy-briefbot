@@ -7,7 +7,7 @@
     "point_in_time": true,
     "benchmark_relative": true,
     "date_clustered": true,
-    "record_fingerprint": "4d1caad60cb6b6219ae4fc7df1f8b9db45aaf27af9de4a1a7302f54e7dd45a29"
+    "record_fingerprint": "fc0d320ad3376144833ac6a8780d975555847bbd96797524594754f5671f3279"
   },
   "governance": {
     "influence_mode": "advisory",
@@ -19,8 +19,8 @@
   },
   "global_prior_alpha_pct": {
     "d5": 0.235,
-    "d10": -0.558,
-    "d20": 0.093
+    "d10": -0.591,
+    "d20": 0.219
   },
   "summary": {
     "lesson_count": 388,
@@ -89,7 +89,7 @@
       "raw_mean_alpha_pct": -10.086,
       "median_alpha_pct": -3.895,
       "recency_weighted_alpha_pct": -10.982,
-      "shrunk_alpha_pct": -6.115,
+      "shrunk_alpha_pct": -6.13,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -18.44,
@@ -124,7 +124,7 @@
       "raw_mean_alpha_pct": -2.336,
       "median_alpha_pct": -3.44,
       "recency_weighted_alpha_pct": -5.077,
-      "shrunk_alpha_pct": -2.439,
+      "shrunk_alpha_pct": -2.375,
       "positive_date_rate": 0.4,
       "ci95_alpha_pct": {
         "low": -24.318,
@@ -194,7 +194,7 @@
       "raw_mean_alpha_pct": -6.555,
       "median_alpha_pct": -6.555,
       "recency_weighted_alpha_pct": -6.094,
-      "shrunk_alpha_pct": -2.138,
+      "shrunk_alpha_pct": -2.162,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -32.652,
@@ -229,7 +229,7 @@
       "raw_mean_alpha_pct": -5.655,
       "median_alpha_pct": -5.655,
       "recency_weighted_alpha_pct": -5.343,
-      "shrunk_alpha_pct": -1.459,
+      "shrunk_alpha_pct": -1.369,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -23.305,
@@ -299,7 +299,7 @@
       "raw_mean_alpha_pct": 9.11,
       "median_alpha_pct": 17.05,
       "recency_weighted_alpha_pct": 10.965,
-      "shrunk_alpha_pct": 3.672,
+      "shrunk_alpha_pct": 3.651,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -7.233,
@@ -334,7 +334,7 @@
       "raw_mean_alpha_pct": 22.98,
       "median_alpha_pct": 22.98,
       "recency_weighted_alpha_pct": 24.332,
-      "shrunk_alpha_pct": 6.94,
+      "shrunk_alpha_pct": 7.031,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 2.008,
@@ -404,7 +404,7 @@
       "raw_mean_alpha_pct": 9.14,
       "median_alpha_pct": 9.14,
       "recency_weighted_alpha_pct": 9.14,
-      "shrunk_alpha_pct": 1.058,
+      "shrunk_alpha_pct": 1.031,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -439,7 +439,7 @@
       "raw_mean_alpha_pct": 6.12,
       "median_alpha_pct": 6.12,
       "recency_weighted_alpha_pct": 6.12,
-      "shrunk_alpha_pct": 1.097,
+      "shrunk_alpha_pct": 1.202,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -509,7 +509,7 @@
       "raw_mean_alpha_pct": -0.927,
       "median_alpha_pct": 5.05,
       "recency_weighted_alpha_pct": -1.681,
-      "shrunk_alpha_pct": -1.35,
+      "shrunk_alpha_pct": -1.36,
       "positive_date_rate": 0.769,
       "ci95_alpha_pct": {
         "low": -10.045,
@@ -544,7 +544,7 @@
       "raw_mean_alpha_pct": -9.447,
       "median_alpha_pct": -3.425,
       "recency_weighted_alpha_pct": -10.924,
-      "shrunk_alpha_pct": -7.516,
+      "shrunk_alpha_pct": -7.477,
       "positive_date_rate": 0.333,
       "ci95_alpha_pct": {
         "low": -18.983,
@@ -614,7 +614,7 @@
       "raw_mean_alpha_pct": 2.068,
       "median_alpha_pct": 1.517,
       "recency_weighted_alpha_pct": 2.532,
-      "shrunk_alpha_pct": 1.981,
+      "shrunk_alpha_pct": 1.975,
       "positive_date_rate": 0.731,
       "ci95_alpha_pct": {
         "low": 0.163,
@@ -649,7 +649,7 @@
       "raw_mean_alpha_pct": 2.944,
       "median_alpha_pct": 2.895,
       "recency_weighted_alpha_pct": 3.067,
-      "shrunk_alpha_pct": 2.388,
+      "shrunk_alpha_pct": 2.417,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -0.318,
@@ -719,7 +719,7 @@
       "raw_mean_alpha_pct": -0.42,
       "median_alpha_pct": -0.42,
       "recency_weighted_alpha_pct": -0.42,
-      "shrunk_alpha_pct": -0.535,
+      "shrunk_alpha_pct": -0.562,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -754,7 +754,7 @@
       "raw_mean_alpha_pct": 1.21,
       "median_alpha_pct": 1.21,
       "recency_weighted_alpha_pct": 1.21,
-      "shrunk_alpha_pct": 0.279,
+      "shrunk_alpha_pct": 0.384,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -822,7 +822,7 @@
       "raw_mean_alpha_pct": -0.541,
       "median_alpha_pct": -2.59,
       "recency_weighted_alpha_pct": 0.585,
-      "shrunk_alpha_pct": 0.231,
+      "shrunk_alpha_pct": 0.221,
       "positive_date_rate": 0.417,
       "ci95_alpha_pct": {
         "low": -8.246,
@@ -856,7 +856,7 @@
       "raw_mean_alpha_pct": 1.391,
       "median_alpha_pct": -3.44,
       "recency_weighted_alpha_pct": 0.695,
-      "shrunk_alpha_pct": 0.441,
+      "shrunk_alpha_pct": 0.494,
       "positive_date_rate": 0.429,
       "ci95_alpha_pct": {
         "low": -8.814,
@@ -924,7 +924,7 @@
       "raw_mean_alpha_pct": -1.887,
       "median_alpha_pct": 2.005,
       "recency_weighted_alpha_pct": -3.171,
-      "shrunk_alpha_pct": -2.471,
+      "shrunk_alpha_pct": -2.479,
       "positive_date_rate": 0.6,
       "ci95_alpha_pct": {
         "low": -8.165,
@@ -958,7 +958,7 @@
       "raw_mean_alpha_pct": -0.655,
       "median_alpha_pct": 4.89,
       "recency_weighted_alpha_pct": -3.132,
-      "shrunk_alpha_pct": -2.074,
+      "shrunk_alpha_pct": -2.032,
       "positive_date_rate": 0.545,
       "ci95_alpha_pct": {
         "low": -9.733,
@@ -1018,26 +1018,26 @@
       "horizon": "d10",
       "status": "MIXED",
       "policy_effect": "NONE",
-      "record_count": 19,
-      "independent_date_count": 13,
-      "effective_date_count": 12.46,
-      "latest_observation_date": "2026-07-08",
-      "age_days": 24,
-      "raw_mean_alpha_pct": -4.169,
-      "median_alpha_pct": -5.58,
-      "recency_weighted_alpha_pct": -2.641,
-      "shrunk_alpha_pct": -2.045,
-      "positive_date_rate": 0.308,
+      "record_count": 20,
+      "independent_date_count": 14,
+      "effective_date_count": 13.15,
+      "latest_observation_date": "2026-07-15",
+      "age_days": 17,
+      "raw_mean_alpha_pct": -4.212,
+      "median_alpha_pct": -5.428,
+      "recency_weighted_alpha_pct": -2.884,
+      "shrunk_alpha_pct": -2.253,
+      "positive_date_rate": 0.286,
       "ci95_alpha_pct": {
-        "low": -12.142,
-        "high": 3.803
+        "low": -11.593,
+        "high": 3.17
       },
       "drift": {
         "recent_window_days": 40,
         "older_mean_alpha_pct": -7.761,
-        "recent_mean_alpha_pct": 0.021,
-        "gap_pct": 7.781,
-        "recent_date_count": 6,
+        "recent_mean_alpha_pct": -0.662,
+        "gap_pct": 7.098,
+        "recent_date_count": 7,
         "older_date_count": 7
       }
     },
@@ -1052,26 +1052,26 @@
       "horizon": "d20",
       "status": "MIXED",
       "policy_effect": "NONE",
-      "record_count": 16,
-      "independent_date_count": 10,
-      "effective_date_count": 9.85,
-      "latest_observation_date": "2026-06-27",
-      "age_days": 35,
-      "raw_mean_alpha_pct": 5.15,
-      "median_alpha_pct": 2.763,
-      "recency_weighted_alpha_pct": 5.802,
-      "shrunk_alpha_pct": 3.88,
-      "positive_date_rate": 0.6,
+      "record_count": 17,
+      "independent_date_count": 11,
+      "effective_date_count": 10.74,
+      "latest_observation_date": "2026-07-02",
+      "age_days": 30,
+      "raw_mean_alpha_pct": 5.082,
+      "median_alpha_pct": 3.13,
+      "recency_weighted_alpha_pct": 5.633,
+      "shrunk_alpha_pct": 3.913,
+      "positive_date_rate": 0.636,
       "ci95_alpha_pct": {
-        "low": -4.572,
-        "high": 14.871
+        "low": -3.712,
+        "high": 13.877
       },
       "drift": {
         "recent_window_days": 60,
         "older_mean_alpha_pct": null,
-        "recent_mean_alpha_pct": 5.15,
+        "recent_mean_alpha_pct": 5.082,
         "gap_pct": null,
-        "recent_date_count": 10,
+        "recent_date_count": 11,
         "older_date_count": 0
       }
     },
@@ -1128,7 +1128,7 @@
       "raw_mean_alpha_pct": 2.045,
       "median_alpha_pct": 3.462,
       "recency_weighted_alpha_pct": 1.463,
-      "shrunk_alpha_pct": 1.101,
+      "shrunk_alpha_pct": 1.095,
       "positive_date_rate": 0.654,
       "ci95_alpha_pct": {
         "low": -0.524,
@@ -1162,7 +1162,7 @@
       "raw_mean_alpha_pct": 2.887,
       "median_alpha_pct": 3.88,
       "recency_weighted_alpha_pct": 2.774,
-      "shrunk_alpha_pct": 2.186,
+      "shrunk_alpha_pct": 2.214,
       "positive_date_rate": 0.737,
       "ci95_alpha_pct": {
         "low": -0.799,
@@ -1230,7 +1230,7 @@
       "raw_mean_alpha_pct": -24.97,
       "median_alpha_pct": -25.22,
       "recency_weighted_alpha_pct": -24.446,
-      "shrunk_alpha_pct": -9.085,
+      "shrunk_alpha_pct": -9.106,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -28.21,
@@ -1264,7 +1264,7 @@
       "raw_mean_alpha_pct": -20.683,
       "median_alpha_pct": -18.38,
       "recency_weighted_alpha_pct": -21.717,
-      "shrunk_alpha_pct": -7.692,
+      "shrunk_alpha_pct": -7.611,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -25.95,
@@ -1332,7 +1332,7 @@
       "raw_mean_alpha_pct": 1.32,
       "median_alpha_pct": 2.48,
       "recency_weighted_alpha_pct": 2.113,
-      "shrunk_alpha_pct": 1.593,
+      "shrunk_alpha_pct": 1.587,
       "positive_date_rate": 0.739,
       "ci95_alpha_pct": {
         "low": -1.907,
@@ -1366,7 +1366,7 @@
       "raw_mean_alpha_pct": -3.787,
       "median_alpha_pct": -2.37,
       "recency_weighted_alpha_pct": -3.578,
-      "shrunk_alpha_pct": -2.617,
+      "shrunk_alpha_pct": -2.584,
       "positive_date_rate": 0.4,
       "ci95_alpha_pct": {
         "low": -9.446,
@@ -1432,7 +1432,7 @@
       "raw_mean_alpha_pct": -12.024,
       "median_alpha_pct": -11.095,
       "recency_weighted_alpha_pct": -11.855,
-      "shrunk_alpha_pct": -5.544,
+      "shrunk_alpha_pct": -5.563,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -22.466,
@@ -1457,26 +1457,26 @@
       "horizon": "d20",
       "status": "COLLECTING",
       "policy_effect": "NONE",
-      "record_count": 4,
-      "independent_date_count": 3,
-      "effective_date_count": 3.0,
-      "latest_observation_date": "2026-06-23",
-      "age_days": 39,
-      "raw_mean_alpha_pct": -6.628,
-      "median_alpha_pct": -1.23,
-      "recency_weighted_alpha_pct": -6.902,
-      "shrunk_alpha_pct": -2.529,
-      "positive_date_rate": 0.333,
+      "record_count": 5,
+      "independent_date_count": 4,
+      "effective_date_count": 3.95,
+      "latest_observation_date": "2026-07-02",
+      "age_days": 30,
+      "raw_mean_alpha_pct": -3.869,
+      "median_alpha_pct": 1.103,
+      "recency_weighted_alpha_pct": -3.539,
+      "shrunk_alpha_pct": -1.44,
+      "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
-        "low": -22.009,
-        "high": 8.752
+        "low": -16.015,
+        "high": 8.278
       },
       "drift": {
         "recent_window_days": 60,
         "older_mean_alpha_pct": null,
-        "recent_mean_alpha_pct": -6.628,
+        "recent_mean_alpha_pct": -3.869,
         "gap_pct": null,
-        "recent_date_count": 3,
+        "recent_date_count": 4,
         "older_date_count": 0
       }
     },
@@ -1531,7 +1531,7 @@
       "raw_mean_alpha_pct": -3.667,
       "median_alpha_pct": -4.755,
       "recency_weighted_alpha_pct": -2.615,
-      "shrunk_alpha_pct": -1.92,
+      "shrunk_alpha_pct": -1.931,
       "positive_date_rate": 0.3,
       "ci95_alpha_pct": {
         "low": -10.188,
@@ -1564,7 +1564,7 @@
       "raw_mean_alpha_pct": 5.147,
       "median_alpha_pct": 3.21,
       "recency_weighted_alpha_pct": 6.194,
-      "shrunk_alpha_pct": 4.131,
+      "shrunk_alpha_pct": 4.174,
       "positive_date_rate": 0.7,
       "ci95_alpha_pct": {
         "low": -2.312,
@@ -1622,26 +1622,26 @@
       "horizon": "d10",
       "status": "MIXED",
       "policy_effect": "NONE",
-      "record_count": 13,
-      "independent_date_count": 8,
-      "effective_date_count": 7.64,
-      "latest_observation_date": "2026-07-13",
-      "age_days": 19,
-      "raw_mean_alpha_pct": -1.632,
-      "median_alpha_pct": 0.782,
-      "recency_weighted_alpha_pct": 0.521,
-      "shrunk_alpha_pct": 0.094,
-      "positive_date_rate": 0.625,
+      "record_count": 14,
+      "independent_date_count": 9,
+      "effective_date_count": 8.58,
+      "latest_observation_date": "2026-07-15",
+      "age_days": 17,
+      "raw_mean_alpha_pct": -1.98,
+      "median_alpha_pct": 0.125,
+      "recency_weighted_alpha_pct": -0.234,
+      "shrunk_alpha_pct": -0.365,
+      "positive_date_rate": 0.556,
       "ci95_alpha_pct": {
-        "low": -12.482,
-        "high": 9.217
+        "low": -11.572,
+        "high": 7.612
       },
       "drift": {
         "recent_window_days": 40,
         "older_mean_alpha_pct": -15.155,
-        "recent_mean_alpha_pct": 2.875,
-        "gap_pct": 18.03,
-        "recent_date_count": 6,
+        "recent_mean_alpha_pct": 1.784,
+        "gap_pct": 16.939,
+        "recent_date_count": 7,
         "older_date_count": 2
       }
     },
@@ -1663,7 +1663,7 @@
       "raw_mean_alpha_pct": -11.95,
       "median_alpha_pct": -6.37,
       "recency_weighted_alpha_pct": -13.752,
-      "shrunk_alpha_pct": -4.977,
+      "shrunk_alpha_pct": -4.897,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -25.857,
@@ -1729,7 +1729,7 @@
       "raw_mean_alpha_pct": 1.534,
       "median_alpha_pct": 2.69,
       "recency_weighted_alpha_pct": 1.299,
-      "shrunk_alpha_pct": 0.892,
+      "shrunk_alpha_pct": 0.884,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -0.771,
@@ -1762,7 +1762,7 @@
       "raw_mean_alpha_pct": 1.755,
       "median_alpha_pct": -0.86,
       "recency_weighted_alpha_pct": 1.866,
-      "shrunk_alpha_pct": 1.386,
+      "shrunk_alpha_pct": 1.42,
       "positive_date_rate": 0.429,
       "ci95_alpha_pct": {
         "low": -1.381,
@@ -1828,7 +1828,7 @@
       "raw_mean_alpha_pct": 0.066,
       "median_alpha_pct": 2.083,
       "recency_weighted_alpha_pct": -0.156,
-      "shrunk_alpha_pct": -0.254,
+      "shrunk_alpha_pct": -0.262,
       "positive_date_rate": 0.688,
       "ci95_alpha_pct": {
         "low": -3.12,
@@ -1861,7 +1861,7 @@
       "raw_mean_alpha_pct": -1.79,
       "median_alpha_pct": 0.725,
       "recency_weighted_alpha_pct": -2.433,
-      "shrunk_alpha_pct": -1.675,
+      "shrunk_alpha_pct": -1.637,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -6.687,
@@ -1929,7 +1929,7 @@
       "raw_mean_alpha_pct": 12.09,
       "median_alpha_pct": 12.09,
       "recency_weighted_alpha_pct": 12.09,
-      "shrunk_alpha_pct": 1.55,
+      "shrunk_alpha_pct": 1.522,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -1989,26 +1989,26 @@
       "horizon": "d10",
       "status": "COLLECTING",
       "policy_effect": "NONE",
-      "record_count": 2,
-      "independent_date_count": 2,
-      "effective_date_count": 2.0,
-      "latest_observation_date": "2026-06-17",
-      "age_days": 45,
-      "raw_mean_alpha_pct": -7.73,
-      "median_alpha_pct": -7.73,
-      "recency_weighted_alpha_pct": -7.662,
-      "shrunk_alpha_pct": -2.588,
+      "record_count": 3,
+      "independent_date_count": 3,
+      "effective_date_count": 2.7,
+      "latest_observation_date": "2026-07-15",
+      "age_days": 17,
+      "raw_mean_alpha_pct": -6.74,
+      "median_alpha_pct": -4.76,
+      "recency_weighted_alpha_pct": -6.236,
+      "shrunk_alpha_pct": -2.569,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
-        "low": -19.274,
-        "high": 3.814
+        "low": -13.682,
+        "high": 0.202
       },
       "drift": {
         "recent_window_days": 40,
         "older_mean_alpha_pct": -7.73,
-        "recent_mean_alpha_pct": null,
-        "gap_pct": null,
-        "recent_date_count": 0,
+        "recent_mean_alpha_pct": -4.76,
+        "gap_pct": 2.97,
+        "recent_date_count": 1,
         "older_date_count": 2
       }
     },
@@ -2031,7 +2031,7 @@
       "raw_mean_alpha_pct": 1.54,
       "median_alpha_pct": 1.54,
       "recency_weighted_alpha_pct": 1.571,
-      "shrunk_alpha_pct": 0.515,
+      "shrunk_alpha_pct": 0.605,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -3.654,
@@ -2099,7 +2099,7 @@
       "raw_mean_alpha_pct": -9.694,
       "median_alpha_pct": -5.412,
       "recency_weighted_alpha_pct": -10.229,
-      "shrunk_alpha_pct": -6.405,
+      "shrunk_alpha_pct": -6.418,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -15.826,
@@ -2125,26 +2125,26 @@
       "horizon": "d20",
       "status": "COLLECTING",
       "policy_effect": "NONE",
-      "record_count": 9,
-      "independent_date_count": 6,
-      "effective_date_count": 5.79,
-      "latest_observation_date": "2026-07-01",
-      "age_days": 31,
-      "raw_mean_alpha_pct": -1.945,
-      "median_alpha_pct": -1.715,
-      "recency_weighted_alpha_pct": -4.258,
-      "shrunk_alpha_pct": -2.242,
-      "positive_date_rate": 0.333,
+      "record_count": 10,
+      "independent_date_count": 7,
+      "effective_date_count": 6.72,
+      "latest_observation_date": "2026-07-02",
+      "age_days": 30,
+      "raw_mean_alpha_pct": -1.037,
+      "median_alpha_pct": -1.485,
+      "recency_weighted_alpha_pct": -2.66,
+      "shrunk_alpha_pct": -1.431,
+      "positive_date_rate": 0.429,
       "ci95_alpha_pct": {
-        "low": -19.889,
-        "high": 15.999
+        "low": -16.307,
+        "high": 14.232
       },
       "drift": {
         "recent_window_days": 60,
         "older_mean_alpha_pct": null,
-        "recent_mean_alpha_pct": -1.945,
+        "recent_mean_alpha_pct": -1.037,
         "gap_pct": null,
-        "recent_date_count": 6,
+        "recent_date_count": 7,
         "older_date_count": 0
       }
     },
@@ -2201,7 +2201,7 @@
       "raw_mean_alpha_pct": -6.295,
       "median_alpha_pct": -4.725,
       "recency_weighted_alpha_pct": -3.203,
-      "shrunk_alpha_pct": -2.14,
+      "shrunk_alpha_pct": -2.153,
       "positive_date_rate": 0.375,
       "ci95_alpha_pct": {
         "low": -16.975,
@@ -2235,7 +2235,7 @@
       "raw_mean_alpha_pct": -6.547,
       "median_alpha_pct": -4.985,
       "recency_weighted_alpha_pct": -5.426,
-      "shrunk_alpha_pct": -2.648,
+      "shrunk_alpha_pct": -2.585,
       "positive_date_rate": 0.4,
       "ci95_alpha_pct": {
         "low": -16.311,
@@ -2303,7 +2303,7 @@
       "raw_mean_alpha_pct": 9.11,
       "median_alpha_pct": 17.05,
       "recency_weighted_alpha_pct": 10.965,
-      "shrunk_alpha_pct": 3.672,
+      "shrunk_alpha_pct": 3.651,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -7.233,
@@ -2337,7 +2337,7 @@
       "raw_mean_alpha_pct": 22.98,
       "median_alpha_pct": 22.98,
       "recency_weighted_alpha_pct": 24.332,
-      "shrunk_alpha_pct": 6.94,
+      "shrunk_alpha_pct": 7.031,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 2.008,
@@ -2405,7 +2405,7 @@
       "raw_mean_alpha_pct": -7.297,
       "median_alpha_pct": -12.14,
       "recency_weighted_alpha_pct": -5.837,
-      "shrunk_alpha_pct": -3.179,
+      "shrunk_alpha_pct": -3.196,
       "positive_date_rate": 0.4,
       "ci95_alpha_pct": {
         "low": -22.366,
@@ -2439,7 +2439,7 @@
       "raw_mean_alpha_pct": 2.372,
       "median_alpha_pct": -0.46,
       "recency_weighted_alpha_pct": 3.067,
-      "shrunk_alpha_pct": 1.57,
+      "shrunk_alpha_pct": 1.633,
       "positive_date_rate": 0.4,
       "ci95_alpha_pct": {
         "low": -7.649,
@@ -2507,7 +2507,7 @@
       "raw_mean_alpha_pct": 1.72,
       "median_alpha_pct": 1.72,
       "recency_weighted_alpha_pct": 1.72,
-      "shrunk_alpha_pct": -0.178,
+      "shrunk_alpha_pct": -0.206,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -2575,7 +2575,7 @@
       "raw_mean_alpha_pct": -3.875,
       "median_alpha_pct": -3.875,
       "recency_weighted_alpha_pct": 1.542,
-      "shrunk_alpha_pct": 0.014,
+      "shrunk_alpha_pct": -0.01,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -44.77,
@@ -2609,7 +2609,7 @@
       "raw_mean_alpha_pct": 3.9,
       "median_alpha_pct": 3.9,
       "recency_weighted_alpha_pct": 3.9,
-      "shrunk_alpha_pct": 0.728,
+      "shrunk_alpha_pct": 0.833,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -2677,7 +2677,7 @@
       "raw_mean_alpha_pct": 6.445,
       "median_alpha_pct": 6.445,
       "recency_weighted_alpha_pct": 6.228,
-      "shrunk_alpha_pct": 1.372,
+      "shrunk_alpha_pct": 1.348,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 1.163,
@@ -2711,7 +2711,7 @@
       "raw_mean_alpha_pct": 6.12,
       "median_alpha_pct": 6.12,
       "recency_weighted_alpha_pct": 6.12,
-      "shrunk_alpha_pct": 1.097,
+      "shrunk_alpha_pct": 1.202,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -2779,7 +2779,7 @@
       "raw_mean_alpha_pct": 0.228,
       "median_alpha_pct": 5.05,
       "recency_weighted_alpha_pct": -1.279,
-      "shrunk_alpha_pct": -1.102,
+      "shrunk_alpha_pct": -1.11,
       "positive_date_rate": 0.765,
       "ci95_alpha_pct": {
         "low": -7.328,
@@ -2813,7 +2813,7 @@
       "raw_mean_alpha_pct": -5.085,
       "median_alpha_pct": -1.227,
       "recency_weighted_alpha_pct": -7.118,
-      "shrunk_alpha_pct": -5.112,
+      "shrunk_alpha_pct": -5.076,
       "positive_date_rate": 0.429,
       "ci95_alpha_pct": {
         "low": -13.727,
@@ -2881,7 +2881,7 @@
       "raw_mean_alpha_pct": 1.635,
       "median_alpha_pct": 2.007,
       "recency_weighted_alpha_pct": 1.776,
-      "shrunk_alpha_pct": 1.421,
+      "shrunk_alpha_pct": 1.416,
       "positive_date_rate": 0.677,
       "ci95_alpha_pct": {
         "low": -0.155,
@@ -2915,7 +2915,7 @@
       "raw_mean_alpha_pct": 1.481,
       "median_alpha_pct": 1.54,
       "recency_weighted_alpha_pct": 0.978,
-      "shrunk_alpha_pct": 0.805,
+      "shrunk_alpha_pct": 0.829,
       "positive_date_rate": 0.591,
       "ci95_alpha_pct": {
         "low": -2.069,
@@ -2983,7 +2983,7 @@
       "raw_mean_alpha_pct": 0.415,
       "median_alpha_pct": 3.39,
       "recency_weighted_alpha_pct": 0.335,
-      "shrunk_alpha_pct": 0.074,
+      "shrunk_alpha_pct": 0.065,
       "positive_date_rate": 0.615,
       "ci95_alpha_pct": {
         "low": -3.01,
@@ -3017,7 +3017,7 @@
       "raw_mean_alpha_pct": 4.469,
       "median_alpha_pct": 4.55,
       "recency_weighted_alpha_pct": 4.852,
-      "shrunk_alpha_pct": 2.985,
+      "shrunk_alpha_pct": 3.034,
       "positive_date_rate": 0.875,
       "ci95_alpha_pct": {
         "low": 1.984,
@@ -3085,7 +3085,7 @@
       "raw_mean_alpha_pct": 5.85,
       "median_alpha_pct": 5.85,
       "recency_weighted_alpha_pct": 5.85,
-      "shrunk_alpha_pct": 0.51,
+      "shrunk_alpha_pct": 0.482,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -3119,7 +3119,7 @@
       "raw_mean_alpha_pct": 4.98,
       "median_alpha_pct": 4.98,
       "recency_weighted_alpha_pct": 4.98,
-      "shrunk_alpha_pct": 0.908,
+      "shrunk_alpha_pct": 1.012,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -3187,7 +3187,7 @@
       "raw_mean_alpha_pct": -1.799,
       "median_alpha_pct": 2.71,
       "recency_weighted_alpha_pct": -1.253,
-      "shrunk_alpha_pct": -0.994,
+      "shrunk_alpha_pct": -1.006,
       "positive_date_rate": 0.556,
       "ci95_alpha_pct": {
         "low": -8.927,
@@ -3221,7 +3221,7 @@
       "raw_mean_alpha_pct": -1.993,
       "median_alpha_pct": 0.02,
       "recency_weighted_alpha_pct": -1.112,
-      "shrunk_alpha_pct": -0.663,
+      "shrunk_alpha_pct": -0.616,
       "positive_date_rate": 0.556,
       "ci95_alpha_pct": {
         "low": -10.075,
@@ -3289,7 +3289,7 @@
       "raw_mean_alpha_pct": 3.05,
       "median_alpha_pct": 5.09,
       "recency_weighted_alpha_pct": 2.961,
-      "shrunk_alpha_pct": 0.76,
+      "shrunk_alpha_pct": 0.74,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -2.347,
@@ -3357,7 +3357,7 @@
       "raw_mean_alpha_pct": 14.062,
       "median_alpha_pct": 17.53,
       "recency_weighted_alpha_pct": 14.201,
-      "shrunk_alpha_pct": 4.974,
+      "shrunk_alpha_pct": 4.953,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 6.803,
@@ -3391,7 +3391,7 @@
       "raw_mean_alpha_pct": 12.59,
       "median_alpha_pct": 15.13,
       "recency_weighted_alpha_pct": 12.877,
-      "shrunk_alpha_pct": 4.885,
+      "shrunk_alpha_pct": 4.964,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -1.316,
@@ -3459,7 +3459,7 @@
       "raw_mean_alpha_pct": -3.65,
       "median_alpha_pct": -3.65,
       "recency_weighted_alpha_pct": -3.65,
-      "shrunk_alpha_pct": -1.073,
+      "shrunk_alpha_pct": -1.101,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -3527,7 +3527,7 @@
       "raw_mean_alpha_pct": -4.437,
       "median_alpha_pct": -7.19,
       "recency_weighted_alpha_pct": -3.444,
-      "shrunk_alpha_pct": -1.566,
+      "shrunk_alpha_pct": -1.587,
       "positive_date_rate": 0.333,
       "ci95_alpha_pct": {
         "low": -12.356,
@@ -3561,7 +3561,7 @@
       "raw_mean_alpha_pct": -2.72,
       "median_alpha_pct": -2.72,
       "recency_weighted_alpha_pct": 0.729,
-      "shrunk_alpha_pct": 0.257,
+      "shrunk_alpha_pct": 0.351,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -20.34,
@@ -3629,7 +3629,7 @@
       "raw_mean_alpha_pct": -0.425,
       "median_alpha_pct": -0.425,
       "recency_weighted_alpha_pct": -0.619,
-      "shrunk_alpha_pct": -0.575,
+      "shrunk_alpha_pct": -0.599,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -8.667,
@@ -3663,7 +3663,7 @@
       "raw_mean_alpha_pct": -0.715,
       "median_alpha_pct": -0.715,
       "recency_weighted_alpha_pct": -0.945,
-      "shrunk_alpha_pct": -0.203,
+      "shrunk_alpha_pct": -0.113,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -10.486,
@@ -3731,7 +3731,7 @@
       "raw_mean_alpha_pct": -2.156,
       "median_alpha_pct": -1.485,
       "recency_weighted_alpha_pct": -1.655,
-      "shrunk_alpha_pct": -1.09,
+      "shrunk_alpha_pct": -1.107,
       "positive_date_rate": 0.4,
       "ci95_alpha_pct": {
         "low": -7.154,
@@ -3765,7 +3765,7 @@
       "raw_mean_alpha_pct": 2.896,
       "median_alpha_pct": 5.51,
       "recency_weighted_alpha_pct": 3.167,
-      "shrunk_alpha_pct": 1.584,
+      "shrunk_alpha_pct": 1.649,
       "positive_date_rate": 0.8,
       "ci95_alpha_pct": {
         "low": -2.841,
@@ -3833,7 +3833,7 @@
       "raw_mean_alpha_pct": 3.54,
       "median_alpha_pct": 3.54,
       "recency_weighted_alpha_pct": 3.54,
-      "shrunk_alpha_pct": 0.125,
+      "shrunk_alpha_pct": 0.097,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -3901,7 +3901,7 @@
       "raw_mean_alpha_pct": -1.255,
       "median_alpha_pct": -1.255,
       "recency_weighted_alpha_pct": 0.694,
-      "shrunk_alpha_pct": -0.224,
+      "shrunk_alpha_pct": -0.248,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -13.476,
@@ -3935,7 +3935,7 @@
       "raw_mean_alpha_pct": 4.3,
       "median_alpha_pct": 4.3,
       "recency_weighted_alpha_pct": 4.3,
-      "shrunk_alpha_pct": 0.794,
+      "shrunk_alpha_pct": 0.899,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -4003,7 +4003,7 @@
       "raw_mean_alpha_pct": 0.208,
       "median_alpha_pct": -0.75,
       "recency_weighted_alpha_pct": 0.4,
-      "shrunk_alpha_pct": -0.138,
+      "shrunk_alpha_pct": -0.157,
       "positive_date_rate": 0.25,
       "ci95_alpha_pct": {
         "low": -1.921,
@@ -4037,7 +4037,7 @@
       "raw_mean_alpha_pct": 3.35,
       "median_alpha_pct": 2.825,
       "recency_weighted_alpha_pct": 3.641,
-      "shrunk_alpha_pct": 1.648,
+      "shrunk_alpha_pct": 1.719,
       "positive_date_rate": 0.75,
       "ci95_alpha_pct": {
         "low": -1.846,
@@ -4105,7 +4105,7 @@
       "raw_mean_alpha_pct": 4.325,
       "median_alpha_pct": 4.325,
       "recency_weighted_alpha_pct": 4.479,
-      "shrunk_alpha_pct": 0.873,
+      "shrunk_alpha_pct": 0.849,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 1.042,
@@ -4173,7 +4173,7 @@
       "raw_mean_alpha_pct": 11.6,
       "median_alpha_pct": 11.6,
       "recency_weighted_alpha_pct": 11.6,
-      "shrunk_alpha_pct": 1.468,
+      "shrunk_alpha_pct": 1.441,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -4207,7 +4207,7 @@
       "raw_mean_alpha_pct": 9.36,
       "median_alpha_pct": 9.36,
       "recency_weighted_alpha_pct": 9.36,
-      "shrunk_alpha_pct": 1.637,
+      "shrunk_alpha_pct": 1.742,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -4275,7 +4275,7 @@
       "raw_mean_alpha_pct": 4.95,
       "median_alpha_pct": 4.66,
       "recency_weighted_alpha_pct": 5.283,
-      "shrunk_alpha_pct": 1.885,
+      "shrunk_alpha_pct": 1.866,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 1.503,
@@ -4309,7 +4309,7 @@
       "raw_mean_alpha_pct": 7.175,
       "median_alpha_pct": 7.175,
       "recency_weighted_alpha_pct": 7.985,
-      "shrunk_alpha_pct": 2.26,
+      "shrunk_alpha_pct": 2.352,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 0.501,
@@ -4377,7 +4377,7 @@
       "raw_mean_alpha_pct": 5.281,
       "median_alpha_pct": 5.375,
       "recency_weighted_alpha_pct": 5.363,
-      "shrunk_alpha_pct": 2.399,
+      "shrunk_alpha_pct": 2.382,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 2.529,
@@ -4411,7 +4411,7 @@
       "raw_mean_alpha_pct": 5.444,
       "median_alpha_pct": 3.775,
       "recency_weighted_alpha_pct": 5.205,
-      "shrunk_alpha_pct": 2.646,
+      "shrunk_alpha_pct": 2.709,
       "positive_date_rate": 0.6,
       "ci95_alpha_pct": {
         "low": -1.846,
@@ -4479,7 +4479,7 @@
       "raw_mean_alpha_pct": 2.08,
       "median_alpha_pct": 1.18,
       "recency_weighted_alpha_pct": 1.887,
-      "shrunk_alpha_pct": 0.357,
+      "shrunk_alpha_pct": 0.336,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -3.099,
@@ -4547,7 +4547,7 @@
       "raw_mean_alpha_pct": 3.91,
       "median_alpha_pct": 5.14,
       "recency_weighted_alpha_pct": 3.263,
-      "shrunk_alpha_pct": 0.841,
+      "shrunk_alpha_pct": 0.82,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -2.324,
@@ -4581,7 +4581,7 @@
       "raw_mean_alpha_pct": 4.273,
       "median_alpha_pct": 3.88,
       "recency_weighted_alpha_pct": 4.055,
-      "shrunk_alpha_pct": 1.543,
+      "shrunk_alpha_pct": 1.623,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 2.654,
@@ -4649,7 +4649,7 @@
       "raw_mean_alpha_pct": 4.803,
       "median_alpha_pct": 4.803,
       "recency_weighted_alpha_pct": 4.835,
-      "shrunk_alpha_pct": 0.983,
+      "shrunk_alpha_pct": 0.959,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": -0.681,
@@ -4683,7 +4683,7 @@
       "raw_mean_alpha_pct": -0.125,
       "median_alpha_pct": -0.125,
       "recency_weighted_alpha_pct": -0.069,
-      "shrunk_alpha_pct": 0.047,
+      "shrunk_alpha_pct": 0.137,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -9.641,
@@ -4751,7 +4751,7 @@
       "raw_mean_alpha_pct": 2.92,
       "median_alpha_pct": 2.12,
       "recency_weighted_alpha_pct": 2.965,
-      "shrunk_alpha_pct": 0.762,
+      "shrunk_alpha_pct": 0.741,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 1.28,
@@ -4785,7 +4785,7 @@
       "raw_mean_alpha_pct": -13.335,
       "median_alpha_pct": -13.335,
       "recency_weighted_alpha_pct": -13.378,
-      "shrunk_alpha_pct": -3.756,
+      "shrunk_alpha_pct": -3.666,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -20.669,
@@ -4853,7 +4853,7 @@
       "raw_mean_alpha_pct": -2.586,
       "median_alpha_pct": -2.42,
       "recency_weighted_alpha_pct": -2.816,
-      "shrunk_alpha_pct": -1.987,
+      "shrunk_alpha_pct": -1.999,
       "positive_date_rate": 0.444,
       "ci95_alpha_pct": {
         "low": -11.853,
@@ -4887,7 +4887,7 @@
       "raw_mean_alpha_pct": -7.825,
       "median_alpha_pct": -1.535,
       "recency_weighted_alpha_pct": -9.188,
-      "shrunk_alpha_pct": -3.977,
+      "shrunk_alpha_pct": -3.906,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -26.764,
@@ -4955,7 +4955,7 @@
       "raw_mean_alpha_pct": -24.34,
       "median_alpha_pct": -24.34,
       "recency_weighted_alpha_pct": -24.34,
-      "shrunk_alpha_pct": -4.522,
+      "shrunk_alpha_pct": -4.549,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -4989,7 +4989,7 @@
       "raw_mean_alpha_pct": -20.96,
       "median_alpha_pct": -20.96,
       "recency_weighted_alpha_pct": -20.96,
-      "shrunk_alpha_pct": -3.416,
+      "shrunk_alpha_pct": -3.311,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -5057,7 +5057,7 @@
       "raw_mean_alpha_pct": -6.79,
       "median_alpha_pct": -6.79,
       "recency_weighted_alpha_pct": -6.79,
-      "shrunk_alpha_pct": -1.597,
+      "shrunk_alpha_pct": -1.624,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -5091,7 +5091,7 @@
       "raw_mean_alpha_pct": -10.5,
       "median_alpha_pct": -10.5,
       "recency_weighted_alpha_pct": -10.5,
-      "shrunk_alpha_pct": -1.673,
+      "shrunk_alpha_pct": -1.567,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -5159,7 +5159,7 @@
       "raw_mean_alpha_pct": 3.39,
       "median_alpha_pct": 3.39,
       "recency_weighted_alpha_pct": 3.39,
-      "shrunk_alpha_pct": 0.1,
+      "shrunk_alpha_pct": 0.072,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -5193,7 +5193,7 @@
       "raw_mean_alpha_pct": -0.46,
       "median_alpha_pct": -0.46,
       "recency_weighted_alpha_pct": -0.46,
-      "shrunk_alpha_pct": 0.001,
+      "shrunk_alpha_pct": 0.106,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -5259,7 +5259,7 @@
       "raw_mean_alpha_pct": 9.29,
       "median_alpha_pct": 10.665,
       "recency_weighted_alpha_pct": 8.928,
-      "shrunk_alpha_pct": 4.558,
+      "shrunk_alpha_pct": 4.543,
       "positive_date_rate": 0.833,
       "ci95_alpha_pct": {
         "low": 2.709,
@@ -5292,7 +5292,7 @@
       "raw_mean_alpha_pct": 18.515,
       "median_alpha_pct": 18.515,
       "recency_weighted_alpha_pct": 19.215,
-      "shrunk_alpha_pct": 5.548,
+      "shrunk_alpha_pct": 5.638,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": -11.208,
@@ -5350,26 +5350,26 @@
       "horizon": "d10",
       "status": "ACTIVE_CAUTION",
       "policy_effect": "WEAKEN",
-      "record_count": 20,
-      "independent_date_count": 12,
-      "effective_date_count": 11.32,
-      "latest_observation_date": "2026-07-08",
-      "age_days": 24,
-      "raw_mean_alpha_pct": -9.106,
-      "median_alpha_pct": -8.155,
-      "recency_weighted_alpha_pct": -6.822,
-      "shrunk_alpha_pct": -4.903,
-      "positive_date_rate": 0.167,
+      "record_count": 21,
+      "independent_date_count": 13,
+      "effective_date_count": 11.97,
+      "latest_observation_date": "2026-07-15",
+      "age_days": 17,
+      "raw_mean_alpha_pct": -8.772,
+      "median_alpha_pct": -7.98,
+      "recency_weighted_alpha_pct": -6.559,
+      "shrunk_alpha_pct": -4.801,
+      "positive_date_rate": 0.154,
       "ci95_alpha_pct": {
-        "low": -15.824,
-        "high": -2.388
+        "low": -14.986,
+        "high": -2.558
       },
       "drift": {
         "recent_window_days": 40,
         "older_mean_alpha_pct": -14.228,
-        "recent_mean_alpha_pct": 1.137,
-        "gap_pct": 15.366,
-        "recent_date_count": 4,
+        "recent_mean_alpha_pct": -0.042,
+        "gap_pct": 14.186,
+        "recent_date_count": 5,
         "older_date_count": 8
       }
     },
@@ -5383,26 +5383,26 @@
       "horizon": "d20",
       "status": "MIXED",
       "policy_effect": "NONE",
-      "record_count": 17,
-      "independent_date_count": 9,
-      "effective_date_count": 8.86,
-      "latest_observation_date": "2026-06-22",
-      "age_days": 40,
-      "raw_mean_alpha_pct": -1.739,
-      "median_alpha_pct": -1.485,
-      "recency_weighted_alpha_pct": -0.857,
-      "shrunk_alpha_pct": -0.514,
-      "positive_date_rate": 0.333,
+      "record_count": 18,
+      "independent_date_count": 10,
+      "effective_date_count": 9.69,
+      "latest_observation_date": "2026-07-02",
+      "age_days": 30,
+      "raw_mean_alpha_pct": -1.124,
+      "median_alpha_pct": -0.967,
+      "recency_weighted_alpha_pct": -0.108,
+      "shrunk_alpha_pct": 0.003,
+      "positive_date_rate": 0.4,
       "ci95_alpha_pct": {
-        "low": -8.119,
-        "high": 4.641
+        "low": -6.957,
+        "high": 4.708
       },
       "drift": {
         "recent_window_days": 60,
         "older_mean_alpha_pct": null,
-        "recent_mean_alpha_pct": -1.739,
+        "recent_mean_alpha_pct": -1.124,
         "gap_pct": null,
-        "recent_date_count": 9,
+        "recent_date_count": 10,
         "older_date_count": 0
       }
     },
@@ -5457,7 +5457,7 @@
       "raw_mean_alpha_pct": -4.523,
       "median_alpha_pct": -2.775,
       "recency_weighted_alpha_pct": -6.275,
-      "shrunk_alpha_pct": -4.025,
+      "shrunk_alpha_pct": -4.038,
       "positive_date_rate": 0.25,
       "ci95_alpha_pct": {
         "low": -14.403,
@@ -5490,7 +5490,7 @@
       "raw_mean_alpha_pct": -2.841,
       "median_alpha_pct": -0.46,
       "recency_weighted_alpha_pct": -5.324,
-      "shrunk_alpha_pct": -3.029,
+      "shrunk_alpha_pct": -2.976,
       "positive_date_rate": 0.429,
       "ci95_alpha_pct": {
         "low": -15.5,
@@ -5556,7 +5556,7 @@
       "raw_mean_alpha_pct": -0.5,
       "median_alpha_pct": 2.65,
       "recency_weighted_alpha_pct": 0.57,
-      "shrunk_alpha_pct": 0.298,
+      "shrunk_alpha_pct": 0.29,
       "positive_date_rate": 0.647,
       "ci95_alpha_pct": {
         "low": -5.197,
@@ -5589,7 +5589,7 @@
       "raw_mean_alpha_pct": -2.019,
       "median_alpha_pct": -0.27,
       "recency_weighted_alpha_pct": -0.948,
-      "shrunk_alpha_pct": -0.568,
+      "shrunk_alpha_pct": -0.522,
       "positive_date_rate": 0.444,
       "ci95_alpha_pct": {
         "low": -10.595,
@@ -5655,7 +5655,7 @@
       "raw_mean_alpha_pct": 0.49,
       "median_alpha_pct": -0.61,
       "recency_weighted_alpha_pct": -0.815,
-      "shrunk_alpha_pct": -0.747,
+      "shrunk_alpha_pct": -0.755,
       "positive_date_rate": 0.467,
       "ci95_alpha_pct": {
         "low": -3.965,
@@ -5688,7 +5688,7 @@
       "raw_mean_alpha_pct": 5.821,
       "median_alpha_pct": 4.64,
       "recency_weighted_alpha_pct": 4.111,
-      "shrunk_alpha_pct": 2.514,
+      "shrunk_alpha_pct": 2.564,
       "positive_date_rate": 0.625,
       "ci95_alpha_pct": {
         "low": -1.993,
@@ -5754,7 +5754,7 @@
       "raw_mean_alpha_pct": 3.058,
       "median_alpha_pct": 2.998,
       "recency_weighted_alpha_pct": 2.952,
-      "shrunk_alpha_pct": 2.206,
+      "shrunk_alpha_pct": 2.199,
       "positive_date_rate": 0.8,
       "ci95_alpha_pct": {
         "low": 0.195,
@@ -5787,7 +5787,7 @@
       "raw_mean_alpha_pct": 0.271,
       "median_alpha_pct": 1.51,
       "recency_weighted_alpha_pct": -0.513,
-      "shrunk_alpha_pct": -0.38,
+      "shrunk_alpha_pct": -0.352,
       "positive_date_rate": 0.526,
       "ci95_alpha_pct": {
         "low": -3.357,
@@ -5857,7 +5857,7 @@
       "raw_mean_alpha_pct": -11.095,
       "median_alpha_pct": -11.095,
       "recency_weighted_alpha_pct": -10.53,
-      "shrunk_alpha_pct": -3.38,
+      "shrunk_alpha_pct": -3.404,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -20.728,
@@ -5884,26 +5884,26 @@
       "horizon": "d20",
       "status": "COLLECTING",
       "policy_effect": "NONE",
-      "record_count": 1,
-      "independent_date_count": 1,
-      "effective_date_count": 1.0,
-      "latest_observation_date": "2026-06-22",
-      "age_days": 40,
-      "raw_mean_alpha_pct": -1.23,
-      "median_alpha_pct": -1.23,
-      "recency_weighted_alpha_pct": -1.23,
-      "shrunk_alpha_pct": -0.128,
-      "positive_date_rate": 0.0,
+      "record_count": 2,
+      "independent_date_count": 2,
+      "effective_date_count": 1.97,
+      "latest_observation_date": "2026-07-02",
+      "age_days": 30,
+      "raw_mean_alpha_pct": 1.59,
+      "median_alpha_pct": 1.59,
+      "recency_weighted_alpha_pct": 1.914,
+      "shrunk_alpha_pct": 0.699,
+      "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
-        "low": null,
-        "high": null
+        "low": -3.937,
+        "high": 7.117
       },
       "drift": {
         "recent_window_days": 60,
         "older_mean_alpha_pct": null,
-        "recent_mean_alpha_pct": -1.23,
+        "recent_mean_alpha_pct": 1.59,
         "gap_pct": null,
-        "recent_date_count": 1,
+        "recent_date_count": 2,
         "older_date_count": 0
       }
     },
@@ -5962,7 +5962,7 @@
       "raw_mean_alpha_pct": -12.953,
       "median_alpha_pct": -12.953,
       "recency_weighted_alpha_pct": -13.369,
-      "shrunk_alpha_pct": -4.215,
+      "shrunk_alpha_pct": -4.239,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -36.507,
@@ -5997,7 +5997,7 @@
       "raw_mean_alpha_pct": -9.328,
       "median_alpha_pct": -9.328,
       "recency_weighted_alpha_pct": -9.77,
-      "shrunk_alpha_pct": -2.722,
+      "shrunk_alpha_pct": -2.632,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -34.342,
@@ -6067,7 +6067,7 @@
       "raw_mean_alpha_pct": 12.3,
       "median_alpha_pct": 12.3,
       "recency_weighted_alpha_pct": 12.556,
-      "shrunk_alpha_pct": 3.183,
+      "shrunk_alpha_pct": 3.16,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 1.442,
@@ -6102,7 +6102,7 @@
       "raw_mean_alpha_pct": 18.515,
       "median_alpha_pct": 18.515,
       "recency_weighted_alpha_pct": 19.215,
-      "shrunk_alpha_pct": 5.548,
+      "shrunk_alpha_pct": 5.638,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": -11.208,
@@ -6172,7 +6172,7 @@
       "raw_mean_alpha_pct": -10.897,
       "median_alpha_pct": -9.128,
       "recency_weighted_alpha_pct": -9.932,
-      "shrunk_alpha_pct": -6.291,
+      "shrunk_alpha_pct": -6.304,
       "positive_date_rate": 0.125,
       "ci95_alpha_pct": {
         "low": -16.723,
@@ -6207,7 +6207,7 @@
       "raw_mean_alpha_pct": -0.388,
       "median_alpha_pct": -0.967,
       "recency_weighted_alpha_pct": 0.675,
-      "shrunk_alpha_pct": 0.449,
+      "shrunk_alpha_pct": 0.498,
       "positive_date_rate": 0.375,
       "ci95_alpha_pct": {
         "low": -8.014,
@@ -6277,7 +6277,7 @@
       "raw_mean_alpha_pct": 6.467,
       "median_alpha_pct": 0.13,
       "recency_weighted_alpha_pct": 4.772,
-      "shrunk_alpha_pct": 1.403,
+      "shrunk_alpha_pct": 1.382,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -7.927,
@@ -6312,7 +6312,7 @@
       "raw_mean_alpha_pct": 9.417,
       "median_alpha_pct": 4.19,
       "recency_weighted_alpha_pct": 7.525,
-      "shrunk_alpha_pct": 2.827,
+      "shrunk_alpha_pct": 2.907,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -5.617,
@@ -6382,7 +6382,7 @@
       "raw_mean_alpha_pct": 7.785,
       "median_alpha_pct": 8.005,
       "recency_weighted_alpha_pct": 7.623,
-      "shrunk_alpha_pct": 3.071,
+      "shrunk_alpha_pct": 3.053,
       "positive_date_rate": 0.75,
       "ci95_alpha_pct": {
         "low": -1.155,
@@ -6444,26 +6444,26 @@
       "horizon": "d10",
       "status": "COLLECTING",
       "policy_effect": "NONE",
-      "record_count": 5,
-      "independent_date_count": 3,
-      "effective_date_count": 2.83,
-      "latest_observation_date": "2026-07-08",
-      "age_days": 24,
-      "raw_mean_alpha_pct": -2.63,
-      "median_alpha_pct": 1.72,
-      "recency_weighted_alpha_pct": 1.208,
-      "shrunk_alpha_pct": 0.08,
-      "positive_date_rate": 0.667,
+      "record_count": 6,
+      "independent_date_count": 4,
+      "effective_date_count": 3.75,
+      "latest_observation_date": "2026-07-15",
+      "age_days": 17,
+      "raw_mean_alpha_pct": -3.162,
+      "median_alpha_pct": -1.52,
+      "recency_weighted_alpha_pct": -0.729,
+      "shrunk_alpha_pct": -0.65,
+      "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
-        "low": -27.659,
-        "high": 22.399
+        "low": -20.891,
+        "high": 14.566
       },
       "drift": {
         "recent_window_days": 40,
         "older_mean_alpha_pct": -26.6,
-        "recent_mean_alpha_pct": 9.355,
-        "gap_pct": 35.955,
-        "recent_date_count": 2,
+        "recent_mean_alpha_pct": 4.65,
+        "gap_pct": 31.25,
+        "recent_date_count": 3,
         "older_date_count": 1
       }
     },
@@ -6487,7 +6487,7 @@
       "raw_mean_alpha_pct": -6.37,
       "median_alpha_pct": -6.37,
       "recency_weighted_alpha_pct": -6.37,
-      "shrunk_alpha_pct": -0.984,
+      "shrunk_alpha_pct": -0.879,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -6557,7 +6557,7 @@
       "raw_mean_alpha_pct": -9.893,
       "median_alpha_pct": -3.98,
       "recency_weighted_alpha_pct": -10.313,
-      "shrunk_alpha_pct": -4.164,
+      "shrunk_alpha_pct": -4.185,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -21.749,
@@ -6592,7 +6592,7 @@
       "raw_mean_alpha_pct": -14.74,
       "median_alpha_pct": -14.74,
       "recency_weighted_alpha_pct": -16.424,
-      "shrunk_alpha_pct": -4.553,
+      "shrunk_alpha_pct": -4.462,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -36.888,
@@ -6662,7 +6662,7 @@
       "raw_mean_alpha_pct": 6.0,
       "median_alpha_pct": 6.0,
       "recency_weighted_alpha_pct": 6.0,
-      "shrunk_alpha_pct": 0.535,
+      "shrunk_alpha_pct": 0.507,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -6732,7 +6732,7 @@
       "raw_mean_alpha_pct": 7.185,
       "median_alpha_pct": 7.185,
       "recency_weighted_alpha_pct": 7.311,
-      "shrunk_alpha_pct": 1.688,
+      "shrunk_alpha_pct": 1.665,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 0.041,
@@ -6802,7 +6802,7 @@
       "raw_mean_alpha_pct": 5.7,
       "median_alpha_pct": 5.7,
       "recency_weighted_alpha_pct": 5.7,
-      "shrunk_alpha_pct": 0.485,
+      "shrunk_alpha_pct": 0.458,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -6837,7 +6837,7 @@
       "raw_mean_alpha_pct": 10.58,
       "median_alpha_pct": 10.58,
       "recency_weighted_alpha_pct": 10.58,
-      "shrunk_alpha_pct": 1.841,
+      "shrunk_alpha_pct": 1.946,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -6907,7 +6907,7 @@
       "raw_mean_alpha_pct": -1.04,
       "median_alpha_pct": 2.875,
       "recency_weighted_alpha_pct": 1.609,
-      "shrunk_alpha_pct": 0.715,
+      "shrunk_alpha_pct": 0.702,
       "positive_date_rate": 0.625,
       "ci95_alpha_pct": {
         "low": -9.282,
@@ -6942,7 +6942,7 @@
       "raw_mean_alpha_pct": -9.512,
       "median_alpha_pct": -2.205,
       "recency_weighted_alpha_pct": -9.286,
-      "shrunk_alpha_pct": -3.99,
+      "shrunk_alpha_pct": -3.919,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -25.126,
@@ -7012,7 +7012,7 @@
       "raw_mean_alpha_pct": -1.344,
       "median_alpha_pct": -0.4,
       "recency_weighted_alpha_pct": -1.481,
-      "shrunk_alpha_pct": -0.968,
+      "shrunk_alpha_pct": -0.986,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -8.213,
@@ -7082,7 +7082,7 @@
       "raw_mean_alpha_pct": -3.035,
       "median_alpha_pct": -3.035,
       "recency_weighted_alpha_pct": -3.042,
-      "shrunk_alpha_pct": -1.268,
+      "shrunk_alpha_pct": -1.291,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -4.24,
@@ -7152,7 +7152,7 @@
       "raw_mean_alpha_pct": 2.294,
       "median_alpha_pct": -2.4,
       "recency_weighted_alpha_pct": -1.92,
-      "shrunk_alpha_pct": -1.185,
+      "shrunk_alpha_pct": -1.203,
       "positive_date_rate": 0.4,
       "ci95_alpha_pct": {
         "low": -10.581,
@@ -7187,7 +7187,7 @@
       "raw_mean_alpha_pct": 12.917,
       "median_alpha_pct": 21.01,
       "recency_weighted_alpha_pct": 10.543,
-      "shrunk_alpha_pct": 3.925,
+      "shrunk_alpha_pct": 4.005,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -5.379,
@@ -7257,7 +7257,7 @@
       "raw_mean_alpha_pct": 8.7,
       "median_alpha_pct": 8.7,
       "recency_weighted_alpha_pct": 8.7,
-      "shrunk_alpha_pct": 0.985,
+      "shrunk_alpha_pct": 0.957,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -7292,7 +7292,7 @@
       "raw_mean_alpha_pct": 6.44,
       "median_alpha_pct": 6.44,
       "recency_weighted_alpha_pct": 6.44,
-      "shrunk_alpha_pct": 1.151,
+      "shrunk_alpha_pct": 1.256,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -7362,7 +7362,7 @@
       "raw_mean_alpha_pct": -3.135,
       "median_alpha_pct": -3.9,
       "recency_weighted_alpha_pct": -2.99,
-      "shrunk_alpha_pct": -1.464,
+      "shrunk_alpha_pct": -1.485,
       "positive_date_rate": 0.333,
       "ci95_alpha_pct": {
         "low": -9.362,
@@ -7397,7 +7397,7 @@
       "raw_mean_alpha_pct": -4.082,
       "median_alpha_pct": -1.16,
       "recency_weighted_alpha_pct": -3.687,
-      "shrunk_alpha_pct": -1.315,
+      "shrunk_alpha_pct": -1.236,
       "positive_date_rate": 0.333,
       "ci95_alpha_pct": {
         "low": -10.997,
@@ -7467,7 +7467,7 @@
       "raw_mean_alpha_pct": 4.681,
       "median_alpha_pct": 3.62,
       "recency_weighted_alpha_pct": 4.918,
-      "shrunk_alpha_pct": 3.181,
+      "shrunk_alpha_pct": 3.17,
       "positive_date_rate": 0.909,
       "ci95_alpha_pct": {
         "low": 2.065,
@@ -7502,7 +7502,7 @@
       "raw_mean_alpha_pct": 3.829,
       "median_alpha_pct": 4.0,
       "recency_weighted_alpha_pct": 4.084,
-      "shrunk_alpha_pct": 2.818,
+      "shrunk_alpha_pct": 2.858,
       "positive_date_rate": 0.636,
       "ci95_alpha_pct": {
         "low": 0.726,
@@ -7572,7 +7572,7 @@
       "raw_mean_alpha_pct": 2.65,
       "median_alpha_pct": 2.65,
       "recency_weighted_alpha_pct": 2.65,
-      "shrunk_alpha_pct": -0.023,
+      "shrunk_alpha_pct": -0.051,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -7642,7 +7642,7 @@
       "raw_mean_alpha_pct": -2.452,
       "median_alpha_pct": -0.875,
       "recency_weighted_alpha_pct": -3.311,
-      "shrunk_alpha_pct": -2.033,
+      "shrunk_alpha_pct": -2.048,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -9.995,
@@ -7677,7 +7677,7 @@
       "raw_mean_alpha_pct": 2.325,
       "median_alpha_pct": 3.295,
       "recency_weighted_alpha_pct": 2.993,
-      "shrunk_alpha_pct": 1.368,
+      "shrunk_alpha_pct": 1.439,
       "positive_date_rate": 0.75,
       "ci95_alpha_pct": {
         "low": -4.789,
@@ -7747,7 +7747,7 @@
       "raw_mean_alpha_pct": -3.91,
       "median_alpha_pct": -3.91,
       "recency_weighted_alpha_pct": -3.91,
-      "shrunk_alpha_pct": -1.117,
+      "shrunk_alpha_pct": -1.144,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -7817,7 +7817,7 @@
       "raw_mean_alpha_pct": 2.24,
       "median_alpha_pct": 2.24,
       "recency_weighted_alpha_pct": 2.24,
-      "shrunk_alpha_pct": -0.092,
+      "shrunk_alpha_pct": -0.119,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -7852,7 +7852,7 @@
       "raw_mean_alpha_pct": 6.34,
       "median_alpha_pct": 6.34,
       "recency_weighted_alpha_pct": 6.34,
-      "shrunk_alpha_pct": 1.134,
+      "shrunk_alpha_pct": 1.239,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -7922,7 +7922,7 @@
       "raw_mean_alpha_pct": -0.924,
       "median_alpha_pct": 3.39,
       "recency_weighted_alpha_pct": -0.787,
-      "shrunk_alpha_pct": -0.67,
+      "shrunk_alpha_pct": -0.686,
       "positive_date_rate": 0.6,
       "ci95_alpha_pct": {
         "low": -7.458,
@@ -7957,7 +7957,7 @@
       "raw_mean_alpha_pct": 0.369,
       "median_alpha_pct": 1.92,
       "recency_weighted_alpha_pct": -0.153,
-      "shrunk_alpha_pct": -0.013,
+      "shrunk_alpha_pct": 0.058,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -5.201,
@@ -8027,7 +8027,7 @@
       "raw_mean_alpha_pct": -3.48,
       "median_alpha_pct": -3.48,
       "recency_weighted_alpha_pct": -3.48,
-      "shrunk_alpha_pct": -1.045,
+      "shrunk_alpha_pct": -1.073,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -8062,7 +8062,7 @@
       "raw_mean_alpha_pct": -9.19,
       "median_alpha_pct": -9.19,
       "recency_weighted_alpha_pct": -9.19,
-      "shrunk_alpha_pct": -1.454,
+      "shrunk_alpha_pct": -1.349,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -8132,7 +8132,7 @@
       "raw_mean_alpha_pct": 6.282,
       "median_alpha_pct": 4.593,
       "recency_weighted_alpha_pct": 5.597,
-      "shrunk_alpha_pct": 2.487,
+      "shrunk_alpha_pct": 2.47,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 1.046,
@@ -8167,7 +8167,7 @@
       "raw_mean_alpha_pct": -2.707,
       "median_alpha_pct": -3.678,
       "recency_weighted_alpha_pct": -3.24,
-      "shrunk_alpha_pct": -1.371,
+      "shrunk_alpha_pct": -1.3,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -10.196,
@@ -8237,7 +8237,7 @@
       "raw_mean_alpha_pct": 2.12,
       "median_alpha_pct": 0.895,
       "recency_weighted_alpha_pct": 1.741,
-      "shrunk_alpha_pct": 0.689,
+      "shrunk_alpha_pct": 0.674,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -6.937,
@@ -8272,7 +8272,7 @@
       "raw_mean_alpha_pct": -4.292,
       "median_alpha_pct": 2.725,
       "recency_weighted_alpha_pct": -5.454,
-      "shrunk_alpha_pct": -2.915,
+      "shrunk_alpha_pct": -2.857,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -17.839,
@@ -8340,7 +8340,7 @@
       "raw_mean_alpha_pct": -11.095,
       "median_alpha_pct": -11.095,
       "recency_weighted_alpha_pct": -10.53,
-      "shrunk_alpha_pct": -3.38,
+      "shrunk_alpha_pct": -3.404,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -20.728,
@@ -8366,26 +8366,26 @@
       "horizon": "d20",
       "status": "COLLECTING",
       "policy_effect": "NONE",
-      "record_count": 1,
-      "independent_date_count": 1,
-      "effective_date_count": 1.0,
-      "latest_observation_date": "2026-06-22",
-      "age_days": 40,
-      "raw_mean_alpha_pct": -1.23,
-      "median_alpha_pct": -1.23,
-      "recency_weighted_alpha_pct": -1.23,
-      "shrunk_alpha_pct": -0.128,
-      "positive_date_rate": 0.0,
+      "record_count": 2,
+      "independent_date_count": 2,
+      "effective_date_count": 1.97,
+      "latest_observation_date": "2026-07-02",
+      "age_days": 30,
+      "raw_mean_alpha_pct": 1.59,
+      "median_alpha_pct": 1.59,
+      "recency_weighted_alpha_pct": 1.914,
+      "shrunk_alpha_pct": 0.699,
+      "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
-        "low": null,
-        "high": null
+        "low": -3.937,
+        "high": 7.117
       },
       "drift": {
         "recent_window_days": 60,
         "older_mean_alpha_pct": null,
-        "recent_mean_alpha_pct": -1.23,
+        "recent_mean_alpha_pct": 1.59,
         "gap_pct": null,
-        "recent_date_count": 1,
+        "recent_date_count": 2,
         "older_date_count": 0
       }
     },
@@ -8442,7 +8442,7 @@
       "raw_mean_alpha_pct": -12.953,
       "median_alpha_pct": -12.953,
       "recency_weighted_alpha_pct": -13.369,
-      "shrunk_alpha_pct": -4.215,
+      "shrunk_alpha_pct": -4.239,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -36.507,
@@ -8476,7 +8476,7 @@
       "raw_mean_alpha_pct": -9.328,
       "median_alpha_pct": -9.328,
       "recency_weighted_alpha_pct": -9.77,
-      "shrunk_alpha_pct": -2.722,
+      "shrunk_alpha_pct": -2.632,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -34.342,
@@ -8544,7 +8544,7 @@
       "raw_mean_alpha_pct": 12.3,
       "median_alpha_pct": 12.3,
       "recency_weighted_alpha_pct": 12.556,
-      "shrunk_alpha_pct": 3.183,
+      "shrunk_alpha_pct": 3.16,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 1.442,
@@ -8578,7 +8578,7 @@
       "raw_mean_alpha_pct": 18.515,
       "median_alpha_pct": 18.515,
       "recency_weighted_alpha_pct": 19.215,
-      "shrunk_alpha_pct": 5.548,
+      "shrunk_alpha_pct": 5.638,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": -11.208,
@@ -8646,7 +8646,7 @@
       "raw_mean_alpha_pct": -10.897,
       "median_alpha_pct": -9.128,
       "recency_weighted_alpha_pct": -9.932,
-      "shrunk_alpha_pct": -6.291,
+      "shrunk_alpha_pct": -6.304,
       "positive_date_rate": 0.125,
       "ci95_alpha_pct": {
         "low": -16.723,
@@ -8680,7 +8680,7 @@
       "raw_mean_alpha_pct": -0.388,
       "median_alpha_pct": -0.967,
       "recency_weighted_alpha_pct": 0.675,
-      "shrunk_alpha_pct": 0.449,
+      "shrunk_alpha_pct": 0.498,
       "positive_date_rate": 0.375,
       "ci95_alpha_pct": {
         "low": -8.014,
@@ -8748,7 +8748,7 @@
       "raw_mean_alpha_pct": 6.467,
       "median_alpha_pct": 0.13,
       "recency_weighted_alpha_pct": 4.772,
-      "shrunk_alpha_pct": 1.403,
+      "shrunk_alpha_pct": 1.382,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -7.927,
@@ -8782,7 +8782,7 @@
       "raw_mean_alpha_pct": 9.417,
       "median_alpha_pct": 4.19,
       "recency_weighted_alpha_pct": 7.525,
-      "shrunk_alpha_pct": 2.827,
+      "shrunk_alpha_pct": 2.907,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -5.617,
@@ -8850,7 +8850,7 @@
       "raw_mean_alpha_pct": 7.785,
       "median_alpha_pct": 8.005,
       "recency_weighted_alpha_pct": 7.623,
-      "shrunk_alpha_pct": 3.071,
+      "shrunk_alpha_pct": 3.053,
       "positive_date_rate": 0.75,
       "ci95_alpha_pct": {
         "low": -1.155,
@@ -8910,26 +8910,26 @@
       "horizon": "d10",
       "status": "COLLECTING",
       "policy_effect": "NONE",
-      "record_count": 5,
-      "independent_date_count": 3,
-      "effective_date_count": 2.83,
-      "latest_observation_date": "2026-07-08",
-      "age_days": 24,
-      "raw_mean_alpha_pct": -2.63,
-      "median_alpha_pct": 1.72,
-      "recency_weighted_alpha_pct": 1.208,
-      "shrunk_alpha_pct": 0.08,
-      "positive_date_rate": 0.667,
+      "record_count": 6,
+      "independent_date_count": 4,
+      "effective_date_count": 3.75,
+      "latest_observation_date": "2026-07-15",
+      "age_days": 17,
+      "raw_mean_alpha_pct": -3.162,
+      "median_alpha_pct": -1.52,
+      "recency_weighted_alpha_pct": -0.729,
+      "shrunk_alpha_pct": -0.65,
+      "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
-        "low": -27.659,
-        "high": 22.399
+        "low": -20.891,
+        "high": 14.566
       },
       "drift": {
         "recent_window_days": 40,
         "older_mean_alpha_pct": -26.6,
-        "recent_mean_alpha_pct": 9.355,
-        "gap_pct": 35.955,
-        "recent_date_count": 2,
+        "recent_mean_alpha_pct": 4.65,
+        "gap_pct": 31.25,
+        "recent_date_count": 3,
         "older_date_count": 1
       }
     },
@@ -8952,7 +8952,7 @@
       "raw_mean_alpha_pct": -6.37,
       "median_alpha_pct": -6.37,
       "recency_weighted_alpha_pct": -6.37,
-      "shrunk_alpha_pct": -0.984,
+      "shrunk_alpha_pct": -0.879,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -9020,7 +9020,7 @@
       "raw_mean_alpha_pct": -9.893,
       "median_alpha_pct": -3.98,
       "recency_weighted_alpha_pct": -10.313,
-      "shrunk_alpha_pct": -4.164,
+      "shrunk_alpha_pct": -4.185,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -21.749,
@@ -9054,7 +9054,7 @@
       "raw_mean_alpha_pct": -14.74,
       "median_alpha_pct": -14.74,
       "recency_weighted_alpha_pct": -16.424,
-      "shrunk_alpha_pct": -4.553,
+      "shrunk_alpha_pct": -4.462,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -36.888,
@@ -9122,7 +9122,7 @@
       "raw_mean_alpha_pct": 0.356,
       "median_alpha_pct": 4.26,
       "recency_weighted_alpha_pct": 2.518,
-      "shrunk_alpha_pct": 1.421,
+      "shrunk_alpha_pct": 1.409,
       "positive_date_rate": 0.7,
       "ci95_alpha_pct": {
         "low": -6.425,
@@ -9156,7 +9156,7 @@
       "raw_mean_alpha_pct": -5.494,
       "median_alpha_pct": -2.04,
       "recency_weighted_alpha_pct": -4.753,
-      "shrunk_alpha_pct": -2.29,
+      "shrunk_alpha_pct": -2.226,
       "positive_date_rate": 0.2,
       "ci95_alpha_pct": {
         "low": -19.926,
@@ -9224,7 +9224,7 @@
       "raw_mean_alpha_pct": 1.523,
       "median_alpha_pct": -1.98,
       "recency_weighted_alpha_pct": -0.622,
-      "shrunk_alpha_pct": -0.598,
+      "shrunk_alpha_pct": -0.61,
       "positive_date_rate": 0.333,
       "ci95_alpha_pct": {
         "low": -5.221,
@@ -9258,7 +9258,7 @@
       "raw_mean_alpha_pct": 12.917,
       "median_alpha_pct": 21.01,
       "recency_weighted_alpha_pct": 10.543,
-      "shrunk_alpha_pct": 3.925,
+      "shrunk_alpha_pct": 4.005,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -5.379,
@@ -9326,7 +9326,7 @@
       "raw_mean_alpha_pct": 3.304,
       "median_alpha_pct": 3.305,
       "recency_weighted_alpha_pct": 3.661,
-      "shrunk_alpha_pct": 2.323,
+      "shrunk_alpha_pct": 2.312,
       "positive_date_rate": 0.818,
       "ci95_alpha_pct": {
         "low": 0.907,
@@ -9360,7 +9360,7 @@
       "raw_mean_alpha_pct": 2.432,
       "median_alpha_pct": 4.0,
       "recency_weighted_alpha_pct": 2.782,
-      "shrunk_alpha_pct": 1.929,
+      "shrunk_alpha_pct": 1.969,
       "positive_date_rate": 0.545,
       "ci95_alpha_pct": {
         "low": -0.911,
@@ -9428,7 +9428,7 @@
       "raw_mean_alpha_pct": -1.723,
       "median_alpha_pct": 1.08,
       "recency_weighted_alpha_pct": -2.278,
-      "shrunk_alpha_pct": -1.545,
+      "shrunk_alpha_pct": -1.559,
       "positive_date_rate": 0.571,
       "ci95_alpha_pct": {
         "low": -8.256,
@@ -9462,7 +9462,7 @@
       "raw_mean_alpha_pct": 2.325,
       "median_alpha_pct": 3.295,
       "recency_weighted_alpha_pct": 2.993,
-      "shrunk_alpha_pct": 1.368,
+      "shrunk_alpha_pct": 1.439,
       "positive_date_rate": 0.75,
       "ci95_alpha_pct": {
         "low": -4.789,
@@ -9530,7 +9530,7 @@
       "raw_mean_alpha_pct": -1.059,
       "median_alpha_pct": 1.153,
       "recency_weighted_alpha_pct": -1.171,
-      "shrunk_alpha_pct": -0.885,
+      "shrunk_alpha_pct": -0.9,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -6.226,
@@ -9564,7 +9564,7 @@
       "raw_mean_alpha_pct": 1.563,
       "median_alpha_pct": 4.3,
       "recency_weighted_alpha_pct": 1.213,
-      "shrunk_alpha_pct": 0.642,
+      "shrunk_alpha_pct": 0.707,
       "positive_date_rate": 0.6,
       "ci95_alpha_pct": {
         "low": -3.345,
@@ -9632,7 +9632,7 @@
       "raw_mean_alpha_pct": 2.758,
       "median_alpha_pct": 2.12,
       "recency_weighted_alpha_pct": 2.416,
-      "shrunk_alpha_pct": 1.34,
+      "shrunk_alpha_pct": 1.328,
       "positive_date_rate": 0.778,
       "ci95_alpha_pct": {
         "low": -3.107,
@@ -9666,7 +9666,7 @@
       "raw_mean_alpha_pct": -2.7,
       "median_alpha_pct": -1.237,
       "recency_weighted_alpha_pct": -3.383,
-      "shrunk_alpha_pct": -2.031,
+      "shrunk_alpha_pct": -1.981,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -9.775,
@@ -9732,7 +9732,7 @@
       "raw_mean_alpha_pct": -3.501,
       "median_alpha_pct": -3.98,
       "recency_weighted_alpha_pct": -2.821,
-      "shrunk_alpha_pct": -1.99,
+      "shrunk_alpha_pct": -2.002,
       "positive_date_rate": 0.222,
       "ci95_alpha_pct": {
         "low": -12.524,
@@ -9765,7 +9765,7 @@
       "raw_mean_alpha_pct": 1.113,
       "median_alpha_pct": -3.44,
       "recency_weighted_alpha_pct": 0.351,
-      "shrunk_alpha_pct": 0.242,
+      "shrunk_alpha_pct": 0.295,
       "positive_date_rate": 0.429,
       "ci95_alpha_pct": {
         "low": -14.69,
@@ -9823,26 +9823,26 @@
       "horizon": "d10",
       "status": "MIXED",
       "policy_effect": "NONE",
-      "record_count": 24,
-      "independent_date_count": 14,
-      "effective_date_count": 13.09,
-      "latest_observation_date": "2026-07-13",
-      "age_days": 19,
-      "raw_mean_alpha_pct": -3.175,
-      "median_alpha_pct": -5.428,
-      "recency_weighted_alpha_pct": -0.657,
-      "shrunk_alpha_pct": -0.63,
-      "positive_date_rate": 0.429,
+      "record_count": 25,
+      "independent_date_count": 15,
+      "effective_date_count": 13.92,
+      "latest_observation_date": "2026-07-15",
+      "age_days": 17,
+      "raw_mean_alpha_pct": -3.28,
+      "median_alpha_pct": -5.277,
+      "recency_weighted_alpha_pct": -1.063,
+      "shrunk_alpha_pct": -0.938,
+      "positive_date_rate": 0.4,
       "ci95_alpha_pct": {
-        "low": -10.078,
-        "high": 3.728
+        "low": -9.71,
+        "high": 3.149
       },
       "drift": {
         "recent_window_days": 40,
         "older_mean_alpha_pct": -11.462,
-        "recent_mean_alpha_pct": 5.113,
-        "gap_pct": 16.575,
-        "recent_date_count": 7,
+        "recent_mean_alpha_pct": 3.879,
+        "gap_pct": 15.341,
+        "recent_date_count": 8,
         "older_date_count": 7
       }
     },
@@ -9856,26 +9856,26 @@
       "horizon": "d20",
       "status": "MIXED",
       "policy_effect": "NONE",
-      "record_count": 17,
-      "independent_date_count": 8,
-      "effective_date_count": 7.93,
-      "latest_observation_date": "2026-06-22",
-      "age_days": 40,
-      "raw_mean_alpha_pct": -0.734,
-      "median_alpha_pct": -0.78,
-      "recency_weighted_alpha_pct": -0.235,
-      "shrunk_alpha_pct": -0.108,
-      "positive_date_rate": 0.375,
+      "record_count": 18,
+      "independent_date_count": 9,
+      "effective_date_count": 8.78,
+      "latest_observation_date": "2026-07-02",
+      "age_days": 30,
+      "raw_mean_alpha_pct": -0.162,
+      "median_alpha_pct": -0.45,
+      "recency_weighted_alpha_pct": 0.478,
+      "shrunk_alpha_pct": 0.384,
+      "positive_date_rate": 0.444,
       "ci95_alpha_pct": {
-        "low": -5.467,
-        "high": 3.999
+        "low": -4.484,
+        "high": 4.159
       },
       "drift": {
         "recent_window_days": 60,
         "older_mean_alpha_pct": null,
-        "recent_mean_alpha_pct": -0.734,
+        "recent_mean_alpha_pct": -0.162,
         "gap_pct": null,
-        "recent_date_count": 8,
+        "recent_date_count": 9,
         "older_date_count": 0
       }
     },
@@ -9930,7 +9930,7 @@
       "raw_mean_alpha_pct": 1.329,
       "median_alpha_pct": 2.595,
       "recency_weighted_alpha_pct": 1.469,
-      "shrunk_alpha_pct": 1.162,
+      "shrunk_alpha_pct": 1.157,
       "positive_date_rate": 0.742,
       "ci95_alpha_pct": {
         "low": -1.72,
@@ -9963,7 +9963,7 @@
       "raw_mean_alpha_pct": -2.029,
       "median_alpha_pct": -1.367,
       "recency_weighted_alpha_pct": -3.17,
-      "shrunk_alpha_pct": -2.553,
+      "shrunk_alpha_pct": -2.529,
       "positive_date_rate": 0.478,
       "ci95_alpha_pct": {
         "low": -6.763,
@@ -10029,7 +10029,7 @@
       "raw_mean_alpha_pct": 3.508,
       "median_alpha_pct": 2.835,
       "recency_weighted_alpha_pct": 3.623,
-      "shrunk_alpha_pct": 2.659,
+      "shrunk_alpha_pct": 2.652,
       "positive_date_rate": 0.833,
       "ci95_alpha_pct": {
         "low": 1.526,
@@ -10062,7 +10062,7 @@
       "raw_mean_alpha_pct": 0.975,
       "median_alpha_pct": 1.91,
       "recency_weighted_alpha_pct": 0.534,
-      "shrunk_alpha_pct": 0.428,
+      "shrunk_alpha_pct": 0.458,
       "positive_date_rate": 0.529,
       "ci95_alpha_pct": {
         "low": -2.736,
@@ -10128,7 +10128,7 @@
       "raw_mean_alpha_pct": -1.48,
       "median_alpha_pct": 2.65,
       "recency_weighted_alpha_pct": -2.457,
-      "shrunk_alpha_pct": -1.938,
+      "shrunk_alpha_pct": -1.947,
       "positive_date_rate": 0.6,
       "ci95_alpha_pct": {
         "low": -7.763,
@@ -10161,7 +10161,7 @@
       "raw_mean_alpha_pct": 1.039,
       "median_alpha_pct": 4.88,
       "recency_weighted_alpha_pct": -1.444,
-      "shrunk_alpha_pct": -0.826,
+      "shrunk_alpha_pct": -0.775,
       "positive_date_rate": 0.625,
       "ci95_alpha_pct": {
         "low": -11.653,
@@ -10229,7 +10229,7 @@
       "raw_mean_alpha_pct": -22.42,
       "median_alpha_pct": -22.42,
       "recency_weighted_alpha_pct": -22.508,
-      "shrunk_alpha_pct": -6.824,
+      "shrunk_alpha_pct": -6.848,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -27.418,
@@ -10263,7 +10263,7 @@
       "raw_mean_alpha_pct": -18.375,
       "median_alpha_pct": -18.375,
       "recency_weighted_alpha_pct": -18.504,
-      "shrunk_alpha_pct": -5.216,
+      "shrunk_alpha_pct": -5.126,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -25.656,
@@ -10331,7 +10331,7 @@
       "raw_mean_alpha_pct": -1.397,
       "median_alpha_pct": -6.18,
       "recency_weighted_alpha_pct": -2.056,
-      "shrunk_alpha_pct": -1.114,
+      "shrunk_alpha_pct": -1.135,
       "positive_date_rate": 0.333,
       "ci95_alpha_pct": {
         "low": -21.202,
@@ -10357,26 +10357,26 @@
       "horizon": "d20",
       "status": "COLLECTING",
       "policy_effect": "NONE",
-      "record_count": 2,
-      "independent_date_count": 2,
-      "effective_date_count": 2.0,
-      "latest_observation_date": "2026-06-22",
-      "age_days": 40,
-      "raw_mean_alpha_pct": 10.15,
-      "median_alpha_pct": 10.15,
-      "recency_weighted_alpha_pct": 9.887,
-      "shrunk_alpha_pct": 2.89,
-      "positive_date_rate": 0.5,
+      "record_count": 3,
+      "independent_date_count": 3,
+      "effective_date_count": 2.95,
+      "latest_observation_date": "2026-07-02",
+      "age_days": 30,
+      "raw_mean_alpha_pct": 8.237,
+      "median_alpha_pct": 4.41,
+      "recency_weighted_alpha_pct": 7.741,
+      "shrunk_alpha_pct": 3.012,
+      "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
-        "low": -12.155,
-        "high": 32.455
+        "low": -5.176,
+        "high": 21.649
       },
       "drift": {
         "recent_window_days": 60,
         "older_mean_alpha_pct": null,
-        "recent_mean_alpha_pct": 10.15,
+        "recent_mean_alpha_pct": 8.237,
         "gap_pct": null,
-        "recent_date_count": 2,
+        "recent_date_count": 3,
         "older_date_count": 0
       }
     },
@@ -10433,7 +10433,7 @@
       "raw_mean_alpha_pct": 4.215,
       "median_alpha_pct": 2.353,
       "recency_weighted_alpha_pct": 5.646,
-      "shrunk_alpha_pct": 2.141,
+      "shrunk_alpha_pct": 2.122,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -6.055,
@@ -10467,7 +10467,7 @@
       "raw_mean_alpha_pct": 16.163,
       "median_alpha_pct": 13.95,
       "recency_weighted_alpha_pct": 17.641,
-      "shrunk_alpha_pct": 7.728,
+      "shrunk_alpha_pct": 7.799,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 1.057,
@@ -10535,7 +10535,7 @@
       "raw_mean_alpha_pct": -9.216,
       "median_alpha_pct": -7.23,
       "recency_weighted_alpha_pct": -8.687,
-      "shrunk_alpha_pct": -5.284,
+      "shrunk_alpha_pct": -5.298,
       "positive_date_rate": 0.143,
       "ci95_alpha_pct": {
         "low": -14.313,
@@ -10569,7 +10569,7 @@
       "raw_mean_alpha_pct": -0.819,
       "median_alpha_pct": -0.45,
       "recency_weighted_alpha_pct": -0.412,
-      "shrunk_alpha_pct": -0.2,
+      "shrunk_alpha_pct": -0.148,
       "positive_date_rate": 0.429,
       "ci95_alpha_pct": {
         "low": -4.575,
@@ -10637,7 +10637,7 @@
       "raw_mean_alpha_pct": -3.157,
       "median_alpha_pct": -3.845,
       "recency_weighted_alpha_pct": -2.507,
-      "shrunk_alpha_pct": -1.414,
+      "shrunk_alpha_pct": -1.432,
       "positive_date_rate": 0.25,
       "ci95_alpha_pct": {
         "low": -18.796,
@@ -10671,7 +10671,7 @@
       "raw_mean_alpha_pct": -14.74,
       "median_alpha_pct": -14.74,
       "recency_weighted_alpha_pct": -16.424,
-      "shrunk_alpha_pct": -4.553,
+      "shrunk_alpha_pct": -4.462,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -36.888,
@@ -10731,26 +10731,26 @@
       "horizon": "d10",
       "status": "COLLECTING",
       "policy_effect": "NONE",
-      "record_count": 9,
-      "independent_date_count": 6,
-      "effective_date_count": 5.76,
-      "latest_observation_date": "2026-07-13",
-      "age_days": 19,
-      "raw_mean_alpha_pct": 3.441,
-      "median_alpha_pct": 6.765,
-      "recency_weighted_alpha_pct": 5.726,
-      "shrunk_alpha_pct": 2.807,
-      "positive_date_rate": 0.833,
+      "record_count": 10,
+      "independent_date_count": 7,
+      "effective_date_count": 6.73,
+      "latest_observation_date": "2026-07-15",
+      "age_days": 17,
+      "raw_mean_alpha_pct": 2.269,
+      "median_alpha_pct": 1.44,
+      "recency_weighted_alpha_pct": 3.899,
+      "shrunk_alpha_pct": 1.985,
+      "positive_date_rate": 0.714,
       "ci95_alpha_pct": {
-        "low": -9.702,
-        "high": 16.584
+        "low": -9.074,
+        "high": 13.612
       },
       "drift": {
         "recent_window_days": 40,
         "older_mean_alpha_pct": -26.6,
-        "recent_mean_alpha_pct": 9.449,
-        "gap_pct": 36.049,
-        "recent_date_count": 5,
+        "recent_mean_alpha_pct": 7.081,
+        "gap_pct": 33.681,
+        "recent_date_count": 6,
         "older_date_count": 1
       }
     },
@@ -10773,7 +10773,7 @@
       "raw_mean_alpha_pct": -6.37,
       "median_alpha_pct": -6.37,
       "recency_weighted_alpha_pct": -6.37,
-      "shrunk_alpha_pct": -0.984,
+      "shrunk_alpha_pct": -0.879,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -10841,7 +10841,7 @@
       "raw_mean_alpha_pct": 2.186,
       "median_alpha_pct": 2.021,
       "recency_weighted_alpha_pct": 2.837,
-      "shrunk_alpha_pct": 2.002,
+      "shrunk_alpha_pct": 1.994,
       "positive_date_rate": 0.778,
       "ci95_alpha_pct": {
         "low": 0.209,
@@ -10875,7 +10875,7 @@
       "raw_mean_alpha_pct": 0.878,
       "median_alpha_pct": -1.367,
       "recency_weighted_alpha_pct": 0.953,
-      "shrunk_alpha_pct": 0.707,
+      "shrunk_alpha_pct": 0.743,
       "positive_date_rate": 0.462,
       "ci95_alpha_pct": {
         "low": -1.928,
@@ -10943,7 +10943,7 @@
       "raw_mean_alpha_pct": 3.127,
       "median_alpha_pct": 2.343,
       "recency_weighted_alpha_pct": 3.186,
-      "shrunk_alpha_pct": 1.921,
+      "shrunk_alpha_pct": 1.91,
       "positive_date_rate": 0.8,
       "ci95_alpha_pct": {
         "low": 0.183,
@@ -10977,7 +10977,7 @@
       "raw_mean_alpha_pct": 2.332,
       "median_alpha_pct": 1.73,
       "recency_weighted_alpha_pct": 2.399,
-      "shrunk_alpha_pct": 1.62,
+      "shrunk_alpha_pct": 1.662,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -1.701,
@@ -11045,7 +11045,7 @@
       "raw_mean_alpha_pct": 2.344,
       "median_alpha_pct": 2.88,
       "recency_weighted_alpha_pct": 1.058,
-      "shrunk_alpha_pct": 0.422,
+      "shrunk_alpha_pct": 0.409,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -4.053,
@@ -11079,7 +11079,7 @@
       "raw_mean_alpha_pct": 7.255,
       "median_alpha_pct": 10.295,
       "recency_weighted_alpha_pct": 7.402,
-      "shrunk_alpha_pct": 3.33,
+      "shrunk_alpha_pct": 3.4,
       "positive_date_rate": 0.75,
       "ci95_alpha_pct": {
         "low": -8.976,
@@ -11147,7 +11147,7 @@
       "raw_mean_alpha_pct": 0.143,
       "median_alpha_pct": 3.515,
       "recency_weighted_alpha_pct": -0.076,
-      "shrunk_alpha_pct": -0.212,
+      "shrunk_alpha_pct": -0.222,
       "positive_date_rate": 0.692,
       "ci95_alpha_pct": {
         "low": -6.712,
@@ -11181,7 +11181,7 @@
       "raw_mean_alpha_pct": -5.807,
       "median_alpha_pct": 0.085,
       "recency_weighted_alpha_pct": -6.677,
-      "shrunk_alpha_pct": -4.394,
+      "shrunk_alpha_pct": -4.352,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -15.885,
@@ -11249,7 +11249,7 @@
       "raw_mean_alpha_pct": 3.985,
       "median_alpha_pct": 3.625,
       "recency_weighted_alpha_pct": 3.957,
-      "shrunk_alpha_pct": 2.204,
+      "shrunk_alpha_pct": 2.191,
       "positive_date_rate": 0.875,
       "ci95_alpha_pct": {
         "low": 1.28,
@@ -11283,7 +11283,7 @@
       "raw_mean_alpha_pct": -0.964,
       "median_alpha_pct": 1.91,
       "recency_weighted_alpha_pct": -1.134,
-      "shrunk_alpha_pct": -0.619,
+      "shrunk_alpha_pct": -0.566,
       "positive_date_rate": 0.571,
       "ci95_alpha_pct": {
         "low": -8.052,
@@ -11351,7 +11351,7 @@
       "raw_mean_alpha_pct": -7.216,
       "median_alpha_pct": -2.42,
       "recency_weighted_alpha_pct": -8.006,
-      "shrunk_alpha_pct": -4.523,
+      "shrunk_alpha_pct": -4.538,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -18.878,
@@ -11385,7 +11385,7 @@
       "raw_mean_alpha_pct": -5.178,
       "median_alpha_pct": 1.92,
       "recency_weighted_alpha_pct": -7.237,
-      "shrunk_alpha_pct": -3.087,
+      "shrunk_alpha_pct": -3.016,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -24.907,
@@ -11453,7 +11453,7 @@
       "raw_mean_alpha_pct": -8.247,
       "median_alpha_pct": -6.79,
       "recency_weighted_alpha_pct": -8.836,
-      "shrunk_alpha_pct": -3.396,
+      "shrunk_alpha_pct": -3.418,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -15.8,
@@ -11487,7 +11487,7 @@
       "raw_mean_alpha_pct": -10.5,
       "median_alpha_pct": -10.5,
       "recency_weighted_alpha_pct": -10.5,
-      "shrunk_alpha_pct": -1.673,
+      "shrunk_alpha_pct": -1.567,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -11555,7 +11555,7 @@
       "raw_mean_alpha_pct": 5.7,
       "median_alpha_pct": 5.7,
       "recency_weighted_alpha_pct": 5.7,
-      "shrunk_alpha_pct": 0.485,
+      "shrunk_alpha_pct": 0.458,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -11589,7 +11589,7 @@
       "raw_mean_alpha_pct": 10.58,
       "median_alpha_pct": 10.58,
       "recency_weighted_alpha_pct": 10.58,
-      "shrunk_alpha_pct": 1.841,
+      "shrunk_alpha_pct": 1.946,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -11657,7 +11657,7 @@
       "raw_mean_alpha_pct": -3.62,
       "median_alpha_pct": -3.775,
       "recency_weighted_alpha_pct": -3.516,
-      "shrunk_alpha_pct": -1.734,
+      "shrunk_alpha_pct": -1.754,
       "positive_date_rate": 0.25,
       "ci95_alpha_pct": {
         "low": -8.565,
@@ -11691,7 +11691,7 @@
       "raw_mean_alpha_pct": -4.283,
       "median_alpha_pct": -1.16,
       "recency_weighted_alpha_pct": -3.864,
-      "shrunk_alpha_pct": -1.381,
+      "shrunk_alpha_pct": -1.302,
       "positive_date_rate": 0.333,
       "ci95_alpha_pct": {
         "low": -11.592,
@@ -11759,7 +11759,7 @@
       "raw_mean_alpha_pct": -14.723,
       "median_alpha_pct": -9.75,
       "recency_weighted_alpha_pct": -14.984,
-      "shrunk_alpha_pct": -5.967,
+      "shrunk_alpha_pct": -5.987,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -34.459,
@@ -11793,7 +11793,7 @@
       "raw_mean_alpha_pct": -21.32,
       "median_alpha_pct": -16.17,
       "recency_weighted_alpha_pct": -21.486,
-      "shrunk_alpha_pct": -7.997,
+      "shrunk_alpha_pct": -7.919,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -34.516,
@@ -11861,7 +11861,7 @@
       "raw_mean_alpha_pct": 2.24,
       "median_alpha_pct": 2.24,
       "recency_weighted_alpha_pct": 2.24,
-      "shrunk_alpha_pct": -0.092,
+      "shrunk_alpha_pct": -0.119,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -11895,7 +11895,7 @@
       "raw_mean_alpha_pct": 6.34,
       "median_alpha_pct": 6.34,
       "recency_weighted_alpha_pct": 6.34,
-      "shrunk_alpha_pct": 1.134,
+      "shrunk_alpha_pct": 1.239,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -11963,7 +11963,7 @@
       "raw_mean_alpha_pct": 6.26,
       "median_alpha_pct": 6.26,
       "recency_weighted_alpha_pct": 6.26,
-      "shrunk_alpha_pct": 0.578,
+      "shrunk_alpha_pct": 0.551,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12031,7 +12031,7 @@
       "raw_mean_alpha_pct": 7.59,
       "median_alpha_pct": 8.06,
       "recency_weighted_alpha_pct": 7.49,
-      "shrunk_alpha_pct": 3.012,
+      "shrunk_alpha_pct": 2.994,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 4.716,
@@ -12065,7 +12065,7 @@
       "raw_mean_alpha_pct": 0.867,
       "median_alpha_pct": -0.98,
       "recency_weighted_alpha_pct": 0.733,
-      "shrunk_alpha_pct": 0.333,
+      "shrunk_alpha_pct": 0.412,
       "positive_date_rate": 0.333,
       "ci95_alpha_pct": {
         "low": -4.357,
@@ -12133,7 +12133,7 @@
       "raw_mean_alpha_pct": 15.19,
       "median_alpha_pct": 15.19,
       "recency_weighted_alpha_pct": 15.19,
-      "shrunk_alpha_pct": 2.067,
+      "shrunk_alpha_pct": 2.039,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12167,7 +12167,7 @@
       "raw_mean_alpha_pct": 1.22,
       "median_alpha_pct": 1.22,
       "recency_weighted_alpha_pct": 1.22,
-      "shrunk_alpha_pct": 0.281,
+      "shrunk_alpha_pct": 0.386,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12235,7 +12235,7 @@
       "raw_mean_alpha_pct": -5.03,
       "median_alpha_pct": -5.03,
       "recency_weighted_alpha_pct": -5.085,
-      "shrunk_alpha_pct": -1.851,
+      "shrunk_alpha_pct": -1.875,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -14.281,
@@ -12269,7 +12269,7 @@
       "raw_mean_alpha_pct": -14.645,
       "median_alpha_pct": -14.645,
       "recency_weighted_alpha_pct": -14.663,
-      "shrunk_alpha_pct": -4.122,
+      "shrunk_alpha_pct": -4.032,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -17.634,
@@ -12337,7 +12337,7 @@
       "raw_mean_alpha_pct": 2.24,
       "median_alpha_pct": 2.24,
       "recency_weighted_alpha_pct": 2.24,
-      "shrunk_alpha_pct": -0.092,
+      "shrunk_alpha_pct": -0.119,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12371,7 +12371,7 @@
       "raw_mean_alpha_pct": 6.34,
       "median_alpha_pct": 6.34,
       "recency_weighted_alpha_pct": 6.34,
-      "shrunk_alpha_pct": 1.134,
+      "shrunk_alpha_pct": 1.239,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12439,7 +12439,7 @@
       "raw_mean_alpha_pct": 1.69,
       "median_alpha_pct": 2.71,
       "recency_weighted_alpha_pct": 2.632,
-      "shrunk_alpha_pct": 0.562,
+      "shrunk_alpha_pct": 0.54,
       "positive_date_rate": 0.667,
       "ci95_alpha_pct": {
         "low": -4.145,
@@ -12473,7 +12473,7 @@
       "raw_mean_alpha_pct": -0.57,
       "median_alpha_pct": -0.57,
       "recency_weighted_alpha_pct": -0.611,
-      "shrunk_alpha_pct": -0.107,
+      "shrunk_alpha_pct": -0.017,
       "positive_date_rate": 0.5,
       "ci95_alpha_pct": {
         "low": -1.726,
@@ -12541,7 +12541,7 @@
       "raw_mean_alpha_pct": 7.073,
       "median_alpha_pct": 6.98,
       "recency_weighted_alpha_pct": 6.996,
-      "shrunk_alpha_pct": 2.272,
+      "shrunk_alpha_pct": 2.251,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": 3.27,
@@ -12575,7 +12575,7 @@
       "raw_mean_alpha_pct": -1.76,
       "median_alpha_pct": -1.76,
       "recency_weighted_alpha_pct": -1.751,
-      "shrunk_alpha_pct": -0.434,
+      "shrunk_alpha_pct": -0.344,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -3.289,
@@ -12643,7 +12643,7 @@
       "raw_mean_alpha_pct": 15.19,
       "median_alpha_pct": 15.19,
       "recency_weighted_alpha_pct": 15.19,
-      "shrunk_alpha_pct": 2.067,
+      "shrunk_alpha_pct": 2.039,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12677,7 +12677,7 @@
       "raw_mean_alpha_pct": 1.22,
       "median_alpha_pct": 1.22,
       "recency_weighted_alpha_pct": 1.22,
-      "shrunk_alpha_pct": 0.281,
+      "shrunk_alpha_pct": 0.386,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12745,7 +12745,7 @@
       "raw_mean_alpha_pct": -17.353,
       "median_alpha_pct": -15.53,
       "recency_weighted_alpha_pct": -16.217,
-      "shrunk_alpha_pct": -6.383,
+      "shrunk_alpha_pct": -6.404,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": -35.372,
@@ -12779,7 +12779,7 @@
       "raw_mean_alpha_pct": -34.67,
       "median_alpha_pct": -34.67,
       "recency_weighted_alpha_pct": -34.67,
-      "shrunk_alpha_pct": -5.701,
+      "shrunk_alpha_pct": -5.596,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12847,7 +12847,7 @@
       "raw_mean_alpha_pct": -3.65,
       "median_alpha_pct": -3.65,
       "recency_weighted_alpha_pct": -3.65,
-      "shrunk_alpha_pct": -1.073,
+      "shrunk_alpha_pct": -1.101,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12915,7 +12915,7 @@
       "raw_mean_alpha_pct": 9.14,
       "median_alpha_pct": 9.14,
       "recency_weighted_alpha_pct": 9.14,
-      "shrunk_alpha_pct": 1.058,
+      "shrunk_alpha_pct": 1.031,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -12949,7 +12949,7 @@
       "raw_mean_alpha_pct": 6.12,
       "median_alpha_pct": 6.12,
       "recency_weighted_alpha_pct": 6.12,
-      "shrunk_alpha_pct": 1.097,
+      "shrunk_alpha_pct": 1.202,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -13017,7 +13017,7 @@
       "raw_mean_alpha_pct": 5.7,
       "median_alpha_pct": 5.7,
       "recency_weighted_alpha_pct": 5.7,
-      "shrunk_alpha_pct": 0.485,
+      "shrunk_alpha_pct": 0.458,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -13051,7 +13051,7 @@
       "raw_mean_alpha_pct": 10.58,
       "median_alpha_pct": 10.58,
       "recency_weighted_alpha_pct": 10.58,
-      "shrunk_alpha_pct": 1.841,
+      "shrunk_alpha_pct": 1.946,
       "positive_date_rate": 1.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -13119,7 +13119,7 @@
       "raw_mean_alpha_pct": -9.64,
       "median_alpha_pct": -9.64,
       "recency_weighted_alpha_pct": -9.64,
-      "shrunk_alpha_pct": -2.072,
+      "shrunk_alpha_pct": -2.099,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -13153,7 +13153,7 @@
       "raw_mean_alpha_pct": -11.71,
       "median_alpha_pct": -11.71,
       "recency_weighted_alpha_pct": -11.71,
-      "shrunk_alpha_pct": -1.874,
+      "shrunk_alpha_pct": -1.769,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -13221,7 +13221,7 @@
       "raw_mean_alpha_pct": -6.79,
       "median_alpha_pct": -6.79,
       "recency_weighted_alpha_pct": -6.79,
-      "shrunk_alpha_pct": -1.597,
+      "shrunk_alpha_pct": -1.624,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
@@ -13255,7 +13255,7 @@
       "raw_mean_alpha_pct": -10.5,
       "median_alpha_pct": -10.5,
       "recency_weighted_alpha_pct": -10.5,
-      "shrunk_alpha_pct": -1.673,
+      "shrunk_alpha_pct": -1.567,
       "positive_date_rate": 0.0,
       "ci95_alpha_pct": {
         "low": null,
