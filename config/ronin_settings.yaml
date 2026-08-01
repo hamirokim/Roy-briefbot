@@ -342,7 +342,7 @@ regime:
     percentile_low_pct: 30             # 하위 30% = "쌈"
 
   core_valuation:
-    enabled: true
+    enabled: false                       # 자기 과거 배수 시계열 확보 전 Telegram/JOURNAL 출력 중단
     tickers: ["VTI", "IXUS", "AVUV", "AVDV", "QQQM", "SCHP", "IAUM", "VT"]
     equity_tickers: ["VTI", "IXUS", "AVUV", "AVDV", "QQQM", "VT"]
     non_equity:

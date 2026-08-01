@@ -327,12 +327,11 @@ class DigestContractTests(unittest.TestCase):
             },
         )
 
-        self.assertIn("오늘 결론 |", message)
+        self.assertIn("판정 |", message)
         self.assertIn("환전 | 대기", message)
-        self.assertIn("TradingView에서 열 종목 | 0개", message)
-        self.assertIn("판정: 정상 관망", message)
-        self.assertIn("0개인 이유: Tier A 확실 후보 없음", message)
-        self.assertIn("TradingView 확인 목록 아님", message)
+        self.assertIn("차트 | 0개", message)
+        self.assertIn("없음 | 새로 열 차트 없음", message)
+        self.assertIn("막힘 | Tier A 확실 후보 없음", message)
         self.assertIn("Tier A 확실 후보 없음", message)
         self.assertNotIn("관찰 레이더", message)
         self.assertNotIn("HWM", message)
@@ -414,13 +413,13 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"radar_pool_count": 58}},
         )
 
-        self.assertIn("TradingView에서 열 종목 | 2개", message)
-        self.assertIn("1. 🇺🇸 <b>AAA</b> [좌측진입 강함]", message)
-        self.assertIn("2. 🇺🇸 <b>BBB</b> [좌측진입 준비]", message)
+        self.assertIn("차트 | 2개", message)
+        self.assertIn("1. <b>AAA</b> | 좌측진입 강함", message)
+        self.assertIn("2. <b>BBB</b> | 좌측진입 준비", message)
         self.assertNotIn("CCC", message)
-        self.assertIn("TradingView RONIN 인디케이터의 실제 진입 신호", message)
-        self.assertIn("무효: 지지 구간 이탈 시 무효", message)
-        self.assertIn("보유 변화", message)
+        self.assertIn("진입 | Entry50/100 점등 + Gate 통과 후", message)
+        self.assertIn("무효 | 지지 구간 이탈 시 무효", message)
+        self.assertIn("보유 경보", message)
         self.assertIn("<b>HELD</b>", message)
         self.assertNotIn("후순위", message)
 
@@ -445,9 +444,7 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
         )
 
-        self.assertIn("데이터 한계", message)
-        self.assertIn("금리·물가 원자료 수집 실패", message)
-        self.assertIn("시장 가격 반응은 정상 수집", message)
+        self.assertIn("자료 | 금리·물가 원자료 누락", message)
         self.assertNotIn("FRED 0/6", message)
 
     def test_macro_jargon_is_translated_for_telegram(self):
@@ -467,9 +464,9 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
         )
 
-        self.assertIn("높은 금리가 더 오래 갈 가능성", message)
-        self.assertIn("달러지수(DXY)", message)
-        self.assertIn("원/달러는 1435.86원", message)
+        self.assertNotIn("높은 금리가 더 오래 갈 가능성", message)
+        self.assertNotIn("달러지수(DXY)", message)
+        self.assertNotIn("원/달러는 1435.86원", message)
         self.assertNotIn("긴축 잔존", message)
 
     def test_fx_output_shows_both_windows_and_52w_context(self):
@@ -493,9 +490,9 @@ class DigestContractTests(unittest.TestCase):
         )
 
         self.assertIn("환전 | 적극", message)
-        self.assertIn("90일 0백분위 · 52주 18백분위", message)
-        self.assertIn("52주 범위 1395.40~1518.60원", message)
-        self.assertIn("중앙값 1478.20원보다 3.2% 낮음", message)
+        self.assertIn("90일 하위 0% · 52주 하위 18%", message)
+        self.assertNotIn("52주 범위", message)
+        self.assertNotIn("중앙값", message)
         self.assertNotIn("52주 비교는 아직 미수집", message)
 
     def test_holding_alert_separates_structure_news_and_unverified_thesis(self):
@@ -527,10 +524,10 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
         )
 
-        self.assertIn("구조: 소고점 돌파 구조 유지", message)
+        self.assertIn("구조 | 소고점 돌파 구조 유지", message)
         self.assertIn("연속 상승 4일", message)
-        self.assertIn("뉴스: NOW 관련 뉴스 영향은 중립", message)
-        self.assertIn("투자 근거 영향: 판정 불가 · 등록 기준 없음", message)
+        self.assertIn("뉴스 | NOW 관련 뉴스 영향은 중립", message)
+        self.assertNotIn("투자 근거 영향", message)
         self.assertNotIn("기존 투자 근거를 바꿀 새 정보 없음", message)
 
     def test_theme_label_without_two_supportive_etfs_cannot_drive_opportunity(self):
@@ -562,8 +559,49 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
         )
 
-        self.assertIn("오늘 결론 | 선별 관찰", message)
-        self.assertNotIn("우호 테마: AI·반도체", message)
+        self.assertIn("판정 | 선별 관찰", message)
+        self.assertNotIn("테마 | AI·반도체", message)
+
+    def test_one_screen_market_map_caps_each_row_at_two_items(self):
+        agent = self._digest_agent()
+        message = agent._build_telegram(
+            [],
+            {},
+            {
+                "vix": 18.0,
+                "fx": {
+                    "current": 1436.6,
+                    "action": "분할",
+                    "percentile_90d": 2,
+                    "percentile_52w": 34,
+                },
+                "rrg": {
+                    "by_quadrant": {
+                        "LEADING": [{"label": "임의소비재"}],
+                        "IMPROVING": [{"label": "기술"}, {"label": "산업재"}],
+                        "LAGGING": [{"label": "필수소비재"}, {"label": "통신"}, {"label": "리츠"}],
+                    },
+                    "transitions": [
+                        {"label": "기술", "prev": "LAGGING", "curr": "IMPROVING"},
+                        {"label": "임의소비재", "prev": "IMPROVING", "curr": "LEADING"},
+                        {"label": "리츠", "prev": "WEAKENING", "curr": "LAGGING"},
+                    ],
+                    "theme_intelligence": {"groups": [
+                        {"label": "클라우드", "judgment": "강함"},
+                        {"label": "사이버보안", "judgment": "강함"},
+                        {"label": "로봇", "judgment": "강함"},
+                    ]},
+                },
+            },
+            scout_out={"radar_summary": {"no_candidate_reason": "추천 기준 미달"}},
+        )
+        self.assertIn("기회 | 임의소비재 주도 · 기술 개선", message)
+        self.assertIn("테마 | 클라우드 · 사이버보안", message)
+        self.assertNotIn("로봇", message)
+        self.assertIn("위험 | 필수소비재 부진 · 통신 부진", message)
+        self.assertNotIn("리츠", message)
+        self.assertIn("변화 | 기술 부진>개선 · 임의소비재 개선>주도", message)
+        self.assertLess(len(message), 700)
 
     def test_malformed_earnings_placeholder_is_not_displayed(self):
         candidate = {

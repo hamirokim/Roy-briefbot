@@ -108,7 +108,7 @@ class CoreEtfValuationTests(unittest.TestCase):
         self.assertEqual(schp["label"], "실질금리 기회 높음")
         self.assertEqual(iaum["label"], "가격 부담 높음")
 
-    def test_telegram_explains_asset_specific_output_and_blockers(self):
+    def test_telegram_hides_unproven_valuation_and_keeps_blockers(self):
         items = [
             {"ticker": "VTI", "label": "상대 낮음", "status": "RELATIVE_LOW", "asset_type": "equity_etf"},
             {"ticker": "VT", "label": "글로벌 기준", "status": "PORTFOLIO_BASELINE", "asset_type": "equity_etf"},
@@ -122,11 +122,10 @@ class CoreEtfValuationTests(unittest.TestCase):
             {"core_valuation": {"enabled": True, "items": items, "complete_count": 4, "total_count": 4}},
             scout_out={"radar_summary": {"decision_health": {"blockers": {"tier_not_allowed": 80, "lane_not_allowed": 14}}}},
         )
-        self.assertIn("메인포트 가격·估值 상태 | 4/4 판정", message)
-        self.assertIn("SCHP: 실질금리 기회 높음", message)
-        self.assertIn("품질·근거 Tier 미달 80개", message)
-        self.assertIn("좌측진입 단계 미달 14개", message)
-        self.assertIn("절대 적정가 아님", message)
+        self.assertNotIn("메인포트", message)
+        self.assertNotIn("SCHP", message)
+        self.assertIn("품질 기준 미달 80개", message)
+        self.assertIn("좌측진입 아직 아님 14개", message)
 
     def test_journal_detail_accepts_non_equity_scalar_metrics(self):
         agent = DigestAgent.__new__(DigestAgent)

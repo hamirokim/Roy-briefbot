@@ -115,17 +115,17 @@ Status as of 2026-07-29:
 - The production recommendation gate allows 0 to 2 live recommendations and only permits
   `left_side` Stage 2 candidates until TradingView has a separately validated breakout route.
   Tier B/C/D candidates remain internal and are never used as slot backfill.
-- Telegram is a compact decision view, not a second Journal sheet. It shows market opportunity/risk,
-  the reason across recent/current/upcoming context, FX as `적극/분할/대기`, only candidates worth
-  opening in TradingView, holding alerts, and degraded-data warnings. Detailed RRG tables, theme
-  tables, WATCHLIST, SCOUT statistics, quiet news, and learning notes remain in Sheets/snapshots.
+- Telegram is a one-screen decision board, not a prose summary or a second Journal sheet. It shows
+  one operating verdict, at most two opportunity sectors, two themes, two risk sectors, two changes,
+  FX as `적극/분할/대기`, 0-2 charts worth opening, holding alerts, the next event, and degraded-data
+  warnings. Event interpretation, learning notes, valuation explanations, full RRG/theme tables,
+  WATCHLIST, and SCOUT detail remain outside Telegram.
 - FX action uses both the recent 90-day and 52-week USD/KRW distributions. `적극` or `대기`
   requires both windows to agree; mixed windows return `분할`. Telegram also shows the 52-week
-  range and distance from its median.
-- Core ETF valuation is display-only. `VTI`, `IXUS`, `AVUV`, `AVDV`, `QQQM`, and `VT` compare
-  P/E, P/B, P/S, and P/CF with their Yahoo fund category. The result is labeled relative low,
-  mixed, or relative high and is never presented as intrinsic fair value. `SCHP` and `IAUM`
-  remain `판정 보류` until asset-appropriate real-yield evidence is connected.
+  percentile as plain `상위/하위 N%`; ranges and medians remain in the Journal.
+- Core ETF relative valuation is disabled. Cross-fund multiples did not answer Roy's requested
+  own-history valuation question and therefore must not appear in Telegram or the Journal. Do not
+  re-enable it until a reliable historical valuation series for each ETF is available.
 - Market operating language is derived only from collected REGIME evidence. The bot must not present
   Roy's discretionary view as an operating mode. No manual market-view input or override is planned;
   Roy compares the bot's independent conclusion with his own judgment outside the bot.
@@ -654,13 +654,13 @@ Rule:
 Telegram is an action-first view. It does not change SCOUT selection authority or the detailed
 Sheets record.
 
-- Lead with today's new-candidate action and the number of held-position alerts.
-- Expand only the final rank-1 recommendation.
+- Lead with verdict, opportunity, risk, and changes in fixed one-line rows.
+- Show at most two final recommendations and only the evidence and invalidation needed to open a chart.
 - The primary recommendation must show entry confirmation, invalidation, evidence health, and
   the nearest alternative comparison.
 - Keep final ranks 2-3 on one explicitly subordinate line.
 - Keep zero recommendations as a healthy operational result.
-- Keep the watch radar explicitly non-actionable and show no more than two names.
+- Keep the watch radar out of Telegram.
 - Surface Outcome Memory only when a validated prior-date lesson has `SUPPORT` or `WEAKEN`
   effect in selective research.
 - Require LLM-generated human-readable research summaries to be concise Korean; deterministic
@@ -668,12 +668,11 @@ Sheets record.
 
 ## Current Next Work Order
 
-Priority 1: Validate the 52-week FX and core ETF valuation runtime output on one untouched brief.
+Priority 1: Validate the one-screen Telegram contract on one live brief.
 
 - Confirm both FX windows are present and mixed windows cannot produce `적극`.
-- Confirm all eight core ETFs are listed, partial Yahoo failures fail closed per ticker, and the
-  valuation section does not change SCOUT, REGIME operating mode, or DCA decisions.
-- Do not trigger a duplicate Telegram message solely for this validation.
+- Confirm Telegram contains no ETF relative-valuation section, event essay, WATCHLIST, or learning note.
+- Confirm the output remains scannable without truncation and preserves 0-2 left-side chart candidates.
 
 Priority 2: Accumulate untouched Left-side Context Shadow outcomes.
 
