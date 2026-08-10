@@ -1,6 +1,6 @@
 {
-  "last_run_date": "2026-08-10",
-  "last_run_at": "2026-08-10T07:58:32.199427+09:00",
+  "last_run_date": "2026-08-11",
+  "last_run_at": "2026-08-11T08:05:36.111454+09:00",
   "last_run_status": "OK",
   "last_error_count": 0,
   "last_errors": [],
@@ -9,6 +9,85 @@
   "last_monthly_run": "2026-08-01",
   "last_weekly_run": "2026-W33",
   "m2_history": {
+    "2026-08-11": {
+      "XLK": {
+        "quadrant": "LEADING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 101.28,
+        "momentum": 101.48
+      },
+      "XLV": {
+        "quadrant": "LEADING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 100.07,
+        "momentum": 100.54
+      },
+      "XLF": {
+        "quadrant": "LAGGING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 98.5,
+        "momentum": 98.1
+      },
+      "XLY": {
+        "quadrant": "LEADING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 101.43,
+        "momentum": 102.83
+      },
+      "XLP": {
+        "quadrant": "LAGGING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 97.03,
+        "momentum": 97.27
+      },
+      "XLE": {
+        "quadrant": "LAGGING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 99.77,
+        "momentum": 95.05
+      },
+      "XLI": {
+        "quadrant": "LAGGING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 98.48,
+        "momentum": 99.79
+      },
+      "XLB": {
+        "quadrant": "LEADING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 100.13,
+        "momentum": 101.46
+      },
+      "XLC": {
+        "quadrant": "IMPROVING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 99.55,
+        "momentum": 100.28
+      },
+      "XLU": {
+        "quadrant": "LAGGING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 93.87,
+        "momentum": 94.66
+      },
+      "XLRE": {
+        "quadrant": "LAGGING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 95.44,
+        "momentum": 94.35
+      }
+    },
     "2026-08-10": {
       "XLK": {
         "quadrant": "LEADING",
@@ -2299,88 +2378,173 @@
         "ratio": 100.13,
         "momentum": 99.83
       }
-    },
-    "2026-07-07": {
-      "XLK": {
-        "quadrant": "LAGGING",
-        "label": "기술",
-        "group": "growth",
-        "ratio": 97.48,
-        "momentum": 98.0
-      },
-      "XLV": {
-        "quadrant": "LEADING",
-        "label": "헬스케어",
-        "group": "defensive",
-        "ratio": 102.7,
-        "momentum": 100.06
-      },
-      "XLF": {
-        "quadrant": "WEAKENING",
-        "label": "금융",
-        "group": "cyclical",
-        "ratio": 102.53,
-        "momentum": 99.12
-      },
-      "XLY": {
-        "quadrant": "LEADING",
-        "label": "임의소비재",
-        "group": "cyclical",
-        "ratio": 100.27,
-        "momentum": 100.38
-      },
-      "XLP": {
-        "quadrant": "LAGGING",
-        "label": "필수소비재",
-        "group": "defensive",
-        "ratio": 98.89,
-        "momentum": 95.69
-      },
-      "XLE": {
-        "quadrant": "LAGGING",
-        "label": "에너지",
-        "group": "cyclical",
-        "ratio": 97.35,
-        "momentum": 96.83
-      },
-      "XLI": {
-        "quadrant": "WEAKENING",
-        "label": "산업재",
-        "group": "cyclical",
-        "ratio": 100.88,
-        "momentum": 98.96
-      },
-      "XLB": {
-        "quadrant": "LAGGING",
-        "label": "소재",
-        "group": "cyclical",
-        "ratio": 99.54,
-        "momentum": 96.69
-      },
-      "XLC": {
-        "quadrant": "LEADING",
-        "label": "통신",
-        "group": "growth",
-        "ratio": 100.34,
-        "momentum": 101.17
-      },
-      "XLU": {
-        "quadrant": "LAGGING",
-        "label": "유틸리티",
-        "group": "defensive",
-        "ratio": 98.93,
-        "momentum": 97.47
-      },
-      "XLRE": {
-        "quadrant": "LAGGING",
-        "label": "리츠",
-        "group": "defensive",
-        "ratio": 98.37,
-        "momentum": 95.59
-      }
     }
   },
   "m2_theme_history": {
+    "2026-08-11": {
+      "SMH": {
+        "quadrant": "IMPROVING",
+        "label": "반도체 (VanEck)",
+        "category": "semiconductor",
+        "theme_group": "ai_semiconductor",
+        "group_label": "AI·반도체",
+        "ratio": 93.25,
+        "momentum": 102.32
+      },
+      "SOXX": {
+        "quadrant": "IMPROVING",
+        "label": "반도체 (iShares)",
+        "category": "semiconductor",
+        "theme_group": "ai_semiconductor",
+        "group_label": "AI·반도체",
+        "ratio": 91.57,
+        "momentum": 102.2
+      },
+      "AIQ": {
+        "quadrant": "IMPROVING",
+        "label": "AI & 빅데이터",
+        "category": "ai",
+        "theme_group": "ai_semiconductor",
+        "group_label": "AI·반도체",
+        "ratio": 97.69,
+        "momentum": 102.77
+      },
+      "ARTY": {
+        "quadrant": "IMPROVING",
+        "label": "Future AI & Tech",
+        "category": "ai",
+        "theme_group": "ai_semiconductor",
+        "group_label": "AI·반도체",
+        "ratio": 97.99,
+        "momentum": 102.55
+      },
+      "SKYY": {
+        "quadrant": "LEADING",
+        "label": "클라우드 컴퓨팅",
+        "category": "cloud",
+        "theme_group": "cloud_software",
+        "group_label": "클라우드·소프트웨어",
+        "ratio": 113.25,
+        "momentum": 106.49
+      },
+      "IGV": {
+        "quadrant": "LEADING",
+        "label": "소프트웨어",
+        "category": "software",
+        "theme_group": "cloud_software",
+        "group_label": "클라우드·소프트웨어",
+        "ratio": 108.57,
+        "momentum": 105.65
+      },
+      "BOTZ": {
+        "quadrant": "IMPROVING",
+        "label": "로봇 & AI",
+        "category": "robotics",
+        "theme_group": "robotics_automation",
+        "group_label": "로봇·자동화",
+        "ratio": 96.26,
+        "momentum": 102.08
+      },
+      "ROBO": {
+        "quadrant": "IMPROVING",
+        "label": "로봇 & 자동화",
+        "category": "robotics",
+        "theme_group": "robotics_automation",
+        "group_label": "로봇·자동화",
+        "ratio": 96.62,
+        "momentum": 100.75
+      },
+      "HACK": {
+        "quadrant": "LEADING",
+        "label": "사이버보안 (ETFMG)",
+        "category": "cybersecurity",
+        "theme_group": "cybersecurity",
+        "group_label": "사이버보안",
+        "ratio": 113.3,
+        "momentum": 106.54
+      },
+      "CIBR": {
+        "quadrant": "LEADING",
+        "label": "사이버보안 (First Trust)",
+        "category": "cybersecurity",
+        "theme_group": "cybersecurity",
+        "group_label": "사이버보안",
+        "ratio": 110.49,
+        "momentum": 105.0
+      },
+      "FINX": {
+        "quadrant": "LAGGING",
+        "label": "핀테크",
+        "category": "fintech",
+        "theme_group": "fintech",
+        "group_label": "핀테크",
+        "ratio": 99.55,
+        "momentum": 97.07
+      },
+      "ARKF": {
+        "quadrant": "LEADING",
+        "label": "핀테크 혁신 (ARK)",
+        "category": "fintech",
+        "theme_group": "fintech",
+        "group_label": "핀테크",
+        "ratio": 102.26,
+        "momentum": 104.2
+      },
+      "ICLN": {
+        "quadrant": "LAGGING",
+        "label": "클린에너지",
+        "category": "clean_energy",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 86.47,
+        "momentum": 98.5
+      },
+      "LIT": {
+        "quadrant": "IMPROVING",
+        "label": "리튬 & 배터리",
+        "category": "battery",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 92.93,
+        "momentum": 105.54
+      },
+      "TAN": {
+        "quadrant": "LAGGING",
+        "label": "태양광",
+        "category": "solar",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 84.89,
+        "momentum": 99.2
+      },
+      "ITA": {
+        "quadrant": "LEADING",
+        "label": "항공우주 & 방산",
+        "category": "space_defense",
+        "theme_group": "space_defense",
+        "group_label": "우주·방산",
+        "ratio": 103.09,
+        "momentum": 100.02
+      },
+      "XBI": {
+        "quadrant": "LEADING",
+        "label": "바이오테크 (S&P)",
+        "category": "biotech",
+        "theme_group": "biotech",
+        "group_label": "바이오테크",
+        "ratio": 105.47,
+        "momentum": 105.15
+      },
+      "IBB": {
+        "quadrant": "LEADING",
+        "label": "바이오테크 (NASDAQ)",
+        "category": "biotech",
+        "theme_group": "biotech",
+        "group_label": "바이오테크",
+        "ratio": 106.89,
+        "momentum": 105.45
+      }
+    },
     "2026-08-10": {
       "SMH": {
         "quadrant": "IMPROVING",
@@ -7136,299 +7300,9 @@
         "ratio": 111.58,
         "momentum": 103.51
       }
-    },
-    "2026-07-07": {
-      "SMH": {
-        "quadrant": "WEAKENING",
-        "label": "반도체 (VanEck)",
-        "category": "semiconductor",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 105.82,
-        "momentum": 95.87
-      },
-      "SOXX": {
-        "quadrant": "WEAKENING",
-        "label": "반도체 (iShares)",
-        "category": "semiconductor",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 109.06,
-        "momentum": 95.65
-      },
-      "AIQ": {
-        "quadrant": "WEAKENING",
-        "label": "AI & 빅데이터",
-        "category": "ai",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 102.76,
-        "momentum": 98.09
-      },
-      "ARTY": {
-        "quadrant": "WEAKENING",
-        "label": "Future AI & Tech",
-        "category": "ai",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 104.53,
-        "momentum": 97.26
-      },
-      "SKYY": {
-        "quadrant": "LEADING",
-        "label": "클라우드 컴퓨팅",
-        "category": "cloud",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 104.26,
-        "momentum": 103.02
-      },
-      "IGV": {
-        "quadrant": "LEADING",
-        "label": "소프트웨어",
-        "category": "software",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 102.83,
-        "momentum": 104.28
-      },
-      "BOTZ": {
-        "quadrant": "IMPROVING",
-        "label": "로봇 & AI",
-        "category": "robotics",
-        "theme_group": "robotics_automation",
-        "group_label": "로봇·자동화",
-        "ratio": 97.08,
-        "momentum": 103.07
-      },
-      "ROBO": {
-        "quadrant": "LEADING",
-        "label": "로봇 & 자동화",
-        "category": "robotics",
-        "theme_group": "robotics_automation",
-        "group_label": "로봇·자동화",
-        "ratio": 101.05,
-        "momentum": 101.99
-      },
-      "HACK": {
-        "quadrant": "LEADING",
-        "label": "사이버보안 (ETFMG)",
-        "category": "cybersecurity",
-        "theme_group": "cybersecurity",
-        "group_label": "사이버보안",
-        "ratio": 119.58,
-        "momentum": 108.46
-      },
-      "CIBR": {
-        "quadrant": "LEADING",
-        "label": "사이버보안 (First Trust)",
-        "category": "cybersecurity",
-        "theme_group": "cybersecurity",
-        "group_label": "사이버보안",
-        "ratio": 115.79,
-        "momentum": 105.62
-      },
-      "FINX": {
-        "quadrant": "LEADING",
-        "label": "핀테크",
-        "category": "fintech",
-        "theme_group": "fintech",
-        "group_label": "핀테크",
-        "ratio": 100.75,
-        "momentum": 101.36
-      },
-      "ARKF": {
-        "quadrant": "IMPROVING",
-        "label": "핀테크 혁신 (ARK)",
-        "category": "fintech",
-        "theme_group": "fintech",
-        "group_label": "핀테크",
-        "ratio": 99.8,
-        "momentum": 104.06
-      },
-      "ICLN": {
-        "quadrant": "IMPROVING",
-        "label": "클린에너지",
-        "category": "clean_energy",
-        "theme_group": "energy_battery",
-        "group_label": "에너지전환·배터리",
-        "ratio": 93.84,
-        "momentum": 100.12
-      },
-      "LIT": {
-        "quadrant": "LAGGING",
-        "label": "리튬 & 배터리",
-        "category": "battery",
-        "theme_group": "energy_battery",
-        "group_label": "에너지전환·배터리",
-        "ratio": 89.19,
-        "momentum": 97.34
-      },
-      "TAN": {
-        "quadrant": "LAGGING",
-        "label": "태양광",
-        "category": "solar",
-        "theme_group": "energy_battery",
-        "group_label": "에너지전환·배터리",
-        "ratio": 91.91,
-        "momentum": 98.21
-      },
-      "ITA": {
-        "quadrant": "LEADING",
-        "label": "항공우주 & 방산",
-        "category": "space_defense",
-        "theme_group": "space_defense",
-        "group_label": "우주·방산",
-        "ratio": 106.31,
-        "momentum": 102.77
-      },
-      "XBI": {
-        "quadrant": "LEADING",
-        "label": "바이오테크 (S&P)",
-        "category": "biotech",
-        "theme_group": "biotech",
-        "group_label": "바이오테크",
-        "ratio": 114.19,
-        "momentum": 100.42
-      },
-      "IBB": {
-        "quadrant": "LEADING",
-        "label": "바이오테크 (NASDAQ)",
-        "category": "biotech",
-        "theme_group": "biotech",
-        "group_label": "바이오테크",
-        "ratio": 109.48,
-        "momentum": 101.15
-      }
     }
   },
   "m6_history": [
-    {
-      "ticker": "HEI",
-      "name": "Heico Corp",
-      "country": "US",
-      "sector": "Industrials",
-      "date_added": "2026-06-26",
-      "price_at_add": 342.45,
-      "score": 1.2,
-      "selection_rank": 1,
-      "selection_tier": "A",
-      "selection_lane": "strength",
-      "selection_lane_status": "STRONG_PASS",
-      "selection_lane_rank": 5,
-      "selection_catalyst_freshness_rank": 0,
-      "selection_support_count": 2,
-      "selection_opportunity_score": 2.741,
-      "signal_keys": [
-        "bb_squeeze"
-      ],
-      "shadow_signal_keys": [
-        "ronin_structure_support"
-      ],
-      "factor_score": 0.0,
-      "factor_positives": [
-        "not_chasing",
-        "volatility_healthy"
-      ],
-      "factor_negatives": [
-        "liquidity_weak"
-      ],
-      "quality_flags": [
-        "low_liquidity_buffer"
-      ],
-      "catalyst_status": "not_checked",
-      "catalyst_classification": "",
-      "catalyst_freshness": "",
-      "catalyst_reaction": "",
-      "catalyst_top3_excluded_reason": "",
-      "catalyst_score": 0.0,
-      "theme_industry_status": "SUPPORT",
-      "theme_industry_confidence_delta": 1,
-      "quality_auditor_status": "STRONG_QUALITY",
-      "quality_auditor_source": "fmp",
-      "quality_auditor_confidence_delta": 3,
-      "data_coverage": {
-        "fundamental": {
-          "status": "partial",
-          "label": "일부 수집",
-          "missing_fields": [
-            "Forward PE",
-            "RSI",
-            "Insider",
-            "Institutional"
-          ]
-        },
-        "catalyst": {
-          "status": "not_checked",
-          "label": "미확인",
-          "detail": "레이더 상위 평가 대상이 아니거나 아직 미확인"
-        }
-      },
-      "track_d": "",
-      "source": "SCOUT"
-    },
-    {
-      "ticker": "PANW",
-      "name": "Palo Alto Networks Inc",
-      "country": "US",
-      "sector": "Technology",
-      "date_added": "2026-06-26",
-      "price_at_add": 293.09,
-      "score": 2.0,
-      "selection_rank": 2,
-      "selection_tier": "A",
-      "selection_lane": "strength",
-      "selection_lane_status": "STRONG_PASS",
-      "selection_lane_rank": 5,
-      "selection_catalyst_freshness_rank": 0,
-      "selection_support_count": 2,
-      "selection_opportunity_score": 4.15,
-      "signal_keys": [
-        "bb_squeeze"
-      ],
-      "shadow_signal_keys": [],
-      "factor_score": -0.0,
-      "factor_positives": [
-        "volatility_healthy"
-      ],
-      "factor_negatives": [
-        "liquidity_weak"
-      ],
-      "quality_flags": [
-        "low_liquidity_buffer",
-        "near_52w_high"
-      ],
-      "catalyst_status": "none",
-      "catalyst_classification": "NOISE",
-      "catalyst_freshness": "FRESH_3D",
-      "catalyst_reaction": "NO_CONFIRM",
-      "catalyst_top3_excluded_reason": "",
-      "catalyst_score": 0.0,
-      "theme_industry_status": "STRONG_SUPPORT",
-      "theme_industry_confidence_delta": 2,
-      "quality_auditor_status": "NEUTRAL",
-      "quality_auditor_source": "fmp",
-      "quality_auditor_confidence_delta": 1,
-      "data_coverage": {
-        "fundamental": {
-          "status": "partial",
-          "label": "일부 수집",
-          "missing_fields": [
-            "Forward PE",
-            "RSI",
-            "Insider",
-            "Institutional"
-          ]
-        },
-        "catalyst": {
-          "status": "none",
-          "label": "조회 결과 없음",
-          "detail": "뉴스 조회는 됐지만 촉매 키워드 없음"
-        }
-      },
-      "track_d": "{'theme_key': 'cybersecurity', 'theme_label': '사이버보안', 'role': '플랫폼 보안', 'priority': 'A+', 'layer': 'upstream', 'parent_sector': 'XLK', 'parent_theme_etf': 'CIBR', 'peer_tickers': ['CRWD', 'FTNT', 'NET', 'OKTA', 'PANW', 'S', 'ZS']}",
-      "source": "SCOUT"
-    },
     {
       "ticker": "NU",
       "name": "Nu Holdings Ltd",
@@ -10356,15 +10230,71 @@
       },
       "track_d": "",
       "source": "SCOUT"
+    },
+    {
+      "ticker": "CDE",
+      "name": "Coeur Mining Inc",
+      "country": "US",
+      "sector": "Basic Materials",
+      "date_added": "2026-08-11",
+      "price_at_add": 18.15,
+      "score": 1.2,
+      "selection_rank": 1,
+      "selection_tier": "A",
+      "selection_lane": "left_side",
+      "selection_lane_status": "STAGE2_STRONG_PASS",
+      "selection_lane_rank": 5,
+      "selection_catalyst_freshness_rank": 0,
+      "selection_support_count": 2,
+      "selection_opportunity_score": 3.608,
+      "signal_keys": [
+        "rrg_improving"
+      ],
+      "shadow_signal_keys": [],
+      "factor_score": 0.0,
+      "factor_positives": [
+        "liquidity_good",
+        "not_chasing",
+        "volatility_healthy"
+      ],
+      "factor_negatives": [],
+      "quality_flags": [],
+      "catalyst_status": "not_checked",
+      "catalyst_classification": "",
+      "catalyst_freshness": "",
+      "catalyst_reaction": "",
+      "catalyst_top3_excluded_reason": "",
+      "catalyst_score": 0.0,
+      "theme_industry_status": "SUPPORT",
+      "theme_industry_confidence_delta": 1,
+      "quality_auditor_status": "STRONG_QUALITY",
+      "quality_auditor_source": "fmp",
+      "quality_auditor_confidence_delta": 3,
+      "data_coverage": {
+        "fundamental": {
+          "status": "partial",
+          "label": "일부 수집",
+          "missing_fields": [
+            "Forward PE",
+            "RSI",
+            "Insider",
+            "Institutional"
+          ]
+        },
+        "catalyst": {
+          "status": "not_checked",
+          "label": "미확인",
+          "detail": "레이더 상위 평가 대상이 아니거나 아직 미확인"
+        }
+      },
+      "track_d": "",
+      "source": "SCOUT"
     }
   ],
   "scout_cooldown": {
     "MRVL": "2026-07-13",
     "FLEX": "2026-07-13",
     "XPO": "2026-07-14",
-    "INTU": "2026-07-11",
-    "AMZN": "2026-07-11",
-    "FOX": "2026-07-11",
     "204320.KS": "2026-07-13",
     "AON": "2026-07-14",
     "FOXA": "2026-07-14",
@@ -10380,16 +10310,17 @@
     "LVS": "2026-07-30",
     "ZS": "2026-08-04",
     "GFI": "2026-08-10",
-    "EQX": "2026-08-10"
+    "EQX": "2026-08-10",
+    "CDE": "2026-08-11"
   },
   "prev_day": {
     "candidates": [
       {
-        "ticker": "GFI",
-        "name": "Gold Fields Ltd ADR",
+        "ticker": "CDE",
+        "name": "Coeur Mining Inc",
         "country": "US",
         "sector": "Basic Materials",
-        "market_cap": 36400000000.0,
+        "market_cap": 18340000000.0,
         "avg_volume_value": 0.0,
         "score": 1.2,
         "signal_score": 1.0,
@@ -10406,23 +10337,23 @@
           "negatives": [],
           "metrics": {
             "close_days": 251,
-            "avg_volume_value": 126319750.85,
+            "avg_volume_value": 548910648.51,
             "liquidity_min_value": 10000000.0,
             "liquidity_source": "common_gate_ohlcv",
             "liquidity_unit": "USD",
-            "liquidity_buffer_multiple": 12.632,
-            "ret_20d": 0.1957,
-            "drawdown_from_high": -0.3364,
-            "atr_pct": 0.0417
+            "liquidity_buffer_multiple": 54.891,
+            "ret_20d": 0.1642,
+            "drawdown_from_high": -0.3315,
+            "atr_pct": 0.0601
           }
         },
         "decision_context": {
           "market_regime": {
             "status": "BULL",
             "reason": "above_ma200_and_positive_20d",
-            "as_of": "2026-08-07",
-            "ret_20d_pct": 2.43,
-            "close_vs_ma200_pct": 10.0
+            "as_of": "2026-08-10",
+            "ret_20d_pct": 3.18,
+            "close_vs_ma200_pct": 9.89
           },
           "benchmark_ticker": "SPY"
         },
@@ -10433,13 +10364,13 @@
           "metrics": {
             "country": "US",
             "close_days": 251,
-            "latest_close": 40.82,
-            "market_cap_usd": 36400000000.0,
-            "latest_date": "2026-08-07",
+            "latest_close": 18.15,
+            "market_cap_usd": 18340000000.0,
+            "latest_date": "2026-08-10",
             "stale_trading_days": 1,
-            "avg_traded_value_20d": 126319750.85,
+            "avg_traded_value_20d": 548910648.51,
             "zero_volume_days_20d": 0,
-            "ret_5d": 0.2591
+            "ret_5d": 0.1665
           }
         },
         "price_lanes": {
@@ -10451,12 +10382,12 @@
               "relative_strength_fail"
             ],
             "metrics": {
-              "ret_20d": 0.1957,
-              "ret_63d": -0.0913,
-              "ret_126d": -0.1844,
-              "rs_20d": 0.1714,
-              "rs_63d": -0.1482,
-              "rs_126d": -0.3256
+              "ret_20d": 0.1642,
+              "ret_63d": -0.0221,
+              "ret_126d": -0.1535,
+              "rs_20d": 0.1324,
+              "rs_63d": -0.0701,
+              "rs_126d": -0.2728
             }
           },
           "pullback": {
@@ -10466,436 +10397,10 @@
               "trend_not_intact"
             ],
             "metrics": {
-              "ma50": 34.99,
-              "ma200": 43.1866,
-              "drawdown_from_252d_high": -0.3364,
-              "volume_ratio_5d_20d": 1.2554
-            }
-          },
-          "left_side": {
-            "status": "STAGE2_STRONG_PASS",
-            "stage": "STAGE2",
-            "reasons": [
-              "low_zone",
-              "short_return_improving",
-              "down_days_decreasing",
-              "higher_low",
-              "higher_high_bonus"
-            ],
-            "review_flags": [],
-            "metrics": {
-              "drawdown_from_252d_high": -0.3364,
-              "distance_from_252d_low": 0.3927,
-              "atr_ratio_10d_20d": 0.9413,
-              "down_day_ratio_10d": 0.3,
-              "down_day_ratio_prev20d": 0.55,
-              "upper_close_days_5d": 2,
-              "deceleration_count": 2,
-              "recent_10d_low": 32.24,
-              "prev_10d_low": 31.25,
-              "benchmark_above_ma200": true,
-              "benchmark_ret_20d": 0.0243
-            }
-          }
-        },
-        "signal_count": 1,
-        "signal_keys": [
-          "rrg_improving"
-        ],
-        "signals": {
-          "rrg_improving": {
-            "etf": "XLB",
-            "today_quadrant": "IMPROVING",
-            "transition_found": true,
-            "label_ko": "활성 섹터 진입 (회전)",
-            "phase": "拉离 (메인자금 회전 시작)"
-          }
-        },
-        "shadow_signal_count": 0,
-        "shadow_signal_keys": [],
-        "shadow_signals": {},
-        "quality_flags": [],
-        "quality_metrics": {
-          "last_close": 40.82,
-          "ret_20d": 0.1957,
-          "ret_1d": 0.0932,
-          "ret_3d": 0.1967,
-          "ret_5d": 0.2591,
-          "ma50": 34.99,
-          "ma200": 43.187,
-          "drawdown_from_high": -0.3364,
-          "avg_volume_value": 126319750.85,
-          "liquidity_min_value": 10000000.0,
-          "liquidity_source": "common_gate_ohlcv",
-          "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 12.632,
-          "volume_ratio_3d_20d": 1.558
-        },
-        "catalyst_context": {
-          "status": "not_checked",
-          "score": 0.0
-        },
-        "quality_auditor": {
-          "enabled": true,
-          "status": "STRONG_QUALITY",
-          "confidence_delta": 3,
-          "score": 5,
-          "source": "fmp",
-          "categories": {
-            "growth": {
-              "status": "SUPPORT",
-              "score": 1,
-              "reasons": [
-                "growth_positive"
-              ],
-              "metrics": {
-                "eps_growth_next_y": 187.7697841726619,
-                "revenue_growth_pct": 68.76528639264842,
-                "free_cash_flow_growth_pct": 340.1396065989848
-              }
-            },
-            "valuation": {
-              "status": "SUPPORT",
-              "score": 1,
-              "reasons": [
-                "valuation_reasonable"
-              ],
-              "metrics": {
-                "pe": 9.991475537226279,
-                "forward_pe": null,
-                "peg": 0.09991475537226278
-              }
-            },
-            "flow": {
-              "status": "SUPPORT",
-              "score": 1,
-              "reasons": [
-                "flow_or_rating_support"
-              ],
-              "metrics": {
-                "insider_trans": null,
-                "inst_trans": null,
-                "rating_score": 4.0
-              }
-            },
-            "short_risk": {
-              "status": "UNKNOWN",
-              "score": 0,
-              "reasons": [],
-              "metrics": {
-                "short_float": null
-              }
-            },
-            "price_quality": {
-              "status": "SUPPORT",
-              "score": 2,
-              "reasons": [
-                "lane_structure_support",
-                "factor_positive"
-              ],
-              "metrics": {
-                "primary_lane": "left_side",
-                "primary_lane_status": "STAGE2_STRONG_PASS",
-                "factor_positives": [
-                  "liquidity_good",
-                  "not_chasing",
-                  "volatility_healthy"
-                ],
-                "factor_negatives": [],
-                "quality_flags": []
-              }
-            }
-          },
-          "data_missing_count": 1,
-          "reject_authority": false
-        },
-        "theme_industry": {
-          "enabled": true,
-          "status": "SUPPORT",
-          "confidence_delta": 1,
-          "reasons": [
-            "sector_rrg_support"
-          ],
-          "warnings": [],
-          "sector": {
-            "name": "Basic Materials",
-            "etf": "XLB",
-            "snapshot_date": "2026-08-08",
-            "quadrant": "IMPROVING",
-            "support": "SUPPORT",
-            "ratio": 99.69,
-            "momentum": 100.43
-          },
-          "themes": [],
-          "theme_snapshot_date": "2026-08-08",
-          "peer_confirmation": {
-            "static_peer_count": 0,
-            "active_peer_count": 0,
-            "active_peers": []
-          },
-          "reject_authority": false
-        },
-        "track_d": {
-          "is_theme_beneficiary": false
-        },
-        "top3_selection": {
-          "tier": "A",
-          "tier_rank": 4,
-          "primary_lane": "left_side",
-          "primary_lane_status": "STAGE2_STRONG_PASS",
-          "lane_rank": 5,
-          "catalyst_freshness_rank": 0,
-          "support_count": 2,
-          "support_reasons": [
-            "theme:SUPPORT",
-            "quality:STRONG_QUALITY"
-          ],
-          "opportunity_score": 3.232,
-          "excluded": false,
-          "exclude_reason": "",
-          "selection_rank": 1,
-          "production_gate_passed": true,
-          "production_gate_rejection_reason": "",
-          "rule_selection_rank": 2,
-          "llm_selected": true,
-          "llm_override": true,
-          "llm_reason": "좌측 구간 STAGE2_STRONG_PASS이고, XLB 개선 회전과 강한 품질이 함께 확인됨.",
-          "llm_risk": "핵심 리스크는 추세가 유지되지 않거나 회전 신호가 약해질 가능성임.",
-          "selective_research": {
-            "ticker": "GFI",
-            "disposition": "KEEP",
-            "memory_effect": "NONE",
-            "memory_evidence_refs": [],
-            "bull_case": {
-              "summary": "좌측 구간 STAGE2_STRONG_PASS이고, XLB 개선 회전과 강한 품질이 함께 확인됨.",
-              "evidence_refs": [
-                "GFI:E003",
-                "GFI:E006",
-                "GFI:E007",
-                "GFI:E008"
-              ]
-            },
-            "bear_case": {
-              "summary": "최근 20일 수익률이 이미 높아 추격 부담이 남아 있음.",
-              "evidence_refs": [
-                "GFI:E005"
-              ]
-            },
-            "risk_case": {
-              "summary": "핵심 리스크는 추세가 유지되지 않거나 회전 신호가 약해질 가능성임.",
-              "evidence_refs": [
-                "GFI:E004",
-                "GFI:E005"
-              ]
-            },
-            "invalidation": {
-              "summary": "좌측 강세 구조가 깨지거나 XLB 개선 회전 근거가 사라지면 제외.",
-              "evidence_refs": [
-                "GFI:E003",
-                "GFI:E004"
-              ]
-            }
-          },
-          "llm_dropped": false,
-          "llm_drop_reason": ""
-        },
-        "selection_tier": "A",
-        "selection_rank": 1,
-        "selection_lane": "left_side",
-        "selection_lane_status": "STAGE2_STRONG_PASS",
-        "selection_opportunity_score": 3.232,
-        "review_pool_reason": "",
-        "production_gate_passed": true,
-        "production_gate_rejection_reason": "",
-        "rule_selection_rank": 2,
-        "selective_research": {
-          "ticker": "GFI",
-          "disposition": "KEEP",
-          "memory_effect": "NONE",
-          "memory_evidence_refs": [],
-          "bull_case": {
-            "summary": "좌측 구간 STAGE2_STRONG_PASS이고, XLB 개선 회전과 강한 품질이 함께 확인됨.",
-            "evidence_refs": [
-              "GFI:E003",
-              "GFI:E006",
-              "GFI:E007",
-              "GFI:E008"
-            ]
-          },
-          "bear_case": {
-            "summary": "최근 20일 수익률이 이미 높아 추격 부담이 남아 있음.",
-            "evidence_refs": [
-              "GFI:E005"
-            ]
-          },
-          "risk_case": {
-            "summary": "핵심 리스크는 추세가 유지되지 않거나 회전 신호가 약해질 가능성임.",
-            "evidence_refs": [
-              "GFI:E004",
-              "GFI:E005"
-            ]
-          },
-          "invalidation": {
-            "summary": "좌측 강세 구조가 깨지거나 XLB 개선 회전 근거가 사라지면 제외.",
-            "evidence_refs": [
-              "GFI:E003",
-              "GFI:E004"
-            ]
-          }
-        },
-        "llm_selected": true,
-        "llm_override": true,
-        "llm_reason": "좌측 구간 STAGE2_STRONG_PASS이고, XLB 개선 회전과 강한 품질이 함께 확인됨.",
-        "llm_risk": "핵심 리스크는 추세가 유지되지 않거나 회전 신호가 약해질 가능성임.",
-        "llm_dropped": false,
-        "llm_drop_reason": "",
-        "fundamental_status": {
-          "status": "partial",
-          "label": "일부 수집",
-          "missing_fields": [
-            "Forward PE",
-            "RSI",
-            "Insider",
-            "Institutional"
-          ]
-        },
-        "data_coverage": {
-          "fundamental": {
-            "status": "partial",
-            "label": "일부 수집",
-            "missing_fields": [
-              "Forward PE",
-              "RSI",
-              "Insider",
-              "Institutional"
-            ]
-          },
-          "catalyst": {
-            "status": "not_checked",
-            "label": "미확인",
-            "detail": "레이더 상위 평가 대상이 아니거나 아직 미확인"
-          }
-        },
-        "buy_questions": {
-          "industry": "Basic Materials",
-          "thesis": "PE 10.0에 비해 내년 EPS Growth 187.8%와 PEG 0.10이 함께 제시되어, 이익 성장 대비 밸류에이션이 낮게 보입니다. 다만 RSI, insider, 기관 수급이 미확인이라 실제 매집 강도는 제한적으로만 확인됩니다.",
-          "catalyst": "촉매 데이터 미연결",
-          "q1_why": "현재 PE 10.0과 EPS Growth 187.8%가 입력되어 있어, 이익 증가 대비 가격 부담이 낮은 구조입니다. PEG 0.10도 성장 대비 저평가 신호로 해석할 수 있습니다.",
-          "q2_who": "insider와 institutional 데이터가 누락되어 누가 매수하는지는 확인되지 않았습니다. 따라서 기관/내부자 매집 여부는 미확인입니다.",
-          "q3_space": "Forward PE와 RSI가 미확인이라 추가 상승 여력은 정량 검증이 불가합니다. 다만 현재 PE와 PEG만 보면 성장 대비 재평가 여지는 남아 있습니다.",
-          "risk_flags": [
-            "RSI 미확인으로 과열/과매도 판단 불가",
-            "insider·기관 수급 미확인"
-          ],
-          "star_rating": "★",
-          "summary": "성장대비저평가",
-          "_llm_used": true,
-          "_data_coverage": {
-            "fundamental": {
-              "status": "partial",
-              "label": "일부 수집",
-              "missing_fields": [
-                "Forward PE",
-                "RSI",
-                "Insider",
-                "Institutional"
-              ]
-            },
-            "catalyst": {
-              "status": "not_checked",
-              "label": "미확인",
-              "detail": "레이더 상위 평가 대상이 아니거나 아직 미확인"
-            }
-          }
-        },
-        "price_at_add": 40.82
-      },
-      {
-        "ticker": "EQX",
-        "name": "Equinox Gold Corp",
-        "country": "US",
-        "sector": "Basic Materials",
-        "market_cap": 9790000000.0,
-        "avg_volume_value": 0.0,
-        "score": 1.2,
-        "signal_score": 1.0,
-        "theme_score": 0.0,
-        "liquidity_score": 0.2,
-        "factor_score": 0.0,
-        "factor_context": {
-          "score": 0.6,
-          "positives": [
-            "liquidity_good",
-            "not_chasing",
-            "volatility_healthy"
-          ],
-          "negatives": [],
-          "metrics": {
-            "close_days": 251,
-            "avg_volume_value": 153163291.23,
-            "liquidity_min_value": 10000000.0,
-            "liquidity_source": "common_gate_ohlcv",
-            "liquidity_unit": "USD",
-            "liquidity_buffer_multiple": 15.316,
-            "ret_20d": 0.1865,
-            "drawdown_from_high": -0.3827,
-            "atr_pct": 0.0524
-          }
-        },
-        "decision_context": {
-          "market_regime": {
-            "status": "BULL",
-            "reason": "above_ma200_and_positive_20d",
-            "as_of": "2026-08-07",
-            "ret_20d_pct": 2.43,
-            "close_vs_ma200_pct": 10.0
-          },
-          "benchmark_ticker": "SPY"
-        },
-        "common_gate": {
-          "status": "PASS",
-          "hard_fail_reasons": [],
-          "review_flags": [],
-          "metrics": {
-            "country": "US",
-            "close_days": 251,
-            "latest_close": 11.58,
-            "market_cap_usd": 9790000000.0,
-            "latest_date": "2026-08-07",
-            "stale_trading_days": 1,
-            "avg_traded_value_20d": 153163291.23,
-            "zero_volume_days_20d": 0,
-            "ret_5d": 0.2939
-          }
-        },
-        "price_lanes": {
-          "benchmark": "SPY",
-          "strength": {
-            "status": "FAIL",
-            "reasons": [],
-            "review_flags": [
-              "relative_strength_fail"
-            ],
-            "metrics": {
-              "ret_20d": 0.1865,
-              "ret_63d": -0.1942,
-              "ret_126d": -0.1572,
-              "rs_20d": 0.1622,
-              "rs_63d": -0.2511,
-              "rs_126d": -0.2983
-            }
-          },
-          "pullback": {
-            "status": "FAIL",
-            "reasons": [],
-            "review_flags": [
-              "trend_not_intact"
-            ],
-            "metrics": {
-              "ma50": 10.1192,
-              "ma200": 13.1649,
-              "drawdown_from_252d_high": -0.3827,
-              "volume_ratio_5d_20d": 1.5302
+              "ma50": 16.4218,
+              "ma200": 18.5415,
+              "drawdown_from_252d_high": -0.3315,
+              "volume_ratio_5d_20d": 1.3159
             }
           },
           "left_side": {
@@ -10907,22 +10412,21 @@
               "down_days_decreasing",
               "upper_range_closes",
               "higher_low",
-              "higher_high_bonus",
-              "volume_reversal_bonus"
+              "higher_high_bonus"
             ],
             "review_flags": [],
             "metrics": {
-              "drawdown_from_252d_high": -0.3827,
-              "distance_from_252d_low": 0.7981,
-              "atr_ratio_10d_20d": 0.9453,
-              "down_day_ratio_10d": 0.3,
-              "down_day_ratio_prev20d": 0.45,
+              "drawdown_from_252d_high": -0.3315,
+              "distance_from_252d_low": 0.6119,
+              "atr_ratio_10d_20d": 0.9691,
+              "down_day_ratio_10d": 0.4,
+              "down_day_ratio_prev20d": 0.6,
               "upper_close_days_5d": 3,
               "deceleration_count": 3,
-              "recent_10d_low": 8.95,
-              "prev_10d_low": 8.62,
+              "recent_10d_low": 14.63,
+              "prev_10d_low": 14.16,
               "benchmark_above_ma200": true,
-              "benchmark_ret_20d": 0.0243
+              "benchmark_ret_20d": 0.0318
             }
           }
         },
@@ -10944,20 +10448,20 @@
         "shadow_signals": {},
         "quality_flags": [],
         "quality_metrics": {
-          "last_close": 11.58,
-          "ret_20d": 0.1865,
-          "ret_1d": 0.0782,
-          "ret_3d": 0.2088,
-          "ret_5d": 0.2939,
-          "ma50": 10.119,
-          "ma200": 13.165,
-          "drawdown_from_high": -0.3827,
-          "avg_volume_value": 153163291.23,
+          "last_close": 18.15,
+          "ret_20d": 0.1642,
+          "ret_1d": 0.0437,
+          "ret_3d": 0.0413,
+          "ret_5d": 0.1665,
+          "ma50": 16.422,
+          "ma200": 18.542,
+          "drawdown_from_high": -0.3315,
+          "avg_volume_value": 548910648.51,
           "liquidity_min_value": 10000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "USD",
-          "liquidity_buffer_multiple": 15.316,
-          "volume_ratio_3d_20d": 1.887
+          "liquidity_buffer_multiple": 54.891,
+          "volume_ratio_3d_20d": 1.363
         },
         "catalyst_context": {
           "status": "not_checked",
@@ -10977,9 +10481,9 @@
                 "growth_positive"
               ],
               "metrics": {
-                "eps_growth_next_y": -55.55555555555556,
-                "revenue_growth_pct": 22.117531503447545,
-                "free_cash_flow_growth_pct": 83.21290079971922
+                "eps_growth_next_y": 5.133333333333334,
+                "revenue_growth_pct": 96.40552330821646,
+                "free_cash_flow_growth_pct": 75.34855930310476
               }
             },
             "valuation": {
@@ -10989,9 +10493,9 @@
                 "valuation_reasonable"
               ],
               "metrics": {
-                "pe": 11.028571428571428,
+                "pe": 14.404761904761903,
                 "forward_pe": null,
-                "peg": 0.0018456807569218888
+                "peg": 0.06457307060755335
               }
             },
             "flow": {
@@ -11046,14 +10550,14 @@
           "sector": {
             "name": "Basic Materials",
             "etf": "XLB",
-            "snapshot_date": "2026-08-08",
+            "snapshot_date": "2026-08-10",
             "quadrant": "IMPROVING",
             "support": "SUPPORT",
             "ratio": 99.69,
             "momentum": 100.43
           },
           "themes": [],
-          "theme_snapshot_date": "2026-08-08",
+          "theme_snapshot_date": "2026-08-10",
           "peer_confirmation": {
             "static_peer_count": 0,
             "active_peer_count": 0,
@@ -11076,49 +10580,53 @@
             "theme:SUPPORT",
             "quality:STRONG_QUALITY"
           ],
-          "opportunity_score": 4.264,
+          "opportunity_score": 3.608,
           "excluded": false,
           "exclude_reason": "",
-          "selection_rank": 2,
+          "selection_rank": 1,
           "production_gate_passed": true,
           "production_gate_rejection_reason": "",
           "rule_selection_rank": 1,
           "llm_selected": true,
-          "llm_override": true,
-          "llm_reason": "좌측 구간 STAGE2_STRONG_PASS이며, XLB 개선 회전과 강한 품질이 확인됨.",
-          "llm_risk": "핵심 리스크는 회전 신호가 이어지지 않거나 가격 구조가 둔화되는 경우임.",
+          "llm_override": false,
+          "llm_reason": "좌측 구간 강한 통과와 유동성, 개선 신호가 함께 있어 상방 여지가 있음",
+          "llm_risk": "상승이 이어져도 추격 매수로 변질되면 기대값이 약해질 수 있음",
           "selective_research": {
-            "ticker": "EQX",
+            "ticker": "CDE",
             "disposition": "KEEP",
-            "memory_effect": "NONE",
-            "memory_evidence_refs": [],
+            "memory_effect": "SUPPORT",
+            "memory_evidence_refs": [
+              "CDE:E010",
+              "CDE:E011",
+              "CDE:E013"
+            ],
             "bull_case": {
-              "summary": "좌측 구간 STAGE2_STRONG_PASS이며, XLB 개선 회전과 강한 품질이 확인됨.",
+              "summary": "좌측 구간 강한 통과와 유동성, 개선 신호가 함께 있어 상방 여지가 있음",
               "evidence_refs": [
-                "EQX:E003",
-                "EQX:E006",
-                "EQX:E007",
-                "EQX:E008"
+                "CDE:E003",
+                "CDE:E005",
+                "CDE:E008"
               ]
             },
             "bear_case": {
-              "summary": "최근 20일 수익률이 높고 252일 고점 대비 낙폭도 커 변동성 부담이 남아 있음.",
+              "summary": "252일 고점 대비 낙폭이 크고, 시장 BULL 기억은 최근 드리프트로 약화됨",
               "evidence_refs": [
-                "EQX:E005"
+                "CDE:E003",
+                "CDE:E012"
               ]
             },
             "risk_case": {
-              "summary": "핵심 리스크는 회전 신호가 이어지지 않거나 가격 구조가 둔화되는 경우임.",
+              "summary": "상승이 이어져도 추격 매수로 변질되면 기대값이 약해질 수 있음",
               "evidence_refs": [
-                "EQX:E004",
-                "EQX:E005"
+                "CDE:E005",
+                "CDE:E008"
               ]
             },
             "invalidation": {
-              "summary": "좌측 강세 구조가 무너지거나 XLB 개선 회전이 확인되지 않으면 제외.",
+              "summary": "좌측 구간 강세가 깨지거나 개선 신호가 사라지면 보류가 타당함",
               "evidence_refs": [
-                "EQX:E003",
-                "EQX:E004"
+                "CDE:E003",
+                "CDE:E004"
               ]
             }
           },
@@ -11126,53 +10634,57 @@
           "llm_drop_reason": ""
         },
         "selection_tier": "A",
-        "selection_rank": 2,
+        "selection_rank": 1,
         "selection_lane": "left_side",
         "selection_lane_status": "STAGE2_STRONG_PASS",
-        "selection_opportunity_score": 4.264,
+        "selection_opportunity_score": 3.608,
         "review_pool_reason": "",
         "production_gate_passed": true,
         "production_gate_rejection_reason": "",
         "rule_selection_rank": 1,
         "selective_research": {
-          "ticker": "EQX",
+          "ticker": "CDE",
           "disposition": "KEEP",
-          "memory_effect": "NONE",
-          "memory_evidence_refs": [],
+          "memory_effect": "SUPPORT",
+          "memory_evidence_refs": [
+            "CDE:E010",
+            "CDE:E011",
+            "CDE:E013"
+          ],
           "bull_case": {
-            "summary": "좌측 구간 STAGE2_STRONG_PASS이며, XLB 개선 회전과 강한 품질이 확인됨.",
+            "summary": "좌측 구간 강한 통과와 유동성, 개선 신호가 함께 있어 상방 여지가 있음",
             "evidence_refs": [
-              "EQX:E003",
-              "EQX:E006",
-              "EQX:E007",
-              "EQX:E008"
+              "CDE:E003",
+              "CDE:E005",
+              "CDE:E008"
             ]
           },
           "bear_case": {
-            "summary": "최근 20일 수익률이 높고 252일 고점 대비 낙폭도 커 변동성 부담이 남아 있음.",
+            "summary": "252일 고점 대비 낙폭이 크고, 시장 BULL 기억은 최근 드리프트로 약화됨",
             "evidence_refs": [
-              "EQX:E005"
+              "CDE:E003",
+              "CDE:E012"
             ]
           },
           "risk_case": {
-            "summary": "핵심 리스크는 회전 신호가 이어지지 않거나 가격 구조가 둔화되는 경우임.",
+            "summary": "상승이 이어져도 추격 매수로 변질되면 기대값이 약해질 수 있음",
             "evidence_refs": [
-              "EQX:E004",
-              "EQX:E005"
+              "CDE:E005",
+              "CDE:E008"
             ]
           },
           "invalidation": {
-            "summary": "좌측 강세 구조가 무너지거나 XLB 개선 회전이 확인되지 않으면 제외.",
+            "summary": "좌측 구간 강세가 깨지거나 개선 신호가 사라지면 보류가 타당함",
             "evidence_refs": [
-              "EQX:E003",
-              "EQX:E004"
+              "CDE:E003",
+              "CDE:E004"
             ]
           }
         },
         "llm_selected": true,
-        "llm_override": true,
-        "llm_reason": "좌측 구간 STAGE2_STRONG_PASS이며, XLB 개선 회전과 강한 품질이 확인됨.",
-        "llm_risk": "핵심 리스크는 회전 신호가 이어지지 않거나 가격 구조가 둔화되는 경우임.",
+        "llm_override": false,
+        "llm_reason": "좌측 구간 강한 통과와 유동성, 개선 신호가 함께 있어 상방 여지가 있음",
+        "llm_risk": "상승이 이어져도 추격 매수로 변질되면 기대값이 약해질 수 있음",
         "llm_dropped": false,
         "llm_drop_reason": "",
         "fundamental_status": {
@@ -11203,15 +10715,15 @@
           }
         },
         "buy_questions": {
-          "industry": "Basic Materials / 금광",
-          "thesis": "PE는 11.0으로 낮지만, next Y EPS Growth가 -55.6%로 이익 성장 측면은 약합니다. 활성 섹터 진입(회전) 신호는 있으나, 현재 제공된 fact만으로는 강한 매집 근거가 부족합니다.",
+          "industry": "Basic Materials",
+          "thesis": "섹터 진입 신호는 있으나, 현재 확인된 매집 근거는 PE와 EPS Growth뿐입니다. PEG가 0.06으로 낮아 밸류에이션 대비 성장 기대는 있으나, RSI·insider·기관 데이터가 미확인이라 매집 강도는 제한적으로 해석됩니다.",
           "catalyst": "촉매 데이터 미연결",
-          "q1_why": "PE 11.0은 절대 밸류에이션이 낮은 편이지만, EPS Growth -55.6%는 향후 이익 개선을 뒷받침하지 못합니다. PEG 0.00은 산출 기준상 해석이 제한적이며, 성장 기반 상승 논리는 약합니다.",
-          "q2_who": "Insider와 Institutional 데이터가 누락되어 실제 매집 주체를 확인할 수 없습니다. 따라서 누가 사는지에 대한 fact 기반 판단은 미확인입니다.",
-          "q3_space": "RSI와 52주 저점 정보가 없어 과매도/저평가 여지를 확인할 수 없습니다. Forward PE도 미확인이라 추가 상승 여력 판단은 제한적입니다.",
+          "q1_why": "PE 14.4와 내년 EPS Growth 5.1%가 확인되어, 이익 성장 대비 가격 부담은 크지 않은 편입니다. 다만 Forward PE가 없어 향후 밸류에이션 재평가 여부는 확인되지 않았습니다.",
+          "q2_who": "Insider와 기관 수급 데이터가 미확인이라 누가 사는지 확인되지 않았습니다. 따라서 현재는 내부자 매집이나 기관 매집을 사실로 판단할 근거가 없습니다.",
+          "q3_space": "PEG 0.06은 성장 대비 저평가 신호로 볼 수 있으나, RSI와 52주 저점 정보가 없어 추가 상승 여력은 검증되지 않았습니다. 현재 확인된 수치만으로는 공간이 있다고 단정할 수 없습니다.",
           "risk_flags": [
-            "EPS Growth -55.6%로 실적 모멘텀 약함",
-            "Insider/Institutional/RSI/Forward PE 미확인"
+            "RSI·insider·institutional 미확인",
+            "촉매 데이터 미연결"
           ],
           "star_rating": "★",
           "summary": "관찰 필요",
@@ -11234,10 +10746,10 @@
             }
           }
         },
-        "price_at_add": 11.58
+        "price_at_add": 18.15
       }
     ],
-    "alerts_count": 0,
-    "vix": 14.9
+    "alerts_count": 1,
+    "vix": 15.46
   }
 }
