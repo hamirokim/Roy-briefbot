@@ -337,6 +337,53 @@ class DigestContractTests(unittest.TestCase):
         self.assertNotIn("HWM", message)
         self.assertNotIn("내부 관찰풀", message)
 
+    def test_pre_entry_board_shows_price_evidence_without_action_copy(self):
+        agent = self._digest_agent()
+        candidate = {
+            "ticker": "EARLY",
+            "country": "US",
+            "sector": "Technology",
+            "price_lanes": {"left_side": {
+                "status": "WAIT_CONFIRM",
+                "reasons": ["low_zone", "down_days_decreasing"],
+            }},
+            "pre_entry_selection": {"rank": 1},
+            "pre_entry_timing": {
+                "status": "EARLY",
+                "setup_date": "2026-08-01",
+                "move_from_setup_pct": 0.03,
+            },
+            "price_map": {
+                "current": 32.4,
+                "position": "NEAR_SUPPORT",
+                "support": {"lower": 31.0, "upper": 31.4},
+                "first_resistance": {"lower": 34.0, "upper": 34.5},
+                "core_resistance": {"lower": 39.5, "upper": 40.2},
+                "invalidation_close_below": 30.8,
+                "downside_to_invalidation_pct": -0.049,
+                "upside_to_first_resistance_pct": 0.049,
+                "reward_risk_to_first_resistance": 1.0,
+            },
+            "theme_industry": {
+                "sector": {"name": "Technology", "quadrant": "IMPROVING"},
+            },
+        }
+        message = agent._build_telegram(
+            [],
+            {},
+            {},
+            scout_out={"pre_entry_candidates": [candidate], "radar_summary": {}},
+        )
+
+        self.assertIn("ENTRY 선행 | 1개", message)
+        self.assertIn("지지 $31.00~$31.40", message)
+        self.assertIn("저항 $34.00~$34.50", message)
+        self.assertIn("핵심 저항 | $39.50~$40.20", message)
+        self.assertIn("선행 | 2026-08-01 최초 조짐 후 +3.0%", message)
+        self.assertIn("무효 | $30.80 아래 종가", message)
+        self.assertNotIn("할 일", message)
+        self.assertNotIn("Entry50/100 점등", message)
+
     def test_primary_pick_is_expanded_and_other_picks_are_compact(self):
         agent = self._digest_agent()
         candidates = [

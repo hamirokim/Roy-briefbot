@@ -79,6 +79,7 @@ def save_state(state: dict) -> None:
             "m2_theme_history": state.get("m2_theme_history", {}),
             "m6_history": state.get("m6_history", []),
             "scout_cooldown": state.get("scout_cooldown", {}),
+            "scout_pre_entry_cooldown": state.get("scout_pre_entry_cooldown", {}),
             "prev_day": {
                 "candidates": state.get("scout_out", {}).get("candidates", []),
                 "alerts_count": len(state.get("guard_out", {}).get("alerts", [])),
@@ -163,10 +164,13 @@ def update_m2_history_from_regime(state: dict) -> None:
 
 
 def update_cooldown_from_scout(state: dict) -> None:
-    """SCOUT new_cooldown → state에 저장."""
+    """SCOUT production/pre-entry cooldown을 state에 저장."""
     new_cooldown = state.get("scout_out", {}).get("new_cooldown")
     if new_cooldown is not None:
         state["scout_cooldown"] = new_cooldown
+    new_pre_entry = state.get("scout_out", {}).get("new_pre_entry_cooldown")
+    if new_pre_entry is not None:
+        state["scout_pre_entry_cooldown"] = new_pre_entry
 
 
 # ═══════════════════════════════════════════════════════════

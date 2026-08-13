@@ -59,6 +59,14 @@ scout:
       atr_ratio_10d_20d_max: 0.85
       upper_close_days_min: 3
       sharp_market_ret20_wait: -0.08
+    price_map:
+      atr_length: 14
+      pivot_left: 3
+      pivot_right: 3
+      lookback_bars: 120
+      cluster_atr: 0.50
+      zone_half_atr: 0.25
+      invalidation_atr: 0.25
 
   # 시간 기준 (모든 신호 동일 — D 단위 통일, Q2 결정)
   bar_interval: "D"
@@ -160,6 +168,33 @@ scout:
       additions_allowed: false         # LLM은 규칙 후보를 줄이거나 재정렬만 가능. WATCHLIST 승격 금지
       candidate_limit: 5               # Selective Research는 확정 후보 최대 5개만 근거 검토
       max_tokens: 1200
+    pre_entry:
+      enabled: true                    # Entry50/100 이전에 TradingView에서 볼 후보를 실전 발송
+      policy_id: "pre_entry_v1"
+      max_picks: 2
+      cooldown_days: 10
+      allowed_countries: ["US", "KR"]
+      allowed_lane_statuses: ["STAGE1_WAIT", "WAIT_CONFIRM", "STAGE2_PASS"]
+      episode_statuses: ["STAGE1_WAIT", "WAIT_CONFIRM", "STAGE2_PASS", "STAGE2_STRONG_PASS"]
+      allowed_timeliness: ["EARLY", "READY"]
+      allowed_sector_quadrants: ["LEADING", "IMPROVING"]
+      mapped_theme_statuses: ["GROUP_SUPPORT"]
+      allow_unmapped_theme: true
+      quality_statuses: ["QUALITY_SUPPORT", "STRONG_QUALITY"]
+      excluded_factor_negatives: ["volatility_extreme", "chasing_extreme", "chasing_hot"]
+      excluded_quality_flags: ["near_52w_high", "overextended_20d"]
+      excluded_lane_review_flags: ["extreme_drawdown_needs_review", "market_weak_wait_confirm"]
+      risk_catalyst_excluded: true
+      episode_lookback_bars: 40
+      min_history_bars: 120
+      atr_length: 14
+      late_ret_3d: 0.08
+      late_move_from_setup: 0.08
+      late_move_atr: 2.0
+      missed_ret_5d: 0.12
+      missed_move_from_setup: 0.12
+      missed_move_atr: 3.0
+      backfill: false
     precision_shadow:
       enabled: true                    # Step3 가설의 미래 검증 전용. Telegram/Sheets/final Top3에는 영향 없음
       policy_id: "us_precision_v1"

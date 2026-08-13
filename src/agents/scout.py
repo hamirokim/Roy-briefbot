@@ -1082,6 +1082,257 @@ def _atr_pct_series(df: pd.DataFrame, close: pd.Series, length: int) -> pd.Serie
     return atr / close.replace(0, np.nan)
 
 
+def _confirmed_pivots(
+    series: pd.Series,
+    *,
+    mode: str,
+    left: int = 3,
+    right: int = 3,
+    lookback: int = 120,
+) -> list[tuple[Any, float]]:
+    """Return past-only confirmed swing points; the last ``right`` bars are never used."""
+    values = series.astype(float).dropna()
+    if len(values) < left + right + 1:
+        return []
+    start = max(left, len(values) - lookback)
+    out: list[tuple[Any, float]] = []
+    for pos in range(start, len(values) - right):
+        value = float(values.iloc[pos])
+        window = values.iloc[pos - left:pos + right + 1]
+        target = float(window.min()) if mode == "low" else float(window.max())
+        if value == target:
+            out.append((values.index[pos], value))
+    return out
+
+
+def _cluster_price_levels(
+    pivots: list[tuple[Any, float]],
+    *,
+    tolerance: float,
+) -> list[dict]:
+    clusters: list[dict] = []
+    for date_value, price in sorted(pivots, key=lambda item: item[1]):
+        match = next(
+            (
+                cluster
+                for cluster in clusters
+                if abs(float(cluster["center"]) - price) <= tolerance
+            ),
+            None,
+        )
+        if match is None:
+            clusters.append({"prices": [price], "dates": [date_value], "center": price})
+            continue
+        match["prices"].append(price)
+        match["dates"].append(date_value)
+        match["center"] = float(np.mean(match["prices"]))
+    return clusters
+
+
+def _price_zone(cluster: dict, half_width: float, source: str) -> dict:
+    center = float(cluster["center"])
+    return {
+        "lower": round(max(0.0, center - half_width), 4),
+        "upper": round(center + half_width, 4),
+        "center": round(center, 4),
+        "touches": int(len(cluster.get("prices", []))),
+        "source": source,
+    }
+
+
+def _assess_price_map(df: pd.DataFrame, cfg: dict) -> dict:
+    """Build evidence-backed support/resistance zones from confirmed swings and ATR."""
+    close = _close_series(df)
+    high, low = _high_low_series(df, close.index)
+    if len(close) < 30 or high.empty or low.empty:
+        return {"available": False, "reason": "price_data_short"}
+
+    current = float(close.iloc[-1])
+    atr_pct = _atr_pct_series(df, close, int(cfg.get("atr_length", 14) or 14))
+    valid_atr = atr_pct.dropna()
+    if valid_atr.empty:
+        return {"available": False, "reason": "atr_unavailable"}
+    atr = float(valid_atr.iloc[-1]) * current
+    if atr <= 0:
+        return {"available": False, "reason": "atr_invalid"}
+
+    pivot_left = int(cfg.get("pivot_left", 3) or 3)
+    pivot_right = int(cfg.get("pivot_right", 3) or 3)
+    lookback = int(cfg.get("lookback_bars", 120) or 120)
+    tolerance = atr * float(cfg.get("cluster_atr", 0.5) or 0.5)
+    half_width = atr * float(cfg.get("zone_half_atr", 0.25) or 0.25)
+    low_clusters = _cluster_price_levels(
+        _confirmed_pivots(low, mode="low", left=pivot_left, right=pivot_right, lookback=lookback),
+        tolerance=tolerance,
+    )
+    high_clusters = _cluster_price_levels(
+        _confirmed_pivots(high, mode="high", left=pivot_left, right=pivot_right, lookback=lookback),
+        tolerance=tolerance,
+    )
+
+    supports = [cluster for cluster in low_clusters if float(cluster["center"]) <= current + half_width]
+    resistances = [cluster for cluster in high_clusters if float(cluster["center"]) > current + half_width]
+    support_from_pivot = bool(supports)
+    support_cluster = max(supports, key=lambda item: float(item["center"])) if supports else {
+        "center": float(low.tail(20).min()), "prices": [float(low.tail(20).min())], "dates": []
+    }
+    resistance_cluster = min(resistances, key=lambda item: float(item["center"])) if resistances else None
+    higher_resistances = []
+    if resistance_cluster is not None:
+        higher_resistances = [
+            cluster
+            for cluster in resistances
+            if float(cluster["center"]) > float(resistance_cluster["center"]) + tolerance
+        ]
+    core_cluster = (
+        min(higher_resistances, key=lambda item: float(item["center"]))
+        if higher_resistances
+        else resistance_cluster
+    )
+
+    support = _price_zone(
+        support_cluster,
+        half_width,
+        "confirmed_swing_low" if support_from_pivot else "rolling_20d_low",
+    )
+    first_resistance = (
+        _price_zone(resistance_cluster, half_width, "confirmed_swing_high")
+        if resistance_cluster is not None else None
+    )
+    core_resistance = (
+        _price_zone(core_cluster, half_width, "confirmed_swing_high")
+        if core_cluster is not None else None
+    )
+    invalidation = max(
+        0.0,
+        float(support["lower"]) - atr * float(cfg.get("invalidation_atr", 0.25) or 0.25),
+    )
+    downside_pct = invalidation / current - 1 if current > 0 else None
+    upside_pct = (
+        float(first_resistance["lower"]) / current - 1
+        if first_resistance and current > 0 else None
+    )
+    reward_risk = (
+        upside_pct / abs(downside_pct)
+        if upside_pct is not None and downside_pct is not None and downside_pct < 0 else None
+    )
+    support_distance_atr = (current - float(support["center"])) / atr
+    resistance_distance_atr = (
+        (float(first_resistance["center"]) - current) / atr
+        if first_resistance else None
+    )
+    if support_distance_atr <= 0.75:
+        position = "NEAR_SUPPORT"
+    elif resistance_distance_atr is not None and resistance_distance_atr <= 0.75:
+        position = "NEAR_RESISTANCE"
+    else:
+        position = "BETWEEN_LEVELS"
+    support_touches = int(support.get("touches", 0) or 0)
+    resistance_touches = int((first_resistance or {}).get("touches", 0) or 0)
+    if support_touches >= 2 and resistance_touches >= 2:
+        level_confidence = "HIGH"
+    elif support_touches >= 2 or resistance_touches >= 2:
+        level_confidence = "MEDIUM"
+    else:
+        level_confidence = "LOW"
+
+    return {
+        "available": True,
+        "as_of": str(close.index[-1].date()) if hasattr(close.index[-1], "date") else str(close.index[-1]),
+        "current": round(current, 4),
+        "atr": round(atr, 4),
+        "support": support,
+        "first_resistance": first_resistance,
+        "core_resistance": core_resistance,
+        "invalidation_close_below": round(invalidation, 4),
+        "downside_to_invalidation_pct": round(downside_pct, 4) if downside_pct is not None else None,
+        "upside_to_first_resistance_pct": round(upside_pct, 4) if upside_pct is not None else None,
+        "reward_risk_to_first_resistance": round(reward_risk, 2) if reward_risk is not None else None,
+        "support_distance_atr": round(support_distance_atr, 2),
+        "resistance_distance_atr": round(resistance_distance_atr, 2) if resistance_distance_atr is not None else None,
+        "position": position,
+        "level_confidence": level_confidence,
+        "method": "confirmed_swings_plus_atr",
+    }
+
+
+def _assess_pre_entry_timing(
+    df: pd.DataFrame,
+    bench_df: Optional[pd.DataFrame],
+    left_cfg: dict,
+    cfg: dict,
+) -> dict:
+    """Replay the latest left-side episode and measure whether the alert is still early."""
+    close = _close_series(df)
+    min_bars = int(cfg.get("min_history_bars", 120) or 120)
+    if len(close) < min_bars:
+        return {"status": "UNAVAILABLE", "reason": "price_data_short"}
+    episode_statuses = {
+        str(value).upper()
+        for value in (
+            cfg.get("episode_statuses")
+            or ["STAGE1_WAIT", "WAIT_CONFIRM", "STAGE2_PASS", "STAGE2_STRONG_PASS"]
+        )
+    }
+    lookback = int(cfg.get("episode_lookback_bars", 40) or 40)
+    history: list[tuple[int, str]] = []
+    start = max(min_bars, len(close) - lookback)
+    for end in range(start, len(close) + 1):
+        bench_slice = bench_df
+        if bench_df is not None and not bench_df.empty and hasattr(df.index[end - 1], "date"):
+            bench_slice = bench_df.loc[bench_df.index <= df.index[end - 1]]
+        lane = _assess_left_side_lane(df.iloc[:end], bench_slice, left_cfg)
+        history.append((end - 1, str(lane.get("status", "") or "").upper()))
+    if not history or history[-1][1] not in episode_statuses:
+        return {"status": "UNAVAILABLE", "reason": "not_in_pre_entry_episode"}
+
+    episode_start = len(history) - 1
+    while episode_start > 0 and history[episode_start - 1][1] in episode_statuses:
+        episode_start -= 1
+    setup_pos = history[episode_start][0]
+    setup_price = float(close.iloc[setup_pos])
+    current = float(close.iloc[-1])
+    move = current / setup_price - 1 if setup_price > 0 else 0.0
+    atr_pct = _atr_pct_series(df, close, int(cfg.get("atr_length", 14) or 14)).dropna()
+    atr = float(atr_pct.iloc[-1]) * current if not atr_pct.empty else 0.0
+    move_atr = (current - setup_price) / atr if atr > 0 else 0.0
+    ret_3d = _period_return(close, 3) or 0.0
+    ret_5d = _period_return(close, 5) or 0.0
+    current_lane_status = history[-1][1]
+
+    missed = (
+        ret_5d >= float(cfg.get("missed_ret_5d", 0.12))
+        or move >= float(cfg.get("missed_move_from_setup", 0.12))
+        or move_atr >= float(cfg.get("missed_move_atr", 3.0))
+    )
+    late = (
+        ret_3d >= float(cfg.get("late_ret_3d", 0.08))
+        or move >= float(cfg.get("late_move_from_setup", 0.08))
+        or move_atr >= float(cfg.get("late_move_atr", 2.0))
+    )
+    if missed:
+        status = "MISSED"
+    elif late:
+        status = "LATE"
+    elif current_lane_status in {"STAGE1_WAIT", "WAIT_CONFIRM"}:
+        status = "EARLY"
+    else:
+        status = "READY"
+    setup_index = close.index[setup_pos]
+    return {
+        "status": status,
+        "lane_status": current_lane_status,
+        "setup_date": str(setup_index.date()) if hasattr(setup_index, "date") else str(setup_index),
+        "setup_price": round(setup_price, 4),
+        "age_bars": int(len(close) - 1 - setup_pos),
+        "move_from_setup_pct": round(move, 4),
+        "move_from_setup_atr": round(move_atr, 2),
+        "ret_3d": round(ret_3d, 4),
+        "ret_5d": round(ret_5d, 4),
+        "method": "left_side_episode_replay",
+    }
+
+
 def _volume_ratio(volume: pd.Series, short_days: int = 5, long_days: int = 20) -> Optional[float]:
     if len(volume) < long_days or float(volume.tail(long_days).mean()) <= 0:
         return None
@@ -1304,10 +1555,11 @@ def _assess_left_side_lane(df: pd.DataFrame, bench_df: Optional[pd.DataFrame], c
         review_flags.append("market_weak_wait_confirm")
         return {"status": "WAIT_CONFIRM", "stage": "STAGE2", "reasons": reasons, "review_flags": review_flags, "metrics": metrics}
 
+    # A 20-day high is already a right-side confirmation. It stays as context,
+    # but must not promote a left-side candidate after the useful entry window.
     strong_bonus = False
     if len(close) >= 21 and current > float(close.iloc[-21:-1].max()):
-        strong_bonus = True
-        reasons.append("higher_high_bonus")
+        reasons.append("higher_high_context")
     if len(volume) >= 20 and _volume_ratio(volume) and _volume_ratio(volume) >= 1.5:
         strong_bonus = True
         reasons.append("volume_reversal_bonus")
@@ -1483,6 +1735,8 @@ def _build_radar_item(
         "decision_context": dict(info.get("decision_context") or {}),
         "common_gate": dict(info.get("common_gate") or {}),
         "price_lanes": dict(info.get("price_lanes") or {}),
+        "price_map": dict(info.get("price_map") or {}),
+        "pre_entry_timing": dict(info.get("pre_entry_timing") or {}),
         "signal_count": len(signal_keys),
         "signal_keys": signal_keys,
         "signals": signals,
@@ -3039,6 +3293,28 @@ def _is_left_side_context_source(item: dict, selection_cfg: dict) -> bool:
     return left_status in allowed_statuses
 
 
+def _is_pre_entry_source(item: dict, selection_cfg: dict) -> bool:
+    cfg = ((selection_cfg or {}).get("pre_entry") or {})
+    if not bool(cfg.get("enabled", False)):
+        return False
+    if str(((item.get("common_gate") or {}).get("status", "") or "")) not in {"PASS", "NEEDS_REVIEW"}:
+        return False
+    allowed_countries = {
+        str(value).upper() for value in (cfg.get("allowed_countries") or ["US", "KR"])
+    }
+    if str(item.get("country", "") or "").upper() not in allowed_countries:
+        return False
+    allowed_statuses = {
+        str(value).upper()
+        for value in (cfg.get("allowed_lane_statuses") or ["STAGE1_WAIT", "WAIT_CONFIRM", "STAGE2_PASS"])
+    }
+    left_status = str(
+        (((item.get("price_lanes") or {}).get("left_side") or {}).get("status", ""))
+        or ""
+    ).upper()
+    return left_status in allowed_statuses
+
+
 def _select_left_side_context_shadow_candidates(
     radar_pool: list[dict],
     selection_cfg: dict,
@@ -3253,6 +3529,192 @@ def _select_left_side_context_shadow_candidates(
         str(key): int(value) for key, value in rejection_counts.items()
     }
     return selected, audit
+
+
+def _pre_entry_rank(item: dict) -> tuple:
+    timing = item.get("pre_entry_timing") or {}
+    price_map = item.get("price_map") or {}
+    lane = ((item.get("price_lanes") or {}).get("left_side") or {})
+    lane_status = str(lane.get("status", "") or "").upper()
+    quality_status = str(((item.get("quality_auditor") or {}).get("status", "")) or "").upper()
+    theme_status = str(((item.get("theme_industry") or {}).get("status", "")) or "").upper()
+    status_rank = {"WAIT_CONFIRM": 3, "STAGE1_WAIT": 2, "STAGE2_PASS": 1}.get(lane_status, 0)
+    quality_rank = {"STRONG_QUALITY": 2, "QUALITY_SUPPORT": 1}.get(quality_status, 0)
+    theme_rank = {"STRONG_SUPPORT": 2, "SUPPORT": 1}.get(theme_status, 0)
+    rr = float(price_map.get("reward_risk_to_first_resistance") or 0.0)
+    setup_move = float(timing.get("move_from_setup_pct") or 0.0)
+    deceleration = int(((lane.get("metrics") or {}).get("deceleration_count", 0)) or 0)
+    return (
+        quality_rank,
+        theme_rank,
+        status_rank,
+        min(rr, 5.0),
+        deceleration,
+        -setup_move,
+        float(item.get("market_cap", 0) or 0),
+    )
+
+
+def _select_pre_entry_candidates(
+    source_pool: list[dict],
+    selection_cfg: dict,
+    cooldown_map: dict,
+    today: str,
+) -> tuple[list[dict], dict, dict]:
+    """Select 0-2 live candidates before TradingView Entry, without slot backfill."""
+    cfg = ((selection_cfg or {}).get("pre_entry") or {})
+    enabled = bool(cfg.get("enabled", False))
+    policy_id = str(cfg.get("policy_id", "pre_entry_v1") or "pre_entry_v1")
+    max_picks = min(2, max(0, int(cfg.get("max_picks", 2) or 0)))
+    cooldown_days = int(cfg.get("cooldown_days", 10) or 10)
+    allowed_countries = {
+        str(value).upper() for value in (cfg.get("allowed_countries") or ["US", "KR"])
+    }
+    allowed_lane_statuses = {
+        str(value).upper()
+        for value in (cfg.get("allowed_lane_statuses") or ["STAGE1_WAIT", "WAIT_CONFIRM", "STAGE2_PASS"])
+    }
+    allowed_timeliness = {
+        str(value).upper() for value in (cfg.get("allowed_timeliness") or ["EARLY", "READY"])
+    }
+    allowed_sector_quadrants = {
+        str(value).upper() for value in (cfg.get("allowed_sector_quadrants") or ["LEADING", "IMPROVING"])
+    }
+    mapped_theme_statuses = {
+        str(value).upper() for value in (cfg.get("mapped_theme_statuses") or ["GROUP_SUPPORT"])
+    }
+    quality_statuses = {
+        str(value).upper() for value in (cfg.get("quality_statuses") or ["QUALITY_SUPPORT", "STRONG_QUALITY"])
+    }
+    excluded_factor_negatives = {
+        str(value).lower() for value in (cfg.get("excluded_factor_negatives") or [])
+    }
+    excluded_quality_flags = {
+        str(value).lower() for value in (cfg.get("excluded_quality_flags") or [])
+    }
+    excluded_lane_review_flags = {
+        str(value).lower() for value in (cfg.get("excluded_lane_review_flags") or [])
+    }
+    allow_unmapped_theme = bool(cfg.get("allow_unmapped_theme", True))
+    risk_catalyst_excluded = bool(cfg.get("risk_catalyst_excluded", True))
+    rejection_counts = Counter()
+    eligible: list[dict] = []
+    if not enabled:
+        return [], {
+            "enabled": False,
+            "policy_id": policy_id,
+            "live": True,
+            "selected": 0,
+            "selected_tickers": [],
+            "no_signal": True,
+            "rejection_counts": {},
+        }, dict(cooldown_map or {})
+
+    for item in source_pool:
+        ticker = str(item.get("ticker", "") or "")
+        country = str(item.get("country", "") or "").upper()
+        lane = ((item.get("price_lanes") or {}).get("left_side") or {})
+        lane_status = str(lane.get("status", "") or "").upper()
+        timing_status = str((item.get("pre_entry_timing") or {}).get("status", "") or "").upper()
+        price_map = item.get("price_map") or {}
+        theme = item.get("theme_industry") or {}
+        sector_quadrant = str(((theme.get("sector") or {}).get("quadrant", "")) or "").upper()
+        mapped_themes = [
+            value
+            for value in (theme.get("themes") or [])
+            if isinstance(value, dict)
+            and (value.get("theme_key") or value.get("theme_group") or value.get("parent_theme_etf"))
+        ]
+        quality_status = str(((item.get("quality_auditor") or {}).get("status", "")) or "").upper()
+        factor_negatives = {
+            str(value).lower() for value in ((item.get("factor_context") or {}).get("negatives") or [])
+        }
+        quality_flags = {str(value).lower() for value in (item.get("quality_flags") or [])}
+        lane_review_flags = {str(value).lower() for value in (lane.get("review_flags") or [])}
+        catalyst = item.get("catalyst_context") or {}
+
+        if country not in allowed_countries:
+            rejection_counts["country"] += 1
+        elif lane_status not in allowed_lane_statuses:
+            rejection_counts["lane_status"] += 1
+        elif timing_status not in allowed_timeliness:
+            rejection_counts[f"timeliness_{timing_status.lower() or 'missing'}"] += 1
+        elif (
+            not bool(price_map.get("available"))
+            or not price_map.get("support")
+            or not price_map.get("first_resistance")
+        ):
+            rejection_counts["price_map"] += 1
+        elif _is_in_cooldown(ticker, cooldown_map, cooldown_days, today):
+            rejection_counts["cooldown"] += 1
+        elif sector_quadrant not in allowed_sector_quadrants:
+            rejection_counts["sector"] += 1
+        elif mapped_themes and not any(
+            str(value.get("status", "") or "").upper() in mapped_theme_statuses
+            for value in mapped_themes
+        ):
+            rejection_counts["mapped_theme"] += 1
+        elif not mapped_themes and not allow_unmapped_theme:
+            rejection_counts["unmapped_theme"] += 1
+        elif quality_status not in quality_statuses:
+            rejection_counts["quality"] += 1
+        elif risk_catalyst_excluded and (
+            str(catalyst.get("top3_excluded_reason", "") or "") == "RISK_CATALYST"
+            or str(catalyst.get("classification", "") or "") == "RISK_CATALYST"
+        ):
+            rejection_counts["risk_catalyst"] += 1
+        elif factor_negatives & excluded_factor_negatives:
+            rejection_counts["factor_extreme"] += 1
+        elif quality_flags & excluded_quality_flags:
+            rejection_counts["quality_flag"] += 1
+        elif lane_review_flags & excluded_lane_review_flags:
+            rejection_counts["lane_review"] += 1
+        else:
+            eligible.append(item)
+
+    best_by_ticker: dict[str, dict] = {}
+    for item in sorted(eligible, key=_pre_entry_rank, reverse=True):
+        ticker = _theme_lookup_key(str(item.get("ticker", "") or ""))
+        if ticker and ticker not in best_by_ticker:
+            best_by_ticker[ticker] = item
+    selected = []
+    for rank, item in enumerate(
+        sorted(best_by_ticker.values(), key=_pre_entry_rank, reverse=True)[:max_picks],
+        1,
+    ):
+        frozen = deepcopy(item)
+        frozen["pre_entry_selection"] = {
+            "policy_id": policy_id,
+            "rank": rank,
+            "live": True,
+            "llm_additions_allowed": False,
+        }
+        selected.append(frozen)
+
+    new_cooldown = dict(cooldown_map or {})
+    for item in selected:
+        ticker = str(item.get("ticker", "") or "")
+        if ticker:
+            new_cooldown[ticker] = today
+    audit = {
+        "enabled": enabled,
+        "policy_id": policy_id,
+        "live": True,
+        "max_picks": max_picks,
+        "evaluated": int(len(source_pool)),
+        "eligible_before_cap": int(len(best_by_ticker)),
+        "selected": int(len(selected)),
+        "selected_tickers": [str(item.get("ticker", "") or "") for item in selected],
+        "no_signal": not bool(selected),
+        "rejection_counts": {str(key): int(value) for key, value in rejection_counts.items()},
+        "criteria": {
+            "allowed_lane_statuses": sorted(allowed_lane_statuses),
+            "allowed_timeliness": sorted(allowed_timeliness),
+            "cooldown_days": cooldown_days,
+            "backfill": False,
+        },
+    }
+    return selected, audit, new_cooldown
 
 
 def _pick_from_tier(tier_items: list[dict], used_lanes: set[str]) -> dict:
@@ -4472,6 +4934,7 @@ class ScoutAgent(BaseAgent):
         today = state.get("date", today_kst_str())
         generated_at = now_kst().isoformat(timespec="seconds")
         cooldown_map = dict(state.get("scout_cooldown", {}))
+        pre_entry_cooldown_map = dict(state.get("scout_pre_entry_cooldown", {}))
         m2_history = state.get("m2_history", {})
         m2_theme_history = state.get("m2_theme_history", {})
         theme_industry_cfg = scout_cfg.get("theme_industry_auditor", {}) or {}
@@ -4567,6 +5030,8 @@ class ScoutAgent(BaseAgent):
         factor_cfg = scout_cfg.get("factor_layer", {}) or {}
         common_gate_cfg = scout_cfg.get("common_gate", {}) or {}
         price_lanes_cfg = scout_cfg.get("price_lanes", {}) or {}
+        top3_selection_cfg = scout_cfg.get("top3_selection", {}) or {}
+        pre_entry_cfg = top3_selection_cfg.get("pre_entry", {}) or {}
         if ohlcv_targets:
             from src.collectors.global_ohlcv import fetch_ohlcv
             tickers_by_country: dict[str, list[str]] = {}
@@ -4629,8 +5094,34 @@ class ScoutAgent(BaseAgent):
                     common_gate=common_gate,
                     common_gate_cfg=common_gate_cfg,
                 )
-                info["price_lanes"] = _assess_price_lanes(df, info["row"], benchmark_data, price_lanes_cfg)
                 benchmark_key = _bench_key_for_row(info["row"])
+                benchmark_frame = benchmark_data.get(benchmark_key)
+                info["price_lanes"] = _assess_price_lanes(df, info["row"], benchmark_data, price_lanes_cfg)
+                left_status = str(
+                    (((info.get("price_lanes") or {}).get("left_side") or {}).get("status", ""))
+                    or ""
+                ).upper()
+                episode_statuses = {
+                    str(value).upper()
+                    for value in (
+                        pre_entry_cfg.get("episode_statuses")
+                        or ["STAGE1_WAIT", "WAIT_CONFIRM", "STAGE2_PASS", "STAGE2_STRONG_PASS"]
+                    )
+                }
+                if left_status in episode_statuses:
+                    info["price_map"] = _assess_price_map(
+                        df,
+                        price_lanes_cfg.get("price_map", {}) or {},
+                    )
+                    info["pre_entry_timing"] = _assess_pre_entry_timing(
+                        df,
+                        benchmark_frame,
+                        price_lanes_cfg.get("left_side", {}) or {},
+                        pre_entry_cfg,
+                    )
+                else:
+                    info["price_map"] = {"available": False, "reason": "not_left_side_episode"}
+                    info["pre_entry_timing"] = {"status": "UNAVAILABLE", "reason": "not_left_side_episode"}
                 info["decision_context"] = {
                     "market_regime": benchmark_regimes.get(
                         benchmark_key,
@@ -4721,7 +5212,6 @@ class ScoutAgent(BaseAgent):
         common_gate_fail_counter = Counter()
         common_gate_review_counter = Counter()
         lane_status_counter = Counter()
-        top3_selection_cfg = scout_cfg.get("top3_selection", {}) or {}
         left_side_shadow_cfg = (
             top3_selection_cfg.get("left_side_context_shadow") or {}
         )
@@ -4752,8 +5242,11 @@ class ScoutAgent(BaseAgent):
                 if lane_status:
                     lane_status_counter[f"{lane_key}:{lane_status}"] += 1
             if (
-                bool(left_side_shadow_cfg.get("enabled", False))
-                and _is_left_side_context_source(item, top3_selection_cfg)
+                (
+                    bool(left_side_shadow_cfg.get("enabled", False))
+                    and _is_left_side_context_source(item, top3_selection_cfg)
+                )
+                or _is_pre_entry_source(item, top3_selection_cfg)
             ):
                 left_side_context_pool.append(deepcopy(item))
             if item["score"] >= radar_min_score and (item["signal_count"] > 0 or item["theme_score"] > 0):
@@ -4780,6 +5273,7 @@ class ScoutAgent(BaseAgent):
         shadow_quality_audit = {}
         shadow_catalyst_audit = {}
         if left_side_context_pool:
+            left_side_context_pool.sort(key=_pre_entry_rank, reverse=True)
             _attach_theme_peer_confirmation(
                 left_side_context_pool,
                 top_n=int(
@@ -4845,11 +5339,19 @@ class ScoutAgent(BaseAgent):
             )
         )
         left_side_shadow_audit["source_pool"] = {
-            "stage": "common_gate_passed_left_side_stage2",
+            "stage": "common_gate_passed_left_side_pre_entry_and_stage2",
             "count": int(len(left_side_context_pool)),
             "quality_audit": shadow_quality_audit,
             "catalyst_audit": shadow_catalyst_audit,
         }
+        pre_entry_candidates, pre_entry_audit, new_pre_entry_cooldown = (
+            _select_pre_entry_candidates(
+                source_pool=left_side_context_pool,
+                selection_cfg=top3_selection_cfg,
+                cooldown_map=pre_entry_cooldown_map,
+                today=today,
+            )
+        )
         candidates, llm_review_audit = _apply_llm_top3_review(
             today=today,
             radar_pool=radar_pool,
@@ -4866,6 +5368,7 @@ class ScoutAgent(BaseAgent):
         top3_selection_audit["llm_override"] = bool(llm_review_audit.get("llm_override", False))
         top3_selection_audit["precision_shadow"] = precision_shadow_audit
         top3_selection_audit["left_side_context_shadow"] = left_side_shadow_audit
+        top3_selection_audit["pre_entry"] = pre_entry_audit
         watchlist_candidates = _build_watchlist_candidates(
             radar_pool=radar_pool,
             candidates=candidates,
@@ -4995,6 +5498,16 @@ class ScoutAgent(BaseAgent):
                     "audit": left_side_shadow_audit,
                     "candidates": left_side_shadow_candidates,
                 }
+            if pre_entry_audit.get("enabled"):
+                policy_id = str(pre_entry_audit.get("policy_id", "pre_entry_v1") or "pre_entry_v1")
+                shadow_policies[policy_id] = {
+                    "policy_id": policy_id,
+                    "shadow_only": False,
+                    "delivery": "telegram",
+                    "llm_additions_allowed": False,
+                    "audit": pre_entry_audit,
+                    "candidates": pre_entry_candidates,
+                }
             snapshot_paths = _save_recommendation_snapshot(
                 today=today,
                 candidates=candidates,
@@ -5017,9 +5530,11 @@ class ScoutAgent(BaseAgent):
             "by_country": by_country_total,
             "cooldown_skipped": cooldown_skipped,
             "new_cooldown": new_cooldown,
+            "new_pre_entry_cooldown": new_pre_entry_cooldown,
             "ohlcv_evaluated": len(ohlcv_targets),
             "radar_pool": radar_pool[:10],
             "watchlist_candidates": watchlist_candidates,
+            "pre_entry_candidates": pre_entry_candidates,
             "radar_summary": radar_summary,
             "radar_paths": radar_paths,
             "recommendation_snapshot_paths": snapshot_paths,
@@ -5089,8 +5604,10 @@ class ScoutAgent(BaseAgent):
             "by_country": {},
             "cooldown_skipped": cooldown_skipped,
             "new_cooldown": {},
+            "new_pre_entry_cooldown": {},
             "ohlcv_evaluated": 0,
             "radar_pool": [],
+            "pre_entry_candidates": [],
             "radar_summary": radar_summary,
             "radar_paths": {},
             "today": today_kst_str(),
@@ -5103,8 +5620,10 @@ class ScoutAgent(BaseAgent):
             "by_country": {},
             "cooldown_skipped": 0,
             "new_cooldown": {},
+            "new_pre_entry_cooldown": {},
             "ohlcv_evaluated": 0,
             "radar_pool": [],
+            "pre_entry_candidates": [],
             "radar_summary": {
                 "radar_pool_count": 0,
                 "brief_pick_count": 0,

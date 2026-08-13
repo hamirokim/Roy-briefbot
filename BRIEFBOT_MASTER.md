@@ -1,6 +1,6 @@
 # Roy-briefbot Master
 
-Last updated: 2026-07-30
+Last updated: 2026-08-13
 
 This is the single source of truth for Roy-briefbot. Codex and Claude should read this file before changing the bot.
 
@@ -112,6 +112,15 @@ Status as of 2026-07-29:
   signal-based Radar threshold. It separately checks sector RRG, mapped-theme group breadth,
   quality, catalyst risk, and factor extremes. It allows 0 to 2 picks without backfill and remains
   snapshot-only.
+- Pre-Entry v1 is the live TradingView-opening lane. It selects at most two `STAGE1_WAIT`,
+  `WAIT_CONFIRM`, or non-extended `STAGE2_PASS` candidates before Entry50/Entry100 confirmation.
+  It has a separate 10-day cooldown, never backfills slots, and excludes `LATE`/`MISSED` setups.
+- Each Pre-Entry candidate carries an OHLCV-only price map: confirmed swing support, nearest and
+  core resistance zones, ATR-buffered close invalidation, price room, first setup date, and move
+  since setup. Volume-profile levels are not claimed because Briefbot does not collect the
+  TradingView volume-profile contract.
+- A 20-day high is recorded only as `higher_high_context`; it no longer upgrades a left-side
+  candidate to `STAGE2_STRONG_PASS`. Volume reversal remains the only strong left-side bonus.
 - The production recommendation gate allows 0 to 2 live recommendations and only permits
   `left_side` Stage 2 candidates until TradingView has a separately validated breakout route.
   Tier B/C/D candidates remain internal and are never used as slot backfill.
@@ -154,6 +163,11 @@ The first TradingView integration step is a bounded validation experiment, not a
   time.
 - Required comparison fields: symbol, timeframe, preset signature, bar date, Entry type, briefbot
   readiness state, lead bars, filter result, Gate stage dates, and later outcome.
+- The 2026-08-13 six-symbol CSV audit confirmed material delivery lag: GFI Entry50 to briefing
+  `26` four-hour bars / `+26.5%`, EQX `27` bars / `+28.5%`, and CDE Entry100 `28` bars / `+18.6%`.
+  `RCI` versus `RCI.B` is treated as a cross-listing date comparison, not a price comparison.
+  Old ZS/CMCSA markers require signal-episode validity checks and are not used as price-lag
+  calibration anchors.
 - This lab is shadow-only. It cannot change Telegram candidates, cooldown, Sheets candidates, or
   production recommendation policy until separately approved.
 

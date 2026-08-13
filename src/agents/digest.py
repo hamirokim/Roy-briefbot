@@ -614,6 +614,71 @@ def _candidate_invalidation(candidate: dict) -> str:
     return "선정 당시 가격 구조 또는 품질 게이트가 깨지면 후보에서 제외"
 
 
+def _brief_price(value: Any, country: str) -> str:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return "-"
+    if country == "KR":
+        return f"₩{number:,.0f}"
+    return f"${number:,.2f}"
+
+
+def _brief_zone(zone: dict | None, country: str) -> str:
+    if not zone:
+        return "없음"
+    return f"{_brief_price(zone.get('lower'), country)}~{_brief_price(zone.get('upper'), country)}"
+
+
+def _pre_entry_evidence(candidate: dict) -> str:
+    lane = ((candidate.get("price_lanes") or {}).get("left_side") or {})
+    reason_labels = {
+        "low_zone": "저점권",
+        "downside_speed_slowing": "하락 속도 둔화",
+        "short_return_improving": "단기 흐름 개선",
+        "atr_contracting": "변동성 축소",
+        "down_days_decreasing": "하락일 감소",
+        "upper_range_closes": "매수 우위 종가",
+        "higher_low": "저점 상승",
+        "volume_reversal_bonus": "거래량 반전",
+    }
+    evidence = [
+        reason_labels[value]
+        for value in (lane.get("reasons") or [])
+        if value in reason_labels
+    ]
+    sector = ((candidate.get("theme_industry") or {}).get("sector") or {})
+    quadrant = str(sector.get("quadrant", "") or "").upper()
+    sector_name = str(sector.get("name", "") or candidate.get("sector", "") or "")
+    if sector_name and quadrant in {"LEADING", "IMPROVING"}:
+        evidence.append(f"{sector_name} {'주도' if quadrant == 'LEADING' else '개선'}")
+    price_map = candidate.get("price_map") or {}
+    support_touches = int(((price_map.get("support") or {}).get("touches", 0)) or 0)
+    resistance_touches = int(((price_map.get("first_resistance") or {}).get("touches", 0)) or 0)
+    if support_touches:
+        evidence.append(f"지지 {support_touches}회 확인")
+    if resistance_touches:
+        evidence.append(f"저항 {resistance_touches}회 확인")
+    return " · ".join(dict.fromkeys(evidence))[:180] or "좌측 가격 구조와 품질 조건 동시 확인"
+
+
+def _pre_entry_position(candidate: dict) -> str:
+    price_map = candidate.get("price_map") or {}
+    timing = candidate.get("pre_entry_timing") or {}
+    position = {
+        "NEAR_SUPPORT": "지지 구간 근처",
+        "NEAR_RESISTANCE": "1차 저항 접근",
+        "BETWEEN_LEVELS": "지지·저항 사이",
+    }.get(str(price_map.get("position", "") or ""), "가격 위치 확인")
+    timing_label = {
+        "EARLY": "조기",
+        "READY": "반전 준비",
+        "LATE": "늦음",
+        "MISSED": "추격 구간",
+    }.get(str(timing.get("status", "") or ""), "선행성 미확인")
+    return f"{position} · {timing_label}"
+
+
 def _candidate_evidence_health(candidate: dict) -> str:
     selection = candidate.get("top3_selection") or {}
     research = _candidate_research(candidate)
@@ -743,6 +808,7 @@ class DigestAgent(BaseAgent):
         # 모든 에이전트 실패 체크
         all_empty = (
             not scout_out.get("candidates")
+            and not scout_out.get("pre_entry_candidates")
             and not guard_out.get("alerts")
             and not regime_out.get("vix")
         )
@@ -810,6 +876,7 @@ class DigestAgent(BaseAgent):
             "telegram_text": telegram_text,
             "sheets_text": sheets_text,
             "candidates_count": len(scout_out.get("candidates", [])),
+            "pre_entry_candidates_count": len(scout_out.get("pre_entry_candidates", [])),
             "alerts_count": len(guard_out.get("alerts", [])),
             "briefing_mode": briefing_mode,
             "all_empty": False,
@@ -1201,29 +1268,30 @@ class DigestAgent(BaseAgent):
         elif briefing_mode == "weekly":
             mode_badge = " · 주간"
 
-        ordered_candidates = sorted(
-            [
-                item
-                for item in candidates
-                if str(
-                    item.get("selection_lane")
-                    or (item.get("top3_selection") or {}).get("primary_lane")
-                    or ""
-                )
-                == "left_side"
-                and str(
-                    item.get("selection_lane_status")
-                    or (item.get("top3_selection") or {}).get("primary_lane_status")
-                    or ""
-                )
-                in {"STAGE2_PASS", "STAGE2_STRONG_PASS"}
-            ],
-            key=lambda item: int(
-                item.get("selection_rank")
-                or (item.get("top3_selection") or {}).get("selection_rank")
-                or 999
-            ),
-        )[:2]
+        using_pre_entry = "pre_entry_candidates" in scout_out
+        if using_pre_entry:
+            candidate_source = scout_out.get("pre_entry_candidates", []) or []
+            ordered_candidates = sorted(
+                candidate_source,
+                key=lambda item: int((item.get("pre_entry_selection") or {}).get("rank", 999) or 999),
+            )[:2]
+        else:
+            ordered_candidates = sorted(
+                [
+                    item
+                    for item in candidates
+                    if str(
+                        item.get("selection_lane")
+                        or (item.get("top3_selection") or {}).get("primary_lane")
+                        or ""
+                    ) == "left_side"
+                ],
+                key=lambda item: int(
+                    item.get("selection_rank")
+                    or (item.get("top3_selection") or {}).get("selection_rank")
+                    or 999
+                ),
+            )[:2]
 
         market_view = _market_operating_view(regime_out)
         market_map = _compact_market_map(regime_out)
@@ -1267,44 +1335,91 @@ class DigestAgent(BaseAgent):
         lines.append(f"<b>환전 | {fx_view['label']}</b> · {fx_view['reason']}")
         lines.append("")
 
-        lines.append(f"<b>차트 | {len(ordered_candidates)}개</b>")
+        chart_title = "ENTRY 선행" if using_pre_entry else "차트"
+        lines.append(f"<b>{chart_title} | {len(ordered_candidates)}개</b>")
         if ordered_candidates:
             for rank, candidate in enumerate(ordered_candidates, 1):
+                if not using_pre_entry:
+                    sector = str(
+                        (((candidate.get("theme_industry") or {}).get("sector") or {}).get("name"))
+                        or candidate.get("sector")
+                        or ""
+                    )
+                    selection = candidate.get("top3_selection") or {}
+                    lane_status = str(
+                        candidate.get("selection_lane_status")
+                        or selection.get("primary_lane_status")
+                        or ""
+                    )
+                    lane_label = "좌측진입 강함" if lane_status == "STAGE2_STRONG_PASS" else "좌측진입 준비"
+                    why = str(
+                        ((_candidate_research(candidate).get("bull_case") or {}).get("summary"))
+                        or _candidate_judgment(candidate)["reason"]
+                    )[:160]
+                    lines.append(
+                        f"{rank}. <b>{candidate.get('ticker')}</b> | {lane_label}"
+                        + (f" · {sector}" if sector else "")
+                    )
+                    lines.append(f"   근거 | {why}")
+                    lines.append(f"   무효 | {_candidate_invalidation(candidate)}")
+                    continue
+                country = str(candidate.get("country", "") or "").upper()
                 sector = str(
                     (((candidate.get("theme_industry") or {}).get("sector") or {}).get("name"))
                     or candidate.get("sector")
                     or ""
                 )
-                selection = candidate.get("top3_selection") or {}
-                lane_status = str(
-                    candidate.get("selection_lane_status")
-                    or selection.get("primary_lane_status")
-                    or ""
-                )
-                lane_label = (
-                    "좌측진입 강함"
-                    if lane_status == "STAGE2_STRONG_PASS"
-                    else "좌측진입 준비"
-                )
-                why = str(
-                    ((_candidate_research(candidate).get("bull_case") or {}).get("summary"))
-                    or _candidate_judgment(candidate)["reason"]
-                )[:160]
+                price_map = candidate.get("price_map") or {}
+                timing = candidate.get("pre_entry_timing") or {}
+                current = _brief_price(price_map.get("current"), country)
+                support = _brief_zone(price_map.get("support"), country)
+                resistance = _brief_zone(price_map.get("first_resistance"), country)
+                core = _brief_zone(price_map.get("core_resistance"), country)
+                downside = price_map.get("downside_to_invalidation_pct")
+                upside = price_map.get("upside_to_first_resistance_pct")
+                rr = price_map.get("reward_risk_to_first_resistance")
+                move = timing.get("move_from_setup_pct")
                 lines.append(
-                    f"{rank}. <b>{candidate.get('ticker')}</b> | {lane_label}"
+                    f"{rank}. <b>{candidate.get('ticker')}</b> | {_pre_entry_position(candidate)}"
                     + (f" · {sector}" if sector else "")
                 )
-                lines.append(f"   근거 | {why}")
-                lines.append(f"   무효 | {_candidate_invalidation(candidate)}")
-            lines.append("진입 | Entry50/100 점등 + Gate 통과 후")
+                lines.append(f"   가격 | {current} · 지지 {support} · 저항 {resistance}")
+                if core != resistance and core != "없음":
+                    lines.append(f"   핵심 저항 | {core}")
+                room = []
+                if isinstance(downside, (int, float)):
+                    room.append(f"무효선까지 {float(downside) * 100:+.1f}%")
+                if isinstance(upside, (int, float)):
+                    room.append(f"1차 저항까지 {float(upside) * 100:+.1f}%")
+                if isinstance(rr, (int, float)):
+                    room.append(f"가격여유 {float(rr):.1f}배")
+                if room:
+                    lines.append(f"   여유 | {' · '.join(room)}")
+                setup = str(timing.get("setup_date", "") or "")
+                if setup and isinstance(move, (int, float)):
+                    lines.append(f"   선행 | {setup} 최초 조짐 후 {float(move) * 100:+.1f}%")
+                lines.append(f"   근거 | {_pre_entry_evidence(candidate)}")
+                invalidation = price_map.get("invalidation_close_below")
+                if invalidation is not None:
+                    lines.append(f"   무효 | {_brief_price(invalidation, country)} 아래 종가")
+            if not using_pre_entry:
+                lines.append("진입 | Entry50/100 점등 + Gate 통과 후")
         else:
-            blocker_text = _candidate_blocker_text(decision_health)
+            pre_entry_audit = (
+                ((radar_summary.get("filter_audit") or {}).get("top3_selection_audit") or {}).get("pre_entry")
+                or {}
+            )
+            rejections = pre_entry_audit.get("rejection_counts", {}) or {}
+            late_count = int(rejections.get("timeliness_late", 0) or 0) + int(
+                rejections.get("timeliness_missed", 0) or 0
+            )
+            blocker_text = f"이미 늦은 후보 {late_count}개 제외" if late_count else _candidate_blocker_text(decision_health)
             reason = blocker_text or str(
                 radar_summary.get("no_candidate_reason")
                 or decision_health.get("reason")
                 or "좌측진입 Stage 2와 품질 기준을 함께 통과한 후보 없음"
             )
-            lines.append("없음 | 새로 열 차트 없음")
+            lines.append("없음 | Entry 전에 볼 후보 없음" if using_pre_entry else "없음 | 새로 열 차트 없음")
             lines.append(f"막힘 | {reason}")
         lines.append("")
 

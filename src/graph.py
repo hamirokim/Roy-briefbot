@@ -49,6 +49,7 @@ class BriefBotState(TypedDict, total=False):
     m2_theme_history: dict             # 테마 RRG 히스토리 (Theme Intelligence 사용)
     m6_history: list                   # SCOUT 후보 추적 history (M6 D86)
     scout_cooldown: dict               # 신호별 cooldown {ticker: last_alert_date}
+    scout_pre_entry_cooldown: dict     # Entry 선행 후보 전용 cooldown
     prev_day: dict                     # 어제 브리핑 데이터
     macro_pending: dict                # 발표 대기 매크로 이벤트
 
