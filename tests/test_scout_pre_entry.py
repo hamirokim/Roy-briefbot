@@ -141,6 +141,34 @@ class PreEntryTests(unittest.TestCase):
             {"confirmed_swings_v1", "rolling_extrema_v1", "prominence_reaction_v2", "atr_reversal_v1"},
         )
 
+    def test_radar_item_preserves_price_map_shadow(self):
+        shadow = {
+            "enabled": True,
+            "schema_version": "sr_engine_shadow_v1",
+            "engines": {"prominence_reaction_v2": {"available": True}},
+        }
+        item = scout._build_radar_item(
+            "TEST",
+            {
+                "row": {
+                    "country": "US",
+                    "name": "Test",
+                    "sector": "Technology",
+                    "market_cap": 1_000_000_000,
+                    "avg_volume_value": 10_000_000,
+                },
+                "price_map_shadow": shadow,
+            },
+            {},
+            {},
+            1_000_000,
+            {},
+            {},
+            {},
+        )
+
+        self.assertEqual(item["price_map_shadow"], shadow)
+
     def test_selector_rejects_late_and_missed_candidates(self):
         selected, audit, cooldown = scout._select_pre_entry_candidates(
             [

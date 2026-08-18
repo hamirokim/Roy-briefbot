@@ -2050,6 +2050,7 @@ def _build_radar_item(
         "common_gate": dict(info.get("common_gate") or {}),
         "price_lanes": dict(info.get("price_lanes") or {}),
         "price_map": dict(info.get("price_map") or {}),
+        "price_map_shadow": dict(info.get("price_map_shadow") or {}),
         "pre_entry_timing": dict(info.get("pre_entry_timing") or {}),
         "signal_count": len(signal_keys),
         "signal_keys": signal_keys,
