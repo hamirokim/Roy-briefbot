@@ -96,7 +96,7 @@
 
 ## Precision Shadow Comparison
 - left_side_context_v1: n=31/33, avgD5=6.56, avgD10=4.92, avgD20=None, alphaD20=None
-- pre_entry_v1: n=6/7, avgD5=None, avgD10=None, avgD20=None, alphaD20=None
+- pre_entry_v1: n=6/6, avgD5=None, avgD10=None, avgD20=None, alphaD20=None
 - us_precision_v1: n=47/48, avgD5=3.64, avgD10=5.16, avgD20=4.1, alphaD20=0.76
 
 ## Support Resistance Engine Comparison
@@ -108,7 +108,7 @@
 - evidence status: COLLECTING_FORWARD_EVIDENCE
 - winner declared: False
 - reason: 정책별 동일 기간의 만기 초과수익 표본을 축적 중이며 자동 승자 선언은 하지 않음
-- baseline:radar_top3_not_selected: n=210/213, alpha={'d5': 0.75, 'd10': 1.42, 'd20': 5.82}, positiveAlpha={'d5': 0.584, 'd10': 0.618, 'd20': 0.63}
+- baseline:radar_top3_not_selected: n=210/213, alpha={'d5': 0.76, 'd10': 1.42, 'd20': 5.82}, positiveAlpha={'d5': 0.584, 'd10': 0.618, 'd20': 0.63}
 - production:integrity_v1: n=6/6, alpha={'d5': 6.68, 'd10': None, 'd20': None}, positiveAlpha={'d5': 1.0, 'd10': None, 'd20': None}
 - production:integrity_v1_unversioned: n=3/3, alpha={'d5': -2.24, 'd10': -2.06, 'd20': None}, positiveAlpha={'d5': 0.333, 'd10': 0.333, 'd20': None}
 - production:legacy_recorded: n=126/126, alpha={'d5': 0.12, 'd10': -0.69, 'd20': 1.29}, positiveAlpha={'d5': 0.528, 'd10': 0.536, 'd20': 0.552}
@@ -128,7 +128,7 @@
 - production_lane_status:legacy_recorded:strength:PASS: n=3/3, alpha={'d5': -7.82, 'd10': -2.89, 'd20': -8.27}, positiveAlpha={'d5': 0.333, 'd10': 0.333, 'd20': 0.333}
 - production_lane_status:legacy_recorded:strength:STRONG_PASS: n=56/56, alpha={'d5': 2.2, 'd10': 1.7, 'd20': -0.44}, positiveAlpha={'d5': 0.655, 'd10': 0.618, 'd20': 0.545}
 - shadow:left_side_context_v1: n=31/33, alpha={'d5': 4.85, 'd10': 0.88, 'd20': None}, positiveAlpha={'d5': 0.55, 'd10': 0.625, 'd20': None}
-- shadow:pre_entry_v1: n=6/7, alpha={'d5': None, 'd10': None, 'd20': None}, positiveAlpha={'d5': None, 'd10': None, 'd20': None}
+- shadow:pre_entry_v1: n=6/6, alpha={'d5': None, 'd10': None, 'd20': None}, positiveAlpha={'d5': None, 'd10': None, 'd20': None}
 - shadow:us_precision_v1: n=47/48, alpha={'d5': 2.17, 'd10': 1.95, 'd20': 0.76}, positiveAlpha={'d5': 0.594, 'd10': 0.577, 'd20': 0.333}
 
 ## Decision And Abstention Audit

@@ -1,6 +1,6 @@
 {
   "date": "2026-08-18",
-  "generated_at": "2026-08-18T10:42:53+09:00",
+  "generated_at": "2026-08-18T10:57:40+09:00",
   "timezone": "Asia/Seoul",
   "data_as_of": {
     "decision_date": "2026-08-18",
@@ -32,14 +32,14 @@
       "reason_code": "PRODUCTION_GATE_NO_PASS",
       "reason": "데이터 검사는 완료됐지만 확실 후보 기준을 통과한 종목이 없어 추천하지 않음",
       "blockers": {
-        "tier_not_allowed": 77,
+        "tier_not_allowed": 76,
         "lane_not_allowed": 3
       }
     },
     "shadow_policy_counts": {
       "us_precision_v1": 1,
       "left_side_context_v1": 2,
-      "pre_entry_v1": 1
+      "pre_entry_v1": 0
     },
     "common_gate_audit": {
       "enabled": true,
@@ -70,16 +70,16 @@
       "enabled": true,
       "status_counts": {
         "strength:FAIL": 753,
-        "pullback:WAIT": 231,
-        "left_side:FAIL": 413,
+        "pullback:WAIT": 233,
+        "left_side:FAIL": 411,
         "pullback:FAIL": 437,
         "pullback:STRONG_PASS": 20,
-        "pullback:PASS": 84,
+        "pullback:PASS": 82,
         "left_side:STAGE2_PASS": 119,
-        "left_side:STAGE1_WAIT": 152,
-        "left_side:WAIT_CONFIRM": 87,
-        "strength:PASS": 8,
-        "strength:STRONG_PASS": 11,
+        "left_side:STAGE1_WAIT": 157,
+        "left_side:WAIT_CONFIRM": 84,
+        "strength:PASS": 7,
+        "strength:STRONG_PASS": 12,
         "left_side:STAGE2_STRONG_PASS": 1
       }
     },
@@ -121,18 +121,18 @@
       "eval_limit": 20,
       "evaluated": 20,
       "found": 3,
-      "risk": 3,
-      "none": 14,
+      "risk": 4,
+      "none": 13,
       "non_us": 0,
       "no_key": 0,
       "error": 0,
       "positive_revaluation": 3,
-      "risk_catalyst": 3,
-      "noise": 14,
+      "risk_catalyst": 4,
+      "noise": 13,
       "fresh_3d": 12,
       "recent_14d": 8,
       "price_volume_confirmed": 0,
-      "top3_excluded_risk": 3,
+      "top3_excluded_risk": 4,
       "llm_enabled": true,
       "llm_evaluated": 8,
       "llm_ok": 8,
@@ -156,22 +156,22 @@
         "backfill": false,
         "eligible": 0,
         "rejection_counts": {
-          "tier_not_allowed": 77,
+          "tier_not_allowed": 76,
           "lane_not_allowed": 3
         },
         "no_signal": true
       },
       "selected": 0,
       "tier_counts": {
-        "REVIEW": 3,
-        "C": 17,
+        "REVIEW": 4,
+        "C": 16,
         "B": 26,
         "D": 34,
         "A": 3
       },
       "selected_tiers": [],
       "selected_lanes": [],
-      "review_pool_risk_catalyst": 3,
+      "review_pool_risk_catalyst": 4,
       "duplicate_ticker_drops": 0,
       "hierarchy": [
         "lane_strength",
@@ -260,7 +260,7 @@
         "policy_id": "left_side_context_v1",
         "max_picks": 2,
         "llm_additions_allowed": false,
-        "evaluated": 359,
+        "evaluated": 361,
         "eligible_before_cap": 3,
         "selected": 2,
         "selected_tickers": [
@@ -269,10 +269,10 @@
         ],
         "no_signal": false,
         "rejection_counts": {
-          "lane_status": 211,
+          "lane_status": 212,
           "mapped_theme": 2,
           "risk_catalyst": 1,
-          "primary_lane": 33,
+          "primary_lane": 34,
           "sector": 102,
           "quality": 7
         },
@@ -317,7 +317,7 @@
         },
         "source_pool": {
           "stage": "common_gate_passed_left_side_pre_entry_and_stage2",
-          "count": 359,
+          "count": 361,
           "quality_audit": {
             "enabled": true,
             "eval_limit": 30,
@@ -346,18 +346,18 @@
             "eval_limit": 20,
             "evaluated": 20,
             "found": 6,
-            "risk": 7,
-            "none": 7,
+            "risk": 6,
+            "none": 8,
             "non_us": 0,
             "no_key": 0,
             "error": 0,
             "positive_revaluation": 6,
-            "risk_catalyst": 7,
-            "noise": 7,
+            "risk_catalyst": 6,
+            "noise": 8,
             "fresh_3d": 14,
             "recent_14d": 5,
             "price_volume_confirmed": 0,
-            "top3_excluded_risk": 7,
+            "top3_excluded_risk": 6,
             "llm_enabled": true,
             "llm_evaluated": 8,
             "llm_ok": 8,
@@ -373,23 +373,21 @@
         "policy_id": "pre_entry_v1",
         "live": true,
         "max_picks": 2,
-        "evaluated": 359,
-        "eligible_before_cap": 1,
-        "selected": 1,
-        "selected_tickers": [
-          "QCOM"
-        ],
-        "no_signal": false,
+        "evaluated": 361,
+        "eligible_before_cap": 0,
+        "selected": 0,
+        "selected_tickers": [],
+        "no_signal": true,
         "rejection_counts": {
-          "resistance_too_close": 168,
-          "timeliness_missed": 44,
+          "resistance_too_close": 172,
+          "timeliness_missed": 41,
           "quality": 1,
-          "cooldown": 3,
-          "broken_support": 5,
+          "cooldown": 4,
+          "broken_support": 6,
           "risk_catalyst": 1,
-          "sector": 116,
+          "sector": 113,
           "factor_extreme": 1,
-          "timeliness_late": 18,
+          "timeliness_late": 21,
           "lane_status": 1
         },
         "criteria": {
@@ -505,6 +503,11 @@
         "available": false,
         "reason": "not_left_side_episode"
       },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
+      },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
         "reason": "not_left_side_episode"
@@ -562,7 +565,7 @@
         "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.46",
-            "reason": "Earnings reported with no actual value versus estimate suggests a possible miss/negative result.",
+            "reason": "Earnings reported with no actual value versus estimate suggests a miss or unavailable result, which is negative for valuation.",
             "confidence": 0.72,
             "classifier": "llm",
             "keywords": []
@@ -571,13 +574,13 @@
         "noise_hits": [
           {
             "headline": "Equinor ASA: Ex. dividend first quarter 2026 today – OSE",
-            "reason": "Ex-dividend date is a routine scheduled trading adjustment, not a new valuation catalyst.",
-            "confidence": 0.95,
+            "reason": "Ex-dividend date is a routine corporate action and not a new value-changing catalyst.",
+            "confidence": 0.96,
             "classifier": "llm"
           },
           {
             "headline": "EQNR Gains 22.2% Over the Past Month While Its Earnings Strengthen",
-            "reason": "Market commentary on past price move and valuation; no new actionable event.",
+            "reason": "Commentary on recent share performance and valuation is generic market color, not a fresh catalyst.",
             "confidence": 0.9,
             "classifier": "llm"
           }
@@ -610,7 +613,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings reported with no actual value versus estimate suggests a possible miss/negative result.",
+            "classification_reason": "Earnings reported with no actual value versus estimate suggests a miss or unavailable result, which is negative for valuation.",
             "classification_confidence": 0.72,
             "classifier": "llm",
             "keywords_positive": [
@@ -626,8 +629,8 @@
             "url": "https://www.globenewswire.com/news-release/2026/08/13/3344228/0/en/equinor-asa-ex-dividend-first-quarter-2026-today-ose.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Ex-dividend date is a routine scheduled trading adjustment, not a new valuation catalyst.",
-            "classification_confidence": 0.95,
+            "classification_reason": "Ex-dividend date is a routine corporate action and not a new value-changing catalyst.",
+            "classification_confidence": 0.96,
             "classifier": "llm",
             "keywords_positive": [
               "dividend"
@@ -642,7 +645,7 @@
             "url": "https://www.zacks.com/stock/news/2968910/eqnr-gains-22-2-over-the-past-month-while-its-earnings-strengthen?cid=CS-STOCKNEWSAPI-FT-analyst_blog_plus|zer_report_insights-2968910",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Market commentary on past price move and valuation; no new actionable event.",
+            "classification_reason": "Commentary on recent share performance and valuation is generic market color, not a fresh catalyst.",
             "classification_confidence": 0.9,
             "classifier": "llm",
             "keywords_positive": [
@@ -680,9 +683,9 @@
               "valuation_reasonable"
             ],
             "metrics": {
-              "pe": 11.230577656675752,
+              "pe": 11.234807629427795,
               "forward_pe": null,
-              "peg": 0.5121824052514242
+              "peg": 0.5123753176451159
             }
           },
           "flow": {
@@ -875,6 +878,11 @@
         "available": false,
         "reason": "not_left_side_episode"
       },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
+      },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
         "reason": "not_left_side_episode"
@@ -922,20 +930,20 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.81",
-            "reason": "No actual reported result provided; just an earnings placeholder.",
+            "reason": "No actual earnings result is provided, only an estimate placeholder.",
             "confidence": 0.95,
             "classifier": "llm"
           },
           {
             "headline": "Vertiv vs. Teradyne: Which AI Infrastructure Stock Is the Better Buy?",
-            "reason": "Comparative opinion piece without a new company-specific catalyst.",
-            "confidence": 0.9,
+            "reason": "Comparative commentary without a new company-specific catalyst.",
+            "confidence": 0.88,
             "classifier": "llm"
           },
           {
             "headline": "AI Infrastructure Boom: Who Should Buy Vertiv and Who Should Buy Super Micro Computer",
-            "reason": "General AI infrastructure commentary and comparison, not a distinct actionable event.",
-            "confidence": 0.88,
+            "reason": "General AI infrastructure discussion; no specific new revaluation event stated.",
+            "confidence": 0.86,
             "classifier": "llm"
           }
         ],
@@ -967,7 +975,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "No actual reported result provided; just an earnings placeholder.",
+            "classification_reason": "No actual earnings result is provided, only an estimate placeholder.",
             "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [
@@ -983,8 +991,8 @@
             "url": "https://www.zacks.com/stock/news/2975942/vertiv-vs-teradyne-which-ai-infrastructure-stock-is-the-better-buy?cid=CS-STOCKNEWSAPI-FT-analyst_blog|most_popular_stocks-2975942",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Comparative opinion piece without a new company-specific catalyst.",
-            "classification_confidence": 0.9,
+            "classification_reason": "Comparative commentary without a new company-specific catalyst.",
+            "classification_confidence": 0.88,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -999,8 +1007,8 @@
             "url": "https://247wallst.com/investing/2026/08/17/ai-infrastructure-boom-who-should-buy-vertiv-and-who-should-buy-super-micro-computer/",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "General AI infrastructure commentary and comparison, not a distinct actionable event.",
-            "classification_confidence": 0.88,
+            "classification_reason": "General AI infrastructure discussion; no specific new revaluation event stated.",
+            "classification_confidence": 0.86,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1146,15 +1154,15 @@
                 "etf": "AIQ",
                 "label": "AI & 빅데이터",
                 "quadrant": "IMPROVING",
-                "ratio": 98.56,
-                "momentum": 100.82
+                "ratio": 98.53,
+                "momentum": 101.1
               },
               {
                 "etf": "ARTY",
                 "label": "Future AI & Tech",
                 "quadrant": "LEADING",
-                "ratio": 104.97,
-                "momentum": 107.78
+                "ratio": 104.96,
+                "momentum": 106.8
               }
             ],
             "caution_etfs": [],
@@ -1327,6 +1335,11 @@
         "available": false,
         "reason": "not_left_side_episode"
       },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
+      },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
         "reason": "not_left_side_episode"
@@ -1374,20 +1387,20 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 6.4",
-            "reason": "No actual earnings result is provided; incomplete data only.",
-            "confidence": 0.93,
+            "reason": "No actual earnings result provided; incomplete data.",
+            "confidence": 0.94,
             "classifier": "llm"
           },
           {
             "headline": "TMO DCF Analysis: Intrinsic Value $491 vs Price $588",
-            "reason": "Valuation commentary only; not a new catalyst or company event.",
-            "confidence": 0.95,
+            "reason": "Valuation opinion only, not a new catalyst.",
+            "confidence": 0.93,
             "classifier": "llm"
           },
           {
             "headline": "Bryn Mawr Trust Advisors LLC Takes Position in Thermo Fisher Scientific Inc. $TMO",
-            "reason": "Routine fund position disclosure, not material enough to re-rate.",
-            "confidence": 0.92,
+            "reason": "Routine fund position disclosure, not material.",
+            "confidence": 0.96,
             "classifier": "llm"
           }
         ],
@@ -1419,8 +1432,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "No actual earnings result is provided; incomplete data only.",
-            "classification_confidence": 0.93,
+            "classification_reason": "No actual earnings result provided; incomplete data.",
+            "classification_confidence": 0.94,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1435,8 +1448,8 @@
             "url": "https://www.gurufocus.com/news/9038097/tmo-dcf-analysis-intrinsic-value-491-vs-price-588",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Valuation commentary only; not a new catalyst or company event.",
-            "classification_confidence": 0.95,
+            "classification_reason": "Valuation opinion only, not a new catalyst.",
+            "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1449,8 +1462,8 @@
             "url": "https://www.defenseworld.net/2026/08/17/bryn-mawr-trust-advisors-llc-takes-position-in-thermo-fisher-scientific-inc-tmo.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Routine fund position disclosure, not material enough to re-rate.",
-            "classification_confidence": 0.92,
+            "classification_reason": "Routine fund position disclosure, not material.",
+            "classification_confidence": 0.96,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1760,6 +1773,11 @@
         "available": false,
         "reason": "not_left_side_episode"
       },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
+      },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
         "reason": "not_left_side_episode"
@@ -1812,28 +1830,30 @@
         "volume_ratio_3d_20d": 0.329
       },
       "catalyst_context": {
-        "status": "none",
-        "classification": "NOISE",
-        "score": 0.0,
+        "status": "risk",
+        "classification": "RISK_CATALYST",
+        "score": -0.0,
         "positive_hits": [],
-        "risk_hits": [],
-        "noise_hits": [
+        "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 1.92",
-            "reason": "Incomplete earnings item with no actual result or surprise shown.",
-            "confidence": 0.93,
-            "classifier": "llm"
-          },
+            "reason": "Earnings item shows missing actual versus estimate, implying an earnings miss/unclear negative result.",
+            "confidence": 0.74,
+            "classifier": "llm",
+            "keywords": []
+          }
+        ],
+        "noise_hits": [
           {
             "headline": "Global Retirement Partners LLC Buys New Holdings in Danaher Corporation $DHR",
-            "reason": "Routine 13F stake purchase by an institution; not a material catalyst.",
-            "confidence": 0.98,
+            "reason": "Routine 13F stake purchase by one investor; not a material company catalyst.",
+            "confidence": 0.95,
             "classifier": "llm"
           },
           {
             "headline": "5,862 Shares in Danaher Corporation $DHR Acquired by Bridgewater Advisors Inc.",
-            "reason": "Routine 13F stake purchase by an institution; not a material catalyst.",
-            "confidence": 0.98,
+            "reason": "Routine 13F stake purchase by one investor; not a material company catalyst.",
+            "confidence": 0.95,
             "classifier": "llm"
           }
         ],
@@ -1864,9 +1884,9 @@
             "datetime": 1792454400,
             "url": "",
             "event_type": "earnings",
-            "classification": "NOISE",
-            "classification_reason": "Incomplete earnings item with no actual result or surprise shown.",
-            "classification_confidence": 0.93,
+            "classification": "RISK_CATALYST",
+            "classification_reason": "Earnings item shows missing actual versus estimate, implying an earnings miss/unclear negative result.",
+            "classification_confidence": 0.74,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -1881,8 +1901,8 @@
             "url": "https://www.defenseworld.net/2026/08/17/global-retirement-partners-llc-buys-new-holdings-in-danaher-corporation-dhr.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Routine 13F stake purchase by an institution; not a material catalyst.",
-            "classification_confidence": 0.98,
+            "classification_reason": "Routine 13F stake purchase by one investor; not a material company catalyst.",
+            "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -1895,16 +1915,16 @@
             "url": "https://www.defenseworld.net/2026/08/16/5862-shares-in-danaher-corporation-dhr-acquired-by-bridgewater-advisors-inc.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Routine 13F stake purchase by an institution; not a material catalyst.",
-            "classification_confidence": 0.98,
+            "classification_reason": "Routine 13F stake purchase by one investor; not a material company catalyst.",
+            "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
           }
         ],
-        "top3_eligible": true,
-        "review_pool": false,
-        "top3_excluded_reason": "",
+        "top3_eligible": false,
+        "review_pool": true,
+        "top3_excluded_reason": "RISK_CATALYST",
         "reject_authority": false
       },
       "quality_auditor": {
@@ -2082,12 +2102,12 @@
       },
       "catalyst_score": 0.0,
       "top3_selection": {
-        "tier": "C",
-        "tier_rank": 2,
+        "tier": "REVIEW",
+        "tier_rank": 0,
         "primary_lane": "strength",
         "primary_lane_status": "FAIL",
         "lane_rank": 0,
-        "catalyst_freshness_rank": 0,
+        "catalyst_freshness_rank": -1,
         "support_count": 3,
         "support_reasons": [
           "theme:STRONG_SUPPORT",
@@ -2095,20 +2115,16 @@
           "theme_peer_confirmation"
         ],
         "opportunity_score": 0.15,
-        "excluded": false,
-        "exclude_reason": "",
-        "selection_rank": null,
-        "production_gate_passed": false,
-        "production_gate_rejection_reason": "tier_not_allowed"
+        "excluded": true,
+        "exclude_reason": "RISK_CATALYST",
+        "selection_rank": null
       },
-      "selection_tier": "C",
+      "selection_tier": "REVIEW",
       "selection_rank": null,
       "selection_lane": "strength",
       "selection_lane_status": "FAIL",
       "selection_opportunity_score": 0.15,
-      "review_pool_reason": "",
-      "production_gate_passed": false,
-      "production_gate_rejection_reason": "tier_not_allowed"
+      "review_pool_reason": "RISK_CATALYST"
     },
     {
       "ticker": "PYPL",
@@ -2206,6 +2222,11 @@
         "available": false,
         "reason": "not_left_side_episode"
       },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
+      },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
         "reason": "not_left_side_episode"
@@ -2254,19 +2275,19 @@
           {
             "headline": "Earnings reported: actual None, estimate 1.32",
             "reason": "No actual earnings result provided, only missing data versus estimate.",
-            "confidence": 0.94,
+            "confidence": 0.92,
             "classifier": "llm"
           },
           {
             "headline": "Should You Buy, Sell or Hold PayPal Stock After a 36.1% 3-Month Rise?",
-            "reason": "Generic valuation commentary on recent stock rise and business mix, not a new catalyst.",
-            "confidence": 0.88,
+            "reason": "Generic stock commentary after a prior rise; no new actionable catalyst.",
+            "confidence": 0.84,
             "classifier": "llm"
           },
           {
             "headline": "Analyst maintain: Neutral -> Neutral (Piper Sandler)",
-            "reason": "Rating unchanged at Neutral, so no meaningful re-rating signal.",
-            "confidence": 0.97,
+            "reason": "Rating unchanged from Neutral to Neutral, no re-rating signal.",
+            "confidence": 0.98,
             "classifier": "llm"
           }
         ],
@@ -2299,7 +2320,7 @@
             "event_type": "earnings",
             "classification": "NOISE",
             "classification_reason": "No actual earnings result provided, only missing data versus estimate.",
-            "classification_confidence": 0.94,
+            "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -2314,8 +2335,8 @@
             "url": "https://www.zacks.com/stock/news/2975936/should-you-buy-sell-or-hold-paypal-stock-after-a-36-1-3-month-rise?cid=CS-STOCKNEWSAPI-FT-analyst_blog|most_popular_stocks-2975936",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic valuation commentary on recent stock rise and business mix, not a new catalyst.",
-            "classification_confidence": 0.88,
+            "classification_reason": "Generic stock commentary after a prior rise; no new actionable catalyst.",
+            "classification_confidence": 0.84,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -2328,8 +2349,8 @@
             "url": "",
             "event_type": "analyst_rating",
             "classification": "NOISE",
-            "classification_reason": "Rating unchanged at Neutral, so no meaningful re-rating signal.",
-            "classification_confidence": 0.97,
+            "classification_reason": "Rating unchanged from Neutral to Neutral, no re-rating signal.",
+            "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -2459,7 +2480,7 @@
                 "label": "핀테크",
                 "quadrant": "LEADING",
                 "ratio": 100.86,
-                "momentum": 101.31
+                "momentum": 101.27
               },
               {
                 "etf": "ARKF",
@@ -2669,6 +2690,182 @@
         "level_confidence": "MEDIUM",
         "method": "confirmed_swings_plus_atr_v1_1"
       },
+      "price_map_shadow": {
+        "enabled": true,
+        "schema_version": "sr_engine_shadow_v1",
+        "production_engine": "confirmed_swings_v1",
+        "winner_declared": false,
+        "engines": {
+          "confirmed_swings_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 228.85,
+            "atr": 8.8507,
+            "support": {
+              "lower": 221.1023,
+              "upper": 225.5277,
+              "center": 223.315,
+              "touches": 2,
+              "source": "confirmed_swing_low"
+            },
+            "first_resistance": {
+              "lower": 228.7573,
+              "upper": 233.1827,
+              "center": 230.97,
+              "touches": 1,
+              "source": "confirmed_swing_high"
+            },
+            "core_resistance": {
+              "lower": 233.7373,
+              "upper": 238.1627,
+              "center": 235.95,
+              "touches": 1,
+              "source": "confirmed_swing_high"
+            },
+            "invalidation_close_below": 218.8896,
+            "downside_to_invalidation_pct": -0.0435,
+            "upside_to_first_resistance_pct": -0.0004,
+            "reward_risk_to_first_resistance": -0.01,
+            "support_distance_atr": 0.63,
+            "resistance_distance_atr": 0.24,
+            "position": "IN_RESISTANCE",
+            "level_confidence": "MEDIUM",
+            "method": "confirmed_swings_plus_atr_v1_1"
+          },
+          "rolling_extrema_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 228.85,
+            "atr": 8.8507,
+            "support": {
+              "lower": 196.9773,
+              "upper": 201.4027,
+              "center": 199.19,
+              "touches": 1,
+              "source": "rolling_low"
+            },
+            "first_resistance": {
+              "lower": 330.2473,
+              "upper": 334.6727,
+              "center": 332.46,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "core_resistance": {
+              "lower": 330.2473,
+              "upper": 334.6727,
+              "center": 332.46,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "invalidation_close_below": 194.7646,
+            "downside_to_invalidation_pct": -0.1489,
+            "upside_to_first_resistance_pct": 0.4431,
+            "reward_risk_to_first_resistance": 2.97,
+            "support_distance_atr": 3.35,
+            "resistance_distance_atr": 11.71,
+            "position": "BETWEEN_LEVELS",
+            "level_confidence": "LOW",
+            "method": "rolling_extrema_v1"
+          },
+          "prominence_reaction_v2": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 228.85,
+            "atr": 8.8507,
+            "support": {
+              "lower": 228.605,
+              "upper": 236.5115,
+              "center": 232.3113,
+              "touches": 3,
+              "independent_reactions": 3,
+              "strength": 2.375,
+              "latest_reaction": "2026-04-10",
+              "latest_confirmation": "2026-04-14",
+              "source": "prominent_swing_low"
+            },
+            "first_resistance": {
+              "lower": 239.3669,
+              "upper": 244.2331,
+              "center": 241.8,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.837,
+              "latest_reaction": "2026-08-11",
+              "latest_confirmation": "2026-08-13",
+              "source": "prominent_swing_high"
+            },
+            "core_resistance": {
+              "lower": 245.2237,
+              "upper": 246.6963,
+              "center": 245.96,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.095,
+              "latest_reaction": "2025-08-27",
+              "latest_confirmation": "2025-08-29",
+              "source": "prominent_swing_high"
+            },
+            "invalidation_close_below": 226.3923,
+            "downside_to_invalidation_pct": -0.0107,
+            "upside_to_first_resistance_pct": 0.046,
+            "reward_risk_to_first_resistance": 4.28,
+            "support_distance_atr": -0.39,
+            "resistance_distance_atr": 1.46,
+            "position": "IN_SUPPORT",
+            "level_confidence": "MEDIUM",
+            "method": "prominence_reaction_v2"
+          },
+          "atr_reversal_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 228.85,
+            "atr": 8.8507,
+            "support": {
+              "lower": 220.4416,
+              "upper": 226.2584,
+              "center": 223.35,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.371,
+              "latest_reaction": "2026-02-23",
+              "latest_confirmation": "2026-02-23",
+              "source": "atr_reversal_low"
+            },
+            "first_resistance": {
+              "lower": 235.9869,
+              "upper": 240.8531,
+              "center": 238.42,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.983,
+              "latest_reaction": "2026-08-11",
+              "latest_confirmation": "2026-08-11",
+              "source": "atr_reversal_high"
+            },
+            "core_resistance": {
+              "lower": 241.9528,
+              "upper": 243.1472,
+              "center": 242.55,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.079,
+              "latest_reaction": "2025-08-20",
+              "latest_confirmation": "2025-08-20",
+              "source": "atr_reversal_high"
+            },
+            "invalidation_close_below": 218.2289,
+            "downside_to_invalidation_pct": -0.0464,
+            "upside_to_first_resistance_pct": 0.0312,
+            "reward_risk_to_first_resistance": 0.67,
+            "support_distance_atr": 0.62,
+            "resistance_distance_atr": 1.08,
+            "position": "NEAR_RESISTANCE",
+            "level_confidence": "LOW",
+            "method": "atr_reversal_v1"
+          }
+        }
+      },
       "pre_entry_timing": {
         "status": "EARLY",
         "lane_status": "STAGE1_WAIT",
@@ -2724,8 +2921,8 @@
         "positive_hits": [
           {
             "headline": "Arrow Electronics adds seven countries to distribution coverage with IBM",
-            "reason": "Expanded distribution agreement with IBM across additional countries could support demand.",
-            "confidence": 0.84,
+            "reason": "Expanded distribution coverage with IBM suggests a potentially meaningful commercial agreement expansion.",
+            "confidence": 0.74,
             "classifier": "llm",
             "keywords": [
               "expands"
@@ -2736,14 +2933,14 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 2.88",
-            "reason": "No actual earnings result is reported, only an estimate reference.",
+            "reason": "No actual earnings result is reported, only an estimate placeholder.",
             "confidence": 0.92,
             "classifier": "llm"
           },
           {
             "headline": "HPE vs. IBM: Which Stock Should Value Investors Buy Now?",
-            "reason": "Generic comparison article without a new company-specific catalyst.",
-            "confidence": 0.95,
+            "reason": "Generic comparison/opinion piece with no new company-specific catalyst.",
+            "confidence": 0.96,
             "classifier": "llm"
           }
         ],
@@ -2775,7 +2972,7 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "No actual earnings result is reported, only an estimate reference.",
+            "classification_reason": "No actual earnings result is reported, only an estimate placeholder.",
             "classification_confidence": 0.92,
             "classifier": "llm",
             "keywords_positive": [
@@ -2791,8 +2988,8 @@
             "url": "https://www.zacks.com/stock/news/2975804/hpe-vs-ibm-which-stock-should-value-investors-buy-now?cid=CS-STOCKNEWSAPI-FT-fundamental_analysis|yseop_template_3-2975804",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Generic comparison article without a new company-specific catalyst.",
-            "classification_confidence": 0.95,
+            "classification_reason": "Generic comparison/opinion piece with no new company-specific catalyst.",
+            "classification_confidence": 0.96,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -2805,8 +3002,8 @@
             "url": "https://www.businesswire.com/news/home/20260817909280/en/Arrow-Electronics-adds-seven-countries-to-distribution-coverage-with-IBM/",
             "event_type": "news",
             "classification": "POSITIVE_REVALUATION",
-            "classification_reason": "Expanded distribution agreement with IBM across additional countries could support demand.",
-            "classification_confidence": 0.84,
+            "classification_reason": "Expanded distribution coverage with IBM suggests a potentially meaningful commercial agreement expansion.",
+            "classification_confidence": 0.74,
             "classifier": "llm",
             "keywords_positive": [
               "expands"
@@ -3084,6 +3281,182 @@
         "level_confidence": "HIGH",
         "method": "confirmed_swings_plus_atr_v1_1"
       },
+      "price_map_shadow": {
+        "enabled": true,
+        "schema_version": "sr_engine_shadow_v1",
+        "production_engine": "confirmed_swings_v1",
+        "winner_declared": false,
+        "engines": {
+          "confirmed_swings_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 23.15,
+            "atr": 0.4601,
+            "support": {
+              "lower": 22.855,
+              "upper": 23.085,
+              "center": 22.97,
+              "touches": 2,
+              "source": "confirmed_swing_low"
+            },
+            "first_resistance": {
+              "lower": 24.265,
+              "upper": 24.495,
+              "center": 24.38,
+              "touches": 2,
+              "source": "confirmed_swing_high"
+            },
+            "core_resistance": {
+              "lower": 24.895,
+              "upper": 25.125,
+              "center": 25.01,
+              "touches": 1,
+              "source": "confirmed_swing_high"
+            },
+            "invalidation_close_below": 22.74,
+            "downside_to_invalidation_pct": -0.0177,
+            "upside_to_first_resistance_pct": 0.0482,
+            "reward_risk_to_first_resistance": 2.72,
+            "support_distance_atr": 0.39,
+            "resistance_distance_atr": 2.67,
+            "position": "NEAR_SUPPORT",
+            "level_confidence": "HIGH",
+            "method": "confirmed_swings_plus_atr_v1_1"
+          },
+          "rolling_extrema_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 23.15,
+            "atr": 0.4601,
+            "support": {
+              "lower": 22.545,
+              "upper": 22.775,
+              "center": 22.66,
+              "touches": 1,
+              "source": "rolling_low"
+            },
+            "first_resistance": {
+              "lower": 27.385,
+              "upper": 27.615,
+              "center": 27.5,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "core_resistance": {
+              "lower": 27.385,
+              "upper": 27.615,
+              "center": 27.5,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "invalidation_close_below": 22.43,
+            "downside_to_invalidation_pct": -0.0311,
+            "upside_to_first_resistance_pct": 0.1829,
+            "reward_risk_to_first_resistance": 5.88,
+            "support_distance_atr": 1.06,
+            "resistance_distance_atr": 9.45,
+            "position": "NEAR_SUPPORT",
+            "level_confidence": "LOW",
+            "method": "rolling_extrema_v1"
+          },
+          "prominence_reaction_v2": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 23.15,
+            "atr": 0.4601,
+            "support": {
+              "lower": 22.4806,
+              "upper": 23.057,
+              "center": 22.8009,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 4.281,
+              "latest_reaction": "2026-07-23",
+              "latest_confirmation": "2026-07-27",
+              "source": "prominent_swing_low"
+            },
+            "first_resistance": {
+              "lower": 23.5911,
+              "upper": 23.8489,
+              "center": 23.72,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.834,
+              "latest_reaction": "2026-08-11",
+              "latest_confirmation": "2026-08-13",
+              "source": "prominent_swing_high"
+            },
+            "core_resistance": {
+              "lower": 24.2131,
+              "upper": 24.5626,
+              "center": 24.3881,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 2.216,
+              "latest_reaction": "2026-07-30",
+              "latest_confirmation": "2026-08-03",
+              "source": "prominent_swing_high"
+            },
+            "invalidation_close_below": 22.3656,
+            "downside_to_invalidation_pct": -0.0339,
+            "upside_to_first_resistance_pct": 0.0191,
+            "reward_risk_to_first_resistance": 0.56,
+            "support_distance_atr": 0.76,
+            "resistance_distance_atr": 1.24,
+            "position": "NEAR_RESISTANCE",
+            "level_confidence": "MEDIUM",
+            "method": "prominence_reaction_v2"
+          },
+          "atr_reversal_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 23.15,
+            "atr": 0.4601,
+            "support": {
+              "lower": 22.863,
+              "upper": 23.3094,
+              "center": 23.0782,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 2.205,
+              "latest_reaction": "2026-07-23",
+              "latest_confirmation": "2026-07-23",
+              "source": "atr_reversal_low"
+            },
+            "first_resistance": {
+              "lower": 23.9774,
+              "upper": 24.3026,
+              "center": 24.14,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 1.061,
+              "latest_reaction": "2026-07-30",
+              "latest_confirmation": "2026-07-30",
+              "source": "atr_reversal_high"
+            },
+            "core_resistance": {
+              "lower": 24.6805,
+              "upper": 24.9995,
+              "center": 24.84,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.911,
+              "latest_reaction": "2026-05-14",
+              "latest_confirmation": "2026-05-14",
+              "source": "atr_reversal_high"
+            },
+            "invalidation_close_below": 22.748,
+            "downside_to_invalidation_pct": -0.0174,
+            "upside_to_first_resistance_pct": 0.0357,
+            "reward_risk_to_first_resistance": 2.06,
+            "support_distance_atr": 0.16,
+            "resistance_distance_atr": 2.15,
+            "position": "IN_SUPPORT",
+            "level_confidence": "MEDIUM",
+            "method": "atr_reversal_v1"
+          }
+        }
+      },
       "pre_entry_timing": {
         "status": "EARLY",
         "lane_status": "STAGE1_WAIT",
@@ -3153,15 +3526,15 @@
         "risk_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 0.4",
-            "reason": "Earnings reported with no actual result shown versus estimate, implying a potential miss/negative surprise.",
-            "confidence": 0.62,
+            "reason": "Earnings item shows no actual result versus estimate, implying a miss/absence of reported earnings data.",
+            "confidence": 0.72,
             "classifier": "llm",
             "keywords": []
           },
           {
             "headline": "HDB ALERT: HAGENS BERMAN, NATIONAL TRIAL ATTORNEYS, Encourages HDFC Bank Limited (NYSE: HDB) Investors to Contact its Legal Team Regarding Securities Fraud Class Action Lawsuit",
-            "reason": "Securities fraud class action lawsuit can create legal and valuation risk.",
-            "confidence": 0.96,
+            "reason": "Announces a securities fraud class action lawsuit, which is a direct legal overhang.",
+            "confidence": 0.98,
             "classifier": "llm",
             "keywords": [
               "class action",
@@ -3172,7 +3545,7 @@
           },
           {
             "headline": "HDB Stockholder Notice: Shareholder Rights Law Firm Robbins LLP Reminds Investors of the Class Action Lawsuit Against HDFC Bank Limited",
-            "reason": "Reminder of an existing class action lawsuit signals ongoing legal risk.",
+            "reason": "Reminds investors of an existing class action lawsuit, adding legal risk sentiment.",
             "confidence": 0.95,
             "classifier": "llm",
             "keywords": [
@@ -3210,8 +3583,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Earnings reported with no actual result shown versus estimate, implying a potential miss/negative surprise.",
-            "classification_confidence": 0.62,
+            "classification_reason": "Earnings item shows no actual result versus estimate, implying a miss/absence of reported earnings data.",
+            "classification_confidence": 0.72,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -3226,8 +3599,8 @@
             "url": "https://www.globenewswire.com/news-release/2026/08/18/3346543/32716/en/hdb-alert-hagens-berman-national-trial-attorneys-encourages-hdfc-bank-limited-nyse-hdb-investors-to-contact-its-legal-team-regarding-securities-fraud-class-action-lawsuit.html",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Securities fraud class action lawsuit can create legal and valuation risk.",
-            "classification_confidence": 0.96,
+            "classification_reason": "Announces a securities fraud class action lawsuit, which is a direct legal overhang.",
+            "classification_confidence": 0.98,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": [
@@ -3245,7 +3618,7 @@
             "url": "https://www.prnewswire.com/news-releases/hdb-stockholder-notice-shareholder-rights-law-firm-robbins-llp-reminds-investors-of-the-class-action-lawsuit-against-hdfc-bank-limited-302853296.html",
             "event_type": "news",
             "classification": "RISK_CATALYST",
-            "classification_reason": "Reminder of an existing class action lawsuit signals ongoing legal risk.",
+            "classification_reason": "Reminds investors of an existing class action lawsuit, adding legal risk sentiment.",
             "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [],
@@ -3483,6 +3856,11 @@
         "available": false,
         "reason": "not_left_side_episode"
       },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
+      },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
         "reason": "not_left_side_episode"
@@ -3543,20 +3921,20 @@
         "noise_hits": [
           {
             "headline": "Earnings reported: actual None, estimate 2.04",
-            "reason": "Incomplete earnings item with no actual result; cannot infer beat or miss.",
-            "confidence": 0.95,
-            "classifier": "llm"
-          },
-          {
-            "headline": "Bank Hapoalim BM Acquires New Holdings in Cadence Design Systems, Inc. $CDNS",
-            "reason": "Routine institutional 13F position disclosure, not a material catalyst.",
+            "reason": "Incomplete earnings data; no actual result or surprise provided.",
             "confidence": 0.93,
             "classifier": "llm"
           },
           {
+            "headline": "Bank Hapoalim BM Acquires New Holdings in Cadence Design Systems, Inc. $CDNS",
+            "reason": "Routine institutional filing; small stake purchase is not a clear revaluation catalyst.",
+            "confidence": 0.88,
+            "classifier": "llm"
+          },
+          {
             "headline": "CDNS Falls 12.9% in the Past Month. Is the Sell-Off an Opportunity?",
-            "reason": "Commentary on recent share performance and valuation, not new company-specific information.",
-            "confidence": 0.9,
+            "reason": "Commentary on recent price action and valuation, not new company-specific information.",
+            "confidence": 0.95,
             "classifier": "llm"
           }
         ],
@@ -3588,8 +3966,8 @@
             "url": "",
             "event_type": "earnings",
             "classification": "NOISE",
-            "classification_reason": "Incomplete earnings item with no actual result; cannot infer beat or miss.",
-            "classification_confidence": 0.95,
+            "classification_reason": "Incomplete earnings data; no actual result or surprise provided.",
+            "classification_confidence": 0.93,
             "classifier": "llm",
             "keywords_positive": [
               "earnings"
@@ -3604,8 +3982,8 @@
             "url": "https://www.defenseworld.net/2026/08/16/bank-hapoalim-bm-acquires-new-holdings-in-cadence-design-systems-inc-cdns.html",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Routine institutional 13F position disclosure, not a material catalyst.",
-            "classification_confidence": 0.93,
+            "classification_reason": "Routine institutional filing; small stake purchase is not a clear revaluation catalyst.",
+            "classification_confidence": 0.88,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -3618,8 +3996,8 @@
             "url": "https://www.zacks.com/stock/news/2975277/cdns-falls-12-9-in-the-past-month-is-the-sell-off-an-opportunity?cid=CS-STOCKNEWSAPI-FT-analyst_blog_plus|zer_report_insights-2975277",
             "event_type": "news",
             "classification": "NOISE",
-            "classification_reason": "Commentary on recent share performance and valuation, not new company-specific information.",
-            "classification_confidence": 0.9,
+            "classification_reason": "Commentary on recent price action and valuation, not new company-specific information.",
+            "classification_confidence": 0.95,
             "classifier": "llm",
             "keywords_positive": [],
             "keywords_risk": []
@@ -3899,6 +4277,182 @@
         "position": "IN_SUPPORT",
         "level_confidence": "MEDIUM",
         "method": "confirmed_swings_plus_atr_v1_1"
+      },
+      "price_map_shadow": {
+        "enabled": true,
+        "schema_version": "sr_engine_shadow_v1",
+        "production_engine": "confirmed_swings_v1",
+        "winner_declared": false,
+        "engines": {
+          "confirmed_swings_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 477.17,
+            "atr": 11.2363,
+            "support": {
+              "lower": 475.4609,
+              "upper": 481.0791,
+              "center": 478.27,
+              "touches": 1,
+              "source": "confirmed_swing_low"
+            },
+            "first_resistance": {
+              "lower": 478.4443,
+              "upper": 484.0624,
+              "center": 481.2533,
+              "touches": 3,
+              "source": "confirmed_swing_high"
+            },
+            "core_resistance": {
+              "lower": 488.2909,
+              "upper": 493.9091,
+              "center": 491.1,
+              "touches": 1,
+              "source": "confirmed_swing_high"
+            },
+            "invalidation_close_below": 472.6518,
+            "downside_to_invalidation_pct": -0.0095,
+            "upside_to_first_resistance_pct": 0.0027,
+            "reward_risk_to_first_resistance": 0.28,
+            "support_distance_atr": -0.1,
+            "resistance_distance_atr": 0.36,
+            "position": "IN_SUPPORT",
+            "level_confidence": "MEDIUM",
+            "method": "confirmed_swings_plus_atr_v1_1"
+          },
+          "rolling_extrema_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 477.17,
+            "atr": 11.2363,
+            "support": {
+              "lower": 433.3909,
+              "upper": 439.0091,
+              "center": 436.2,
+              "touches": 1,
+              "source": "rolling_low"
+            },
+            "first_resistance": {
+              "lower": 520.5009,
+              "upper": 526.1191,
+              "center": 523.31,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "core_resistance": {
+              "lower": 520.5009,
+              "upper": 526.1191,
+              "center": 523.31,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "invalidation_close_below": 430.5818,
+            "downside_to_invalidation_pct": -0.0976,
+            "upside_to_first_resistance_pct": 0.0908,
+            "reward_risk_to_first_resistance": 0.93,
+            "support_distance_atr": 3.65,
+            "resistance_distance_atr": 4.11,
+            "position": "BETWEEN_LEVELS",
+            "level_confidence": "LOW",
+            "method": "rolling_extrema_v1"
+          },
+          "prominence_reaction_v2": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 477.17,
+            "atr": 11.2363,
+            "support": {
+              "lower": 463.9468,
+              "upper": 481.7348,
+              "center": 472.0468,
+              "touches": 9,
+              "independent_reactions": 9,
+              "strength": 4.144,
+              "latest_reaction": "2026-08-06",
+              "latest_confirmation": "2026-08-10",
+              "source": "prominent_swing_low"
+            },
+            "first_resistance": {
+              "lower": 479.2753,
+              "upper": 494.4605,
+              "center": 485.1865,
+              "touches": 4,
+              "independent_reactions": 4,
+              "strength": 3.436,
+              "latest_reaction": "2026-08-03",
+              "latest_confirmation": "2026-08-05",
+              "source": "prominent_swing_high"
+            },
+            "core_resistance": {
+              "lower": 494.8005,
+              "upper": 501.4944,
+              "center": 497.8942,
+              "touches": 4,
+              "independent_reactions": 4,
+              "strength": 0.987,
+              "latest_reaction": "2025-12-05",
+              "latest_confirmation": "2025-12-09",
+              "source": "prominent_swing_high"
+            },
+            "invalidation_close_below": 461.1377,
+            "downside_to_invalidation_pct": -0.0336,
+            "upside_to_first_resistance_pct": 0.0044,
+            "reward_risk_to_first_resistance": 0.13,
+            "support_distance_atr": 0.46,
+            "resistance_distance_atr": 0.71,
+            "position": "IN_SUPPORT",
+            "level_confidence": "HIGH",
+            "method": "prominence_reaction_v2"
+          },
+          "atr_reversal_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 477.17,
+            "atr": 11.2363,
+            "support": {
+              "lower": 466.095,
+              "upper": 475.3824,
+              "center": 471.3212,
+              "touches": 6,
+              "independent_reactions": 6,
+              "strength": 1.8,
+              "latest_reaction": "2026-07-24",
+              "latest_confirmation": "2026-07-24",
+              "source": "atr_reversal_low"
+            },
+            "first_resistance": {
+              "lower": 475.5243,
+              "upper": 503.8559,
+              "center": 492.3368,
+              "touches": 8,
+              "independent_reactions": 8,
+              "strength": 2.922,
+              "latest_reaction": "2026-08-13",
+              "latest_confirmation": "2026-08-13",
+              "source": "atr_reversal_high"
+            },
+            "core_resistance": {
+              "lower": 514.0781,
+              "upper": 522.4378,
+              "center": 518.8087,
+              "touches": 4,
+              "independent_reactions": 4,
+              "strength": 1.195,
+              "latest_reaction": "2026-07-16",
+              "latest_confirmation": "2026-07-16",
+              "source": "atr_reversal_high"
+            },
+            "invalidation_close_below": 463.2859,
+            "downside_to_invalidation_pct": -0.0291,
+            "upside_to_first_resistance_pct": -0.0034,
+            "reward_risk_to_first_resistance": -0.12,
+            "support_distance_atr": 0.52,
+            "resistance_distance_atr": 1.35,
+            "position": "IN_RESISTANCE",
+            "level_confidence": "HIGH",
+            "method": "atr_reversal_v1"
+          }
+        }
       },
       "pre_entry_timing": {
         "status": "READY",
@@ -4270,6 +4824,11 @@
         "available": false,
         "reason": "not_left_side_episode"
       },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
+      },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
         "reason": "not_left_side_episode"
@@ -4639,6 +5198,11 @@
       "price_map": {
         "available": false,
         "reason": "not_left_side_episode"
+      },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
       },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
@@ -5044,6 +5608,182 @@
         "level_confidence": "MEDIUM",
         "method": "confirmed_swings_plus_atr_v1_1"
       },
+      "price_map_shadow": {
+        "enabled": true,
+        "schema_version": "sr_engine_shadow_v1",
+        "production_engine": "confirmed_swings_v1",
+        "winner_declared": false,
+        "engines": {
+          "confirmed_swings_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 550.68,
+            "atr": 15.8759,
+            "support": {
+              "lower": 550.541,
+              "upper": 558.479,
+              "center": 554.51,
+              "touches": 1,
+              "source": "confirmed_swing_low"
+            },
+            "first_resistance": {
+              "lower": 562.1477,
+              "upper": 570.0856,
+              "center": 566.1167,
+              "touches": 3,
+              "source": "confirmed_swing_high"
+            },
+            "core_resistance": {
+              "lower": 575.101,
+              "upper": 583.039,
+              "center": 579.07,
+              "touches": 1,
+              "source": "confirmed_swing_high"
+            },
+            "invalidation_close_below": 546.572,
+            "downside_to_invalidation_pct": -0.0075,
+            "upside_to_first_resistance_pct": 0.0208,
+            "reward_risk_to_first_resistance": 2.79,
+            "support_distance_atr": -0.24,
+            "resistance_distance_atr": 0.97,
+            "position": "IN_SUPPORT",
+            "level_confidence": "MEDIUM",
+            "method": "confirmed_swings_plus_atr_v1_1"
+          },
+          "rolling_extrema_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 550.68,
+            "atr": 15.8759,
+            "support": {
+              "lower": 538.361,
+              "upper": 546.299,
+              "center": 542.33,
+              "touches": 1,
+              "source": "rolling_low"
+            },
+            "first_resistance": {
+              "lower": 640.801,
+              "upper": 648.739,
+              "center": 644.77,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "core_resistance": {
+              "lower": 640.801,
+              "upper": 648.739,
+              "center": 644.77,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "invalidation_close_below": 534.392,
+            "downside_to_invalidation_pct": -0.0296,
+            "upside_to_first_resistance_pct": 0.1637,
+            "reward_risk_to_first_resistance": 5.53,
+            "support_distance_atr": 0.53,
+            "resistance_distance_atr": 5.93,
+            "position": "NEAR_SUPPORT",
+            "level_confidence": "LOW",
+            "method": "rolling_extrema_v1"
+          },
+          "prominence_reaction_v2": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 550.68,
+            "atr": 15.8759,
+            "support": {
+              "lower": 516.1537,
+              "upper": 559.7852,
+              "center": 541.3902,
+              "touches": 16,
+              "independent_reactions": 16,
+              "strength": 13.138,
+              "latest_reaction": "2026-07-21",
+              "latest_confirmation": "2026-07-23",
+              "source": "prominent_swing_low"
+            },
+            "first_resistance": {
+              "lower": 561.5493,
+              "upper": 597.7675,
+              "center": 581.3494,
+              "touches": 14,
+              "independent_reactions": 14,
+              "strength": 5.493,
+              "latest_reaction": "2026-07-29",
+              "latest_confirmation": "2026-07-31",
+              "source": "prominent_swing_high"
+            },
+            "core_resistance": {
+              "lower": 598.2507,
+              "upper": 608.4738,
+              "center": 603.5885,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 1.652,
+              "latest_reaction": "2026-05-01",
+              "latest_confirmation": "2026-05-05",
+              "source": "prominent_swing_high"
+            },
+            "invalidation_close_below": 512.1847,
+            "downside_to_invalidation_pct": -0.0699,
+            "upside_to_first_resistance_pct": 0.0197,
+            "reward_risk_to_first_resistance": 0.28,
+            "support_distance_atr": 0.59,
+            "resistance_distance_atr": 1.93,
+            "position": "IN_SUPPORT",
+            "level_confidence": "HIGH",
+            "method": "prominence_reaction_v2"
+          },
+          "atr_reversal_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 550.68,
+            "atr": 15.8759,
+            "support": {
+              "lower": 530.3716,
+              "upper": 571.2844,
+              "center": 549.4406,
+              "touches": 15,
+              "independent_reactions": 15,
+              "strength": 6.429,
+              "latest_reaction": "2026-07-24",
+              "latest_confirmation": "2026-07-24",
+              "source": "atr_reversal_low"
+            },
+            "first_resistance": {
+              "lower": 553.3516,
+              "upper": 564.7207,
+              "center": 558.4515,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 1.043,
+              "latest_reaction": "2026-04-08",
+              "latest_confirmation": "2026-04-08",
+              "source": "atr_reversal_high"
+            },
+            "core_resistance": {
+              "lower": 565.9412,
+              "upper": 597.1475,
+              "center": 580.6281,
+              "touches": 11,
+              "independent_reactions": 11,
+              "strength": 2.83,
+              "latest_reaction": "2026-07-29",
+              "latest_confirmation": "2026-07-29",
+              "source": "atr_reversal_high"
+            },
+            "invalidation_close_below": 526.4026,
+            "downside_to_invalidation_pct": -0.0441,
+            "upside_to_first_resistance_pct": 0.0049,
+            "reward_risk_to_first_resistance": 0.11,
+            "support_distance_atr": 0.08,
+            "resistance_distance_atr": 0.49,
+            "position": "IN_SUPPORT",
+            "level_confidence": "HIGH",
+            "method": "atr_reversal_v1"
+          }
+        }
+      },
       "pre_entry_timing": {
         "status": "EARLY",
         "lane_status": "STAGE1_WAIT",
@@ -5419,6 +6159,11 @@
         "available": false,
         "reason": "not_left_side_episode"
       },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
+      },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
         "reason": "not_left_side_episode"
@@ -5592,9 +6337,9 @@
             "score": 0,
             "reasons": [],
             "metrics": {
-              "pe": -71.05266446700509,
+              "pe": -71.05813071065992,
               "forward_pe": null,
-              "peg": -0.9271443864248203
+              "peg": -0.9272157137586708
             }
           },
           "flow": {
@@ -5651,8 +6396,8 @@
           "snapshot_date": "2026-08-18",
           "quadrant": "LAGGING",
           "support": "UNSUPPORTED",
-          "ratio": 98.97,
-          "momentum": 98.56
+          "ratio": 98.79,
+          "momentum": 99.93
         },
         "themes": [],
         "theme_snapshot_date": "2026-08-18",
@@ -5824,6 +6569,182 @@
         "position": "IN_SUPPORT",
         "level_confidence": "HIGH",
         "method": "confirmed_swings_plus_atr_v1_1"
+      },
+      "price_map_shadow": {
+        "enabled": true,
+        "schema_version": "sr_engine_shadow_v1",
+        "production_engine": "confirmed_swings_v1",
+        "winner_declared": false,
+        "engines": {
+          "confirmed_swings_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 57.34,
+            "atr": 1.5489,
+            "support": {
+              "lower": 57.0878,
+              "upper": 57.8622,
+              "center": 57.475,
+              "touches": 2,
+              "source": "confirmed_swing_low"
+            },
+            "first_resistance": {
+              "lower": 60.3878,
+              "upper": 61.1622,
+              "center": 60.775,
+              "touches": 2,
+              "source": "confirmed_swing_high"
+            },
+            "core_resistance": {
+              "lower": 61.5094,
+              "upper": 62.2839,
+              "center": 61.8967,
+              "touches": 3,
+              "source": "confirmed_swing_high"
+            },
+            "invalidation_close_below": 56.7006,
+            "downside_to_invalidation_pct": -0.0112,
+            "upside_to_first_resistance_pct": 0.0532,
+            "reward_risk_to_first_resistance": 4.77,
+            "support_distance_atr": -0.09,
+            "resistance_distance_atr": 2.22,
+            "position": "IN_SUPPORT",
+            "level_confidence": "HIGH",
+            "method": "confirmed_swings_plus_atr_v1_1"
+          },
+          "rolling_extrema_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 57.34,
+            "atr": 1.5489,
+            "support": {
+              "lower": 55.3628,
+              "upper": 56.1372,
+              "center": 55.75,
+              "touches": 1,
+              "source": "rolling_low"
+            },
+            "first_resistance": {
+              "lower": 67.2028,
+              "upper": 67.9772,
+              "center": 67.59,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "core_resistance": {
+              "lower": 67.2028,
+              "upper": 67.9772,
+              "center": 67.59,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "invalidation_close_below": 54.9756,
+            "downside_to_invalidation_pct": -0.0412,
+            "upside_to_first_resistance_pct": 0.172,
+            "reward_risk_to_first_resistance": 4.17,
+            "support_distance_atr": 1.03,
+            "resistance_distance_atr": 6.62,
+            "position": "NEAR_SUPPORT",
+            "level_confidence": "LOW",
+            "method": "rolling_extrema_v1"
+          },
+          "prominence_reaction_v2": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 57.34,
+            "atr": 1.5489,
+            "support": {
+              "lower": 56.7698,
+              "upper": 58.0714,
+              "center": 57.5108,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 2.069,
+              "latest_reaction": "2026-04-16",
+              "latest_confirmation": "2026-04-20",
+              "source": "prominent_swing_low"
+            },
+            "first_resistance": {
+              "lower": 57.307,
+              "upper": 58.333,
+              "center": 57.82,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.666,
+              "latest_reaction": "2026-05-18",
+              "latest_confirmation": "2026-05-20",
+              "source": "prominent_swing_high"
+            },
+            "core_resistance": {
+              "lower": 60.212,
+              "upper": 62.6861,
+              "center": 61.4222,
+              "touches": 6,
+              "independent_reactions": 6,
+              "strength": 5.751,
+              "latest_reaction": "2026-08-12",
+              "latest_confirmation": "2026-08-14",
+              "source": "prominent_swing_high"
+            },
+            "invalidation_close_below": 56.3826,
+            "downside_to_invalidation_pct": -0.0167,
+            "upside_to_first_resistance_pct": -0.0006,
+            "reward_risk_to_first_resistance": -0.03,
+            "support_distance_atr": -0.11,
+            "resistance_distance_atr": 0.31,
+            "position": "IN_RESISTANCE",
+            "level_confidence": "MEDIUM",
+            "method": "prominence_reaction_v2"
+          },
+          "atr_reversal_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 57.34,
+            "atr": 1.5489,
+            "support": {
+              "lower": 54.8909,
+              "upper": 58.0914,
+              "center": 56.3936,
+              "touches": 6,
+              "independent_reactions": 6,
+              "strength": 5.575,
+              "latest_reaction": "2026-07-23",
+              "latest_confirmation": "2026-07-23",
+              "source": "atr_reversal_low"
+            },
+            "first_resistance": {
+              "lower": 58.782,
+              "upper": 59.858,
+              "center": 59.32,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.625,
+              "latest_reaction": "2026-05-07",
+              "latest_confirmation": "2026-05-07",
+              "source": "atr_reversal_high"
+            },
+            "core_resistance": {
+              "lower": 60.7036,
+              "upper": 62.6769,
+              "center": 61.4401,
+              "touches": 6,
+              "independent_reactions": 6,
+              "strength": 2.874,
+              "latest_reaction": "2026-08-05",
+              "latest_confirmation": "2026-08-05",
+              "source": "atr_reversal_high"
+            },
+            "invalidation_close_below": 54.5037,
+            "downside_to_invalidation_pct": -0.0495,
+            "upside_to_first_resistance_pct": 0.0251,
+            "reward_risk_to_first_resistance": 0.51,
+            "support_distance_atr": 0.61,
+            "resistance_distance_atr": 1.28,
+            "position": "IN_SUPPORT",
+            "level_confidence": "MEDIUM",
+            "method": "atr_reversal_v1"
+          }
+        }
       },
       "pre_entry_timing": {
         "status": "EARLY",
@@ -6235,6 +7156,182 @@
         "level_confidence": "MEDIUM",
         "method": "confirmed_swings_plus_atr_v1_1"
       },
+      "price_map_shadow": {
+        "enabled": true,
+        "schema_version": "sr_engine_shadow_v1",
+        "production_engine": "confirmed_swings_v1",
+        "winner_declared": false,
+        "engines": {
+          "confirmed_swings_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 15.72,
+            "atr": 0.6139,
+            "support": {
+              "lower": 15.5865,
+              "upper": 15.8935,
+              "center": 15.74,
+              "touches": 1,
+              "source": "confirmed_swing_low"
+            },
+            "first_resistance": {
+              "lower": 16.764,
+              "upper": 17.071,
+              "center": 16.9175,
+              "touches": 2,
+              "source": "confirmed_swing_high"
+            },
+            "core_resistance": {
+              "lower": 19.414,
+              "upper": 19.721,
+              "center": 19.5675,
+              "touches": 2,
+              "source": "confirmed_swing_high"
+            },
+            "invalidation_close_below": 15.433,
+            "downside_to_invalidation_pct": -0.0183,
+            "upside_to_first_resistance_pct": 0.0664,
+            "reward_risk_to_first_resistance": 3.64,
+            "support_distance_atr": -0.03,
+            "resistance_distance_atr": 1.95,
+            "position": "IN_SUPPORT",
+            "level_confidence": "MEDIUM",
+            "method": "confirmed_swings_plus_atr_v1_1"
+          },
+          "rolling_extrema_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 15.72,
+            "atr": 0.6139,
+            "support": {
+              "lower": 14.7665,
+              "upper": 15.0735,
+              "center": 14.92,
+              "touches": 1,
+              "source": "rolling_low"
+            },
+            "first_resistance": {
+              "lower": 19.4515,
+              "upper": 19.7585,
+              "center": 19.605,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "core_resistance": {
+              "lower": 19.4515,
+              "upper": 19.7585,
+              "center": 19.605,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "invalidation_close_below": 14.613,
+            "downside_to_invalidation_pct": -0.0704,
+            "upside_to_first_resistance_pct": 0.2374,
+            "reward_risk_to_first_resistance": 3.37,
+            "support_distance_atr": 1.3,
+            "resistance_distance_atr": 6.33,
+            "position": "BETWEEN_LEVELS",
+            "level_confidence": "LOW",
+            "method": "rolling_extrema_v1"
+          },
+          "prominence_reaction_v2": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 15.72,
+            "atr": 0.6139,
+            "support": {
+              "lower": 15.4284,
+              "upper": 15.9164,
+              "center": 15.7058,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 1.239,
+              "latest_reaction": "2026-08-06",
+              "latest_confirmation": "2026-08-10",
+              "source": "prominent_swing_low"
+            },
+            "first_resistance": {
+              "lower": 16.723,
+              "upper": 17.097,
+              "center": 16.9182,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 2.093,
+              "latest_reaction": "2026-08-04",
+              "latest_confirmation": "2026-08-06",
+              "source": "prominent_swing_high"
+            },
+            "core_resistance": {
+              "lower": 18.5392,
+              "upper": 19.0108,
+              "center": 18.775,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.272,
+              "latest_reaction": "2026-02-10",
+              "latest_confirmation": "2026-02-12",
+              "source": "prominent_swing_high"
+            },
+            "invalidation_close_below": 15.2749,
+            "downside_to_invalidation_pct": -0.0283,
+            "upside_to_first_resistance_pct": 0.0638,
+            "reward_risk_to_first_resistance": 2.25,
+            "support_distance_atr": 0.02,
+            "resistance_distance_atr": 1.95,
+            "position": "IN_SUPPORT",
+            "level_confidence": "HIGH",
+            "method": "prominence_reaction_v2"
+          },
+          "atr_reversal_v1": {
+            "available": true,
+            "as_of": "2026-08-17",
+            "current": 15.72,
+            "atr": 0.6139,
+            "support": {
+              "lower": 14.9204,
+              "upper": 15.4652,
+              "center": 15.1566,
+              "touches": 3,
+              "independent_reactions": 3,
+              "strength": 3.778,
+              "latest_reaction": "2026-07-29",
+              "latest_confirmation": "2026-07-29",
+              "source": "atr_reversal_low"
+            },
+            "first_resistance": {
+              "lower": 16.543,
+              "upper": 16.9519,
+              "center": 16.7534,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 2.419,
+              "latest_reaction": "2026-08-04",
+              "latest_confirmation": "2026-08-04",
+              "source": "atr_reversal_high"
+            },
+            "core_resistance": {
+              "lower": 18.2968,
+              "upper": 19.3731,
+              "center": 18.938,
+              "touches": 3,
+              "independent_reactions": 3,
+              "strength": 2.65,
+              "latest_reaction": "2026-07-09",
+              "latest_confirmation": "2026-07-09",
+              "source": "atr_reversal_high"
+            },
+            "invalidation_close_below": 14.7669,
+            "downside_to_invalidation_pct": -0.0606,
+            "upside_to_first_resistance_pct": 0.0524,
+            "reward_risk_to_first_resistance": 0.86,
+            "support_distance_atr": 0.92,
+            "resistance_distance_atr": 1.68,
+            "position": "NEAR_SUPPORT",
+            "level_confidence": "HIGH",
+            "method": "atr_reversal_v1"
+          }
+        }
+      },
       "pre_entry_timing": {
         "status": "EARLY",
         "lane_status": "STAGE1_WAIT",
@@ -6528,14 +7625,14 @@
         "negatives": [],
         "metrics": {
           "close_days": 243,
-          "avg_volume_value": 17972451557.5,
+          "avg_volume_value": 18004133597.5,
           "liquidity_min_value": 2000000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "KRW",
-          "liquidity_buffer_multiple": 8.986,
-          "ret_20d": -0.0288,
-          "drawdown_from_high": -0.2369,
-          "atr_pct": 0.0409
+          "liquidity_buffer_multiple": 9.002,
+          "ret_20d": -0.031,
+          "drawdown_from_high": -0.2387,
+          "atr_pct": 0.0411
         }
       },
       "decision_context": {
@@ -6543,8 +7640,8 @@
           "status": "BULL",
           "reason": "above_ma200_and_positive_20d",
           "as_of": "2026-08-18",
-          "ret_20d_pct": 9.98,
-          "close_vs_ma200_pct": 21.67
+          "ret_20d_pct": 9.11,
+          "close_vs_ma200_pct": 20.72
         },
         "benchmark_ticker": "^KS11"
       },
@@ -6555,13 +7652,13 @@
         "metrics": {
           "country": "KR",
           "close_days": 243,
-          "latest_close": 21900.0,
+          "latest_close": 21850.0,
           "market_cap_usd": 7297892590.07,
           "latest_date": "2026-08-18",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 17972451557.5,
+          "avg_traded_value_20d": 18004133597.5,
           "zero_volume_days_20d": 0,
-          "ret_5d": -0.0113
+          "ret_5d": -0.0135
         }
       },
       "price_lanes": {
@@ -6573,12 +7670,12 @@
             "relative_strength_fail"
           ],
           "metrics": {
-            "ret_20d": -0.0288,
-            "ret_63d": -0.0245,
-            "ret_126d": -0.1767,
-            "rs_20d": -0.1286,
-            "rs_63d": 0.0191,
-            "rs_126d": -0.5293
+            "ret_20d": -0.031,
+            "ret_63d": -0.0267,
+            "ret_126d": -0.1786,
+            "rs_20d": -0.1221,
+            "rs_63d": 0.0244,
+            "rs_126d": -0.5205
           }
         },
         "pullback": {
@@ -6588,10 +7685,10 @@
             "trend_not_intact"
           ],
           "metrics": {
-            "ma50": 22167.0,
-            "ma200": 23070.75,
-            "drawdown_from_252d_high": -0.2369,
-            "volume_ratio_5d_20d": 0.8512
+            "ma50": 22166.0,
+            "ma200": 23070.5,
+            "drawdown_from_252d_high": -0.2387,
+            "volume_ratio_5d_20d": 0.8568
           }
         },
         "left_side": {
@@ -6605,9 +7702,9 @@
           ],
           "review_flags": [],
           "metrics": {
-            "drawdown_from_252d_high": -0.2369,
-            "distance_from_252d_low": 0.1089,
-            "atr_ratio_10d_20d": 0.9267,
+            "drawdown_from_252d_high": -0.2387,
+            "distance_from_252d_low": 0.1063,
+            "atr_ratio_10d_20d": 0.927,
             "down_day_ratio_10d": 0.3,
             "down_day_ratio_prev20d": 0.55,
             "upper_close_days_5d": 0,
@@ -6615,45 +7712,221 @@
             "recent_10d_low": 21550.0,
             "prev_10d_low": 21150.0,
             "benchmark_above_ma200": true,
-            "benchmark_ret_20d": 0.0998
+            "benchmark_ret_20d": 0.0911
           }
         }
       },
       "price_map": {
         "available": true,
         "as_of": "2026-08-18",
-        "current": 21900.0,
-        "atr": 839.1375,
+        "current": 21850.0,
+        "atr": 842.7089,
         "support": {
-          "lower": 21840.2156,
-          "upper": 22259.7844,
+          "lower": 21839.3228,
+          "upper": 22260.6772,
           "center": 22050.0,
           "touches": 1,
           "source": "confirmed_swing_low"
         },
         "first_resistance": {
-          "lower": 22415.2156,
-          "upper": 22834.7844,
+          "lower": 22414.3228,
+          "upper": 22835.6772,
           "center": 22625.0,
           "touches": 2,
           "source": "confirmed_swing_high"
         },
         "core_resistance": {
-          "lower": 23040.2156,
-          "upper": 23459.7844,
+          "lower": 23039.3228,
+          "upper": 23460.6772,
           "center": 23250.0,
           "touches": 1,
           "source": "confirmed_swing_high"
         },
-        "invalidation_close_below": 21630.4312,
-        "downside_to_invalidation_pct": -0.0123,
-        "upside_to_first_resistance_pct": 0.0235,
-        "reward_risk_to_first_resistance": 1.91,
-        "support_distance_atr": -0.18,
-        "resistance_distance_atr": 0.86,
+        "invalidation_close_below": 21628.6456,
+        "downside_to_invalidation_pct": -0.0101,
+        "upside_to_first_resistance_pct": 0.0258,
+        "reward_risk_to_first_resistance": 2.55,
+        "support_distance_atr": -0.24,
+        "resistance_distance_atr": 0.92,
         "position": "IN_SUPPORT",
         "level_confidence": "MEDIUM",
         "method": "confirmed_swings_plus_atr_v1_1"
+      },
+      "price_map_shadow": {
+        "enabled": true,
+        "schema_version": "sr_engine_shadow_v1",
+        "production_engine": "confirmed_swings_v1",
+        "winner_declared": false,
+        "engines": {
+          "confirmed_swings_v1": {
+            "available": true,
+            "as_of": "2026-08-18",
+            "current": 21850.0,
+            "atr": 842.7089,
+            "support": {
+              "lower": 21839.3228,
+              "upper": 22260.6772,
+              "center": 22050.0,
+              "touches": 1,
+              "source": "confirmed_swing_low"
+            },
+            "first_resistance": {
+              "lower": 22414.3228,
+              "upper": 22835.6772,
+              "center": 22625.0,
+              "touches": 2,
+              "source": "confirmed_swing_high"
+            },
+            "core_resistance": {
+              "lower": 23039.3228,
+              "upper": 23460.6772,
+              "center": 23250.0,
+              "touches": 1,
+              "source": "confirmed_swing_high"
+            },
+            "invalidation_close_below": 21628.6456,
+            "downside_to_invalidation_pct": -0.0101,
+            "upside_to_first_resistance_pct": 0.0258,
+            "reward_risk_to_first_resistance": 2.55,
+            "support_distance_atr": -0.24,
+            "resistance_distance_atr": 0.92,
+            "position": "IN_SUPPORT",
+            "level_confidence": "MEDIUM",
+            "method": "confirmed_swings_plus_atr_v1_1"
+          },
+          "rolling_extrema_v1": {
+            "available": true,
+            "as_of": "2026-08-18",
+            "current": 21850.0,
+            "atr": 842.7089,
+            "support": {
+              "lower": 18899.3228,
+              "upper": 19320.6772,
+              "center": 19110.0,
+              "touches": 1,
+              "source": "rolling_low"
+            },
+            "first_resistance": {
+              "lower": 24789.3228,
+              "upper": 25210.6772,
+              "center": 25000.0,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "core_resistance": {
+              "lower": 24789.3228,
+              "upper": 25210.6772,
+              "center": 25000.0,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "invalidation_close_below": 18688.6456,
+            "downside_to_invalidation_pct": -0.1447,
+            "upside_to_first_resistance_pct": 0.1345,
+            "reward_risk_to_first_resistance": 0.93,
+            "support_distance_atr": 3.25,
+            "resistance_distance_atr": 3.74,
+            "position": "BETWEEN_LEVELS",
+            "level_confidence": "LOW",
+            "method": "rolling_extrema_v1"
+          },
+          "prominence_reaction_v2": {
+            "available": true,
+            "as_of": "2026-08-18",
+            "current": 21850.0,
+            "atr": 842.7089,
+            "support": {
+              "lower": 20481.0308,
+              "upper": 22525.2382,
+              "center": 21304.6875,
+              "touches": 19,
+              "independent_reactions": 19,
+              "strength": 12.078,
+              "latest_reaction": "2026-08-06",
+              "latest_confirmation": "2026-08-10",
+              "source": "prominent_swing_low"
+            },
+            "first_resistance": {
+              "lower": 22039.7853,
+              "upper": 22863.7318,
+              "center": 22518.0592,
+              "touches": 4,
+              "independent_reactions": 4,
+              "strength": 1.528,
+              "latest_reaction": "2026-01-06",
+              "latest_confirmation": "2026-01-08",
+              "source": "prominent_swing_high"
+            },
+            "core_resistance": {
+              "lower": 23026.1716,
+              "upper": 23511.7892,
+              "center": 23272.7331,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 0.683,
+              "latest_reaction": "2026-05-26",
+              "latest_confirmation": "2026-05-28",
+              "source": "prominent_swing_high"
+            },
+            "invalidation_close_below": 20270.3536,
+            "downside_to_invalidation_pct": -0.0723,
+            "upside_to_first_resistance_pct": 0.0087,
+            "reward_risk_to_first_resistance": 0.12,
+            "support_distance_atr": 0.65,
+            "resistance_distance_atr": 0.79,
+            "position": "IN_SUPPORT",
+            "level_confidence": "HIGH",
+            "method": "prominence_reaction_v2"
+          },
+          "atr_reversal_v1": {
+            "available": true,
+            "as_of": "2026-08-18",
+            "current": 21850.0,
+            "atr": 842.7089,
+            "support": {
+              "lower": 20881.0308,
+              "upper": 22551.8436,
+              "center": 21613.5991,
+              "touches": 12,
+              "independent_reactions": 12,
+              "strength": 5.924,
+              "latest_reaction": "2026-07-29",
+              "latest_confirmation": "2026-07-29",
+              "source": "atr_reversal_low"
+            },
+            "first_resistance": {
+              "lower": 21852.4409,
+              "upper": 22210.2147,
+              "center": 22058.581,
+              "touches": 2,
+              "independent_reactions": 2,
+              "strength": 0.421,
+              "latest_reaction": "2025-12-24",
+              "latest_confirmation": "2025-12-24",
+              "source": "atr_reversal_high"
+            },
+            "core_resistance": {
+              "lower": 22373.8033,
+              "upper": 23830.2271,
+              "center": 23181.2335,
+              "touches": 8,
+              "independent_reactions": 8,
+              "strength": 4.72,
+              "latest_reaction": "2026-07-13",
+              "latest_confirmation": "2026-07-13",
+              "source": "atr_reversal_high"
+            },
+            "invalidation_close_below": 20670.3536,
+            "downside_to_invalidation_pct": -0.054,
+            "upside_to_first_resistance_pct": 0.0001,
+            "reward_risk_to_first_resistance": 0.0,
+            "support_distance_atr": 0.28,
+            "resistance_distance_atr": 0.25,
+            "position": "IN_SUPPORT",
+            "level_confidence": "HIGH",
+            "method": "atr_reversal_v1"
+          }
+        }
       },
       "pre_entry_timing": {
         "status": "READY",
@@ -6661,10 +7934,10 @@
         "setup_date": "202",
         "setup_price": 22150.0,
         "age_bars": 40,
-        "move_from_setup_pct": -0.0113,
-        "move_from_setup_atr": -0.3,
-        "ret_3d": 0.0069,
-        "ret_5d": -0.0113,
+        "move_from_setup_pct": -0.0135,
+        "move_from_setup_atr": -0.36,
+        "ret_3d": 0.0046,
+        "ret_5d": -0.0135,
         "method": "left_side_episode_replay"
       },
       "signal_count": 1,
@@ -6675,7 +7948,7 @@
         "bb_squeeze": {
           "current_width": 0.0572,
           "avg_width": 0.1168,
-          "ratio": 0.489,
+          "ratio": 0.49,
           "threshold": 0.5,
           "label_ko": "변동성 압축",
           "phase": "拉升 직전 (매집 완료)"
@@ -6688,20 +7961,20 @@
         "left_side_context"
       ],
       "quality_metrics": {
-        "last_close": 21900.0,
-        "ret_20d": -0.0288,
-        "ret_1d": -0.0135,
-        "ret_3d": 0.0069,
-        "ret_5d": -0.0113,
-        "ma50": 22167.0,
-        "ma200": 23070.75,
-        "drawdown_from_high": -0.2369,
-        "avg_volume_value": 17972451557.5,
+        "last_close": 21850.0,
+        "ret_20d": -0.031,
+        "ret_1d": -0.0158,
+        "ret_3d": 0.0046,
+        "ret_5d": -0.0135,
+        "ma50": 22166.0,
+        "ma200": 23070.5,
+        "drawdown_from_high": -0.2387,
+        "avg_volume_value": 18004133597.5,
         "liquidity_min_value": 2000000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "KRW",
-        "liquidity_buffer_multiple": 8.986,
-        "volume_ratio_3d_20d": 0.827
+        "liquidity_buffer_multiple": 9.002,
+        "volume_ratio_3d_20d": 0.838
       },
       "catalyst_context": {
         "status": "none",
@@ -6738,9 +8011,9 @@
         },
         "price_volume_reaction": {
           "status": "NO_CONFIRM",
-          "ret_3d": 0.0069,
-          "ret_5d": -0.0113,
-          "volume_ratio_3d_20d": 0.827,
+          "ret_3d": 0.0046,
+          "ret_5d": -0.0135,
+          "volume_ratio_3d_20d": 0.838,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -6830,7 +8103,7 @@
               "valuation_reasonable"
             ],
             "metrics": {
-              "pe": 15.853790069071982,
+              "pe": 15.85637468211869,
               "forward_pe": null,
               "peg": null
             }
@@ -6916,7 +8189,7 @@
         "support_reasons": [
           "quality:QUALITY_SUPPORT"
         ],
-        "opportunity_score": 3.334,
+        "opportunity_score": 3.344,
         "excluded": false,
         "exclude_reason": "",
         "selection_rank": null,
@@ -6927,7 +8200,7 @@
       "selection_rank": null,
       "selection_lane": "left_side",
       "selection_lane_status": "STAGE2_PASS",
-      "selection_opportunity_score": 3.334,
+      "selection_opportunity_score": 3.344,
       "review_pool_reason": "",
       "production_gate_passed": false,
       "production_gate_rejection_reason": "tier_not_allowed"
@@ -6955,11 +8228,11 @@
         ],
         "metrics": {
           "close_days": 243,
-          "avg_volume_value": 3802428202.5,
+          "avg_volume_value": 3805389842.5,
           "liquidity_min_value": 2000000000.0,
           "liquidity_source": "common_gate_ohlcv",
           "liquidity_unit": "KRW",
-          "liquidity_buffer_multiple": 1.901,
+          "liquidity_buffer_multiple": 1.903,
           "ret_20d": -0.0348,
           "drawdown_from_high": -0.3781,
           "atr_pct": 0.0656
@@ -6970,8 +8243,8 @@
           "status": "BULL",
           "reason": "above_ma200_and_positive_20d",
           "as_of": "2026-08-18",
-          "ret_20d_pct": 9.98,
-          "close_vs_ma200_pct": 21.67
+          "ret_20d_pct": 9.11,
+          "close_vs_ma200_pct": 20.72
         },
         "benchmark_ticker": "^KS11"
       },
@@ -6986,7 +8259,7 @@
           "market_cap_usd": 1494357579.88,
           "latest_date": "2026-08-18",
           "stale_trading_days": 0,
-          "avg_traded_value_20d": 3802428202.5,
+          "avg_traded_value_20d": 3805389842.5,
           "zero_volume_days_20d": 0,
           "ret_5d": -0.0135
         }
@@ -7003,9 +8276,9 @@
             "ret_20d": -0.0348,
             "ret_63d": -0.2132,
             "ret_126d": 0.119,
-            "rs_20d": -0.1345,
-            "rs_63d": -0.1696,
-            "rs_126d": -0.2336
+            "rs_20d": -0.1258,
+            "rs_63d": -0.1621,
+            "rs_126d": -0.223
           }
         },
         "pullback": {
@@ -7018,7 +8291,7 @@
             "ma50": 13191.8,
             "ma200": 11883.75,
             "drawdown_from_252d_high": -0.3781,
-            "volume_ratio_5d_20d": 0.6229
+            "volume_ratio_5d_20d": 0.6256
           }
         },
         "left_side": {
@@ -7043,7 +8316,7 @@
             "recent_10d_low": 11460.0,
             "prev_10d_low": 11300.0,
             "benchmark_above_ma200": true,
-            "benchmark_ret_20d": 0.0998
+            "benchmark_ret_20d": 0.0911
           }
         }
       },
@@ -7082,6 +8355,182 @@
         "position": "IN_SUPPORT",
         "level_confidence": "MEDIUM",
         "method": "confirmed_swings_plus_atr_v1_1"
+      },
+      "price_map_shadow": {
+        "enabled": true,
+        "schema_version": "sr_engine_shadow_v1",
+        "production_engine": "confirmed_swings_v1",
+        "winner_declared": false,
+        "engines": {
+          "confirmed_swings_v1": {
+            "available": true,
+            "as_of": "2026-08-18",
+            "current": 11660.0,
+            "atr": 708.721,
+            "support": {
+              "lower": 11349.4864,
+              "upper": 11703.8469,
+              "center": 11526.6667,
+              "touches": 3,
+              "source": "confirmed_swing_low"
+            },
+            "first_resistance": {
+              "lower": 12442.8197,
+              "upper": 12797.1803,
+              "center": 12620.0,
+              "touches": 1,
+              "source": "confirmed_swing_high"
+            },
+            "core_resistance": {
+              "lower": 14406.1531,
+              "upper": 14760.5136,
+              "center": 14583.3333,
+              "touches": 3,
+              "source": "confirmed_swing_high"
+            },
+            "invalidation_close_below": 11172.3061,
+            "downside_to_invalidation_pct": -0.0418,
+            "upside_to_first_resistance_pct": 0.0671,
+            "reward_risk_to_first_resistance": 1.61,
+            "support_distance_atr": 0.19,
+            "resistance_distance_atr": 1.35,
+            "position": "IN_SUPPORT",
+            "level_confidence": "MEDIUM",
+            "method": "confirmed_swings_plus_atr_v1_1"
+          },
+          "rolling_extrema_v1": {
+            "available": true,
+            "as_of": "2026-08-18",
+            "current": 11660.0,
+            "atr": 708.721,
+            "support": {
+              "lower": 10622.8197,
+              "upper": 10977.1803,
+              "center": 10800.0,
+              "touches": 1,
+              "source": "rolling_low"
+            },
+            "first_resistance": {
+              "lower": 16432.8197,
+              "upper": 16787.1803,
+              "center": 16610.0,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "core_resistance": {
+              "lower": 16432.8197,
+              "upper": 16787.1803,
+              "center": 16610.0,
+              "touches": 1,
+              "source": "rolling_high"
+            },
+            "invalidation_close_below": 10445.6394,
+            "downside_to_invalidation_pct": -0.1041,
+            "upside_to_first_resistance_pct": 0.4093,
+            "reward_risk_to_first_resistance": 3.93,
+            "support_distance_atr": 1.21,
+            "resistance_distance_atr": 6.98,
+            "position": "NEAR_SUPPORT",
+            "level_confidence": "LOW",
+            "method": "rolling_extrema_v1"
+          },
+          "prominence_reaction_v2": {
+            "available": true,
+            "as_of": "2026-08-18",
+            "current": 11660.0,
+            "atr": 708.721,
+            "support": {
+              "lower": 11303.7922,
+              "upper": 11716.2078,
+              "center": 11510.0,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 2.53,
+              "latest_reaction": "2026-06-08",
+              "latest_confirmation": "2026-06-10",
+              "source": "prominent_swing_low"
+            },
+            "first_resistance": {
+              "lower": 12405.7634,
+              "upper": 12834.2366,
+              "center": 12620.0,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.887,
+              "latest_reaction": "2026-08-07",
+              "latest_confirmation": "2026-08-11",
+              "source": "prominent_swing_high"
+            },
+            "core_resistance": {
+              "lower": 14286.4194,
+              "upper": 14857.2494,
+              "center": 14566.4786,
+              "touches": 3,
+              "independent_reactions": 3,
+              "strength": 1.892,
+              "latest_reaction": "2026-07-13",
+              "latest_confirmation": "2026-07-15",
+              "source": "prominent_swing_high"
+            },
+            "invalidation_close_below": 11126.6119,
+            "downside_to_invalidation_pct": -0.0457,
+            "upside_to_first_resistance_pct": 0.064,
+            "reward_risk_to_first_resistance": 1.4,
+            "support_distance_atr": 0.21,
+            "resistance_distance_atr": 1.35,
+            "position": "IN_SUPPORT",
+            "level_confidence": "LOW",
+            "method": "prominence_reaction_v2"
+          },
+          "atr_reversal_v1": {
+            "available": true,
+            "as_of": "2026-08-18",
+            "current": 11660.0,
+            "atr": 708.721,
+            "support": {
+              "lower": 11057.4602,
+              "upper": 11542.5398,
+              "center": 11300.0,
+              "touches": 1,
+              "independent_reactions": 1,
+              "strength": 0.917,
+              "latest_reaction": "2026-07-30",
+              "latest_confirmation": "2026-07-30",
+              "source": "atr_reversal_low"
+            },
+            "first_resistance": {
+              "lower": 13733.1607,
+              "upper": 14595.6917,
+              "center": 14190.4079,
+              "touches": 3,
+              "independent_reactions": 3,
+              "strength": 3.631,
+              "latest_reaction": "2026-07-10",
+              "latest_confirmation": "2026-07-10",
+              "source": "atr_reversal_high"
+            },
+            "core_resistance": {
+              "lower": 15067.8816,
+              "upper": 15902.8992,
+              "center": 15435.325,
+              "touches": 3,
+              "independent_reactions": 3,
+              "strength": 2.091,
+              "latest_reaction": "2026-05-14",
+              "latest_confirmation": "2026-05-14",
+              "source": "atr_reversal_high"
+            },
+            "invalidation_close_below": 10880.2799,
+            "downside_to_invalidation_pct": -0.0669,
+            "upside_to_first_resistance_pct": 0.1778,
+            "reward_risk_to_first_resistance": 2.66,
+            "support_distance_atr": 0.51,
+            "resistance_distance_atr": 3.57,
+            "position": "NEAR_SUPPORT",
+            "level_confidence": "MEDIUM",
+            "method": "atr_reversal_v1"
+          }
+        }
       },
       "pre_entry_timing": {
         "status": "READY",
@@ -7124,12 +8573,12 @@
         "ma50": 13191.8,
         "ma200": 11883.75,
         "drawdown_from_high": -0.3781,
-        "avg_volume_value": 3802428202.5,
+        "avg_volume_value": 3805389842.5,
         "liquidity_min_value": 2000000000.0,
         "liquidity_source": "common_gate_ohlcv",
         "liquidity_unit": "KRW",
-        "liquidity_buffer_multiple": 1.901,
-        "volume_ratio_3d_20d": 0.345
+        "liquidity_buffer_multiple": 1.903,
+        "volume_ratio_3d_20d": 0.35
       },
       "catalyst_context": {
         "status": "none",
@@ -7168,7 +8617,7 @@
           "status": "NO_CONFIRM",
           "ret_3d": 0.0175,
           "ret_5d": -0.0135,
-          "volume_ratio_3d_20d": 0.345,
+          "volume_ratio_3d_20d": 0.35,
           "thresholds": {
             "ret_3d_up": 0.03,
             "ret_3d_down": -0.05,
@@ -7258,7 +8707,7 @@
               "valuation_reasonable"
             ],
             "metrics": {
-              "pe": 4.064421311490555,
+              "pe": 4.065083926316614,
               "forward_pe": null,
               "peg": null
             }
@@ -7457,6 +8906,11 @@
       "price_map": {
         "available": false,
         "reason": "not_left_side_episode"
+      },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
       },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
@@ -7675,8 +9129,8 @@
           "snapshot_date": "2026-08-18",
           "quadrant": "LAGGING",
           "support": "UNSUPPORTED",
-          "ratio": 98.97,
-          "momentum": 98.56
+          "ratio": 98.79,
+          "momentum": 99.93
         },
         "themes": [],
         "theme_snapshot_date": "2026-08-18",
@@ -7812,6 +9266,11 @@
       "price_map": {
         "available": false,
         "reason": "not_left_side_episode"
+      },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
       },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
@@ -8185,6 +9644,11 @@
       "price_map": {
         "available": false,
         "reason": "not_left_side_episode"
+      },
+      "price_map_shadow": {
+        "enabled": false,
+        "schema_version": "sr_engine_shadow_v1",
+        "engines": {}
       },
       "pre_entry_timing": {
         "status": "UNAVAILABLE",
@@ -8609,6 +10073,11 @@
             "available": false,
             "reason": "not_left_side_episode"
           },
+          "price_map_shadow": {
+            "enabled": false,
+            "schema_version": "sr_engine_shadow_v1",
+            "engines": {}
+          },
           "pre_entry_timing": {
             "status": "UNAVAILABLE",
             "reason": "not_left_side_episode"
@@ -8666,9 +10135,9 @@
                   "valuation_reasonable"
                 ],
                 "metrics": {
-                  "pe": 27.819636026428654,
+                  "pe": 27.761678451373594,
                   "forward_pe": null,
-                  "peg": 0.5226044405365141
+                  "peg": 0.5215156812853964
                 }
               },
               "flow": {
@@ -8775,15 +10244,15 @@
                     "etf": "AIQ",
                     "label": "AI & 빅데이터",
                     "quadrant": "IMPROVING",
-                    "ratio": 98.56,
-                    "momentum": 100.82
+                    "ratio": 98.53,
+                    "momentum": 101.1
                   },
                   {
                     "etf": "ARTY",
                     "label": "Future AI & Tech",
                     "quadrant": "LEADING",
-                    "ratio": 104.97,
-                    "momentum": 107.78
+                    "ratio": 104.96,
+                    "momentum": 106.8
                   }
                 ],
                 "caution_etfs": [],
@@ -8876,7 +10345,7 @@
         "policy_id": "left_side_context_v1",
         "max_picks": 2,
         "llm_additions_allowed": false,
-        "evaluated": 359,
+        "evaluated": 361,
         "eligible_before_cap": 3,
         "selected": 2,
         "selected_tickers": [
@@ -8885,10 +10354,10 @@
         ],
         "no_signal": false,
         "rejection_counts": {
-          "lane_status": 211,
+          "lane_status": 212,
           "mapped_theme": 2,
           "risk_catalyst": 1,
-          "primary_lane": 33,
+          "primary_lane": 34,
           "sector": 102,
           "quality": 7
         },
@@ -8933,7 +10402,7 @@
         },
         "source_pool": {
           "stage": "common_gate_passed_left_side_pre_entry_and_stage2",
-          "count": 359,
+          "count": 361,
           "quality_audit": {
             "enabled": true,
             "eval_limit": 30,
@@ -8962,18 +10431,18 @@
             "eval_limit": 20,
             "evaluated": 20,
             "found": 6,
-            "risk": 7,
-            "none": 7,
+            "risk": 6,
+            "none": 8,
             "non_us": 0,
             "no_key": 0,
             "error": 0,
             "positive_revaluation": 6,
-            "risk_catalyst": 7,
-            "noise": 7,
+            "risk_catalyst": 6,
+            "noise": 8,
             "fresh_3d": 14,
             "recent_14d": 5,
             "price_volume_confirmed": 0,
-            "top3_excluded_risk": 7,
+            "top3_excluded_risk": 6,
             "llm_enabled": true,
             "llm_evaluated": 8,
             "llm_ok": 8,
@@ -9122,6 +10591,182 @@
             "position": "IN_SUPPORT",
             "level_confidence": "MEDIUM",
             "method": "confirmed_swings_plus_atr_v1_1"
+          },
+          "price_map_shadow": {
+            "enabled": true,
+            "schema_version": "sr_engine_shadow_v1",
+            "production_engine": "confirmed_swings_v1",
+            "winner_declared": false,
+            "engines": {
+              "confirmed_swings_v1": {
+                "available": true,
+                "as_of": "2026-08-17",
+                "current": 162.18,
+                "atr": 7.5762,
+                "support": {
+                  "lower": 161.026,
+                  "upper": 164.814,
+                  "center": 162.92,
+                  "touches": 2,
+                  "source": "confirmed_swing_low"
+                },
+                "first_resistance": {
+                  "lower": 166.976,
+                  "upper": 170.764,
+                  "center": 168.87,
+                  "touches": 1,
+                  "source": "confirmed_swing_high"
+                },
+                "core_resistance": {
+                  "lower": 176.756,
+                  "upper": 180.544,
+                  "center": 178.65,
+                  "touches": 1,
+                  "source": "confirmed_swing_high"
+                },
+                "invalidation_close_below": 159.132,
+                "downside_to_invalidation_pct": -0.0188,
+                "upside_to_first_resistance_pct": 0.0296,
+                "reward_risk_to_first_resistance": 1.57,
+                "support_distance_atr": -0.1,
+                "resistance_distance_atr": 0.88,
+                "position": "IN_SUPPORT",
+                "level_confidence": "MEDIUM",
+                "method": "confirmed_swings_plus_atr_v1_1"
+              },
+              "rolling_extrema_v1": {
+                "available": true,
+                "as_of": "2026-08-17",
+                "current": 162.18,
+                "atr": 7.5762,
+                "support": {
+                  "lower": 140.996,
+                  "upper": 144.784,
+                  "center": 142.89,
+                  "touches": 1,
+                  "source": "rolling_low"
+                },
+                "first_resistance": {
+                  "lower": 258.026,
+                  "upper": 261.8141,
+                  "center": 259.92,
+                  "touches": 1,
+                  "source": "rolling_high"
+                },
+                "core_resistance": {
+                  "lower": 258.026,
+                  "upper": 261.8141,
+                  "center": 259.92,
+                  "touches": 1,
+                  "source": "rolling_high"
+                },
+                "invalidation_close_below": 139.102,
+                "downside_to_invalidation_pct": -0.1423,
+                "upside_to_first_resistance_pct": 0.591,
+                "reward_risk_to_first_resistance": 4.15,
+                "support_distance_atr": 2.55,
+                "resistance_distance_atr": 12.9,
+                "position": "BETWEEN_LEVELS",
+                "level_confidence": "LOW",
+                "method": "rolling_extrema_v1"
+              },
+              "prominence_reaction_v2": {
+                "available": true,
+                "as_of": "2026-08-17",
+                "current": 162.18,
+                "atr": 7.5762,
+                "support": {
+                  "lower": 157.254,
+                  "upper": 160.4461,
+                  "center": 158.85,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 0.408,
+                  "latest_reaction": "2025-11-20",
+                  "latest_confirmation": "2025-11-24",
+                  "source": "prominent_swing_low"
+                },
+                "first_resistance": {
+                  "lower": 159.7295,
+                  "upper": 162.2705,
+                  "center": 161.0,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 1.205,
+                  "latest_reaction": "2026-04-27",
+                  "latest_confirmation": "2026-04-29",
+                  "source": "prominent_swing_high"
+                },
+                "core_resistance": {
+                  "lower": 162.6741,
+                  "upper": 164.3059,
+                  "center": 163.49,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 0.133,
+                  "latest_reaction": "2025-09-05",
+                  "latest_confirmation": "2025-09-09",
+                  "source": "prominent_swing_high"
+                },
+                "invalidation_close_below": 155.36,
+                "downside_to_invalidation_pct": -0.0421,
+                "upside_to_first_resistance_pct": -0.0151,
+                "reward_risk_to_first_resistance": -0.36,
+                "support_distance_atr": 0.44,
+                "resistance_distance_atr": -0.16,
+                "position": "IN_RESISTANCE",
+                "level_confidence": "LOW",
+                "method": "prominence_reaction_v2"
+              },
+              "atr_reversal_v1": {
+                "available": true,
+                "as_of": "2026-08-17",
+                "current": 162.18,
+                "atr": 7.5762,
+                "support": {
+                  "lower": 156.5273,
+                  "upper": 161.186,
+                  "center": 158.7679,
+                  "touches": 2,
+                  "independent_reactions": 2,
+                  "strength": 0.283,
+                  "latest_reaction": "2025-11-20",
+                  "latest_confirmation": "2025-11-20",
+                  "source": "atr_reversal_low"
+                },
+                "first_resistance": {
+                  "lower": 168.3336,
+                  "upper": 170.0264,
+                  "center": 169.18,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 0.122,
+                  "latest_reaction": "2025-10-03",
+                  "latest_confirmation": "2025-10-03",
+                  "source": "atr_reversal_high"
+                },
+                "core_resistance": {
+                  "lower": 172.6885,
+                  "upper": 174.4115,
+                  "center": 173.55,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 0.115,
+                  "latest_reaction": "2025-09-24",
+                  "latest_confirmation": "2025-09-24",
+                  "source": "atr_reversal_high"
+                },
+                "invalidation_close_below": 154.6333,
+                "downside_to_invalidation_pct": -0.0465,
+                "upside_to_first_resistance_pct": 0.0379,
+                "reward_risk_to_first_resistance": 0.82,
+                "support_distance_atr": 0.45,
+                "resistance_distance_atr": 0.92,
+                "position": "NEAR_RESISTANCE",
+                "level_confidence": "MEDIUM",
+                "method": "atr_reversal_v1"
+              }
+            }
           },
           "pre_entry_timing": {
             "status": "READY",
@@ -9428,6 +11073,182 @@
             "level_confidence": "MEDIUM",
             "method": "confirmed_swings_plus_atr_v1_1"
           },
+          "price_map_shadow": {
+            "enabled": true,
+            "schema_version": "sr_engine_shadow_v1",
+            "production_engine": "confirmed_swings_v1",
+            "winner_declared": false,
+            "engines": {
+              "confirmed_swings_v1": {
+                "available": true,
+                "as_of": "2026-08-17",
+                "current": 271.43,
+                "atr": 21.9909,
+                "support": {
+                  "lower": 259.8723,
+                  "upper": 270.8677,
+                  "center": 265.37,
+                  "touches": 1,
+                  "source": "confirmed_swing_low"
+                },
+                "first_resistance": {
+                  "lower": 291.1448,
+                  "upper": 302.1402,
+                  "center": 296.6425,
+                  "touches": 2,
+                  "source": "confirmed_swing_high"
+                },
+                "core_resistance": {
+                  "lower": 333.9423,
+                  "upper": 344.9377,
+                  "center": 339.44,
+                  "touches": 1,
+                  "source": "confirmed_swing_high"
+                },
+                "invalidation_close_below": 254.3746,
+                "downside_to_invalidation_pct": -0.0628,
+                "upside_to_first_resistance_pct": 0.0726,
+                "reward_risk_to_first_resistance": 1.16,
+                "support_distance_atr": 0.28,
+                "resistance_distance_atr": 1.15,
+                "position": "NEAR_RESISTANCE",
+                "level_confidence": "MEDIUM",
+                "method": "confirmed_swings_plus_atr_v1_1"
+              },
+              "rolling_extrema_v1": {
+                "available": true,
+                "as_of": "2026-08-17",
+                "current": 271.43,
+                "atr": 21.9909,
+                "support": {
+                  "lower": 213.8923,
+                  "upper": 224.8877,
+                  "center": 219.39,
+                  "touches": 1,
+                  "source": "rolling_low"
+                },
+                "first_resistance": {
+                  "lower": 447.2023,
+                  "upper": 458.1977,
+                  "center": 452.7,
+                  "touches": 1,
+                  "source": "rolling_high"
+                },
+                "core_resistance": {
+                  "lower": 447.2023,
+                  "upper": 458.1977,
+                  "center": 452.7,
+                  "touches": 1,
+                  "source": "rolling_high"
+                },
+                "invalidation_close_below": 208.3946,
+                "downside_to_invalidation_pct": -0.2322,
+                "upside_to_first_resistance_pct": 0.6476,
+                "reward_risk_to_first_resistance": 2.79,
+                "support_distance_atr": 2.37,
+                "resistance_distance_atr": 8.24,
+                "position": "BETWEEN_LEVELS",
+                "level_confidence": "LOW",
+                "method": "rolling_extrema_v1"
+              },
+              "prominence_reaction_v2": {
+                "available": true,
+                "as_of": "2026-08-17",
+                "current": 271.43,
+                "atr": 21.9909,
+                "support": {
+                  "lower": 235.5068,
+                  "upper": 250.7332,
+                  "center": 243.12,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 1.052,
+                  "latest_reaction": "2026-07-17",
+                  "latest_confirmation": "2026-07-21",
+                  "source": "prominent_swing_low"
+                },
+                "first_resistance": {
+                  "lower": 261.7929,
+                  "upper": 275.1671,
+                  "center": 268.48,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 0.88,
+                  "latest_reaction": "2026-07-30",
+                  "latest_confirmation": "2026-08-03",
+                  "source": "prominent_swing_high"
+                },
+                "core_resistance": {
+                  "lower": 286.8307,
+                  "upper": 305.891,
+                  "center": 296.9759,
+                  "touches": 2,
+                  "independent_reactions": 2,
+                  "strength": 1.74,
+                  "latest_reaction": "2026-08-07",
+                  "latest_confirmation": "2026-08-11",
+                  "source": "prominent_swing_high"
+                },
+                "invalidation_close_below": 230.0091,
+                "downside_to_invalidation_pct": -0.1526,
+                "upside_to_first_resistance_pct": -0.0355,
+                "reward_risk_to_first_resistance": -0.23,
+                "support_distance_atr": 1.29,
+                "resistance_distance_atr": -0.13,
+                "position": "IN_RESISTANCE",
+                "level_confidence": "LOW",
+                "method": "prominence_reaction_v2"
+              },
+              "atr_reversal_v1": {
+                "available": true,
+                "as_of": "2026-08-17",
+                "current": 271.43,
+                "atr": 21.9909,
+                "support": {
+                  "lower": 218.5268,
+                  "upper": 231.2532,
+                  "center": 224.89,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 2.187,
+                  "latest_reaction": "2026-07-29",
+                  "latest_confirmation": "2026-07-29",
+                  "source": "atr_reversal_low"
+                },
+                "first_resistance": {
+                  "lower": 404.9947,
+                  "upper": 418.6653,
+                  "center": 411.83,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 2.219,
+                  "latest_reaction": "2026-06-03",
+                  "latest_confirmation": "2026-06-03",
+                  "source": "atr_reversal_high"
+                },
+                "core_resistance": {
+                  "lower": 430.6729,
+                  "upper": 448.2471,
+                  "center": 439.46,
+                  "touches": 1,
+                  "independent_reactions": 1,
+                  "strength": 2.079,
+                  "latest_reaction": "2026-06-18",
+                  "latest_confirmation": "2026-06-18",
+                  "source": "atr_reversal_high"
+                },
+                "invalidation_close_below": 213.0291,
+                "downside_to_invalidation_pct": -0.2152,
+                "upside_to_first_resistance_pct": 0.4921,
+                "reward_risk_to_first_resistance": 2.29,
+                "support_distance_atr": 2.12,
+                "resistance_distance_atr": 6.38,
+                "position": "BETWEEN_LEVELS",
+                "level_confidence": "LOW",
+                "method": "atr_reversal_v1"
+              }
+            }
+          },
           "pre_entry_timing": {
             "status": "READY",
             "lane_status": "STAGE2_PASS",
@@ -9610,23 +11431,21 @@
         "policy_id": "pre_entry_v1",
         "live": true,
         "max_picks": 2,
-        "evaluated": 359,
-        "eligible_before_cap": 1,
-        "selected": 1,
-        "selected_tickers": [
-          "QCOM"
-        ],
-        "no_signal": false,
+        "evaluated": 361,
+        "eligible_before_cap": 0,
+        "selected": 0,
+        "selected_tickers": [],
+        "no_signal": true,
         "rejection_counts": {
-          "resistance_too_close": 168,
-          "timeliness_missed": 44,
+          "resistance_too_close": 172,
+          "timeliness_missed": 41,
           "quality": 1,
-          "cooldown": 3,
-          "broken_support": 5,
+          "cooldown": 4,
+          "broken_support": 6,
           "risk_catalyst": 1,
-          "sector": 116,
+          "sector": 113,
           "factor_extreme": 1,
-          "timeliness_late": 18,
+          "timeliness_late": 21,
           "lane_status": 1
         },
         "criteria": {
@@ -9643,314 +11462,7 @@
           "backfill": false
         }
       },
-      "candidates": [
-        {
-          "ticker": "QCOM",
-          "name": "Qualcomm Inc",
-          "country": "US",
-          "sector": "Technology",
-          "market_cap": 213450000000.0,
-          "avg_volume_value": 0.0,
-          "score": 0.2,
-          "signal_score": 0.0,
-          "theme_score": 0.0,
-          "liquidity_score": 0.2,
-          "factor_score": 0.0,
-          "factor_context": {
-            "score": 0.6,
-            "positives": [
-              "liquidity_good",
-              "not_chasing",
-              "volatility_healthy"
-            ],
-            "negatives": [],
-            "metrics": {
-              "close_days": 251,
-              "avg_volume_value": 1855986821.26,
-              "liquidity_min_value": 10000000.0,
-              "liquidity_source": "common_gate_ohlcv",
-              "liquidity_unit": "USD",
-              "liquidity_buffer_multiple": 185.599,
-              "ret_20d": -0.0478,
-              "drawdown_from_high": -0.3539,
-              "atr_pct": 0.0533
-            }
-          },
-          "decision_context": {
-            "market_regime": {
-              "status": "UNKNOWN",
-              "reason": "benchmark_regime_missing"
-            },
-            "benchmark_ticker": "SPY"
-          },
-          "common_gate": {
-            "status": "PASS",
-            "hard_fail_reasons": [],
-            "review_flags": [],
-            "metrics": {
-              "country": "US",
-              "close_days": 251,
-              "latest_close": 162.18,
-              "market_cap_usd": 213450000000.0,
-              "latest_date": "2026-08-17",
-              "stale_trading_days": 1,
-              "avg_traded_value_20d": 1855986821.26,
-              "zero_volume_days_20d": 0,
-              "ret_5d": 0.0001
-            }
-          },
-          "price_lanes": {
-            "benchmark": "SPY",
-            "strength": {
-              "status": "FAIL",
-              "reasons": [],
-              "review_flags": [
-                "benchmark_or_price_data_short"
-              ],
-              "metrics": {}
-            },
-            "pullback": {
-              "status": "FAIL",
-              "reasons": [],
-              "review_flags": [
-                "trend_not_intact"
-              ],
-              "metrics": {
-                "ma50": 182.263,
-                "ma200": 168.5877,
-                "drawdown_from_252d_high": -0.3539,
-                "volume_ratio_5d_20d": 0.6269
-              }
-            },
-            "left_side": {
-              "status": "STAGE2_PASS",
-              "stage": "STAGE2",
-              "reasons": [
-                "low_zone",
-                "downside_speed_slowing",
-                "short_return_improving",
-                "down_days_decreasing",
-                "higher_low"
-              ],
-              "review_flags": [],
-              "metrics": {
-                "drawdown_from_252d_high": -0.3539,
-                "distance_from_252d_low": 0.3072,
-                "atr_ratio_10d_20d": 0.9236,
-                "down_day_ratio_10d": 0.3,
-                "down_day_ratio_prev20d": 0.65,
-                "upper_close_days_5d": 1,
-                "deceleration_count": 3,
-                "recent_10d_low": 157.53,
-                "prev_10d_low": 147.61
-              }
-            }
-          },
-          "price_map": {
-            "available": true,
-            "as_of": "2026-08-17",
-            "current": 162.18,
-            "atr": 7.5762,
-            "support": {
-              "lower": 161.026,
-              "upper": 164.814,
-              "center": 162.92,
-              "touches": 2,
-              "source": "confirmed_swing_low"
-            },
-            "first_resistance": {
-              "lower": 166.976,
-              "upper": 170.764,
-              "center": 168.87,
-              "touches": 1,
-              "source": "confirmed_swing_high"
-            },
-            "core_resistance": {
-              "lower": 176.756,
-              "upper": 180.544,
-              "center": 178.65,
-              "touches": 1,
-              "source": "confirmed_swing_high"
-            },
-            "invalidation_close_below": 159.132,
-            "downside_to_invalidation_pct": -0.0188,
-            "upside_to_first_resistance_pct": 0.0296,
-            "reward_risk_to_first_resistance": 1.57,
-            "support_distance_atr": -0.1,
-            "resistance_distance_atr": 0.88,
-            "position": "IN_SUPPORT",
-            "level_confidence": "MEDIUM",
-            "method": "confirmed_swings_plus_atr_v1_1"
-          },
-          "pre_entry_timing": {
-            "status": "READY",
-            "lane_status": "STAGE2_PASS",
-            "setup_date": "228",
-            "setup_price": 170.61,
-            "age_bars": 22,
-            "move_from_setup_pct": -0.0494,
-            "move_from_setup_atr": -1.11,
-            "ret_3d": -0.0055,
-            "ret_5d": 0.0001,
-            "method": "left_side_episode_replay"
-          },
-          "signal_count": 0,
-          "signal_keys": [],
-          "signals": {},
-          "shadow_signal_count": 0,
-          "shadow_signal_keys": [],
-          "shadow_signals": {},
-          "quality_flags": [],
-          "quality_metrics": {
-            "last_close": 162.18,
-            "ret_20d": -0.0478,
-            "ret_1d": -0.0218,
-            "ret_3d": -0.0055,
-            "ret_5d": 0.0001,
-            "ma50": 182.263,
-            "ma200": 168.588,
-            "drawdown_from_high": -0.3539,
-            "avg_volume_value": 1855986821.26,
-            "liquidity_min_value": 10000000.0,
-            "liquidity_source": "common_gate_ohlcv",
-            "liquidity_unit": "USD",
-            "liquidity_buffer_multiple": 185.599,
-            "volume_ratio_3d_20d": 0.637
-          },
-          "catalyst_context": {
-            "status": "not_checked",
-            "score": 0.0
-          },
-          "quality_auditor": {
-            "enabled": true,
-            "status": "QUALITY_SUPPORT",
-            "confidence_delta": 3,
-            "score": 3,
-            "source": "fmp",
-            "categories": {
-              "growth": {
-                "status": "NEUTRAL",
-                "score": 0,
-                "reasons": [],
-                "metrics": {
-                  "eps_growth_next_y": -44.33443344334434,
-                  "revenue_growth_pct": 13.65946306657769,
-                  "free_cash_flow_growth_pct": 14.864259474957443
-                }
-              },
-              "valuation": {
-                "status": "SUPPORT",
-                "score": 1,
-                "reasons": [
-                  "valuation_reasonable"
-                ],
-                "metrics": {
-                  "pe": 18.47152619589977,
-                  "forward_pe": null,
-                  "peg": -1.1443602323731976
-                }
-              },
-              "flow": {
-                "status": "NEUTRAL",
-                "score": 0,
-                "reasons": [],
-                "metrics": {
-                  "insider_trans": null,
-                  "inst_trans": null,
-                  "rating_score": 3.0
-                }
-              },
-              "short_risk": {
-                "status": "UNKNOWN",
-                "score": 0,
-                "reasons": [],
-                "metrics": {
-                  "short_float": null
-                }
-              },
-              "price_quality": {
-                "status": "SUPPORT",
-                "score": 2,
-                "reasons": [
-                  "lane_structure_support",
-                  "factor_positive"
-                ],
-                "metrics": {
-                  "primary_lane": "left_side",
-                  "primary_lane_status": "STAGE2_PASS",
-                  "factor_positives": [
-                    "liquidity_good",
-                    "not_chasing",
-                    "volatility_healthy"
-                  ],
-                  "factor_negatives": [],
-                  "quality_flags": []
-                }
-              }
-            },
-            "data_missing_count": 1,
-            "reject_authority": false
-          },
-          "theme_industry": {
-            "enabled": true,
-            "status": "SUPPORT",
-            "confidence_delta": 1,
-            "reasons": [
-              "sector_rrg_support"
-            ],
-            "warnings": [],
-            "sector": {
-              "name": "Technology",
-              "etf": "XLK",
-              "snapshot_date": "2026-08-18",
-              "quadrant": "LEADING",
-              "support": "SUPPORT",
-              "ratio": 102.44,
-              "momentum": 106.4
-            },
-            "themes": [],
-            "theme_snapshot_date": "2026-08-18",
-            "peer_confirmation": {
-              "static_peer_count": 0,
-              "active_peer_count": 0,
-              "active_peers": []
-            },
-            "reject_authority": false
-          },
-          "track_d": {
-            "is_theme_beneficiary": false
-          },
-          "top3_selection": {
-            "tier": "B",
-            "tier_rank": 3,
-            "primary_lane": "left_side",
-            "primary_lane_status": "STAGE2_PASS",
-            "lane_rank": 4,
-            "catalyst_freshness_rank": 0,
-            "support_count": 2,
-            "support_reasons": [
-              "theme:SUPPORT",
-              "quality:QUALITY_SUPPORT"
-            ],
-            "opportunity_score": 3.569,
-            "excluded": false,
-            "exclude_reason": "",
-            "selection_rank": null
-          },
-          "selection_tier": "B",
-          "selection_rank": null,
-          "selection_lane": "left_side",
-          "selection_lane_status": "STAGE2_PASS",
-          "selection_opportunity_score": 3.569,
-          "review_pool_reason": "",
-          "pre_entry_selection": {
-            "policy_id": "pre_entry_v1",
-            "rank": 1,
-            "live": true,
-            "llm_additions_allowed": false
-          }
-        }
-      ]
+      "candidates": []
     }
   }
 }
