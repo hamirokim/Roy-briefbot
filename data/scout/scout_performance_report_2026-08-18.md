@@ -3,8 +3,8 @@
 - date: 2026-08-18
 - evaluated candidates: 135 / 135
 - actually bought: 0
-- avg D20 return: -3.51
-- avg alpha: {'d5': 0.22, 'd10': -0.74, 'd20': 1.28}
+- avg D20 return: -3.5
+- avg alpha: {'d5': 0.22, 'd10': -0.72, 'd20': 1.29}
 - positive alpha rate: {'d5': 0.534, 'd10': 0.531, 'd20': 0.552}
 - verdicts: {'FAILED_FAST': 77, 'WINNER': 45, 'NEUTRAL': 7, 'PENDING': 4, 'WATCH': 2}
 - execution: first executable session open; no same-day close entry
@@ -15,18 +15,18 @@
 ### by_lane
 - strength: n=62, avgD20=-4.51, avgAlphaD20=-0.84, winner=0.355, failed_fast=0.548, bought=0
 - pullback: n=41, avgD20=-5.39, avgAlphaD20=1.13, winner=0.268, failed_fast=0.732, bought=0
-- left_side: n=32, avgD20=1.68, avgAlphaD20=6.23, winner=0.375, failed_fast=0.406, bought=0
+- left_side: n=32, avgD20=1.75, avgAlphaD20=6.3, winner=0.375, failed_fast=0.406, bought=0
 
 ### by_lane_status
 - STRONG_PASS: n=79, avgD20=-3.98, avgAlphaD20=0.22, winner=0.342, failed_fast=0.582, bought=0
 - PASS: n=23, avgD20=-7.08, avgAlphaD20=0.1, winner=0.261, failed_fast=0.739, bought=0
-- STAGE2_PASS: n=19, avgD20=3.7, avgAlphaD20=9.41, winner=0.421, failed_fast=0.526, bought=0
+- STAGE2_PASS: n=19, avgD20=3.78, avgAlphaD20=9.49, winner=0.421, failed_fast=0.526, bought=0
 - STAGE2_STRONG_PASS: n=12, avgD20=-5.62, avgAlphaD20=-6.77, winner=0.333, failed_fast=0.167, bought=0
 - WAIT_CONFIRM: n=1, avgD20=7.33, avgAlphaD20=23.92, winner=0.0, failed_fast=1.0, bought=0
 - WAIT: n=1, avgD20=-21.01, avgAlphaD20=-20.96, winner=0.0, failed_fast=1.0, bought=0
 
 ### by_theme_industry
-- SUPPORT: n=66, avgD20=1.04, avgAlphaD20=0.78, winner=0.455, failed_fast=0.364, bought=0
+- SUPPORT: n=66, avgD20=1.06, avgAlphaD20=0.81, winner=0.455, failed_fast=0.364, bought=0
 - NO_MAPPING: n=37, avgD20=-13.37, avgAlphaD20=4.0, winner=0.027, failed_fast=0.973, bought=0
 - STRONG_SUPPORT: n=20, avgD20=-1.16, avgAlphaD20=-1.28, winner=0.4, failed_fast=0.6, bought=0
 - SECTOR_UNSUPPORTED: n=10, avgD20=1.05, avgAlphaD20=-1.25, winner=0.5, failed_fast=0.5, bought=0
@@ -35,18 +35,18 @@
 ### by_quality_auditor
 - STRONG_QUALITY: n=56, avgD20=2.23, avgAlphaD20=3.39, winner=0.375, failed_fast=0.446, bought=0
 - QUALITY_SUPPORT: n=38, avgD20=-7.07, avgAlphaD20=-0.89, winner=0.342, failed_fast=0.658, bought=0
-- not_checked: n=25, avgD20=-1.33, avgAlphaD20=1.51, winner=0.4, failed_fast=0.48, bought=0
+- not_checked: n=25, avgD20=-1.27, avgAlphaD20=1.58, winner=0.4, failed_fast=0.48, bought=0
 - NEUTRAL: n=13, avgD20=-17.65, avgAlphaD20=-0.9, winner=0.077, failed_fast=0.923, bought=0
 - DATA_LIGHT: n=3, avgD20=-12.63, avgAlphaD20=-0.5, winner=0.0, failed_fast=1.0, bought=0
 
 ### by_catalyst
-- unknown: n=59, avgD20=-1.97, avgAlphaD20=1.65, winner=0.39, failed_fast=0.458, bought=0
+- unknown: n=59, avgD20=-1.94, avgAlphaD20=1.69, winner=0.39, failed_fast=0.458, bought=0
 - POSITIVE_REVALUATION: n=39, avgD20=-3.42, avgAlphaD20=-2.35, winner=0.333, failed_fast=0.564, bought=0
 - NOISE: n=32, avgD20=-5.18, avgAlphaD20=2.95, winner=0.281, failed_fast=0.719, bought=0
 - NO_DATA: n=5, avgD20=-9.49, avgAlphaD20=12.75, winner=0.0, failed_fast=1.0, bought=0
 
 ### by_market_regime
-- BULL: n=71, avgD20=-0.87, avgAlphaD20=2.87, winner=0.338, failed_fast=0.521, bought=0
+- BULL: n=71, avgD20=-0.85, avgAlphaD20=2.9, winner=0.338, failed_fast=0.521, bought=0
 - MIXED: n=50, avgD20=-3.31, avgAlphaD20=0.64, winner=0.42, failed_fast=0.52, bought=0
 - POSITIVE: n=6, avgD20=-13.55, avgAlphaD20=-3.85, winner=0.0, failed_fast=1.0, bought=0
 - BEAR: n=5, avgD20=-23.62, avgAlphaD20=-2.41, winner=0.0, failed_fast=1.0, bought=0
@@ -55,7 +55,7 @@
 ## LLM Override Comparison
 - counts: dropped=7, added=19, kept=116
 - avg D5: dropped=-1.26, added=-1.81, kept=-0.63
-- avg D20: dropped=-9.89, added=-4.38, kept=-3.36
+- avg D20: dropped=-9.89, added=-4.38, kept=-3.34
 
 ### Dropped by LLM
 - 2026-05-28 IRDM FAILED_FAST D5=1.32 D20=-15.31 MFE=4.75 MAE=-21.0 lane=strength:STRONG_PASS
@@ -91,30 +91,35 @@
 - evidence status: COLLECTING_UNTOUCHED_WINDOW
 - counterfactual proven: False
 - winner declared: False
-- NONE: n=131/131, alpha={'d5': 0.1, 'd10': -0.74, 'd20': 1.28}, positiveAlpha={'d5': 0.531, 'd10': 0.531, 'd20': 0.552}
+- NONE: n=131/131, alpha={'d5': 0.1, 'd10': -0.72, 'd20': 1.29}, positiveAlpha={'d5': 0.531, 'd10': 0.531, 'd20': 0.552}
 - SUPPORT: n=4/4, alpha={'d5': 14.78, 'd10': None, 'd20': None}, positiveAlpha={'d5': 1.0, 'd10': None, 'd20': None}
 
 ## Precision Shadow Comparison
-- left_side_context_v1: n=31/31, avgD5=6.56, avgD10=5.25, avgD20=None, alphaD20=None
-- pre_entry_v1: n=6/8, avgD5=None, avgD10=None, avgD20=None, alphaD20=None
-- us_precision_v1: n=47/48, avgD5=3.64, avgD10=5.04, avgD20=4.1, alphaD20=0.76
+- left_side_context_v1: n=31/33, avgD5=6.56, avgD10=4.92, avgD20=None, alphaD20=None
+- pre_entry_v1: n=6/7, avgD5=None, avgD10=None, avgD20=None, alphaD20=None
+- us_precision_v1: n=47/48, avgD5=3.64, avgD10=5.16, avgD20=4.1, alphaD20=0.76
+
+## Support Resistance Engine Comparison
+- evidence status: COLLECTING_FORWARD_EVIDENCE
+- winner declared: False
+- confirmed_swings_v1: resolved=14/74, target=2, stop=12, late=0, avgR=-0.84
 
 ## Policy Comparison
 - evidence status: COLLECTING_FORWARD_EVIDENCE
 - winner declared: False
 - reason: 정책별 동일 기간의 만기 초과수익 표본을 축적 중이며 자동 승자 선언은 하지 않음
-- baseline:radar_top3_not_selected: n=210/213, alpha={'d5': 0.92, 'd10': 1.4, 'd20': 5.97}, positiveAlpha={'d5': 0.596, 'd10': 0.618, 'd20': 0.635}
+- baseline:radar_top3_not_selected: n=210/213, alpha={'d5': 0.75, 'd10': 1.42, 'd20': 5.82}, positiveAlpha={'d5': 0.584, 'd10': 0.618, 'd20': 0.63}
 - production:integrity_v1: n=6/6, alpha={'d5': 6.68, 'd10': None, 'd20': None}, positiveAlpha={'d5': 1.0, 'd10': None, 'd20': None}
-- production:integrity_v1_unversioned: n=3/3, alpha={'d5': -2.24, 'd10': -3.0, 'd20': None}, positiveAlpha={'d5': 0.333, 'd10': 0.333, 'd20': None}
-- production:legacy_recorded: n=126/126, alpha={'d5': 0.12, 'd10': -0.69, 'd20': 1.28}, positiveAlpha={'d5': 0.528, 'd10': 0.536, 'd20': 0.552}
+- production:integrity_v1_unversioned: n=3/3, alpha={'d5': -2.24, 'd10': -2.06, 'd20': None}, positiveAlpha={'d5': 0.333, 'd10': 0.333, 'd20': None}
+- production:legacy_recorded: n=126/126, alpha={'d5': 0.12, 'd10': -0.69, 'd20': 1.29}, positiveAlpha={'d5': 0.528, 'd10': 0.536, 'd20': 0.552}
 - production_lane:integrity_v1:left_side: n=6/6, alpha={'d5': 6.68, 'd10': None, 'd20': None}, positiveAlpha={'d5': 1.0, 'd10': None, 'd20': None}
-- production_lane:integrity_v1_unversioned:strength: n=3/3, alpha={'d5': -2.24, 'd10': -3.0, 'd20': None}, positiveAlpha={'d5': 0.333, 'd10': 0.333, 'd20': None}
-- production_lane:legacy_recorded:left_side: n=26/26, alpha={'d5': 1.18, 'd10': 2.92, 'd20': 6.23}, positiveAlpha={'d5': 0.615, 'd10': 0.731, 'd20': 0.692}
+- production_lane:integrity_v1_unversioned:strength: n=3/3, alpha={'d5': -2.24, 'd10': -2.06, 'd20': None}, positiveAlpha={'d5': 0.333, 'd10': 0.333, 'd20': None}
+- production_lane:legacy_recorded:left_side: n=26/26, alpha={'d5': 1.18, 'd10': 2.92, 'd20': 6.3}, positiveAlpha={'d5': 0.615, 'd10': 0.731, 'd20': 0.692}
 - production_lane:legacy_recorded:pullback: n=41/41, alpha={'d5': -2.76, 'd10': -6.02, 'd20': 1.13}, positiveAlpha={'d5': 0.317, 'd10': 0.317, 'd20': 0.488}
 - production_lane:legacy_recorded:strength: n=59/59, alpha={'d5': 1.69, 'd10': 1.46, 'd20': -0.84}, positiveAlpha={'d5': 0.638, 'd10': 0.603, 'd20': 0.534}
 - production_lane_status:integrity_v1:left_side:STAGE2_STRONG_PASS: n=6/6, alpha={'d5': 6.68, 'd10': None, 'd20': None}, positiveAlpha={'d5': 1.0, 'd10': None, 'd20': None}
-- production_lane_status:integrity_v1_unversioned:strength:STRONG_PASS: n=3/3, alpha={'d5': -2.24, 'd10': -3.0, 'd20': None}, positiveAlpha={'d5': 0.333, 'd10': 0.333, 'd20': None}
-- production_lane_status:legacy_recorded:left_side:STAGE2_PASS: n=19/19, alpha={'d5': 2.19, 'd10': 4.57, 'd20': 9.41}, positiveAlpha={'d5': 0.632, 'd10': 0.737, 'd20': 0.789}
+- production_lane_status:integrity_v1_unversioned:strength:STRONG_PASS: n=3/3, alpha={'d5': -2.24, 'd10': -2.06, 'd20': None}, positiveAlpha={'d5': 0.333, 'd10': 0.333, 'd20': None}
+- production_lane_status:legacy_recorded:left_side:STAGE2_PASS: n=19/19, alpha={'d5': 2.19, 'd10': 4.57, 'd20': 9.49}, positiveAlpha={'d5': 0.632, 'd10': 0.737, 'd20': 0.789}
 - production_lane_status:legacy_recorded:left_side:STAGE2_STRONG_PASS: n=6/6, alpha={'d5': -4.22, 'd10': -4.58, 'd20': -6.77}, positiveAlpha={'d5': 0.5, 'd10': 0.667, 'd20': 0.333}
 - production_lane_status:legacy_recorded:left_side:WAIT_CONFIRM: n=1/1, alpha={'d5': 14.19, 'd10': 16.6, 'd20': 23.92}, positiveAlpha={'d5': 1.0, 'd10': 1.0, 'd20': 1.0}
 - production_lane_status:legacy_recorded:pullback:PASS: n=20/20, alpha={'d5': -3.4, 'd10': -4.82, 'd20': 1.36}, positiveAlpha={'d5': 0.3, 'd10': 0.4, 'd20': 0.6}
@@ -122,17 +127,17 @@
 - production_lane_status:legacy_recorded:pullback:WAIT: n=1/1, alpha={'d5': 0.55, 'd10': -24.34, 'd20': -20.96}, positiveAlpha={'d5': 1.0, 'd10': 0.0, 'd20': 0.0}
 - production_lane_status:legacy_recorded:strength:PASS: n=3/3, alpha={'d5': -7.82, 'd10': -2.89, 'd20': -8.27}, positiveAlpha={'d5': 0.333, 'd10': 0.333, 'd20': 0.333}
 - production_lane_status:legacy_recorded:strength:STRONG_PASS: n=56/56, alpha={'d5': 2.2, 'd10': 1.7, 'd20': -0.44}, positiveAlpha={'d5': 0.655, 'd10': 0.618, 'd20': 0.545}
-- shadow:left_side_context_v1: n=31/31, alpha={'d5': 4.85, 'd10': 1.21, 'd20': None}, positiveAlpha={'d5': 0.55, 'd10': 0.5, 'd20': None}
-- shadow:pre_entry_v1: n=6/8, alpha={'d5': None, 'd10': None, 'd20': None}, positiveAlpha={'d5': None, 'd10': None, 'd20': None}
-- shadow:us_precision_v1: n=47/48, alpha={'d5': 2.17, 'd10': 1.83, 'd20': 0.76}, positiveAlpha={'d5': 0.594, 'd10': 0.577, 'd20': 0.333}
+- shadow:left_side_context_v1: n=31/33, alpha={'d5': 4.85, 'd10': 0.88, 'd20': None}, positiveAlpha={'d5': 0.55, 'd10': 0.625, 'd20': None}
+- shadow:pre_entry_v1: n=6/7, alpha={'d5': None, 'd10': None, 'd20': None}, positiveAlpha={'d5': None, 'd10': None, 'd20': None}
+- shadow:us_precision_v1: n=47/48, alpha={'d5': 2.17, 'd10': 1.95, 'd20': 0.76}, positiveAlpha={'d5': 0.594, 'd10': 0.577, 'd20': 0.333}
 
 ## Decision And Abstention Audit
 - snapshots: 71
 - abstentions: {'MISSED_OPPORTUNITY': 19, 'DEGRADED_DATA': 1, 'PENDING': 4}
 - D20 selected nonpositive alpha: 56
-- D20 rejected positive alpha: 487
-- avg D20 opportunity cost: 8.92
-- avg D20 ex-post upper-bound gap: 25.2
+- D20 rejected positive alpha: 507
+- avg D20 opportunity cost: 8.91
+- avg D20 ex-post upper-bound gap: 25.17
 
 ## Recent Candidate Records
 - 2026-05-28 AMZN FAILED_FAST D20=-14.54 alphaD20=-11.71 MFE=0.91 MAE=-17.16 bought=False lane=strength catalyst=POSITIVE_REVALUATION
@@ -257,12 +262,12 @@
 - 2026-07-13 204320.KS FAILED_FAST D20=9.4 alphaD20=23.79 MFE=12.03 MAE=-23.96 bought=False lane=left_side catalyst=NOISE
 - 2026-07-14 XPO FAILED_FAST D20=-3.95 alphaD20=-6.57 MFE=4.12 MAE=-8.41 bought=False lane=pullback catalyst=
 - 2026-07-14 AON NEUTRAL D20=-2.15 alphaD20=-4.77 MFE=4.95 MAE=-3.86 bought=False lane=left_side catalyst=
-- 2026-07-14 FOXA WINNER D20=13.17 alphaD20=10.55 MFE=17.06 MAE=-0.93 bought=False lane=left_side catalyst=
+- 2026-07-14 FOXA WINNER D20=14.82 alphaD20=12.2 MFE=17.06 MAE=-0.93 bought=False lane=left_side catalyst=
 - 2026-07-15 GOOG FAILED_FAST D20=-3.83 alphaD20=-6.25 MFE=7.25 MAE=-11.55 bought=False lane=pullback catalyst=
 - 2026-07-15 HWM WINNER D20=1.07 alphaD20=-1.35 MFE=11.25 MAE=-4.63 bought=False lane=pullback catalyst=POSITIVE_REVALUATION
 - 2026-07-15 426030.KS FAILED_FAST D20=-4.32 alphaD20=-4.57 MFE=0.03 MAE=-19.98 bought=False lane=pullback catalyst=
 - 2026-07-29 SLGN FAILED_FAST D20=None alphaD20=None MFE=1.49 MAE=-11.67 bought=False lane=strength catalyst=POSITIVE_REVALUATION
-- 2026-07-29 KTB FAILED_FAST D20=None alphaD20=None MFE=1.19 MAE=-14.08 bought=False lane=strength catalyst=POSITIVE_REVALUATION
+- 2026-07-29 KTB FAILED_FAST D20=None alphaD20=None MFE=1.19 MAE=-12.12 bought=False lane=strength catalyst=POSITIVE_REVALUATION
 - 2026-07-29 SNOW WINNER D20=None alphaD20=None MFE=23.49 MAE=0.0 bought=False lane=strength catalyst=
 - 2026-08-04 ZS WINNER D20=None alphaD20=None MFE=24.12 MAE=-0.04 bought=False lane=left_side catalyst=
 - 2026-08-10 GFI WATCH D20=None alphaD20=None MFE=5.08 MAE=-2.9 bought=False lane=left_side catalyst=

@@ -1,6 +1,6 @@
 {
   "last_run_date": "2026-08-18",
-  "last_run_at": "2026-08-18T07:50:41.690684+09:00",
+  "last_run_at": "2026-08-18T10:54:52.565956+09:00",
   "last_run_status": "OK",
   "last_error_count": 0,
   "last_errors": [],
@@ -70,8 +70,8 @@
         "quadrant": "LAGGING",
         "label": "통신",
         "group": "growth",
-        "ratio": 98.97,
-        "momentum": 98.56
+        "ratio": 98.79,
+        "momentum": 99.93
       },
       "XLU": {
         "quadrant": "LAGGING",
@@ -2406,8 +2406,8 @@
         "category": "ai",
         "theme_group": "ai_semiconductor",
         "group_label": "AI·반도체",
-        "ratio": 98.56,
-        "momentum": 100.82
+        "ratio": 98.53,
+        "momentum": 101.1
       },
       "ARTY": {
         "quadrant": "LEADING",
@@ -2415,8 +2415,8 @@
         "category": "ai",
         "theme_group": "ai_semiconductor",
         "group_label": "AI·반도체",
-        "ratio": 104.97,
-        "momentum": 107.78
+        "ratio": 104.96,
+        "momentum": 106.8
       },
       "SKYY": {
         "quadrant": "LEADING",
@@ -2451,17 +2451,17 @@
         "category": "robotics",
         "theme_group": "robotics_automation",
         "group_label": "로봇·자동화",
-        "ratio": 98.75,
-        "momentum": 101.68
+        "ratio": 98.72,
+        "momentum": 100.53
       },
       "HACK": {
-        "quadrant": "WEAKENING",
+        "quadrant": "LEADING",
         "label": "사이버보안 (ETFMG)",
         "category": "cybersecurity",
         "theme_group": "cybersecurity",
         "group_label": "사이버보안",
-        "ratio": 107.58,
-        "momentum": 97.0
+        "ratio": 107.77,
+        "momentum": 100.2
       },
       "CIBR": {
         "quadrant": "WEAKENING",
@@ -2479,7 +2479,7 @@
         "theme_group": "fintech",
         "group_label": "핀테크",
         "ratio": 100.86,
-        "momentum": 101.31
+        "momentum": 101.27
       },
       "ARKF": {
         "quadrant": "LEADING",
@@ -9429,7 +9429,8 @@
     "FICO": "2026-08-17",
     "INFY": "2026-08-17",
     "ADBE": "2026-08-18",
-    "ON": "2026-08-18"
+    "ON": "2026-08-18",
+    "QCOM": "2026-08-18"
   },
   "prev_day": {
     "candidates": [],
