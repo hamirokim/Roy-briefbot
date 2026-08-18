@@ -99,10 +99,47 @@ class PreEntryTests(unittest.TestCase):
         result = scout._assess_price_map(_ohlcv(closes), {})
 
         self.assertTrue(result["available"])
-        self.assertEqual(result["method"], "confirmed_swings_plus_atr")
+        self.assertEqual(result["method"], "confirmed_swings_plus_atr_v1_1")
         self.assertLess(result["support"]["lower"], result["support"]["upper"])
         self.assertLessEqual(result["support"]["center"], result["current"])
         self.assertGreater(result["invalidation_close_below"], 0)
+
+    def test_resistance_zone_remains_visible_when_price_enters_it(self):
+        closes = [100.0] * 35 + [96, 94, 96, 101, 104, 102, 100, 103, 105, 104, 105]
+        result = scout._assess_price_map(_ohlcv(closes), {"near_level_atr": 0.75})
+
+        self.assertTrue(result["available"])
+        self.assertIsNotNone(result["first_resistance"])
+        if result["first_resistance"]["lower"] <= result["current"] <= result["first_resistance"]["upper"]:
+            self.assertEqual(result["position"], "IN_RESISTANCE")
+
+    def test_prominence_engine_collapses_flat_plateau_to_one_reaction(self):
+        closes = [100.0] * 30 + [98, 96, 94, 94, 94, 96, 99] + [100.0] * 30
+        df = _ohlcv(closes)
+        close = scout._close_series(df)
+        atr = scout._atr_abs_series(df, close, 14)
+        events = scout._prominent_pivots(
+            df,
+            df["low"],
+            atr,
+            mode="low",
+            cfg={"min_prominence_atr": 0.5, "min_separation_bars": 3},
+        )
+
+        plateau_events = [event for event in events if 30 <= event["pos"] <= 36]
+        self.assertEqual(len(plateau_events), 1)
+
+    def test_shadow_map_keeps_four_engines_without_declaring_winner(self):
+        closes = list(np.linspace(60, 40, 80))
+        closes += [42, 40, 41, 39, 41, 43, 42, 45, 44, 47, 45, 48, 46, 49, 47, 48]
+        cfg = {"shadow_compare": {"enabled": True, "min_prominence_atr": 0.5}}
+        shadow = scout._assess_price_map_shadow(_ohlcv(closes), cfg)
+
+        self.assertFalse(shadow["winner_declared"])
+        self.assertEqual(
+            set(shadow["engines"]),
+            {"confirmed_swings_v1", "rolling_extrema_v1", "prominence_reaction_v2", "atr_reversal_v1"},
+        )
 
     def test_selector_rejects_late_and_missed_candidates(self):
         selected, audit, cooldown = scout._select_pre_entry_candidates(
@@ -121,6 +158,22 @@ class PreEntryTests(unittest.TestCase):
         self.assertEqual(audit["rejection_counts"]["timeliness_late"], 1)
         self.assertEqual(audit["rejection_counts"]["timeliness_missed"], 1)
         self.assertEqual(cooldown, {"EARLY": "2026-08-13", "READY": "2026-08-13"})
+
+    def test_selector_rejects_candidate_at_resistance(self):
+        candidate = _candidate("LATE_AT_LEVEL")
+        candidate["price_map"].update({
+            "position": "NEAR_RESISTANCE",
+            "upside_to_first_resistance_pct": 0.008,
+        })
+        selected, audit, _ = scout._select_pre_entry_candidates(
+            [candidate],
+            _selection_config(),
+            {},
+            "2026-08-13",
+        )
+
+        self.assertEqual(selected, [])
+        self.assertEqual(audit["rejection_counts"]["resistance_too_close"], 1)
 
     def test_pre_entry_cooldown_is_separate_and_does_not_backfill(self):
         selected, audit, _ = scout._select_pre_entry_candidates(

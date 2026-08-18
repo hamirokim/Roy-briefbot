@@ -97,6 +97,37 @@ class ExecutableSessionTests(unittest.TestCase):
         )
         self.assertEqual(evaluated["benchmark"]["alpha"]["d5"]["alpha_pct"], round(expected_alpha, 2))
 
+    def test_price_map_first_touch_records_target_and_same_bar_ambiguity(self):
+        df = _ohlcv("2026-07-01", 5, 100, 0)
+        price_map = {
+            "available": True,
+            "first_resistance": {"lower": 103.0},
+            "invalidation_close_below": 97.0,
+        }
+        target = scout_performance._price_map_first_touch(price_map, df, 0, 100.0)
+        self.assertEqual(target["status"], "OPEN")
+
+        df.loc[1, "High"] = 104.0
+        target = scout_performance._price_map_first_touch(price_map, df, 0, 100.0)
+        self.assertEqual(target["status"], "TARGET_FIRST")
+        self.assertEqual(target["realized_r"], 1.0)
+
+        df.loc[1, "Low"] = 96.0
+        ambiguous = scout_performance._price_map_first_touch(price_map, df, 0, 100.0)
+        self.assertEqual(ambiguous["status"], "AMBIGUOUS_SAME_BAR")
+
+    def test_price_map_engine_summary_deduplicates_policy_copies(self):
+        outcome = {"status": "TARGET_FIRST", "realized_r": 2.0}
+        records = [
+            {"snapshot_date": "2026-08-01", "ticker": "A", "bucket": "candidate", "price_map_engine_outcomes": {"v2": outcome}},
+            {"snapshot_date": "2026-08-01", "ticker": "A", "bucket": "shadow:pre_entry_v1", "price_map_engine_outcomes": {"v2": outcome}},
+        ]
+        comparison = scout_performance._price_map_engine_comparison(records)
+
+        self.assertEqual(comparison["engines"]["v2"]["count"], 1)
+        self.assertEqual(comparison["engines"]["v2"]["avg_realized_r"], 2.0)
+        self.assertFalse(comparison["winner_declared"])
+
     def test_regime_ignores_prices_after_entry(self):
         benchmark = _ohlcv("2025-01-01", 240, 100, 0.2)
         entry_idx = 220

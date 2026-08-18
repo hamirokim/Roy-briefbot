@@ -429,7 +429,7 @@ LLM boundary:
 
 Persistence:
 
-- Recommendation snapshots use schema `scout_recommendation_snapshot_v0_4`.
+- Recommendation snapshots use schema `scout_recommendation_snapshot_v0_5`.
 - Top-level `generated_at`, `timezone`, and `data_as_of` preserve the decision-time context.
 - Top-level `policy.production_policy_id` identifies the live policy used for the decision.
 - `summary.decision_health` preserves recommendation, abstention, and degraded-data state.
@@ -443,7 +443,7 @@ Source: `src/modules/scout_performance.py`
 
 Current schema:
 
-- `scout_performance_v0_5`
+- `scout_performance_v0_6`
 
 Tracks:
 
@@ -456,6 +456,8 @@ Tracks:
   hindsight-best rejected candidate is reported separately as an ex-post upper-bound gap.
 - recorded production policy, precision shadow, and non-selected Radar baseline cohorts.
 - policy comparison never auto-declares a winner while forward evidence is still accumulating.
+- frozen support/resistance maps are evaluated by the first 20-session touch of target or invalidation;
+  a same-bar touch is recorded as ambiguous, never guessed.
 - MFE / MAE.
 - structure events:
   - higher low,
@@ -681,6 +683,24 @@ Sheets record.
   facts, ticker symbols, and evidence IDs remain unchanged.
 
 ## Current Next Work Order
+
+### Support / Resistance Engine v2
+
+- Live `pre_entry_v1` keeps the confirmed-swing map but now preserves resistance zones while price
+  is inside them and explicitly labels `IN_RESISTANCE`, `NEAR_RESISTANCE`, `IN_SUPPORT`, and
+  `BROKEN_SUPPORT`.
+- Live selection rejects broken support, resistance-zone entry, and resistance-near candidates.
+  This prevents an already-compressed upside such as the ADBE case from being presented as an
+  Entry-leading chart candidate.
+- Resistance-near means the lower edge of the first resistance is within one current daily ATR;
+  the six Roy-provided TradingView CSV cases were used as the initial regression audit set.
+- The old rolling-low fallback is removed. Missing confirmed support or resistance is an incomplete
+  map, not invented evidence.
+- Every left-side episode stores four frozen maps under `price_map_shadow`: live confirmed swings,
+  rolling extrema baseline, prominence plus independent reaction v2, and ATR reversal clusters.
+- `prominence_reaction_v2` uses local ATR at each reaction, collapses flat plateaus, separates nearby
+  reactions, and applies time decay. It remains shadow-only until forward first-touch evidence is
+  sufficient; no engine winner is auto-declared.
 
 Priority 1: Validate the one-screen Telegram contract on one live brief.
 

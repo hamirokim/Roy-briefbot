@@ -1082,6 +1082,22 @@ def _atr_pct_series(df: pd.DataFrame, close: pd.Series, length: int) -> pd.Serie
     return atr / close.replace(0, np.nan)
 
 
+def _atr_abs_series(df: pd.DataFrame, close: pd.Series, length: int) -> pd.Series:
+    atr_pct = _atr_pct_series(df, close, length)
+    return atr_pct * close.reindex(atr_pct.index)
+
+
+def _price_date_label(df: pd.DataFrame, pos: int, index_value: Any) -> str:
+    if "date" in df.columns and pos < len(df):
+        value = df["date"].iloc[pos]
+    else:
+        value = index_value
+    try:
+        return pd.to_datetime(value).strftime("%Y-%m-%d")
+    except Exception:
+        return str(value)
+
+
 def _confirmed_pivots(
     series: pd.Series,
     *,
@@ -1096,12 +1112,23 @@ def _confirmed_pivots(
         return []
     start = max(left, len(values) - lookback)
     out: list[tuple[Any, float]] = []
-    for pos in range(start, len(values) - right):
+    pos = start
+    while pos < len(values) - right:
         value = float(values.iloc[pos])
         window = values.iloc[pos - left:pos + right + 1]
         target = float(window.min()) if mode == "low" else float(window.max())
         if value == target:
-            out.append((values.index[pos], value))
+            plateau_end = pos
+            while plateau_end + 1 < len(values) - right and float(values.iloc[plateau_end + 1]) == value:
+                plateau_end += 1
+            pivot_pos = (pos + plateau_end) // 2
+            pivot_window = values.iloc[pivot_pos - left:pivot_pos + right + 1]
+            pivot_target = float(pivot_window.min()) if mode == "low" else float(pivot_window.max())
+            if float(values.iloc[pivot_pos]) == pivot_target:
+                out.append((values.index[pivot_pos], value))
+            pos = plateau_end + 1
+            continue
+        pos += 1
     return out
 
 
@@ -1140,6 +1167,234 @@ def _price_zone(cluster: dict, half_width: float, source: str) -> dict:
     }
 
 
+def _map_position(
+    current: float,
+    atr: float,
+    support: Optional[dict],
+    resistance: Optional[dict],
+    near_level_atr: float,
+) -> str:
+    if resistance and float(resistance["lower"]) <= current <= float(resistance["upper"]):
+        return "IN_RESISTANCE"
+    if support and float(support["lower"]) <= current <= float(support["upper"]):
+        return "IN_SUPPORT"
+    if support and current < float(support["lower"]):
+        return "BROKEN_SUPPORT"
+    if resistance and (float(resistance["lower"]) - current) / atr <= near_level_atr:
+        return "NEAR_RESISTANCE"
+    if support and (current - float(support["upper"])) / atr <= near_level_atr:
+        return "NEAR_SUPPORT"
+    return "BETWEEN_LEVELS"
+
+
+def _finalize_price_map(
+    *,
+    df: pd.DataFrame,
+    close: pd.Series,
+    current: float,
+    atr: float,
+    support: Optional[dict],
+    first_resistance: Optional[dict],
+    core_resistance: Optional[dict],
+    cfg: dict,
+    method: str,
+) -> dict:
+    if not support or not first_resistance:
+        return {
+            "available": False,
+            "reason": "confirmed_levels_incomplete",
+            "method": method,
+        }
+    invalidation = max(
+        0.0,
+        float(support["lower"]) - atr * float(cfg.get("invalidation_atr", 0.25) or 0.25),
+    )
+    downside_pct = invalidation / current - 1 if current > 0 else None
+    upside_pct = float(first_resistance["lower"]) / current - 1 if current > 0 else None
+    reward_risk = (
+        upside_pct / abs(downside_pct)
+        if upside_pct is not None and downside_pct is not None and downside_pct < 0
+        else None
+    )
+    support_distance_atr = (current - float(support["center"])) / atr
+    resistance_distance_atr = (float(first_resistance["center"]) - current) / atr
+    position = _map_position(
+        current,
+        atr,
+        support,
+        first_resistance,
+        float(cfg.get("near_level_atr", 1.0) or 1.0),
+    )
+    support_touches = int(support.get("touches", 0) or 0)
+    resistance_touches = int(first_resistance.get("touches", 0) or 0)
+    if support_touches >= 2 and resistance_touches >= 2:
+        level_confidence = "HIGH"
+    elif support_touches >= 2 or resistance_touches >= 2:
+        level_confidence = "MEDIUM"
+    else:
+        level_confidence = "LOW"
+    return {
+        "available": True,
+        "as_of": _price_date_label(df, len(close) - 1, close.index[-1]),
+        "current": round(current, 4),
+        "atr": round(atr, 4),
+        "support": support,
+        "first_resistance": first_resistance,
+        "core_resistance": core_resistance,
+        "invalidation_close_below": round(invalidation, 4),
+        "downside_to_invalidation_pct": round(downside_pct, 4) if downside_pct is not None else None,
+        "upside_to_first_resistance_pct": round(upside_pct, 4) if upside_pct is not None else None,
+        "reward_risk_to_first_resistance": round(reward_risk, 2) if reward_risk is not None else None,
+        "support_distance_atr": round(support_distance_atr, 2),
+        "resistance_distance_atr": round(resistance_distance_atr, 2),
+        "position": position,
+        "level_confidence": level_confidence,
+        "method": method,
+    }
+
+
+def _prominent_pivots(
+    df: pd.DataFrame,
+    series: pd.Series,
+    atr_series: pd.Series,
+    *,
+    mode: str,
+    cfg: dict,
+) -> list[dict]:
+    """Two-sided, past-confirmed reactions with plateau and spacing controls."""
+    values = series.astype(float).to_numpy()
+    atr_values = atr_series.reindex(series.index).astype(float).to_numpy()
+    left = int(cfg.get("pivot_left", 2) or 2)
+    right = int(cfg.get("pivot_right", 2) or 2)
+    window = int(cfg.get("prominence_window", 20) or 20)
+    lookback = int(cfg.get("lookback_bars", 252) or 252)
+    min_prominence = float(cfg.get("min_prominence_atr", 0.75) or 0.75)
+    min_separation = int(cfg.get("min_separation_bars", 5) or 5)
+    candidates: list[dict] = []
+    start = max(left, len(values) - lookback)
+    pos = start
+    while pos < len(values) - right:
+        value = float(values[pos])
+        local = values[pos - left:pos + right + 1]
+        target = float(np.nanmin(local)) if mode == "low" else float(np.nanmax(local))
+        if not np.isfinite(value) or value != target:
+            pos += 1
+            continue
+        plateau_end = pos
+        while plateau_end + 1 < len(values) - right and values[plateau_end + 1] == value:
+            plateau_end += 1
+        pivot_pos = (pos + plateau_end) // 2
+        left_slice = values[max(0, pivot_pos - window):pivot_pos]
+        right_slice = values[pivot_pos + 1:min(len(values), pivot_pos + window + 1)]
+        local_atr = float(atr_values[pivot_pos]) if np.isfinite(atr_values[pivot_pos]) else 0.0
+        if left_slice.size and right_slice.size and local_atr > 0:
+            if mode == "low":
+                prominence = min(float(np.nanmax(left_slice)) - value, float(np.nanmax(right_slice)) - value)
+            else:
+                prominence = min(value - float(np.nanmin(left_slice)), value - float(np.nanmin(right_slice)))
+            prominence_atr = prominence / local_atr
+            if prominence_atr >= min_prominence:
+                candidates.append({
+                    "pos": pivot_pos,
+                    "price": value,
+                    "local_atr": local_atr,
+                    "prominence_atr": prominence_atr,
+                    "date": _price_date_label(df, pivot_pos, series.index[pivot_pos]),
+                    "confirmed_date": _price_date_label(
+                        df,
+                        min(len(series) - 1, pivot_pos + right),
+                        series.index[min(len(series) - 1, pivot_pos + right)],
+                    ),
+                })
+        pos = plateau_end + 1
+
+    selected: list[dict] = []
+    for event in sorted(candidates, key=lambda row: float(row["prominence_atr"]), reverse=True):
+        if all(abs(int(event["pos"]) - int(other["pos"])) >= min_separation for other in selected):
+            selected.append(event)
+    return sorted(selected, key=lambda row: int(row["pos"]))
+
+
+def _cluster_reaction_events(events: list[dict], cfg: dict, source: str) -> list[dict]:
+    half_atr = float(cfg.get("zone_half_atr", 0.25) or 0.25)
+    half_life = max(1.0, float(cfg.get("recency_half_life_bars", 60) or 60))
+    latest_pos = max((int(row["pos"]) for row in events), default=0)
+    clusters: list[dict] = []
+    for event in sorted(events, key=lambda row: float(row["price"])):
+        half_width = max(0.0001, float(event["local_atr"]) * half_atr)
+        lower = float(event["price"]) - half_width
+        upper = float(event["price"]) + half_width
+        match = next(
+            (cluster for cluster in clusters if lower <= float(cluster["upper"]) and upper >= float(cluster["lower"])),
+            None,
+        )
+        if match is None:
+            match = {"events": [], "lower": lower, "upper": upper}
+            clusters.append(match)
+        match["events"].append(event)
+        match["lower"] = min(float(match["lower"]), lower)
+        match["upper"] = max(float(match["upper"]), upper)
+
+    zones = []
+    for cluster in clusters:
+        weighted = []
+        for event in cluster["events"]:
+            age = max(0, latest_pos - int(event["pos"]))
+            recency = 0.5 ** (age / half_life)
+            weight = max(0.01, float(event["prominence_atr"])) * recency
+            weighted.append((float(event["price"]), weight))
+        total_weight = sum(weight for _, weight in weighted)
+        center = sum(price * weight for price, weight in weighted) / total_weight
+        zones.append({
+            "lower": round(max(0.0, float(cluster["lower"])), 4),
+            "upper": round(float(cluster["upper"]), 4),
+            "center": round(center, 4),
+            "touches": len(cluster["events"]),
+            "independent_reactions": len(cluster["events"]),
+            "strength": round(total_weight, 3),
+            "latest_reaction": max(str(row["date"]) for row in cluster["events"]),
+            "latest_confirmation": max(
+                str(row.get("confirmed_date", row["date"])) for row in cluster["events"]
+            ),
+            "source": source,
+        })
+    return sorted(zones, key=lambda zone: float(zone["center"]))
+
+
+def _map_from_zones(
+    df: pd.DataFrame,
+    close: pd.Series,
+    atr: float,
+    support_zones: list[dict],
+    resistance_zones: list[dict],
+    cfg: dict,
+    method: str,
+) -> dict:
+    current = float(close.iloc[-1])
+    active_supports = [zone for zone in support_zones if current >= float(zone["lower"])]
+    broken_supports = [zone for zone in support_zones if current < float(zone["lower"])]
+    support = (
+        max(active_supports, key=lambda zone: float(zone["center"]))
+        if active_supports
+        else min(broken_supports, key=lambda zone: float(zone["center"]), default=None)
+    )
+    active_resistances = [zone for zone in resistance_zones if current <= float(zone["upper"])]
+    active_resistances.sort(key=lambda zone: float(zone["center"]))
+    first_resistance = active_resistances[0] if active_resistances else None
+    core_resistance = active_resistances[1] if len(active_resistances) > 1 else None
+    return _finalize_price_map(
+        df=df,
+        close=close,
+        current=current,
+        atr=atr,
+        support=support,
+        first_resistance=first_resistance,
+        core_resistance=core_resistance,
+        cfg=cfg,
+        method=method,
+    )
+
+
 def _assess_price_map(df: pd.DataFrame, cfg: dict) -> dict:
     """Build evidence-backed support/resistance zones from confirmed swings and ATR."""
     close = _close_series(df)
@@ -1170,89 +1425,148 @@ def _assess_price_map(df: pd.DataFrame, cfg: dict) -> dict:
         tolerance=tolerance,
     )
 
-    supports = [cluster for cluster in low_clusters if float(cluster["center"]) <= current + half_width]
-    resistances = [cluster for cluster in high_clusters if float(cluster["center"]) > current + half_width]
-    support_from_pivot = bool(supports)
-    support_cluster = max(supports, key=lambda item: float(item["center"])) if supports else {
-        "center": float(low.tail(20).min()), "prices": [float(low.tail(20).min())], "dates": []
-    }
-    resistance_cluster = min(resistances, key=lambda item: float(item["center"])) if resistances else None
-    higher_resistances = []
-    if resistance_cluster is not None:
-        higher_resistances = [
-            cluster
-            for cluster in resistances
-            if float(cluster["center"]) > float(resistance_cluster["center"]) + tolerance
-        ]
-    core_cluster = (
-        min(higher_resistances, key=lambda item: float(item["center"]))
-        if higher_resistances
-        else resistance_cluster
+    support_zones = [_price_zone(cluster, half_width, "confirmed_swing_low") for cluster in low_clusters]
+    resistance_zones = [_price_zone(cluster, half_width, "confirmed_swing_high") for cluster in high_clusters]
+    return _map_from_zones(
+        df,
+        close,
+        atr,
+        support_zones,
+        resistance_zones,
+        cfg,
+        "confirmed_swings_plus_atr_v1_1",
     )
 
-    support = _price_zone(
-        support_cluster,
-        half_width,
-        "confirmed_swing_low" if support_from_pivot else "rolling_20d_low",
-    )
-    first_resistance = (
-        _price_zone(resistance_cluster, half_width, "confirmed_swing_high")
-        if resistance_cluster is not None else None
-    )
-    core_resistance = (
-        _price_zone(core_cluster, half_width, "confirmed_swing_high")
-        if core_cluster is not None else None
-    )
-    invalidation = max(
-        0.0,
-        float(support["lower"]) - atr * float(cfg.get("invalidation_atr", 0.25) or 0.25),
-    )
-    downside_pct = invalidation / current - 1 if current > 0 else None
-    upside_pct = (
-        float(first_resistance["lower"]) / current - 1
-        if first_resistance and current > 0 else None
-    )
-    reward_risk = (
-        upside_pct / abs(downside_pct)
-        if upside_pct is not None and downside_pct is not None and downside_pct < 0 else None
-    )
-    support_distance_atr = (current - float(support["center"])) / atr
-    resistance_distance_atr = (
-        (float(first_resistance["center"]) - current) / atr
-        if first_resistance else None
-    )
-    if support_distance_atr <= 0.75:
-        position = "NEAR_SUPPORT"
-    elif resistance_distance_atr is not None and resistance_distance_atr <= 0.75:
-        position = "NEAR_RESISTANCE"
-    else:
-        position = "BETWEEN_LEVELS"
-    support_touches = int(support.get("touches", 0) or 0)
-    resistance_touches = int((first_resistance or {}).get("touches", 0) or 0)
-    if support_touches >= 2 and resistance_touches >= 2:
-        level_confidence = "HIGH"
-    elif support_touches >= 2 or resistance_touches >= 2:
-        level_confidence = "MEDIUM"
-    else:
-        level_confidence = "LOW"
 
+def _assess_prominence_price_map(df: pd.DataFrame, cfg: dict) -> dict:
+    close = _close_series(df)
+    high, low = _high_low_series(df, close.index)
+    if len(close) < 60 or high.empty or low.empty:
+        return {"available": False, "reason": "price_data_short", "method": "prominence_reaction_v2"}
+    atr_series = _atr_abs_series(df, close, int(cfg.get("atr_length", 14) or 14))
+    valid_atr = atr_series.dropna()
+    if valid_atr.empty or float(valid_atr.iloc[-1]) <= 0:
+        return {"available": False, "reason": "atr_unavailable", "method": "prominence_reaction_v2"}
+    support_events = _prominent_pivots(df, low, atr_series, mode="low", cfg=cfg)
+    resistance_events = _prominent_pivots(df, high, atr_series, mode="high", cfg=cfg)
+    return _map_from_zones(
+        df,
+        close,
+        float(valid_atr.iloc[-1]),
+        _cluster_reaction_events(support_events, cfg, "prominent_swing_low"),
+        _cluster_reaction_events(resistance_events, cfg, "prominent_swing_high"),
+        cfg,
+        "prominence_reaction_v2",
+    )
+
+
+def _assess_rolling_price_map(df: pd.DataFrame, cfg: dict) -> dict:
+    close = _close_series(df)
+    high, low = _high_low_series(df, close.index)
+    lookback = int(cfg.get("rolling_lookback_bars", 60) or 60)
+    if len(close) < lookback or high.empty or low.empty:
+        return {"available": False, "reason": "price_data_short", "method": "rolling_extrema_v1"}
+    atr_series = _atr_abs_series(df, close, int(cfg.get("atr_length", 14) or 14)).dropna()
+    if atr_series.empty:
+        return {"available": False, "reason": "atr_unavailable", "method": "rolling_extrema_v1"}
+    atr = float(atr_series.iloc[-1])
+    half = atr * float(cfg.get("zone_half_atr", 0.25) or 0.25)
+    support = _price_zone({"center": float(low.tail(lookback).min()), "prices": [1]}, half, "rolling_low")
+    resistance = _price_zone({"center": float(high.tail(lookback).max()), "prices": [1]}, half, "rolling_high")
+    return _finalize_price_map(
+        df=df,
+        close=close,
+        current=float(close.iloc[-1]),
+        atr=atr,
+        support=support,
+        first_resistance=resistance,
+        core_resistance=resistance,
+        cfg=cfg,
+        method="rolling_extrema_v1",
+    )
+
+
+def _atr_reversal_events(df: pd.DataFrame, close: pd.Series, atr_series: pd.Series, cfg: dict) -> tuple[list[dict], list[dict]]:
+    multiple = float(cfg.get("reversal_atr", 1.0) or 1.0)
+    values = close.astype(float).to_numpy()
+    atr_values = atr_series.reindex(close.index).astype(float).to_numpy()
+    highs: list[dict] = []
+    lows: list[dict] = []
+    trend = 0
+    high_pos = low_pos = 0
+    high_value = low_value = float(values[0])
+    for pos in range(1, len(values)):
+        value = float(values[pos])
+        threshold = float(atr_values[pos]) * multiple if np.isfinite(atr_values[pos]) else 0.0
+        if threshold <= 0:
+            continue
+        if value >= high_value:
+            high_value, high_pos = value, pos
+        if value <= low_value:
+            low_value, low_pos = value, pos
+        if trend >= 0 and high_value - value >= threshold:
+            pivot_atr = float(atr_values[high_pos])
+            local_atr = pivot_atr if np.isfinite(pivot_atr) and pivot_atr > 0 else threshold / multiple
+            highs.append({
+                "pos": high_pos,
+                "price": high_value,
+                "local_atr": local_atr,
+                "prominence_atr": (high_value - value) / local_atr,
+                "date": _price_date_label(df, high_pos, close.index[high_pos]),
+            })
+            trend = -1
+            low_value, low_pos = value, pos
+        elif trend <= 0 and value - low_value >= threshold:
+            pivot_atr = float(atr_values[low_pos])
+            local_atr = pivot_atr if np.isfinite(pivot_atr) and pivot_atr > 0 else threshold / multiple
+            lows.append({
+                "pos": low_pos,
+                "price": low_value,
+                "local_atr": local_atr,
+                "prominence_atr": (value - low_value) / local_atr,
+                "date": _price_date_label(df, low_pos, close.index[low_pos]),
+            })
+            trend = 1
+            high_value, high_pos = value, pos
+    return lows, highs
+
+
+def _assess_atr_reversal_price_map(df: pd.DataFrame, cfg: dict) -> dict:
+    close = _close_series(df)
+    if len(close) < 60:
+        return {"available": False, "reason": "price_data_short", "method": "atr_reversal_v1"}
+    atr_series = _atr_abs_series(df, close, int(cfg.get("atr_length", 14) or 14))
+    valid_atr = atr_series.dropna()
+    if valid_atr.empty:
+        return {"available": False, "reason": "atr_unavailable", "method": "atr_reversal_v1"}
+    lows, highs = _atr_reversal_events(df, close, atr_series, cfg)
+    return _map_from_zones(
+        df,
+        close,
+        float(valid_atr.iloc[-1]),
+        _cluster_reaction_events(lows, cfg, "atr_reversal_low"),
+        _cluster_reaction_events(highs, cfg, "atr_reversal_high"),
+        cfg,
+        "atr_reversal_v1",
+    )
+
+
+def _assess_price_map_shadow(df: pd.DataFrame, cfg: dict, live_map: Optional[dict] = None) -> dict:
+    shadow_cfg = cfg.get("shadow_compare", {}) or {}
+    if not bool(shadow_cfg.get("enabled", False)):
+        return {"enabled": False, "schema_version": "sr_engine_shadow_v1", "engines": {}}
+    experiment_cfg = {**cfg, **shadow_cfg}
     return {
-        "available": True,
-        "as_of": str(close.index[-1].date()) if hasattr(close.index[-1], "date") else str(close.index[-1]),
-        "current": round(current, 4),
-        "atr": round(atr, 4),
-        "support": support,
-        "first_resistance": first_resistance,
-        "core_resistance": core_resistance,
-        "invalidation_close_below": round(invalidation, 4),
-        "downside_to_invalidation_pct": round(downside_pct, 4) if downside_pct is not None else None,
-        "upside_to_first_resistance_pct": round(upside_pct, 4) if upside_pct is not None else None,
-        "reward_risk_to_first_resistance": round(reward_risk, 2) if reward_risk is not None else None,
-        "support_distance_atr": round(support_distance_atr, 2),
-        "resistance_distance_atr": round(resistance_distance_atr, 2) if resistance_distance_atr is not None else None,
-        "position": position,
-        "level_confidence": level_confidence,
-        "method": "confirmed_swings_plus_atr",
+        "enabled": True,
+        "schema_version": "sr_engine_shadow_v1",
+        "production_engine": "confirmed_swings_v1",
+        "winner_declared": False,
+        "engines": {
+            "confirmed_swings_v1": live_map or _assess_price_map(df, cfg),
+            "rolling_extrema_v1": _assess_rolling_price_map(df, experiment_cfg),
+            "prominence_reaction_v2": _assess_prominence_price_map(df, experiment_cfg),
+            "atr_reversal_v1": _assess_atr_reversal_price_map(df, experiment_cfg),
+        },
     }
 
 
@@ -3645,6 +3959,18 @@ def _select_pre_entry_candidates(
             or not price_map.get("first_resistance")
         ):
             rejection_counts["price_map"] += 1
+        elif str(price_map.get("position", "") or "").upper() == "BROKEN_SUPPORT":
+            rejection_counts["broken_support"] += 1
+        elif str(price_map.get("position", "") or "").upper() in {
+            "IN_RESISTANCE",
+            "NEAR_RESISTANCE",
+        }:
+            rejection_counts["resistance_too_close"] += 1
+        elif (
+            price_map.get("upside_to_first_resistance_pct") is not None
+            and float(price_map.get("upside_to_first_resistance_pct")) <= 0
+        ):
+            rejection_counts["resistance_already_passed"] += 1
         elif _is_in_cooldown(ticker, cooldown_map, cooldown_days, today):
             rejection_counts["cooldown"] += 1
         elif sector_quadrant not in allowed_sector_quadrants:
@@ -4647,7 +4973,7 @@ def _save_recommendation_snapshot(
             "theme_snapshot_dates": sorted(theme_dates),
             "source_policy": "latest_available_at_generation",
         },
-        "schema_version": "scout_recommendation_snapshot_v0_4",
+        "schema_version": "scout_recommendation_snapshot_v0_5",
         "policy": {
             "production_policy_id": "integrity_v1",
             "selection_policy": "tier_a_quality_confirmed",
@@ -5113,6 +5439,11 @@ class ScoutAgent(BaseAgent):
                         df,
                         price_lanes_cfg.get("price_map", {}) or {},
                     )
+                    info["price_map_shadow"] = _assess_price_map_shadow(
+                        df,
+                        price_lanes_cfg.get("price_map", {}) or {},
+                        live_map=info["price_map"],
+                    )
                     info["pre_entry_timing"] = _assess_pre_entry_timing(
                         df,
                         benchmark_frame,
@@ -5121,6 +5452,11 @@ class ScoutAgent(BaseAgent):
                     )
                 else:
                     info["price_map"] = {"available": False, "reason": "not_left_side_episode"}
+                    info["price_map_shadow"] = {
+                        "enabled": False,
+                        "schema_version": "sr_engine_shadow_v1",
+                        "engines": {},
+                    }
                     info["pre_entry_timing"] = {"status": "UNAVAILABLE", "reason": "not_left_side_episode"}
                 info["decision_context"] = {
                     "market_regime": benchmark_regimes.get(

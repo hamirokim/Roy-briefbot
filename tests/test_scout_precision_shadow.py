@@ -158,7 +158,7 @@ class PrecisionShadowPersistenceTests(unittest.TestCase):
             )
             payload = json.loads(Path(paths["json"]).read_text(encoding="utf-8"))
 
-        self.assertEqual(payload["schema_version"], "scout_recommendation_snapshot_v0_4")
+        self.assertEqual(payload["schema_version"], "scout_recommendation_snapshot_v0_5")
         self.assertEqual(payload["policy"]["production_policy_id"], "integrity_v1")
         self.assertEqual(payload["summary"]["decision_health"]["status"], "RECOMMENDATION_AVAILABLE")
         self.assertEqual(payload["generated_at"], "2026-07-15T07:10:00+09:00")

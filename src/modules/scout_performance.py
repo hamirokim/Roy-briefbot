@@ -511,11 +511,102 @@ def _extract_record(
         }),
         "catalyst_has_upcoming": bool((catalyst.get("freshness") or {}).get("has_upcoming")),
         "decision_context": item.get("decision_context") or {},
+        "price_map": item.get("price_map") or {},
+        "price_map_shadow": item.get("price_map_shadow") or {},
         "actually_bought": ticker in historical_pos,
         "currently_open": ticker in open_pos,
         "position_id": historical_pos.get(ticker, ""),
         "lane_key": lane,
         "benchmark_ticker": _benchmark_ticker(item, country),
+    }
+
+
+def _price_map_first_touch(
+    price_map: dict,
+    df: pd.DataFrame,
+    start_idx: int,
+    entry_price: float,
+    horizon: int = 20,
+) -> dict:
+    if not bool(price_map.get("available")):
+        return {"status": "UNAVAILABLE", "realized_r": None}
+    resistance = price_map.get("first_resistance") or {}
+    target = _safe_float(resistance.get("lower"))
+    invalidation = _safe_float(price_map.get("invalidation_close_below"))
+    if target is None or invalidation is None:
+        return {"status": "LEVELS_MISSING", "realized_r": None}
+    if target <= entry_price:
+        return {
+            "status": "TARGET_ALREADY_PASSED",
+            "target": round(target, 4),
+            "invalidation": round(invalidation, 4),
+            "realized_r": None,
+        }
+    risk = entry_price - invalidation
+    if risk <= 0:
+        return {
+            "status": "INVALID_GEOMETRY",
+            "target": round(target, 4),
+            "invalidation": round(invalidation, 4),
+            "realized_r": None,
+        }
+    planned_r = (target - entry_price) / risk
+    end_idx = min(len(df) - 1, start_idx + horizon)
+    for idx in range(start_idx, end_idx + 1):
+        target_hit = float(df["High"].iloc[idx]) >= target
+        stop_hit = float(df["Low"].iloc[idx]) <= invalidation
+        event_date = pd.to_datetime(df["Date"].iloc[idx]).strftime("%Y-%m-%d")
+        if target_hit and stop_hit:
+            return {
+                "status": "AMBIGUOUS_SAME_BAR",
+                "date": event_date,
+                "target": round(target, 4),
+                "invalidation": round(invalidation, 4),
+                "planned_r": round(planned_r, 2),
+                "realized_r": None,
+            }
+        if target_hit:
+            return {
+                "status": "TARGET_FIRST",
+                "date": event_date,
+                "target": round(target, 4),
+                "invalidation": round(invalidation, 4),
+                "planned_r": round(planned_r, 2),
+                "realized_r": round(planned_r, 2),
+            }
+        if stop_hit:
+            return {
+                "status": "INVALIDATION_FIRST",
+                "date": event_date,
+                "target": round(target, 4),
+                "invalidation": round(invalidation, 4),
+                "planned_r": round(planned_r, 2),
+                "realized_r": -1.0,
+            }
+    return {
+        "status": "OPEN",
+        "target": round(target, 4),
+        "invalidation": round(invalidation, 4),
+        "planned_r": round(planned_r, 2),
+        "realized_r": None,
+        "observed_sessions": int(end_idx - start_idx + 1),
+    }
+
+
+def _evaluate_price_map_engines(
+    record: dict,
+    df: pd.DataFrame,
+    start_idx: int,
+    entry_price: float,
+) -> dict:
+    shadow = record.get("price_map_shadow") or {}
+    engines = dict(shadow.get("engines") or {})
+    if "confirmed_swings_v1" not in engines and record.get("price_map"):
+        engines["confirmed_swings_v1"] = record.get("price_map") or {}
+    return {
+        engine_id: _price_map_first_touch(price_map, df, start_idx, entry_price)
+        for engine_id, price_map in sorted(engines.items())
+        if isinstance(price_map, dict)
     }
 
 
@@ -668,6 +759,12 @@ def _evaluate_record(record: dict, ohlcv_cache: dict[str, Optional[pd.DataFrame]
         "followup": followups,
         "mfe_mae": mfe_mae,
         "structure_events": structure,
+        "price_map_engine_outcomes": _evaluate_price_map_engines(
+            record,
+            df,
+            start_idx,
+            entry_price,
+        ),
         "final_verdict": verdict,
     }
     evaluated["benchmark"] = _benchmark_outcome(evaluated, followups, ohlcv_cache)
@@ -774,9 +871,57 @@ def _summary(records: list[dict], snapshots: Optional[list[dict]] = None) -> dic
         "llm_override_comparison": _llm_override_comparison(records),
         "outcome_memory_comparison": _outcome_memory_comparison(records),
         "shadow_policy_comparison": _shadow_policy_comparison(records),
+        "price_map_engine_comparison": _price_map_engine_comparison(records),
         "policy_comparison": _policy_comparison(records),
         "decision_audit": _decision_audit_summary(decision_audits),
         "decision_audits": decision_audits,
+    }
+
+
+def _price_map_engine_comparison(records: list[dict]) -> dict:
+    """Compare frozen SR maps without declaring a winner from immature samples."""
+    rows_by_engine: dict[str, list[dict]] = defaultdict(list)
+    seen = set()
+    ordered = sorted(
+        records,
+        key=lambda row: (
+            0 if str(row.get("bucket", "")).startswith("shadow:pre_entry") else 1,
+            str(row.get("snapshot_date", "")),
+            str(row.get("ticker", "")),
+        ),
+    )
+    for record in ordered:
+        for engine_id, outcome in (record.get("price_map_engine_outcomes") or {}).items():
+            key = (record.get("snapshot_date"), record.get("ticker"), engine_id)
+            if key in seen or not isinstance(outcome, dict):
+                continue
+            seen.add(key)
+            rows_by_engine[str(engine_id)].append(outcome)
+
+    comparison = {}
+    for engine_id, outcomes in sorted(rows_by_engine.items()):
+        statuses = Counter(str(row.get("status", "")) for row in outcomes)
+        realized = [
+            _safe_float(row.get("realized_r"))
+            for row in outcomes
+            if _safe_float(row.get("realized_r")) is not None
+        ]
+        resolved = int(statuses.get("TARGET_FIRST", 0)) + int(statuses.get("INVALIDATION_FIRST", 0))
+        comparison[engine_id] = {
+            "count": len(outcomes),
+            "resolved_count": resolved,
+            "target_first": int(statuses.get("TARGET_FIRST", 0)),
+            "invalidation_first": int(statuses.get("INVALIDATION_FIRST", 0)),
+            "target_already_passed": int(statuses.get("TARGET_ALREADY_PASSED", 0)),
+            "ambiguous_same_bar": int(statuses.get("AMBIGUOUS_SAME_BAR", 0)),
+            "open": int(statuses.get("OPEN", 0)),
+            "avg_realized_r": round(sum(realized) / len(realized), 2) if realized else None,
+            "winner_declared": False,
+        }
+    return {
+        "evidence_status": "COLLECTING_FORWARD_EVIDENCE",
+        "winner_declared": False,
+        "engines": comparison,
     }
 
 
@@ -1218,6 +1363,17 @@ def _markdown_report(today: str, summary: dict, records: list[dict]) -> str:
                 f"alphaD20={policy.get('avg_d20_alpha_pct')}"
             )
     lines.append("")
+    lines.append("## Support Resistance Engine Comparison")
+    sr_comparison = summary.get("price_map_engine_comparison") or {}
+    lines.append(f"- evidence status: {sr_comparison.get('evidence_status', '')}")
+    lines.append(f"- winner declared: {sr_comparison.get('winner_declared', False)}")
+    for engine_id, metrics in (sr_comparison.get("engines") or {}).items():
+        lines.append(
+            f"- {engine_id}: resolved={metrics.get('resolved_count', 0)}/{metrics.get('count', 0)}, "
+            f"target={metrics.get('target_first', 0)}, stop={metrics.get('invalidation_first', 0)}, "
+            f"late={metrics.get('target_already_passed', 0)}, avgR={metrics.get('avg_realized_r')}"
+        )
+    lines.append("")
     lines.append("## Policy Comparison")
     policy_comparison = summary.get("policy_comparison") or {}
     lines.append(f"- evidence status: {policy_comparison.get('evidence_status', '')}")
@@ -1347,7 +1503,7 @@ def run_scout_performance(
     summary = _summary(evaluated, snapshots=snapshots)
     payload = _json_safe({
         "date": today,
-        "schema_version": "scout_performance_v0_5",
+        "schema_version": "scout_performance_v0_6",
         "lookback_days": int(days),
         "followup_days": FOLLOWUP_DAYS,
         "evaluation_protocol": {
@@ -1357,6 +1513,8 @@ def run_scout_performance(
             "benchmark_relative": True,
             "regime_uses_pre_entry_benchmark_data_only": True,
             "policy_winner_auto_declared": False,
+            "price_map_first_touch_horizon": 20,
+            "price_map_same_bar_order": "ambiguous",
         },
         "summary": summary,
         "records": evaluated,

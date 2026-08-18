@@ -666,8 +666,11 @@ def _pre_entry_position(candidate: dict) -> str:
     price_map = candidate.get("price_map") or {}
     timing = candidate.get("pre_entry_timing") or {}
     position = {
+        "IN_SUPPORT": "지지 구간 안",
         "NEAR_SUPPORT": "지지 구간 근처",
+        "IN_RESISTANCE": "1차 저항 안",
         "NEAR_RESISTANCE": "1차 저항 접근",
+        "BROKEN_SUPPORT": "지지 이탈",
         "BETWEEN_LEVELS": "지지·저항 사이",
     }.get(str(price_map.get("position", "") or ""), "가격 위치 확인")
     timing_label = {

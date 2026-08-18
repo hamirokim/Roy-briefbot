@@ -67,6 +67,18 @@ scout:
       cluster_atr: 0.50
       zone_half_atr: 0.25
       invalidation_atr: 0.25
+      near_level_atr: 1.00                # 한 번의 보통 일간 변동으로 저항에 닿는 후보는 늦은 후보로 차단
+      shadow_compare:
+        enabled: true                    # 실전 판정에는 미사용. 동일 시점 SR 엔진을 함께 저장해 미래 성과 비교
+        lookback_bars: 252
+        pivot_left: 2
+        pivot_right: 2
+        prominence_window: 20
+        min_prominence_atr: 0.75
+        min_separation_bars: 5
+        recency_half_life_bars: 60
+        rolling_lookback_bars: 60
+        reversal_atr: 1.0
 
   # 시간 기준 (모든 신호 동일 — D 단위 통일, Q2 결정)
   bar_interval: "D"
