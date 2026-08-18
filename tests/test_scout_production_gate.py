@@ -332,12 +332,13 @@ class DigestContractTests(unittest.TestCase):
         self.assertIn("차트 | 0개", message)
         self.assertIn("없음 | 새로 열 차트 없음", message)
         self.assertIn("막힘 | Tier A 확실 후보 없음", message)
+        self.assertIn("행동 | 오늘은 새 차트 열지 말고 보유 종목만 점검", message)
         self.assertIn("Tier A 확실 후보 없음", message)
         self.assertNotIn("관찰 레이더", message)
         self.assertNotIn("HWM", message)
         self.assertNotIn("내부 관찰풀", message)
 
-    def test_pre_entry_board_shows_price_evidence_without_action_copy(self):
+    def test_pre_entry_board_shows_price_evidence_with_execution_prompt(self):
         agent = self._digest_agent()
         candidate = {
             "ticker": "EARLY",
@@ -381,8 +382,10 @@ class DigestContractTests(unittest.TestCase):
         self.assertIn("핵심 저항 | $39.50~$40.20", message)
         self.assertIn("선행 | 2026-08-01 최초 조짐 후 +3.0%", message)
         self.assertIn("무효 | $30.80 아래 종가", message)
-        self.assertNotIn("할 일", message)
-        self.assertNotIn("Entry50/100 점등", message)
+        self.assertIn(
+            "행동 | 지금 차트 열기 · Entry50/100 점등과 Gate 통과까지 대기",
+            message,
+        )
 
     def test_primary_pick_is_expanded_and_other_picks_are_compact(self):
         agent = self._digest_agent()
@@ -464,7 +467,10 @@ class DigestContractTests(unittest.TestCase):
         self.assertIn("1. <b>AAA</b> | 좌측진입 강함", message)
         self.assertIn("2. <b>BBB</b> | 좌측진입 준비", message)
         self.assertNotIn("CCC", message)
-        self.assertIn("진입 | Entry50/100 점등 + Gate 통과 후", message)
+        self.assertIn(
+            "행동 | 지금 차트 열기 · Entry50/100 점등과 Gate 통과까지 대기",
+            message,
+        )
         self.assertIn("무효 | 지지 구간 이탈 시 무효", message)
         self.assertIn("보유 경보", message)
         self.assertIn("<b>HELD</b>", message)
@@ -538,6 +544,7 @@ class DigestContractTests(unittest.TestCase):
 
         self.assertIn("환전 | 적극", message)
         self.assertIn("90일 하위 0% · 52주 하위 18%", message)
+        self.assertIn("행동 | 이번 달 필요한 달러는 지금부터 확보", message)
         self.assertNotIn("52주 범위", message)
         self.assertNotIn("중앙값", message)
         self.assertNotIn("52주 비교는 아직 미수집", message)
@@ -573,6 +580,7 @@ class DigestContractTests(unittest.TestCase):
 
         self.assertIn("구조 | 소고점 돌파 구조 유지", message)
         self.assertIn("연속 상승 4일", message)
+        self.assertIn("행동 | 보유 관찰 · 표시 지지선 종가 이탈 때 다시 판단", message)
         self.assertIn("뉴스 | NOW 관련 뉴스 영향은 중립", message)
         self.assertNotIn("투자 근거 영향", message)
         self.assertNotIn("기존 투자 근거를 바꿀 새 정보 없음", message)
@@ -607,6 +615,7 @@ class DigestContractTests(unittest.TestCase):
         )
 
         self.assertIn("판정 | 선별 관찰", message)
+        self.assertIn("행동 | 시장 전체를 따라가지 말고 표시된 후보만 확인", message)
         self.assertNotIn("테마 | AI·반도체", message)
 
     def test_one_screen_market_map_caps_each_row_at_two_items(self):

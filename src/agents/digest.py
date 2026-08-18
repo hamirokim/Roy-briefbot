@@ -365,6 +365,14 @@ def _market_operating_view(regime_out: dict) -> dict:
     }
 
 
+def _market_action(label: str) -> str:
+    return {
+        "기회 탐색": "우호 영역의 ENTRY 선행 후보만 차트로 확인",
+        "선별 관찰": "시장 전체를 따라가지 말고 표시된 후보만 확인",
+        "위험 회피": "신규 진입보다 보유 위험과 지지 이탈부터 점검",
+    }.get(str(label or ""), "표시된 후보와 보유 위험만 선별 확인")
+
+
 _QUADRANT_PLAIN = {
     "LEADING": "주도",
     "IMPROVING": "개선",
@@ -472,6 +480,17 @@ def _fx_action(fx: dict) -> dict:
                 f"{abs(float(median_diff)):.1f}% {direction}"
             )
     return {"label": label, "reason": reason, "detail": detail}
+
+
+def _fx_operating_action(fx_view: dict, fx: dict) -> str:
+    label = str(fx_view.get("label", "") or "")
+    if fx.get("current") is None:
+        return "환율 자료가 정상화될 때까지 판단 보류"
+    return {
+        "적극": "이번 달 필요한 달러는 지금부터 확보",
+        "분할": "필요한 달러만 여러 번 나눠 확보",
+        "대기": "급하지 않은 환전은 기다림",
+    }.get(label, "필요한 달러만 나눠 확보")
 
 
 def _core_valuation_groups(core_valuation: dict) -> list[tuple[str, list[str]]]:
@@ -680,6 +699,30 @@ def _pre_entry_position(candidate: dict) -> str:
         "MISSED": "추격 구간",
     }.get(str(timing.get("status", "") or ""), "선행성 미확인")
     return f"{position} · {timing_label}"
+
+
+def _pre_entry_action(candidate: dict) -> str:
+    price_map = candidate.get("price_map") or {}
+    position = str(price_map.get("position", "") or "")
+    if position in {"IN_RESISTANCE", "NEAR_RESISTANCE"}:
+        return "추격 금지 · 저항 돌파 안착 또는 재눌림 대기"
+    if position == "BROKEN_SUPPORT":
+        return "진입 보류 · 지지 회복 전까지 관찰"
+    if position in {"IN_SUPPORT", "NEAR_SUPPORT"}:
+        return "지금 차트 열기 · Entry50/100 점등과 Gate 통과까지 대기"
+    return "차트 확인 · 추격하지 말고 Entry50/100과 지지 유지 확인"
+
+
+def _holding_action(structure: dict) -> str:
+    status = str(structure.get("status", "") or "")
+    return {
+        "BREAKOUT_HOLD": "보유 관찰 · 표시 지지선 종가 이탈 때 다시 판단",
+        "SUPPORT_WATCH": "추가 진입 보류 · 지지 유지 또는 회복 확인",
+        "STRUCTURE_BREAK": "손절·축소 판단 우선 · SL과 지지선 종가 이탈 확인",
+        "NO_RECENT_BREAKOUT": "추가 매수보다 지지 확인 우선",
+        "DATA_UNAVAILABLE": "차트 직접 확인 전 판단 보류",
+        "DATA_SHORT": "차트 직접 확인 전 판단 보류",
+    }.get(status, "표시된 지지와 구조 변화 확인")
 
 
 def _candidate_evidence_health(candidate: dict) -> str:
@@ -1317,6 +1360,7 @@ class DigestAgent(BaseAgent):
             lines.append(f"흐름 | {_clip_complete_sentence(period_summary, 140)}")
         if briefing_mode == "monthly" and m6_out.get("summary_text"):
             lines.append(f"성과 | {_clip_complete_sentence(m6_out['summary_text'], 120)}")
+        lines.append(f"행동 | {_market_action(market_view['label'])}")
         lines.append("")
 
         yesterday = macro.get("yesterday_announced", []) or []
@@ -1336,6 +1380,7 @@ class DigestAgent(BaseAgent):
             lines.append("")
 
         lines.append(f"<b>환전 | {fx_view['label']}</b> · {fx_view['reason']}")
+        lines.append(f"행동 | {_fx_operating_action(fx_view, regime_out.get('fx', {}) or {})}")
         lines.append("")
 
         chart_title = "ENTRY 선행" if using_pre_entry else "차트"
@@ -1405,8 +1450,9 @@ class DigestAgent(BaseAgent):
                 invalidation = price_map.get("invalidation_close_below")
                 if invalidation is not None:
                     lines.append(f"   무효 | {_brief_price(invalidation, country)} 아래 종가")
+                lines.append(f"   행동 | {_pre_entry_action(candidate)}")
             if not using_pre_entry:
-                lines.append("진입 | Entry50/100 점등 + Gate 통과 후")
+                lines.append("행동 | 지금 차트 열기 · Entry50/100 점등과 Gate 통과까지 대기")
         else:
             pre_entry_audit = (
                 ((radar_summary.get("filter_audit") or {}).get("top3_selection_audit") or {}).get("pre_entry")
@@ -1424,6 +1470,7 @@ class DigestAgent(BaseAgent):
             )
             lines.append("없음 | Entry 전에 볼 후보 없음" if using_pre_entry else "없음 | 새로 열 차트 없음")
             lines.append(f"막힘 | {reason}")
+            lines.append("행동 | 오늘은 새 차트 열지 말고 보유 종목만 점검")
         lines.append("")
 
         alerts = guard_out.get("alerts", []) or []
@@ -1455,6 +1502,7 @@ class DigestAgent(BaseAgent):
                         if extension is not None:
                             caution += f" · 20일선 대비 {float(extension):+.1f}ATR"
                         lines.append(f"주의 | {caution} · 지지 유지 확인")
+                    lines.append(f"행동 | {_holding_action(structure)}")
                 news = alert.get("news", []) or []
                 if news:
                     summary = str(

@@ -129,6 +129,11 @@ Status as of 2026-07-29:
   FX as `적극/분할/대기`, 0-2 charts worth opening, holding alerts, the next event, and degraded-data
   warnings. Event interpretation, learning notes, valuation explanations, full RRG/theme tables,
   WATCHLIST, and SCOUT detail remain outside Telegram.
+- Each Telegram decision block includes one short deterministic `행동 |` line. Market evidence says
+  whether to scan selectively or prioritize risk, FX says whether to secure the month's needed dollars
+  now/in parts/wait, Pre-Entry says whether to open the chart and wait for Entry50/100 plus Gate, and
+  GUARD says which structure must be checked next. These are operating prompts, not automatic buy/sell
+  orders, and they must not override TradingView Entry/Gate or Roy's execution decision.
 - FX action uses both the recent 90-day and 52-week USD/KRW distributions. `적극` or `대기`
   requires both windows to agree; mixed windows return `분할`. Telegram also shows the 52-week
   percentile as plain `상위/하위 N%`; ranges and medians remain in the Journal.
