@@ -1,14 +1,93 @@
 {
-  "last_run_date": "2026-08-31",
-  "last_run_at": "2026-08-31T09:44:24.965865+09:00",
+  "last_run_date": "2026-09-01",
+  "last_run_at": "2026-09-01T10:28:27.168168+09:00",
   "last_run_status": "OK",
   "last_error_count": 0,
   "last_errors": [],
   "last_telegram_sent": true,
   "last_sheets_saved": true,
-  "last_monthly_run": "2026-08-01",
+  "last_monthly_run": "2026-09-01",
   "last_weekly_run": "2026-W36",
   "m2_history": {
+    "2026-09-01": {
+      "XLK": {
+        "quadrant": "WEAKENING",
+        "label": "기술",
+        "group": "growth",
+        "ratio": 100.65,
+        "momentum": 99.2
+      },
+      "XLV": {
+        "quadrant": "LAGGING",
+        "label": "헬스케어",
+        "group": "defensive",
+        "ratio": 99.72,
+        "momentum": 99.74
+      },
+      "XLF": {
+        "quadrant": "IMPROVING",
+        "label": "금융",
+        "group": "cyclical",
+        "ratio": 99.99,
+        "momentum": 101.21
+      },
+      "XLY": {
+        "quadrant": "LAGGING",
+        "label": "임의소비재",
+        "group": "cyclical",
+        "ratio": 99.54,
+        "momentum": 98.28
+      },
+      "XLP": {
+        "quadrant": "IMPROVING",
+        "label": "필수소비재",
+        "group": "defensive",
+        "ratio": 99.32,
+        "momentum": 102.15
+      },
+      "XLE": {
+        "quadrant": "LEADING",
+        "label": "에너지",
+        "group": "cyclical",
+        "ratio": 102.28,
+        "momentum": 100.91
+      },
+      "XLI": {
+        "quadrant": "LAGGING",
+        "label": "산업재",
+        "group": "cyclical",
+        "ratio": 96.83,
+        "momentum": 97.48
+      },
+      "XLB": {
+        "quadrant": "LAGGING",
+        "label": "소재",
+        "group": "cyclical",
+        "ratio": 99.96,
+        "momentum": 99.52
+      },
+      "XLC": {
+        "quadrant": "LEADING",
+        "label": "통신",
+        "group": "growth",
+        "ratio": 100.01,
+        "momentum": 100.56
+      },
+      "XLU": {
+        "quadrant": "IMPROVING",
+        "label": "유틸리티",
+        "group": "defensive",
+        "ratio": 97.32,
+        "momentum": 101.57
+      },
+      "XLRE": {
+        "quadrant": "IMPROVING",
+        "label": "리츠",
+        "group": "defensive",
+        "ratio": 98.51,
+        "momentum": 103.27
+      }
+    },
     "2026-08-31": {
       "XLK": {
         "quadrant": "LAGGING",
@@ -2299,88 +2378,173 @@
         "ratio": 102.78,
         "momentum": 103.94
       }
-    },
-    "2026-07-28": {
-      "XLK": {
-        "quadrant": "IMPROVING",
-        "label": "기술",
-        "group": "growth",
-        "ratio": 97.91,
-        "momentum": 100.44
-      },
-      "XLV": {
-        "quadrant": "WEAKENING",
-        "label": "헬스케어",
-        "group": "defensive",
-        "ratio": 102.62,
-        "momentum": 99.92
-      },
-      "XLF": {
-        "quadrant": "LEADING",
-        "label": "금융",
-        "group": "cyclical",
-        "ratio": 102.59,
-        "momentum": 100.06
-      },
-      "XLY": {
-        "quadrant": "LAGGING",
-        "label": "임의소비재",
-        "group": "cyclical",
-        "ratio": 97.39,
-        "momentum": 97.12
-      },
-      "XLP": {
-        "quadrant": "LEADING",
-        "label": "필수소비재",
-        "group": "defensive",
-        "ratio": 102.34,
-        "momentum": 103.49
-      },
-      "XLE": {
-        "quadrant": "LEADING",
-        "label": "에너지",
-        "group": "cyclical",
-        "ratio": 103.48,
-        "momentum": 106.29
-      },
-      "XLI": {
-        "quadrant": "LEADING",
-        "label": "산업재",
-        "group": "cyclical",
-        "ratio": 102.64,
-        "momentum": 101.74
-      },
-      "XLB": {
-        "quadrant": "LEADING",
-        "label": "소재",
-        "group": "cyclical",
-        "ratio": 102.68,
-        "momentum": 103.16
-      },
-      "XLC": {
-        "quadrant": "LAGGING",
-        "label": "통신",
-        "group": "growth",
-        "ratio": 98.64,
-        "momentum": 98.31
-      },
-      "XLU": {
-        "quadrant": "LEADING",
-        "label": "유틸리티",
-        "group": "defensive",
-        "ratio": 101.6,
-        "momentum": 102.7
-      },
-      "XLRE": {
-        "quadrant": "LEADING",
-        "label": "리츠",
-        "group": "defensive",
-        "ratio": 103.08,
-        "momentum": 104.79
-      }
     }
   },
   "m2_theme_history": {
+    "2026-09-01": {
+      "SMH": {
+        "quadrant": "IMPROVING",
+        "label": "반도체 (VanEck)",
+        "category": "semiconductor",
+        "theme_group": "ai_semiconductor",
+        "group_label": "AI·반도체",
+        "ratio": 92.8,
+        "momentum": 101.32
+      },
+      "SOXX": {
+        "quadrant": "IMPROVING",
+        "label": "반도체 (iShares)",
+        "category": "semiconductor",
+        "theme_group": "ai_semiconductor",
+        "group_label": "AI·반도체",
+        "ratio": 89.99,
+        "momentum": 100.49
+      },
+      "AIQ": {
+        "quadrant": "LEADING",
+        "label": "AI & 빅데이터",
+        "category": "ai",
+        "theme_group": "ai_semiconductor",
+        "group_label": "AI·반도체",
+        "ratio": 100.22,
+        "momentum": 102.73
+      },
+      "ARTY": {
+        "quadrant": "LEADING",
+        "label": "Future AI & Tech",
+        "category": "ai",
+        "theme_group": "ai_semiconductor",
+        "group_label": "AI·반도체",
+        "ratio": 100.71,
+        "momentum": 102.44
+      },
+      "SKYY": {
+        "quadrant": "LEADING",
+        "label": "클라우드 컴퓨팅",
+        "category": "cloud",
+        "theme_group": "cloud_software",
+        "group_label": "클라우드·소프트웨어",
+        "ratio": 112.34,
+        "momentum": 103.52
+      },
+      "IGV": {
+        "quadrant": "LEADING",
+        "label": "소프트웨어",
+        "category": "software",
+        "theme_group": "cloud_software",
+        "group_label": "클라우드·소프트웨어",
+        "ratio": 112.29,
+        "momentum": 106.85
+      },
+      "BOTZ": {
+        "quadrant": "IMPROVING",
+        "label": "로봇 & AI",
+        "category": "robotics",
+        "theme_group": "robotics_automation",
+        "group_label": "로봇·자동화",
+        "ratio": 95.9,
+        "momentum": 101.34
+      },
+      "ROBO": {
+        "quadrant": "IMPROVING",
+        "label": "로봇 & 자동화",
+        "category": "robotics",
+        "theme_group": "robotics_automation",
+        "group_label": "로봇·자동화",
+        "ratio": 95.66,
+        "momentum": 100.12
+      },
+      "HACK": {
+        "quadrant": "LEADING",
+        "label": "사이버보안 (ETFMG)",
+        "category": "cybersecurity",
+        "theme_group": "cybersecurity",
+        "group_label": "사이버보안",
+        "ratio": 107.27,
+        "momentum": 106.26
+      },
+      "CIBR": {
+        "quadrant": "LEADING",
+        "label": "사이버보안 (First Trust)",
+        "category": "cybersecurity",
+        "theme_group": "cybersecurity",
+        "group_label": "사이버보안",
+        "ratio": 107.16,
+        "momentum": 106.92
+      },
+      "FINX": {
+        "quadrant": "WEAKENING",
+        "label": "핀테크",
+        "category": "fintech",
+        "theme_group": "fintech",
+        "group_label": "핀테크",
+        "ratio": 103.35,
+        "momentum": 98.04
+      },
+      "ARKF": {
+        "quadrant": "LEADING",
+        "label": "핀테크 혁신 (ARK)",
+        "category": "fintech",
+        "theme_group": "fintech",
+        "group_label": "핀테크",
+        "ratio": 109.61,
+        "momentum": 101.44
+      },
+      "ICLN": {
+        "quadrant": "LAGGING",
+        "label": "클린에너지",
+        "category": "clean_energy",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 88.29,
+        "momentum": 98.79
+      },
+      "LIT": {
+        "quadrant": "LAGGING",
+        "label": "리튬 & 배터리",
+        "category": "battery",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 99.42,
+        "momentum": 98.68
+      },
+      "TAN": {
+        "quadrant": "LAGGING",
+        "label": "태양광",
+        "category": "solar",
+        "theme_group": "energy_battery",
+        "group_label": "에너지전환·배터리",
+        "ratio": 84.11,
+        "momentum": 97.99
+      },
+      "ITA": {
+        "quadrant": "LAGGING",
+        "label": "항공우주 & 방산",
+        "category": "space_defense",
+        "theme_group": "space_defense",
+        "group_label": "우주·방산",
+        "ratio": 93.73,
+        "momentum": 97.38
+      },
+      "XBI": {
+        "quadrant": "WEAKENING",
+        "label": "바이오테크 (S&P)",
+        "category": "biotech",
+        "theme_group": "biotech",
+        "group_label": "바이오테크",
+        "ratio": 105.2,
+        "momentum": 98.52
+      },
+      "IBB": {
+        "quadrant": "WEAKENING",
+        "label": "바이오테크 (NASDAQ)",
+        "category": "biotech",
+        "theme_group": "biotech",
+        "group_label": "바이오테크",
+        "ratio": 108.18,
+        "momentum": 97.9
+      }
+    },
     "2026-08-31": {
       "SMH": {
         "quadrant": "LAGGING",
@@ -7136,170 +7300,6 @@
         "ratio": 107.36,
         "momentum": 101.65
       }
-    },
-    "2026-07-28": {
-      "SMH": {
-        "quadrant": "LAGGING",
-        "label": "반도체 (VanEck)",
-        "category": "semiconductor",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 93.93,
-        "momentum": 99.13
-      },
-      "SOXX": {
-        "quadrant": "LAGGING",
-        "label": "반도체 (iShares)",
-        "category": "semiconductor",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 93.6,
-        "momentum": 99.49
-      },
-      "AIQ": {
-        "quadrant": "LAGGING",
-        "label": "AI & 빅데이터",
-        "category": "ai",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 93.61,
-        "momentum": 99.88
-      },
-      "ARTY": {
-        "quadrant": "IMPROVING",
-        "label": "Future AI & Tech",
-        "category": "ai",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 94.5,
-        "momentum": 101.97
-      },
-      "SKYY": {
-        "quadrant": "LEADING",
-        "label": "클라우드 컴퓨팅",
-        "category": "cloud",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 102.0,
-        "momentum": 100.38
-      },
-      "IGV": {
-        "quadrant": "LAGGING",
-        "label": "소프트웨어",
-        "category": "software",
-        "theme_group": "ai_semis_cloud",
-        "group_label": "AI·반도체·클라우드",
-        "ratio": 99.27,
-        "momentum": 98.52
-      },
-      "BOTZ": {
-        "quadrant": "IMPROVING",
-        "label": "로봇 & AI",
-        "category": "robotics",
-        "theme_group": "robotics_automation",
-        "group_label": "로봇·자동화",
-        "ratio": 90.51,
-        "momentum": 100.39
-      },
-      "ROBO": {
-        "quadrant": "IMPROVING",
-        "label": "로봇 & 자동화",
-        "category": "robotics",
-        "theme_group": "robotics_automation",
-        "group_label": "로봇·자동화",
-        "ratio": 94.19,
-        "momentum": 101.46
-      },
-      "HACK": {
-        "quadrant": "WEAKENING",
-        "label": "사이버보안 (ETFMG)",
-        "category": "cybersecurity",
-        "theme_group": "cybersecurity",
-        "group_label": "사이버보안",
-        "ratio": 109.41,
-        "momentum": 95.93
-      },
-      "CIBR": {
-        "quadrant": "WEAKENING",
-        "label": "사이버보안 (First Trust)",
-        "category": "cybersecurity",
-        "theme_group": "cybersecurity",
-        "group_label": "사이버보안",
-        "ratio": 106.17,
-        "momentum": 97.02
-      },
-      "FINX": {
-        "quadrant": "LEADING",
-        "label": "핀테크",
-        "category": "fintech",
-        "theme_group": "fintech",
-        "group_label": "핀테크",
-        "ratio": 102.33,
-        "momentum": 102.16
-      },
-      "ARKF": {
-        "quadrant": "LEADING",
-        "label": "핀테크 혁신 (ARK)",
-        "category": "fintech",
-        "theme_group": "fintech",
-        "group_label": "핀테크",
-        "ratio": 100.21,
-        "momentum": 100.84
-      },
-      "ICLN": {
-        "quadrant": "LAGGING",
-        "label": "클린에너지",
-        "category": "clean_energy",
-        "theme_group": "energy_battery",
-        "group_label": "에너지전환·배터리",
-        "ratio": 86.3,
-        "momentum": 97.5
-      },
-      "LIT": {
-        "quadrant": "IMPROVING",
-        "label": "리튬 & 배터리",
-        "category": "battery",
-        "theme_group": "energy_battery",
-        "group_label": "에너지전환·배터리",
-        "ratio": 85.51,
-        "momentum": 100.94
-      },
-      "TAN": {
-        "quadrant": "LAGGING",
-        "label": "태양광",
-        "category": "solar",
-        "theme_group": "energy_battery",
-        "group_label": "에너지전환·배터리",
-        "ratio": 85.53,
-        "momentum": 96.2
-      },
-      "ITA": {
-        "quadrant": "LEADING",
-        "label": "항공우주 & 방산",
-        "category": "space_defense",
-        "theme_group": "space_defense",
-        "group_label": "우주·방산",
-        "ratio": 105.98,
-        "momentum": 106.31
-      },
-      "XBI": {
-        "quadrant": "WEAKENING",
-        "label": "바이오테크 (S&P)",
-        "category": "biotech",
-        "theme_group": "biotech",
-        "group_label": "바이오테크",
-        "ratio": 106.63,
-        "momentum": 98.18
-      },
-      "IBB": {
-        "quadrant": "WEAKENING",
-        "label": "바이오테크 (NASDAQ)",
-        "category": "biotech",
-        "theme_group": "biotech",
-        "group_label": "바이오테크",
-        "ratio": 106.65,
-        "momentum": 99.81
-      }
     }
   },
   "m6_history": [
@@ -7937,11 +7937,13 @@
     "IDXX": "2026-08-29",
     "BTI": "2026-08-29",
     "O": "2026-08-31",
-    "PEG": "2026-08-31"
+    "PEG": "2026-08-31",
+    "AXP": "2026-09-01",
+    "EXC": "2026-09-01"
   },
   "prev_day": {
     "candidates": [],
     "alerts_count": 1,
-    "vix": 14.43
+    "vix": 14.92
   }
 }
