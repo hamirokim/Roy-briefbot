@@ -707,11 +707,27 @@ Sheets record.
   reactions, and applies time decay. It remains shadow-only until forward first-touch evidence is
   sufficient; no engine winner is auto-declared.
 
-Priority 1: Validate the one-screen Telegram contract on one live brief.
+## Tactical Briefing and Journal Contract v1 (2026-09-02)
+
+- DIGEST creates one plain-text tactical briefing and sends the exact same body to Telegram and
+  the Journal `BRIEFING` sheet. Output-specific renderers must not become separate products again.
+- Candidate sections are always distinct: `최종 후보` (strict production gate),
+  `오늘 TV 확인 후보` (`pre_entry_v1`, not an order), and `관찰 후보` (WATCHLIST).
+- A zero strict-candidate day is valid. The brief must show zero and the recorded production-gate
+  blockers instead of silently replacing strict candidates with the daily two TV-check names.
+- The two TV-check names must show price zones, invalidation, timing, structure, sector context,
+  quality status, and the explicit instruction to confirm TradingView Entry/Gate state.
+- `m6_node` writes both strict and TV-check candidates to `SCOUT 후보발굴`, tagged by candidate
+  type and policy. WATCHLIST remains in its dedicated sheet. No candidate write creates a position.
+- Outcome thresholds are unchanged. Current samples are insufficient to promote TV-check or
+  WATCHLIST candidates into the strict cohort.
+
+Priority 1: Validate the one-screen common briefing contract on one live brief.
 
 - Confirm both FX windows are present and mixed windows cannot produce `적극`.
-- Confirm Telegram contains no ETF relative-valuation section, event essay, WATCHLIST, or learning note.
-- Confirm the output remains scannable without truncation and preserves 0-2 left-side chart candidates.
+- Confirm Telegram and Journal contain byte-identical briefing bodies.
+- Confirm the output remains scannable without truncation and preserves separate strict, TV-check,
+  and WATCHLIST sections.
 
 Priority 2: Accumulate untouched Left-side Context Shadow outcomes.
 

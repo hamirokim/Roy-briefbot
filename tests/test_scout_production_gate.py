@@ -290,7 +290,20 @@ class DigestContractTests(unittest.TestCase):
         agent.log = logging.getLogger("test.digest")
         return agent
 
-    def test_zero_day_is_explicit_and_watchlist_is_hidden(self):
+    def test_run_uses_one_canonical_body_for_telegram_and_journal(self):
+        agent = self._digest_agent()
+        agent._enrich_candidates_llm = lambda items: items
+        agent._translate_news_korean = lambda payload: payload
+        agent._build_macro_interpretation_llm = lambda *args: ""
+        out = agent.run({
+            "scout_out": {"candidates": [], "pre_entry_candidates": [], "watchlist_candidates": []},
+            "guard_out": {},
+            "regime_out": {"vix": 18.0},
+            "briefing_mode": "daily",
+        })
+        self.assertEqual(out["telegram_text"], out["sheets_text"])
+
+    def test_zero_day_is_explicit_and_watchlist_is_visible(self):
         agent = self._digest_agent()
         message = agent._build_telegram(
             [],
@@ -329,14 +342,14 @@ class DigestContractTests(unittest.TestCase):
 
         self.assertIn("판정 |", message)
         self.assertIn("환전 | 대기", message)
-        self.assertIn("차트 | 0개", message)
-        self.assertIn("없음 | 새로 열 차트 없음", message)
+        self.assertIn("최종 후보 | 0개", message)
+        self.assertIn("오늘 TV 확인 후보 | 0개", message)
+        self.assertIn("없음 | Entry 전에 볼 후보 없음", message)
         self.assertIn("막힘 | Tier A 확실 후보 없음", message)
         self.assertIn("행동 | 오늘은 새 차트 열지 말고 보유 종목만 점검", message)
         self.assertIn("Tier A 확실 후보 없음", message)
-        self.assertNotIn("관찰 레이더", message)
-        self.assertNotIn("HWM", message)
-        self.assertNotIn("내부 관찰풀", message)
+        self.assertIn("관찰 후보 | 1개", message)
+        self.assertIn("HWM | Tier B", message)
 
     def test_pre_entry_board_shows_price_evidence_with_execution_prompt(self):
         agent = self._digest_agent()
@@ -376,7 +389,7 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"pre_entry_candidates": [candidate], "radar_summary": {}},
         )
 
-        self.assertIn("ENTRY 선행 | 1개", message)
+        self.assertIn("오늘 TV 확인 후보 | 1개", message)
         self.assertIn("지지 $31.00~$31.40", message)
         self.assertIn("저항 $34.00~$34.50", message)
         self.assertIn("핵심 저항 | $39.50~$40.20", message)
@@ -463,17 +476,14 @@ class DigestContractTests(unittest.TestCase):
             scout_out={"radar_summary": {"radar_pool_count": 58}},
         )
 
-        self.assertIn("차트 | 2개", message)
-        self.assertIn("1. <b>AAA</b> | 좌측진입 강함", message)
-        self.assertIn("2. <b>BBB</b> | 좌측진입 준비", message)
+        self.assertIn("최종 후보 | 2개", message)
+        self.assertIn("1. AAA | STAGE2_STRONG_PASS", message)
+        self.assertIn("2. BBB | STAGE2_PASS", message)
         self.assertNotIn("CCC", message)
-        self.assertIn(
-            "행동 | 지금 차트 열기 · Entry50/100 점등과 Gate 통과까지 대기",
-            message,
-        )
+        self.assertIn("행동 | TV Entry 신호와 현재 Gate를 다시 확인", message)
         self.assertIn("무효 | 지지 구간 이탈 시 무효", message)
         self.assertIn("보유 경보", message)
-        self.assertIn("<b>HELD</b>", message)
+        self.assertIn("HELD", message)
         self.assertNotIn("후순위", message)
 
     def test_macro_degraded_coverage_is_visible(self):

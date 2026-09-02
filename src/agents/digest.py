@@ -860,9 +860,10 @@ class DigestAgent(BaseAgent):
         )
         if all_empty:
             self.log.warning("[digest] 모든 에이전트 빈 결과 — fallback")
+            fallback = self.settings["digest"]["telegram"]["fallback_message"]
             return {
-                "telegram_text": self.settings["digest"]["telegram"]["fallback_message"],
-                "sheets_text": "",
+                "telegram_text": fallback,
+                "sheets_text": fallback,
                 "all_empty": True,
             }
 
@@ -908,15 +909,9 @@ class DigestAgent(BaseAgent):
             improvement_report=improvement_report,
         )
 
-        # ── 저널 BRIEFING 시트 메시지 생성 (상세) ──
-        sheets_text = self._build_sheets_detailed(
-            scout_out, guard_out_translated, regime_out, candidates_with_explanation,
-            briefing_mode=briefing_mode,
-            period_summary=period_summary,
-            macro_interp=macro_interp,
-            m6_out=m6_out,
-            improvement_report=improvement_report,
-        )
+        # 하나의 브리핑을 만든 뒤 Telegram과 Journal에 그대로 보낸다.
+        # 출력기별 별도 렌더링은 패치 누락과 의미 차이를 만들기 때문에 사용하지 않는다.
+        sheets_text = telegram_text
 
         return {
             "telegram_text": telegram_text,
@@ -1314,30 +1309,19 @@ class DigestAgent(BaseAgent):
         elif briefing_mode == "weekly":
             mode_badge = " · 주간"
 
-        using_pre_entry = "pre_entry_candidates" in scout_out
-        if using_pre_entry:
-            candidate_source = scout_out.get("pre_entry_candidates", []) or []
-            ordered_candidates = sorted(
-                candidate_source,
-                key=lambda item: int((item.get("pre_entry_selection") or {}).get("rank", 999) or 999),
-            )[:2]
-        else:
-            ordered_candidates = sorted(
-                [
-                    item
-                    for item in candidates
-                    if str(
-                        item.get("selection_lane")
-                        or (item.get("top3_selection") or {}).get("primary_lane")
-                        or ""
-                    ) == "left_side"
-                ],
-                key=lambda item: int(
-                    item.get("selection_rank")
-                    or (item.get("top3_selection") or {}).get("selection_rank")
-                    or 999
-                ),
-            )[:2]
+        strict_candidates = sorted(
+            candidates or [],
+            key=lambda item: int(
+                item.get("selection_rank")
+                or (item.get("top3_selection") or {}).get("selection_rank")
+                or 999
+            ),
+        )[:2]
+        ordered_candidates = sorted(
+            scout_out.get("pre_entry_candidates", []) or [],
+            key=lambda item: int((item.get("pre_entry_selection") or {}).get("rank", 999) or 999),
+        )[:2]
+        watchlist_candidates = (scout_out.get("watchlist_candidates") or [])[:5]
 
         market_view = _market_operating_view(regime_out)
         market_map = _compact_market_map(regime_out)
@@ -1383,34 +1367,47 @@ class DigestAgent(BaseAgent):
         lines.append(f"행동 | {_fx_operating_action(fx_view, regime_out.get('fx', {}) or {})}")
         lines.append("")
 
-        chart_title = "ENTRY 선행" if using_pre_entry else "차트"
-        lines.append(f"<b>{chart_title} | {len(ordered_candidates)}개</b>")
+        lines.append(f"<b>최종 후보 | {len(strict_candidates)}개</b>")
+        if strict_candidates:
+            for rank, candidate in enumerate(strict_candidates, 1):
+                sector = str(
+                    (((candidate.get("theme_industry") or {}).get("sector") or {}).get("name"))
+                    or candidate.get("sector")
+                    or ""
+                )
+                selection = candidate.get("top3_selection") or {}
+                lane_status = str(
+                    candidate.get("selection_lane_status")
+                    or selection.get("primary_lane_status")
+                    or ""
+                )
+                why = str(
+                    ((_candidate_research(candidate).get("bull_case") or {}).get("summary"))
+                    or _candidate_judgment(candidate)["reason"]
+                )[:160]
+                lines.append(
+                    f"{rank}. <b>{candidate.get('ticker')}</b> | {lane_status or '통과'}"
+                    + (f" · {sector}" if sector else "")
+                )
+                lines.append(f"   근거 | {why}")
+                lines.append(f"   무효 | {_candidate_invalidation(candidate)}")
+                lines.append("   행동 | TV Entry 신호와 현재 Gate를 다시 확인")
+        else:
+            production_audit = (
+                ((radar_summary.get("filter_audit") or {}).get("top3_selection_audit") or {}).get("production_gate")
+                or {}
+            )
+            reject_counts = production_audit.get("rejection_counts") or {}
+            top_rejects = sorted(reject_counts.items(), key=lambda item: int(item[1] or 0), reverse=True)[:2]
+            blocker = " · ".join(f"{key} {value}개" for key, value in top_rejects)
+            lines.append("없음 | 엄격 관문을 모두 통과한 종목 없음")
+            if blocker:
+                lines.append(f"막힘 | {blocker}")
+        lines.append("")
+
+        lines.append(f"<b>오늘 TV 확인 후보 | {len(ordered_candidates)}개</b>")
         if ordered_candidates:
             for rank, candidate in enumerate(ordered_candidates, 1):
-                if not using_pre_entry:
-                    sector = str(
-                        (((candidate.get("theme_industry") or {}).get("sector") or {}).get("name"))
-                        or candidate.get("sector")
-                        or ""
-                    )
-                    selection = candidate.get("top3_selection") or {}
-                    lane_status = str(
-                        candidate.get("selection_lane_status")
-                        or selection.get("primary_lane_status")
-                        or ""
-                    )
-                    lane_label = "좌측진입 강함" if lane_status == "STAGE2_STRONG_PASS" else "좌측진입 준비"
-                    why = str(
-                        ((_candidate_research(candidate).get("bull_case") or {}).get("summary"))
-                        or _candidate_judgment(candidate)["reason"]
-                    )[:160]
-                    lines.append(
-                        f"{rank}. <b>{candidate.get('ticker')}</b> | {lane_label}"
-                        + (f" · {sector}" if sector else "")
-                    )
-                    lines.append(f"   근거 | {why}")
-                    lines.append(f"   무효 | {_candidate_invalidation(candidate)}")
-                    continue
                 country = str(candidate.get("country", "") or "").upper()
                 sector = str(
                     (((candidate.get("theme_industry") or {}).get("sector") or {}).get("name"))
@@ -1447,12 +1444,19 @@ class DigestAgent(BaseAgent):
                 if setup and isinstance(move, (int, float)):
                     lines.append(f"   선행 | {setup} 최초 조짐 후 {float(move) * 100:+.1f}%")
                 lines.append(f"   근거 | {_pre_entry_evidence(candidate)}")
+                quality = candidate.get("quality_auditor") or candidate.get("quality_context") or {}
+                sector_state = str(candidate.get("theme_industry_status") or candidate.get("sector_quadrant") or "미확인")
+                lines.append(
+                    "   관문 | "
+                    + "구조 " + str(candidate.get("selection_lane_status") or candidate.get("selection_lane") or "통과")
+                    + " · 타이밍 " + str(timing.get("status") or candidate.get("timeliness") or "통과")
+                    + " · 섹터 " + sector_state
+                    + " · 품질 " + str(quality.get("status") or candidate.get("quality_auditor_status") or "통과")
+                )
                 invalidation = price_map.get("invalidation_close_below")
                 if invalidation is not None:
                     lines.append(f"   무효 | {_brief_price(invalidation, country)} 아래 종가")
                 lines.append(f"   행동 | {_pre_entry_action(candidate)}")
-            if not using_pre_entry:
-                lines.append("행동 | 지금 차트 열기 · Entry50/100 점등과 Gate 통과까지 대기")
         else:
             pre_entry_audit = (
                 ((radar_summary.get("filter_audit") or {}).get("top3_selection_audit") or {}).get("pre_entry")
@@ -1468,9 +1472,19 @@ class DigestAgent(BaseAgent):
                 or decision_health.get("reason")
                 or "좌측진입 Stage 2와 품질 기준을 함께 통과한 후보 없음"
             )
-            lines.append("없음 | Entry 전에 볼 후보 없음" if using_pre_entry else "없음 | 새로 열 차트 없음")
+            lines.append("없음 | Entry 전에 볼 후보 없음")
             lines.append(f"막힘 | {reason}")
             lines.append("행동 | 오늘은 새 차트 열지 말고 보유 종목만 점검")
+        lines.append("")
+
+        lines.append(f"<b>관찰 후보 | {len(watchlist_candidates)}개</b>")
+        if watchlist_candidates:
+            for candidate in watchlist_candidates:
+                ticker = str(candidate.get("ticker") or "")
+                reason = str(candidate.get("watch_reason") or candidate.get("selection_lane_status") or "다음 관문 대기")
+                lines.append(f"{ticker} | {reason[:120]}")
+        else:
+            lines.append("없음 | 관찰 풀 통과 후보 없음")
         lines.append("")
 
         alerts = guard_out.get("alerts", []) or []
@@ -1529,14 +1543,15 @@ class DigestAgent(BaseAgent):
             if limits:
                 lines.append(f"자료 | {' · '.join(limits)}")
 
-        text = "\n".join(lines).strip()
+        # Journal도 같은 원문을 쓰므로 HTML 태그 없이 공통 텍스트로 확정한다.
+        text = "\n".join(lines).replace("<b>", "").replace("</b>", "").strip()
         if len(text) > max_chars:
             self.log.warning(
                 "[digest] 텔레그램 길이 초과 (%d > %d), 자르기",
                 len(text),
                 max_chars,
             )
-            text = text[:max_chars - 50] + "\n\n... (상세 내용은 저널 BRIEFING 시트)"
+            text = text[:max_chars - 50] + "\n\n... (브리핑 길이 제한으로 일부 생략)"
         return text
 
     def _build_telegram_legacy(

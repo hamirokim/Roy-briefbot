@@ -172,16 +172,31 @@ def m6_node(state: BriefBotState) -> dict:
         )
         date_str = state.get("date", "")
 
-        # 1. 신규 후보 적재 (price_at_add 이미 주입됨)
-        if candidates_with_price and date_str:
+        # 1. 엄격 최종 후보와 TV 확인 후보를 같은 원장에 유형을 분리해 적재한다.
+        scout_out = state.get("scout_out") or {}
+        eval_candidates = []
+        for candidate in candidates_with_price:
+            item = dict(candidate)
+            item["_candidate_type"] = "STRICT"
+            item["_policy_id"] = "production"
+            eval_candidates.append(item)
+        for candidate in scout_out.get("pre_entry_candidates") or []:
+            item = dict(candidate)
+            item["_candidate_type"] = "TV_CHECK"
+            item["_policy_id"] = "pre_entry_v1"
+            price_map = item.get("price_map") or {}
+            item["price_at_add"] = item.get("price_at_add") or price_map.get("current")
+            eval_candidates.append(item)
+
+        if eval_candidates and date_str:
             try:
-                added = save_candidates_eval(candidates_with_price, date_str)
+                added = save_candidates_eval(eval_candidates, date_str)
                 if added > 0:
                     logger.info("[m6_node] SCOUT 시트 신규 적재: %d행", added)
             except Exception as e:
                 logger.warning("[m6_node] save_candidates_eval 실패: %s", e)
 
-        watchlist = (state.get("scout_out") or {}).get("watchlist_candidates") or []
+        watchlist = scout_out.get("watchlist_candidates") or []
         if watchlist and date_str:
             try:
                 added = save_watchlist_eval(watchlist, date_str)

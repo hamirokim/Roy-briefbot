@@ -341,6 +341,16 @@ SCOUT_CANDIDATES_HEADERS = [
     "Catalyst Headline", # AD: 대표 뉴스/리스크 헤드라인
     "Data Status",    # AE: 정보 부족 사유 구분
     "현재보유",      # AF: OPEN 포지션일 때만 Position ID
+    "후보유형",      # AG: STRICT / TV_CHECK
+    "정책ID",        # AH: production / pre_entry_v1
+    "선발등급",      # AI: A/B/C/D/REVIEW
+    "대표레인",      # AJ
+    "레인상태",      # AK
+    "타이밍",        # AL
+    "섹터분면",      # AM
+    "품질판정",      # AN
+    "가격위치",      # AO
+    "선발근거",      # AP
 ]
 
 
@@ -352,6 +362,8 @@ SCOUT_CANDIDATES_GUIDE = [
     "POSITIONS 매핑", "환경변수", "봇 자동", "shadow",
     "shadow", "shadow", "shadow", "shadow", "shadow",
     "shadow", "shadow", "shadow", "OPEN 매핑",
+    "봇 자동", "봇 자동", "봇 자동", "봇 자동", "봇 자동",
+    "봇 자동", "봇 자동", "봇 자동", "봇 자동", "봇 자동",
 ]
 
 SCOUT_WATCHLIST_HEADERS = [
@@ -610,7 +622,7 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
     동작:
         1. 시트 자동 생성 (없으면)
         2. POSITIONS 매핑 자동 로드 → 진입여부 컬럼 자동 매핑
-        3. (티커 + 발생일) 중복 시 skip
+        3. (티커 + 발생일 + 후보유형) 중복 시 skip
         4. 신규 행만 append
     """
     if not candidates:
@@ -633,11 +645,12 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
         logger.error("[SCOUT] 기존 데이터 read 실패: %s", e)
         return 0
 
-    # (티커, 발생일) 중복 체크 set
+    # 과거 32컬럼 행은 엄격 최종 후보로 간주한다.
     seen = set()
     for row in existing[2:]:  # row 1=헤더, row 2=가이드
         if len(row) >= 3:
-            seen.add((row[2].strip().upper(), row[1].strip()))
+            candidate_type = (row[32].strip().upper() if len(row) > 32 and row[32] else "STRICT")
+            seen.add((row[2].strip().upper(), row[1].strip(), candidate_type))
 
     next_row = len(existing) + 1
     if next_row < 3:
@@ -651,8 +664,8 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
         if not ticker:
             continue
 
-        # 중복 skip (같은 티커가 같은 날 두 번 안 들어가도록)
-        if (ticker, date_str) in seen:
+        candidate_type = str(c.get("_candidate_type") or "STRICT").strip().upper()
+        if (ticker, date_str, candidate_type) in seen:
             continue
 
         bq = c.get("buy_questions") or {}
@@ -693,7 +706,18 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
         except Exception:
             data_status = ""
 
-        # 후보 기본 정보 + 실험 검증용 shadow 컬럼
+        selection = c.get("top3_selection") or c.get("pre_entry_selection") or {}
+        timing = c.get("pre_entry_timing") or {}
+        quality = c.get("quality_auditor") or c.get("quality_context") or {}
+        price_map = c.get("price_map") or {}
+        selection_reason = str(
+            selection.get("reason")
+            or c.get("watch_reason")
+            or bq.get("summary")
+            or ""
+        )[:300]
+
+        # 후보 기본 정보 + 선발 당시 관문 증거
         row = [
             f"=ROW()-2",                              # A: No (수식)
             date_str,                                 # B: 발생일
@@ -710,9 +734,9 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
             risk_str,                                 # M: Risk Flags
             price_str,                                # N: 발생가
             "",                                       # O: +5d 가 (follow-up)
-            f"=IFERROR((O{next_row + len(rows_to_append)}-N{next_row + len(rows_to_append)})/N{next_row + len(rows_to_append)},\"\")",  # P: +5d %
+            f"=IF(OR(O{next_row + len(rows_to_append)}=\"\",N{next_row + len(rows_to_append)}=\"\"),\"\",IFERROR((O{next_row + len(rows_to_append)}-N{next_row + len(rows_to_append)})/N{next_row + len(rows_to_append)},\"\"))",  # P: +5d %
             "",                                       # Q: +28d 가
-            f"=IFERROR((Q{next_row + len(rows_to_append)}-N{next_row + len(rows_to_append)})/N{next_row + len(rows_to_append)},\"\")",  # R: +28d %
+            f"=IF(OR(Q{next_row + len(rows_to_append)}=\"\",N{next_row + len(rows_to_append)}=\"\"),\"\",IFERROR((Q{next_row + len(rows_to_append)}-N{next_row + len(rows_to_append)})/N{next_row + len(rows_to_append)},\"\"))",  # R: +28d %
             "",                                       # S: 방향 적중
             entry_pid,                                # T: 진입여부
             model_name,                               # U: Model
@@ -727,9 +751,19 @@ def save_candidates_eval(candidates: list[dict], date_str: str) -> int:
             catalyst_headline,                         # AD: Catalyst Headline
             data_status,                               # AE: Data Status
             open_pid,                                  # AF: 현재보유
+            candidate_type,                            # AG: 후보유형
+            str(c.get("_policy_id") or "production"), # AH: 정책ID
+            str(c.get("selection_tier") or selection.get("tier") or ""),
+            str(c.get("selection_lane") or selection.get("primary_lane") or ""),
+            str(c.get("selection_lane_status") or selection.get("primary_lane_status") or ""),
+            str(timing.get("status") or c.get("timeliness") or ""),
+            str(c.get("theme_industry_status") or c.get("sector_quadrant") or ""),
+            str(quality.get("status") or c.get("quality_auditor_status") or ""),
+            str(price_map.get("position") or c.get("price_position") or ""),
+            selection_reason,
         ]
         rows_to_append.append(row)
-        seen.add((ticker, date_str))
+        seen.add((ticker, date_str, candidate_type))
 
     if not rows_to_append:
         logger.info("[SCOUT] 시트 적재 skip (모두 중복)")
